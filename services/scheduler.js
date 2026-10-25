@@ -2,6 +2,7 @@ const cron = require('node-cron');
 const fs = require('fs');
 const path = require('path');
 const { publishPostToFanpage } = require('./facebook');
+const { sendPostNotification } = require('./mailer');
 
 const POSTS_FILE = path.join(__dirname, '..', 'data', 'posts.json');
 const POSTS_TMP_FILE = path.join('/tmp', 'posts.json');
@@ -88,6 +89,11 @@ async function executePost(post) {
     post.isSimulation = result.isSimulation || false;
     post.lastMessage = result.message;
     console.log(`[Scheduler] ✅ Đăng thành công bài [${post.id}]! Link: ${result.postUrl}`);
+
+    // Gửi email thông báo tự động tới người dùng
+    sendPostNotification(post, settings).catch(err => {
+      console.error('[Scheduler] Gửi email thông báo bị lỗi:', err.message);
+    });
   } catch (error) {
     post.status = 'failed';
     post.failedAt = new Date().toISOString();

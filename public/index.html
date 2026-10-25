@@ -439,6 +439,43 @@
                 <input type="text" id="settingScheduleTimes" placeholder="08:30, 11:45, 15:30, 20:00" class="neo-input w-full px-3 py-2 text-sm font-mono">
               </div>
 
+              <!-- Email Notification Section -->
+              <h3 class="text-sm font-black uppercase tracking-wider text-[#18181B] border-b-2 border-[#18181B] pb-3 pt-3 flex items-center justify-between">
+                <span class="flex items-center gap-2"><span>📧</span> Thông báo Email khi đăng bài</span>
+                <label class="relative inline-flex items-center cursor-pointer gap-2">
+                  <input type="checkbox" id="settingEmailEnabled" class="sr-only peer" checked>
+                  <div class="w-9 h-5 bg-neutral-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600 border border-[#18181B]"></div>
+                  <span class="text-xs font-bold text-[#18181B]">Bật gửi mail</span>
+                </label>
+              </h3>
+
+              <div class="space-y-3">
+                <div>
+                  <label class="text-xs font-bold text-[#18181B] block mb-1">Hòm thư nhận email thông báo:</label>
+                  <input type="email" id="settingNotificationEmail" placeholder="nguyennhu19022008@gmail.com" class="neo-input w-full px-3 py-2 text-sm font-bold">
+                  <span class="text-[11px] text-neutral-500 font-medium">Khi đăng bài thành công lên Fanpage, hệ thống sẽ gửi báo cáo kèm link bài viết về hòm thư này.</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div>
+                    <label class="text-xs font-bold text-[#18181B] block mb-1">Gmail gửi (Tài khoản Google):</label>
+                    <input type="email" id="settingSmtpUser" placeholder="nguyennhu19022008@gmail.com" class="neo-input w-full px-3 py-2 text-sm font-mono">
+                  </div>
+                  <div>
+                    <div class="flex justify-between items-center mb-1">
+                      <label class="text-xs font-bold text-[#18181B]">Mật khẩu ứng dụng Gmail (16 ký tự):</label>
+                      <button type="button" onclick="testEmailConnection()" class="text-xs font-bold text-blue-700 hover:underline">Gửi thử</button>
+                    </div>
+                    <input type="password" id="settingSmtpPass" placeholder="xxxx xxxx xxxx xxxx" class="neo-input w-full px-3 py-2 text-sm font-mono">
+                    <div id="emailTestResult" class="text-xs mt-1"></div>
+                  </div>
+                </div>
+
+                <div class="p-2.5 bg-[#FAF5EE] border border-[#18181B] rounded-lg text-[11px] text-neutral-700 font-medium">
+                  💡 <strong>Cách tạo Mật khẩu ứng dụng Gmail (App Password):</strong> Vào <a href="https://myaccount.google.com/apppasswords" target="_blank" class="text-blue-700 underline font-bold">myaccount.google.com/apppasswords</a> ➔ Nhập tên ứng dụng "AutoPost" ➔ Copy mã 16 ký tự dán vào ô trên.
+                </div>
+              </div>
+
               <div class="pt-2">
                 <button onclick="saveSettingsForm()" class="neo-btn neo-btn-green w-full py-3 text-sm font-black shadow-[3px_3px_0px_#18181B] uppercase tracking-wide">
                   💾 LƯU CẤU HÌNH HỆ THỐNG

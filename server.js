@@ -7,6 +7,7 @@ require('dotenv').config();
 
 const { generatePostWithGemini, sanitizeRawText } = require('./services/gemini');
 const { verifyPageToken } = require('./services/facebook');
+const { sendTestEmail } = require('./services/mailer');
 const {
   startScheduler,
   executePost,
@@ -89,6 +90,18 @@ app.post('/api/test-fb', async (req, res) => {
 
   const result = await verifyPageToken(pageId, token);
   res.json(result);
+});
+
+// 3.1. Test Email Connection
+app.post('/api/test-email', async (req, res) => {
+  try {
+    const currentSettings = getSettings();
+    const testConfig = { ...currentSettings, ...req.body };
+    const result = await sendTestEmail(testConfig);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
 });
 
 // 4. AI Generate Post Content

@@ -106,6 +106,14 @@ async function loadSettings() {
       document.getElementById('settingWarranty').value = appSettings.warrantyPolicy || '';
       document.getElementById('settingAddress').value = appSettings.storeAddress || '';
       document.getElementById('settingScheduleTimes').value = (appSettings.scheduleTimes || []).join(', ');
+
+      // Email notification fields
+      if (document.getElementById('settingEmailEnabled')) {
+        document.getElementById('settingEmailEnabled').checked = appSettings.emailNotificationEnabled !== false;
+        document.getElementById('settingNotificationEmail').value = appSettings.notificationEmail || appSettings.email || 'nguyennhu19022008@gmail.com';
+        document.getElementById('settingSmtpUser').value = appSettings.smtpUser || appSettings.email || 'nguyennhu19022008@gmail.com';
+        document.getElementById('settingSmtpPass').value = appSettings.smtpPass || '';
+      }
     }
 
     // Update top header badge
@@ -133,7 +141,11 @@ async function saveSettingsForm() {
     hotline: document.getElementById('settingHotline').value.trim(),
     warrantyPolicy: document.getElementById('settingWarranty').value.trim(),
     storeAddress: document.getElementById('settingAddress').value.trim(),
-    scheduleTimes: document.getElementById('settingScheduleTimes').value.split(',').map(s => s.trim()).filter(Boolean)
+    scheduleTimes: document.getElementById('settingScheduleTimes').value.split(',').map(s => s.trim()).filter(Boolean),
+    emailNotificationEnabled: document.getElementById('settingEmailEnabled')?.checked ?? true,
+    notificationEmail: document.getElementById('settingNotificationEmail')?.value.trim() || 'nguyennhu19022008@gmail.com',
+    smtpUser: document.getElementById('settingSmtpUser')?.value.trim() || '',
+    smtpPass: document.getElementById('settingSmtpPass')?.value.trim() || ''
   };
 
   try {
@@ -167,12 +179,38 @@ async function testFacebookConnection() {
     const data = await res.json();
 
     if (data.valid) {
-      resultDiv.innerHTML = `<span class="text-emerald-400 font-semibold">✅ Kết nối thành công tới Trang: <strong>${data.pageInfo.name}</strong> (ID: ${data.pageInfo.id})</span>`;
+      resultDiv.innerHTML = `<span class="text-emerald-700 font-bold">✅ Kết nối thành công tới Trang: <strong>${data.pageInfo.name}</strong> (ID: ${data.pageInfo.id})</span>`;
     } else {
-      resultDiv.innerHTML = `<span class="text-red-400">❌ ${data.error}</span>`;
+      resultDiv.innerHTML = `<span class="text-red-600 font-bold">❌ ${data.error}</span>`;
     }
   } catch (err) {
-    resultDiv.innerHTML = `<span class="text-red-400">❌ Lỗi: ${err.message}</span>`;
+    resultDiv.innerHTML = `<span class="text-red-600 font-bold">❌ Lỗi: ${err.message}</span>`;
+  }
+}
+
+async function testEmailConnection() {
+  const resultDiv = document.getElementById('emailTestResult');
+  resultDiv.innerHTML = '<span class="text-blue-700 font-bold">⏳ Đang gửi email kiểm thử...</span>';
+
+  const notificationEmail = document.getElementById('settingNotificationEmail').value.trim();
+  const smtpUser = document.getElementById('settingSmtpUser').value.trim();
+  const smtpPass = document.getElementById('settingSmtpPass').value.trim();
+
+  try {
+    const res = await fetch('/api/test-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ notificationEmail, smtpUser, smtpPass })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      resultDiv.innerHTML = `<span class="text-emerald-700 font-bold">✅ Đã gửi email kiểm thử thành công tới <strong>${notificationEmail}</strong>! Hãy kiểm tra hòm thư của bạn.</span>`;
+    } else {
+      resultDiv.innerHTML = `<span class="text-red-600 font-bold">❌ ${data.error}</span>`;
+    }
+  } catch (err) {
+    resultDiv.innerHTML = `<span class="text-red-600 font-bold">❌ Lỗi: ${err.message}</span>`;
   }
 }
 
