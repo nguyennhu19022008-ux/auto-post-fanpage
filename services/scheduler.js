@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { publishPostToFanpage } = require('./facebook');
 const { sendPostNotification, sendMediaReminderEmail } = require('./mailer');
+const { upsertPostToDb } = require('./supabase');
 
 const POSTS_FILE = path.join(__dirname, '..', 'data', 'posts.json');
 const POSTS_TMP_FILE = path.join('/tmp', 'posts.json');
@@ -110,6 +111,7 @@ async function executePost(post) {
     posts.push(post);
   }
   savePosts(posts);
+  upsertPostToDb(post).catch(e => console.warn('Supabase post sync notice:', e.message));
 
   return post;
 }
@@ -179,6 +181,9 @@ async function checkAndPublishDuePosts() {
 
   if (hasUpdates) {
     savePosts(posts);
+    for (const p of posts) {
+      upsertPostToDb(p).catch(e => console.warn('Supabase post sync notice:', e.message));
+    }
   }
 }
 

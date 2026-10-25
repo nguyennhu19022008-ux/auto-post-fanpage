@@ -10,6 +10,12 @@ const { verifyPageToken } = require('./services/facebook');
 const { sendTestEmail } = require('./services/mailer');
 const { parseStockTableFromImage } = require('./services/tableParser');
 const {
+  uploadToSupabaseStorage,
+  deleteFromSupabaseStorage,
+  upsertPostToDb,
+  deletePostFromDb
+} = require('./services/supabase');
+const {
   startScheduler,
   executePost,
   checkAndPublishDuePosts,
@@ -120,16 +126,30 @@ app.post('/api/generate-content', async (req, res) => {
 });
 
 // 5. Upload Media Files (Images / Videos - Up to 35 files)
-app.post('/api/upload-media', upload.array('files', 35), (req, res) => {
+app.post('/api/upload-media', upload.array('files', 35), async (req, res) => {
   try {
-    const files = req.files.map(f => ({
-      originalname: f.originalname,
-      filename: f.filename,
-      path: f.path,
-      url: `/uploads/${f.filename}`,
-      mimetype: f.mimetype,
-      size: f.size
-    }));
+    const files = [];
+    for (const f of (req.files || [])) {
+      let publicUrl = `/uploads/${f.filename}`;
+      try {
+        const buffer = fs.readFileSync(f.path);
+        const supaRes = await uploadToSupabaseStorage(buffer, f.originalname, f.mimetype);
+        if (supaRes && supaRes.url) {
+          publicUrl = supaRes.url;
+        }
+      } catch (err) {
+        console.warn('[Storage] Fallback to local file:', err.message);
+      }
+
+      files.push({
+        originalname: f.originalname,
+        filename: f.filename,
+        path: f.path,
+        url: publicUrl,
+        mimetype: f.mimetype,
+        size: f.size
+      });
+    }
     res.json({ success: true, files });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -184,6 +204,10 @@ app.post('/api/batch-schedule', async (req, res) => {
     });
 
     savePosts(posts);
+    for (const np of newPosts) {
+      upsertPostToDb(np).catch(e => console.warn('Supabase post sync notice:', e.message));
+    }
+
     res.json({
       success: true,
       count: newPosts.length,
@@ -204,20 +228,34 @@ app.get('/api/posts/:id', (req, res) => {
 });
 
 // Attach media to a post from Mobile Quick-Upload or Web (Up to 35 files)
-app.post('/api/posts/:id/attach-media', upload.array('files', 35), (req, res) => {
+app.post('/api/posts/:id/attach-media', upload.array('files', 35), async (req, res) => {
   try {
     const posts = getPosts();
     const post = posts.find(p => p.id === req.params.id);
     if (!post) return res.status(404).json({ error: 'Không tìm thấy bài viết.' });
 
-    const newFiles = (req.files || []).map(f => ({
-      originalname: f.originalname,
-      filename: f.filename,
-      path: f.path,
-      url: `/uploads/${f.filename}`,
-      mimetype: f.mimetype,
-      size: f.size
-    }));
+    const newFiles = [];
+    for (const f of (req.files || [])) {
+      let publicUrl = `/uploads/${f.filename}`;
+      try {
+        const buffer = fs.readFileSync(f.path);
+        const supaRes = await uploadToSupabaseStorage(buffer, f.originalname, f.mimetype);
+        if (supaRes && supaRes.url) {
+          publicUrl = supaRes.url;
+        }
+      } catch (err) {
+        console.warn('[Storage] Fallback to local file:', err.message);
+      }
+
+      newFiles.push({
+        originalname: f.originalname,
+        filename: f.filename,
+        path: f.path,
+        url: publicUrl,
+        mimetype: f.mimetype,
+        size: f.size
+      });
+    }
 
     if (!post.mediaFiles) post.mediaFiles = [];
     post.mediaFiles = [...post.mediaFiles, ...newFiles];
@@ -233,6 +271,7 @@ app.post('/api/posts/:id/attach-media', upload.array('files', 35), (req, res) =>
 
     post.mediaReminderSent = true;
     savePosts(posts);
+    await upsertPostToDb(post);
 
     console.log(`[QuickUpload] 📸 Đã cập nhật ${newFiles.length} tệp media cho bài [${post.id}] - Mã #${post.machineCode}`);
     res.json({ success: true, post, message: 'Đã cập nhật hình ảnh thành công!' });
@@ -303,6 +342,7 @@ app.post('/api/posts', async (req, res) => {
     } else {
       posts.unshift(newPost);
       savePosts(posts);
+      upsertPostToDb(newPost).catch(e => console.warn('Supabase post sync notice:', e.message));
       return res.json({
         success: true,
         post: newPost,
@@ -323,6 +363,7 @@ app.post('/api/posts/:id/publish-now', async (req, res) => {
   }
 
   const updatedPost = await executePost(post);
+  upsertPostToDb(updatedPost).catch(e => console.warn('Supabase post sync notice:', e.message));
   res.json({ success: true, post: updatedPost, message: 'Đã thực thi đăng bài thành công!' });
 });
 
@@ -334,9 +375,31 @@ app.delete('/api/posts/:id', (req, res) => {
 
   if (posts.length !== initialLength) {
     savePosts(posts);
+    deletePostFromDb(req.params.id).catch(e => console.warn('Supabase delete notice:', e.message));
     res.json({ success: true, message: 'Đã xóa bài viết khỏi danh sách.' });
   } else {
     res.status(404).json({ error: 'Không tìm thấy bài viết.' });
+  }
+});
+
+// 11. External Cron Check Trigger (for cron-job.org / GitHub Actions / Vercel Serverless)
+app.get('/api/cron-check', async (req, res) => {
+  const key = req.query.key || req.headers['authorization'];
+  const expected = process.env.CRON_SECRET || 'vg_cron_2026_laptop';
+  if (key !== expected && key !== `Bearer ${expected}`) {
+    return res.status(401).json({ error: 'Unauthorized: Sai mã CRON_SECRET key.' });
+  }
+
+  console.log('[CronCheck] ⏰ Đã nhận tín hiệu quét tự động từ dịch vụ Cron bên ngoài!');
+  try {
+    await checkAndPublishDuePosts();
+    res.json({
+      success: true,
+      timestamp: new Date().toISOString(),
+      message: 'Đã quét và xử lý đăng bài thành công!'
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 

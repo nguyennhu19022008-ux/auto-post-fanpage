@@ -47,13 +47,19 @@ function resolveMediaFilePath(filePath) {
 
 /**
  * Upload an un-published photo to get photo ID (for multi-image album)
+ * Supports both public HTTPS URLs (Supabase Storage) and local file streams
  */
-async function uploadUnpublishedPhoto(pageId, pageToken, filePath) {
-  const resolved = resolveMediaFilePath(filePath);
+async function uploadUnpublishedPhoto(pageId, pageToken, filePath, fileUrl = '') {
   const form = new FormData();
   form.append('published', 'false');
   form.append('access_token', pageToken);
-  form.append('source', fs.createReadStream(resolved));
+
+  if (fileUrl && fileUrl.startsWith('http')) {
+    form.append('url', fileUrl);
+  } else {
+    const resolved = resolveMediaFilePath(filePath);
+    form.append('source', fs.createReadStream(resolved));
+  }
 
   const response = await axios.post(`${BASE_URL}/${pageId}/photos`, form, {
     headers: form.getHeaders(),
@@ -66,13 +72,18 @@ async function uploadUnpublishedPhoto(pageId, pageToken, filePath) {
 /**
  * Upload a video to the Fanpage
  */
-async function uploadVideo(pageId, pageToken, filePath, description, title = '') {
-  const resolved = resolveMediaFilePath(filePath);
+async function uploadVideo(pageId, pageToken, filePath, description, title = '', fileUrl = '') {
   const form = new FormData();
   form.append('access_token', pageToken);
   form.append('description', description);
   if (title) form.append('title', title);
-  form.append('source', fs.createReadStream(resolved));
+
+  if (fileUrl && fileUrl.startsWith('http')) {
+    form.append('file_url', fileUrl);
+  } else {
+    const resolved = resolveMediaFilePath(filePath);
+    form.append('source', fs.createReadStream(resolved));
+  }
 
   const response = await axios.post(`${BASE_URL}/${pageId}/videos`, form, {
     headers: form.getHeaders(),
@@ -122,12 +133,19 @@ async function publishPostToFanpage(postData, userSettings) {
 
     // 2. Single photo post
     if (imageFiles.length === 1) {
-      const resolved = resolveMediaFilePath(imageFiles[0].path);
-      console.log(`[FB API] Đang đăng 1 ảnh lên Fanpage: ${resolved}`);
+      const img = imageFiles[0];
       const form = new FormData();
       form.append('message', content);
       form.append('access_token', pageToken);
-      form.append('source', fs.createReadStream(resolved));
+
+      if (img.url && img.url.startsWith('http')) {
+        console.log(`[FB API] Đang đăng 1 ảnh từ Supabase Cloud URL: ${img.url}`);
+        form.append('url', img.url);
+      } else {
+        const resolved = resolveMediaFilePath(img.path);
+        console.log(`[FB API] Đang đăng 1 ảnh từ file cục bộ: ${resolved}`);
+        form.append('source', fs.createReadStream(resolved));
+      }
 
       const response = await axios.post(`${BASE_URL}/${pageId}/photos`, form, {
         headers: form.getHeaders(),
@@ -149,7 +167,7 @@ async function publishPostToFanpage(postData, userSettings) {
       console.log(`[FB API] Đang tải lên album ${imageFiles.length} ảnh...`);
       const mediaFbidList = [];
       for (const img of imageFiles) {
-        const photoId = await uploadUnpublishedPhoto(pageId, pageToken, img.path);
+        const photoId = await uploadUnpublishedPhoto(pageId, pageToken, img.path, img.url);
         mediaFbidList.push({ media_fbid: photoId });
       }
 
