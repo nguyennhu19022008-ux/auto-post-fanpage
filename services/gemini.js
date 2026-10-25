@@ -1,5 +1,36 @@
 const axios = require('axios');
 
+const GEMINI_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];
+
+/**
+ * Reusable Gemini API caller with automatic fallback across reliable models
+ */
+async function callGeminiWithFallback(contents, apiKey, timeout = 35000) {
+  let lastError = null;
+
+  for (const model of GEMINI_MODELS) {
+    try {
+      const response = await axios.post(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+        { contents },
+        { headers: { 'Content-Type': 'application/json' }, timeout }
+      );
+
+      const text = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (text) {
+        return { text: text.trim(), model };
+      }
+    } catch (err) {
+      lastError = err;
+      const status = err.response?.status;
+      const msg = err.response?.data?.error?.message || err.message;
+      console.warn(`[Gemini API] Thử model ${model} không thành công (Status: ${status}): ${msg}. Chuyển sang model dự phòng tiếp theo...`);
+    }
+  }
+
+  throw new Error(`Tất cả các model Gemini đều không phản hồi: ${lastError?.message || 'Không rõ nguyên nhân'}`);
+}
+
 /**
  * Clean and filter sensitive wholesale terms from text
  */
@@ -26,7 +57,7 @@ function fallbackGeneratePost(rawText, userSettings, customPrice) {
   const machineCode = codeMatch ? codeMatch[1].toUpperCase() : 'VIP';
 
   // Extract CPU (Dell, HP, ThinkPad, Dynabook, etc.)
-  const cpuMatch = sanitized.match(/(?:Intel\s+Core\s+i[3579][\w-]*|Core\s+Ultra\s+\d+\s*\w*|Ultra\s+\d+|Ryzen\s+[3579][\w-]*|i[3579]-\d{4,5}[A-Z]*|i[3579]\s+\d+th)/i);
+  const cpuMatch = sanitized.match(/(?:Intel\s+Core\s+i[3579][\w-]*|Core\s+Ultra\s+\d+\s*\w*|Ultra\s+\d+|Ryzen\s+[3579][\w-]*|i[3579][\s-]+\d{1,5}(?:[A-Za-z0-9]+|ThGen)?|i[3579]\s+\d+th)/i);
   const cpu = cpuMatch ? cpuMatch[0] : 'Intel Core mạnh mẽ';
 
   // Extract RAM
@@ -41,8 +72,8 @@ function fallbackGeneratePost(rawText, userSettings, customPrice) {
                    sanitized.match(/Ssd\s*(\d{3,4})/i);
   const ssd = ssdMatch ? (ssdMatch[1] ? (ssdMatch[1].toUpperCase().includes('GB') || ssdMatch[1].toUpperCase().includes('TB') ? ssdMatch[1].toUpperCase() : ssdMatch[1] + 'GB SSD') : '256GB SSD') : '256GB SSD siêu tốc';
 
-  // Extract Screen & Features (e.g. Cảm ứng, xoay 360)
-  const screenMatch = sanitized.match(/(?:màn\s*hình|màn)\s*[:=]?\s*([^,.\n•]+)/i);
+  // Extract Screen & Features (e.g. Cảm ứng, xoay 360) - preserve decimals like 13.3 inch
+  const screenMatch = sanitized.match(/(?:màn\s*hình|màn)\s*[:=]?\s*([0-9.,]+\s*inch[^\n,•]*|[^,\n•]+)/i);
   let screen = screenMatch ? screenMatch[1].trim() : 'Sắc nét, chống chói, góc nhìn rộng';
   if (/cảm\s*ứng/i.test(sanitized) && !/cảm\s*ứng/i.test(screen)) {
     screen += ' (Hỗ trợ cảm ứng vuốt chạm)';
@@ -187,22 +218,14 @@ YÊU CẦU NGHIÊM NGẶT VỀ CẤU TRÚC VÀ NỘI DUNG:
 
     contents.push({ role: 'user', parts });
 
-    const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-      { contents },
-      { headers: { 'Content-Type': 'application/json' }, timeout: 30000 }
-    );
+    const result = await callGeminiWithFallback(contents, apiKey);
 
-    const generatedText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (generatedText) {
-      return {
-        content: generatedText.trim(),
-        isAIGenerated: true,
-        message: 'Đã sinh bài viết thành công bằng Gemini 2.5 Flash!'
-      };
-    } else {
-      throw new Error('Không nhận được nội dung từ Gemini API');
-    }
+    return {
+      content: result.text,
+      isAIGenerated: true,
+      modelUsed: result.model,
+      message: `Đã sinh bài viết thành công bằng ${result.model}!`
+    };
   } catch (error) {
     console.error('Gemini API Error:', error.response?.data || error.message);
     // Fallback if API call failed
@@ -217,5 +240,6 @@ YÊU CẦU NGHIÊM NGẶT VỀ CẤU TRÚC VÀ NỘI DUNG:
 module.exports = {
   sanitizeRawText,
   fallbackGeneratePost,
-  generatePostWithGemini
+  generatePostWithGemini,
+  callGeminiWithFallback
 };

@@ -5,6 +5,8 @@ let allPosts = [];
 let parsedTableItems = [];
 let isDashboardInitialized = false;
 
+let isSampleDataLoaded = false;
+
 // Auto-initialize Dashboard on page load
 document.addEventListener('DOMContentLoaded', () => {
   initDashboard();
@@ -797,16 +799,15 @@ async function loadSampleTableData() {
     });
     const data = await res.json();
     if (data.success && data.items) {
-      const { merged, replacedCount, replacedCodes } = mergeAndDeduplicateTableItems(parsedTableItems, data.items);
-      parsedTableItems = merged;
+      isSampleDataLoaded = true;
+      parsedTableItems = data.items.map((item, idx) => ({
+        ...item,
+        selected: true,
+        originalIndex: idx
+      }));
       renderParsedTable(parsedTableItems);
       updateSelectedCount();
-
-      if (replacedCount > 0) {
-        showTableDedupAlert(`⚡ Đã tự động xóa ${replacedCount} máy cũ bị trùng mã (#${replacedCodes.join(', #')}) và cập nhật bằng thông tin mới nhất!`, 'success');
-      } else {
-        showTableDedupAlert(`✓ Đã nạp thành công ${data.items.length} mã máy từ mẫu bảng kho.`, 'success');
-      }
+      showTableDedupAlert(`✓ Đã nạp thành công ${data.items.length} mã máy từ mẫu bảng kho.`, 'success');
     } else {
       alert('Không thể nạp dữ liệu mẫu: ' + (data.error || 'Lỗi không xác định'));
     }
@@ -859,7 +860,11 @@ async function parseTableImageFiles(fileList) {
         body: JSON.stringify({ imageBase64: base64Data })
       });
       const data = await res.json();
-      if (data.success && data.items && data.items.length > 0) {
+      if (!data.success) {
+        alert('Lỗi bóc tách ảnh: ' + (data.error || 'Không rõ nguyên nhân'));
+        continue;
+      }
+      if (data.items && data.items.length > 0) {
         totalNewItems.push(...data.items);
         if (data.replacedCodes && data.replacedCodes.length) {
           totalReplacedCodes.push(...data.replacedCodes);
@@ -868,7 +873,11 @@ async function parseTableImageFiles(fileList) {
     }
 
     if (totalNewItems.length > 0) {
-      const { merged, replacedCount, replacedCodes } = mergeAndDeduplicateTableItems(parsedTableItems, totalNewItems);
+      // If table previously contained mock sample data, start fresh with the user's real uploaded photo!
+      const baseList = isSampleDataLoaded ? [] : parsedTableItems;
+      isSampleDataLoaded = false;
+
+      const { merged, replacedCount, replacedCodes } = mergeAndDeduplicateTableItems(baseList, totalNewItems);
       parsedTableItems = merged;
       renderParsedTable(parsedTableItems);
       updateSelectedCount();
@@ -877,7 +886,8 @@ async function parseTableImageFiles(fileList) {
       if (allReplaced.length > 0) {
         showTableDedupAlert(`🎉 Đã nạp thành công! Hệ thống đã tự động phát hiện và xóa ${allReplaced.length} máy cũ bị trùng mã (#${allReplaced.join(', #')}), thay thế bằng thông tin mã mới nhất!`, 'success');
       } else {
-        showTableDedupAlert(`✓ Đã nạp thành công ${totalNewItems.length} máy từ ảnh bảng kho. Không có mã nào bị trùng lặp.`, 'success');
+        const countDesc = totalNewItems.length === 1 ? '1 máy đơn lẻ' : `${totalNewItems.length} máy`;
+        showTableDedupAlert(`✓ Đã bóc tách thành công ${countDesc} từ ảnh vừa nạp.`, 'success');
       }
     } else {
       alert('Không tìm thấy dữ liệu máy trong ảnh: Vui lòng thử lại với ảnh rõ nét hơn.');
