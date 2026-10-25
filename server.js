@@ -383,10 +383,14 @@ app.delete('/api/posts/:id', (req, res) => {
 });
 
 // 11. External Cron Check Trigger (for cron-job.org / GitHub Actions / Vercel Serverless)
-app.get('/api/cron-check', async (req, res) => {
+app.get(['/api/cron', '/api/cron-check'], async (req, res) => {
   const key = req.query.key || req.headers['authorization'];
   const expected = process.env.CRON_SECRET || 'vg_cron_2026_laptop';
-  if (key !== expected && key !== `Bearer ${expected}`) {
+  // Allow Vercel native cron (sends CRON_SECRET in header) or secret key query param
+  const authHeader = req.headers['authorization'];
+  const isVercelCron = authHeader === `Bearer ${expected}` || req.headers['x-vercel-cron'] === '1';
+
+  if (!isVercelCron && key !== expected && authHeader !== `Bearer ${expected}`) {
     return res.status(401).json({ error: 'Unauthorized: Sai mã CRON_SECRET key.' });
   }
 
