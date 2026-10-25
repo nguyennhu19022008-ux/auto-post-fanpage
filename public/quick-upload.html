@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tải Ảnh Nhanh - Laptop Vương Gia</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FDFBF7; color: #18181B; }
+    .neo-card { background: #FFFFFF; border: 2.5px solid #18181B; border-radius: 12px; box-shadow: 4px 4px 0px #18181B; }
+    .neo-btn { border: 2px solid #18181B; border-radius: 8px; box-shadow: 3px 3px 0px #18181B; font-weight: 800; transition: all 0.15s ease; }
+    .neo-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0px #18181B; }
+    .neo-input { border: 2px solid #18181B; border-radius: 8px; box-shadow: 2px 2px 0px #18181B; }
+  </style>
+</head>
+<body class="min-h-screen p-4 flex flex-col items-center justify-center">
+
+  <div class="w-full max-w-lg neo-card p-5 sm:p-7 space-y-5">
+    
+    <!-- Top Header -->
+    <div class="border-b-2 border-[#18181B] pb-3 text-center">
+      <div class="inline-block px-3 py-1 bg-[#FDE047] border-2 border-[#18181B] rounded-full text-xs font-black uppercase tracking-wider mb-2 shadow-[2px_2px_0px_#18181B]">
+        ⚡ CẬP NHẬT ẢNH NHANH 1-CHẠM
+      </div>
+      <h1 class="text-xl font-black text-[#18181B] tracking-tight">CUNG CẤP ẢNH / VIDEO MÁY</h1>
+      <p class="text-xs text-neutral-600 font-bold mt-1">Chuẩn bị xuất bản lên Fanpage Laptop Vương Gia</p>
+    </div>
+
+    <!-- Machine Info Box -->
+    <div id="machineInfoBox" class="p-3.5 bg-[#FFFBEB] border-2 border-[#18181B] rounded-lg space-y-1.5 shadow-[2px_2px_0px_#18181B]">
+      <div class="flex justify-between items-center">
+        <span class="text-xs font-bold text-neutral-600 uppercase">Mã máy:</span>
+        <span class="text-base font-black text-blue-700 font-mono" id="infoMachineCode">#...</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-xs font-bold text-neutral-600 uppercase">Tên máy:</span>
+        <span class="text-sm font-black text-[#18181B]" id="infoMachineName">Đang tải...</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-xs font-bold text-neutral-600 uppercase">Giờ đăng dự kiến:</span>
+        <span class="text-xs font-black text-emerald-700 font-mono" id="infoScheduledTime">...</span>
+      </div>
+    </div>
+
+    <!-- Upload Options -->
+    <div class="space-y-4">
+      
+      <!-- Option 1: Pick from phone camera / library -->
+      <div>
+        <label class="text-xs font-black uppercase tracking-wider block mb-2">
+          Cách 1: Chọn ảnh / video từ máy hoặc điện thoại
+        </label>
+        <div onclick="document.getElementById('mobileFileInput').click()" class="border-2 border-dashed border-[#18181B] bg-[#FAF5EE] hover:bg-[#FEF08A]/40 rounded-xl p-5 text-center cursor-pointer transition">
+          <input type="file" id="mobileFileInput" multiple accept="image/*,video/*" class="hidden" onchange="handleMobileFiles(event)">
+          <div class="text-3xl mb-1">📸</div>
+          <div class="text-sm font-black text-[#18181B]">Chạm vào đây để chọn ảnh</div>
+          <div class="text-[11px] text-neutral-500 font-medium mt-0.5">Hỗ trợ chọn nhiều ảnh cùng lúc & video ngắn</div>
+        </div>
+      </div>
+
+      <!-- Preview Selected Media -->
+      <div id="previewContainer" class="grid grid-cols-3 gap-2 max-h-36 overflow-y-auto hidden"></div>
+
+      <!-- Option 2: Paste Google Drive / Cloud Link -->
+      <div>
+        <label class="text-xs font-black uppercase tracking-wider block mb-1">
+          Cách 2: Hoặc dán link Google Drive / Link ảnh
+        </label>
+        <input type="url" id="cloudLinkInput" placeholder="https://drive.google.com/drive/folders/..." class="neo-input w-full p-2.5 text-xs">
+      </div>
+
+    </div>
+
+    <!-- Submit Button -->
+    <div class="pt-2">
+      <button id="submitBtn" onclick="submitMedia()" class="neo-btn bg-[#16A34A] hover:bg-emerald-700 text-white w-full py-3.5 text-sm font-black uppercase tracking-wide flex items-center justify-center gap-2 shadow-[4px_4px_0px_#18181B]">
+        <span id="spinner" class="hidden animate-spin">🌀</span>
+        <span>✅ XÁC NHẬN - SẴN SÀNG ĐĂNG BÀI ➔</span>
+      </button>
+    </div>
+
+    <!-- Success Screen (Hidden by default) -->
+    <div id="successBox" class="hidden text-center space-y-3 py-4">
+      <div class="text-5xl">🎉</div>
+      <h2 class="text-lg font-black text-emerald-700">ĐÃ LƯU ẢNH THÀNH CÔNG!</h2>
+      <p class="text-xs text-neutral-700 font-bold">
+        Bài viết đã sẵn sàng và sẽ tự động được hệ thống đăng lên Fanpage vào đúng giờ hẹn!
+      </p>
+      <button onclick="window.close()" class="neo-btn bg-[#FDE047] text-[#18181B] px-5 py-2 text-xs font-black">
+        Đóng cửa sổ này
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    let selectedFiles = [];
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get('id');
+
+    async function loadPostDetails() {
+      if (!postId) {
+        alert('Không tìm thấy mã bài viết trên đường dẫn.');
+        return;
+      }
+      try {
+        const res = await fetch(`/api/posts/${postId}`);
+        const post = await res.json();
+        if (post) {
+          document.getElementById('infoMachineCode').innerText = '#' + (post.machineCode || 'N/A');
+          document.getElementById('infoMachineName').innerText = post.machineName || 'Laptop Nhật Bãi';
+          document.getElementById('infoScheduledTime').innerText = new Date(post.scheduledTime).toLocaleString('vi-VN');
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function handleMobileFiles(e) {
+      selectedFiles = Array.from(e.target.files);
+      const container = document.getElementById('previewContainer');
+      container.innerHTML = '';
+      if (selectedFiles.length > 0) {
+        container.classList.remove('hidden');
+        selectedFiles.forEach(file => {
+          const div = document.createElement('div');
+          div.className = 'border-2 border-[#18181B] rounded-lg aspect-square overflow-hidden bg-black flex items-center justify-center';
+          const img = document.createElement('img');
+          img.src = URL.createObjectURL(file);
+          img.className = 'w-full h-full object-cover';
+          div.appendChild(img);
+          container.appendChild(div);
+        });
+      }
+    }
+
+    async function submitMedia() {
+      const cloudLink = document.getElementById('cloudLinkInput').value.trim();
+      if (selectedFiles.length === 0 && !cloudLink) {
+        alert('Vui lòng chọn ít nhất 1 ảnh hoặc dán link ảnh/drive.');
+        return;
+      }
+
+      const btn = document.getElementById('submitBtn');
+      const spinner = document.getElementById('spinner');
+      btn.disabled = true;
+      spinner.classList.remove('hidden');
+
+      const formData = new FormData();
+      selectedFiles.forEach(f => formData.append('files', f));
+      if (cloudLink) formData.append('cloudLink', cloudLink);
+
+      try {
+        const res = await fetch(`/api/posts/${postId}/attach-media`, {
+          method: 'POST',
+          body: formData
+        });
+        const result = await res.json();
+        if (result.success) {
+          document.getElementById('machineInfoBox').classList.add('hidden');
+          document.querySelector('.space-y-4').classList.add('hidden');
+          btn.classList.add('hidden');
+          document.getElementById('successBox').classList.remove('hidden');
+        } else {
+          alert('Lỗi: ' + result.error);
+        }
+      } catch (err) {
+        alert('Lỗi gửi ảnh: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        spinner.classList.add('hidden');
+      }
+    }
+
+    loadPostDetails();
+  </script>
+</body>
+</html>

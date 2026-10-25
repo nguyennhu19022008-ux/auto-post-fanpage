@@ -3,6 +3,7 @@ let appSettings = {};
 let currentMediaFiles = [];
 let allPosts = [];
 let isPage0Active = true;
+let parsedTableItems = [];
 
 // ======================== PAGE 0 LOGIC ========================
 
@@ -61,7 +62,7 @@ window.addEventListener('keydown', (e) => {
 // ======================== TAB NAVIGATION ========================
 
 function switchTab(tabName) {
-  ['studio', 'queue', 'history', 'settings'].forEach(t => {
+  ['studio', 'table', 'queue', 'history', 'settings'].forEach(t => {
     const section = document.getElementById(`section-${t}`);
     const btn = document.getElementById(`tabBtn-${t}`);
     if (section && btn) {
@@ -89,6 +90,7 @@ async function initDashboard() {
   await loadNextSlot();
   await loadPosts();
   setupDragAndDrop();
+  setupTableDragAndDrop();
 }
 
 async function loadSettings() {
@@ -492,7 +494,7 @@ async function loadPosts() {
     const res = await fetch('/api/posts');
     allPosts = await res.json();
 
-    const queuedPosts = allPosts.filter(p => p.status === 'queued' || p.status === 'processing');
+    const queuedPosts = allPosts.filter(p => p.status === 'queued' || p.status === 'processing' || p.status === 'pending_media' || p.status === 'skipped_no_media');
     const historyPosts = allPosts.filter(p => p.status === 'posted' || p.status === 'failed');
 
     document.getElementById('queueCount').innerText = queuedPosts.length;
@@ -530,9 +532,12 @@ function renderQueueList(posts) {
           ${firstImg ? `<img src="${firstImg}" class="w-16 h-16 rounded-lg object-cover border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B]">` : `<div class="w-16 h-16 rounded-lg bg-[#FAF5EE] border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] flex items-center justify-center text-xs text-neutral-500 font-bold font-mono">No Media</div>`}
           <div>
             <div class="flex items-center gap-2 flex-wrap">
-              <span class="neo-sticker sticker-lavender font-mono">#${post.machineCode}</span>
+              <span class="neo-sticker sticker-lavender font-mono font-bold">#${post.machineCode}</span>
               ${post.price ? `<span class="neo-sticker sticker-yellow font-bold">${post.price}</span>` : ''}
-              <span class="neo-sticker sticker-peach text-[11px]">⏳ Chờ đăng</span>
+              ${post.status === 'pending_media' ? `<span class="neo-sticker sticker-yellow text-[11px] font-bold">📬 Chờ ảnh (nhắc trước 20p)</span>` : ''}
+              ${post.status === 'queued' ? `<span class="neo-sticker sticker-green text-[11px] font-bold">⏳ Sẵn sàng đăng</span>` : ''}
+              ${post.status === 'skipped_no_media' ? `<span class="neo-sticker sticker-coral text-[11px] font-bold">⚠️ Bỏ qua (thiếu ảnh)</span>` : ''}
+              ${post.status === 'processing' ? `<span class="neo-sticker sticker-lavender text-[11px] font-bold">⚙️ Đang đăng</span>` : ''}
             </div>
             <div class="text-xs text-[#18181B] font-bold mt-1.5 line-clamp-1 max-w-lg">${post.content.split('\n')[0]}</div>
             <div class="text-xs text-neutral-500 font-medium mt-1 flex items-center gap-2">
@@ -544,6 +549,11 @@ function renderQueueList(posts) {
         </div>
 
         <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+          ${post.status === 'pending_media' ? `
+            <a href="/quick-upload?id=${post.id}" target="_blank" class="neo-btn neo-btn-lavender px-3 py-1.5 text-xs font-black" title="Nạp ảnh hoặc video trực tiếp">
+              <span>📸 Nạp ảnh ngay</span>
+            </a>
+          ` : ''}
           <button onclick="publishPostNow('${post.id}')" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-black">
             <span>⚡ Đăng ngay</span>
           </button>
@@ -628,5 +638,331 @@ async function deletePost(id) {
     await loadPosts();
   } catch (err) {
     alert('Lỗi xóa bài: ' + err.message);
+  }
+}
+
+// ======================== BATCH STOCK TABLE & OCR ========================
+
+function setupTableDragAndDrop() {
+  const dropZone = document.getElementById('tableDropZone');
+  const fileInput = document.getElementById('tableFileInput');
+  if (!dropZone || !fileInput) return;
+
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files && e.target.files[0]) {
+      parseTableImageFile(e.target.files[0]);
+    }
+  });
+
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropZone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.add('bg-[#E0E7FF]/40', 'border-indigo-600');
+    }, false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.remove('bg-[#E0E7FF]/40', 'border-indigo-600');
+    }, false);
+  });
+
+  dropZone.addEventListener('drop', (e) => {
+    const files = e.dataTransfer.files;
+    if (files && files[0]) {
+      parseTableImageFile(files[0]);
+    }
+  });
+}
+
+async function loadSampleTableData() {
+  const loading = document.getElementById('dropZoneLoading');
+  const idle = document.getElementById('dropZoneIdle');
+  if (loading) loading.classList.remove('hidden');
+  if (idle) idle.classList.add('hidden');
+
+  try {
+    const res = await fetch('/api/parse-table', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}) // Empty body triggers built-in sample data
+    });
+    const data = await res.json();
+    if (data.success && data.items) {
+      parsedTableItems = data.items.map((item, idx) => ({
+        ...item,
+        selected: true,
+        originalIndex: idx
+      }));
+      renderParsedTable(parsedTableItems);
+      updateSelectedCount();
+    } else {
+      alert('Không thể nạp dữ liệu mẫu: ' + (data.error || 'Lỗi không xác định'));
+    }
+  } catch (err) {
+    alert('Lỗi nạp mẫu: ' + err.message);
+  } finally {
+    if (loading) loading.classList.add('hidden');
+    if (idle) idle.classList.remove('hidden');
+  }
+}
+
+function parseTableImageFile(file) {
+  if (!file.type.startsWith('image/')) {
+    alert('Vui lòng chọn một tệp hình ảnh (PNG, JPG, WebP)!');
+    return;
+  }
+
+  const reader = new FileReader();
+  const loading = document.getElementById('dropZoneLoading');
+  const idle = document.getElementById('dropZoneIdle');
+  const previewBar = document.getElementById('tableImagePreviewBar');
+  const previewThumb = document.getElementById('tableImageThumbnail');
+  const previewName = document.getElementById('tableImageFileName');
+
+  if (loading) loading.classList.remove('hidden');
+  if (idle) idle.classList.add('hidden');
+
+  reader.onload = async (e) => {
+    const base64Data = e.target.result;
+    if (previewThumb) previewThumb.src = base64Data;
+    if (previewName) previewName.innerText = file.name;
+    if (previewBar) previewBar.classList.remove('hidden');
+
+    try {
+      const res = await fetch('/api/parse-table', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: base64Data })
+      });
+      const data = await res.json();
+
+      if (data.success && data.items && data.items.length > 0) {
+        parsedTableItems = data.items.map((item, idx) => ({
+          ...item,
+          selected: true,
+          originalIndex: idx
+        }));
+        renderParsedTable(parsedTableItems);
+        updateSelectedCount();
+      } else {
+        alert('Không tìm thấy dữ liệu máy trong ảnh: ' + (data.error || 'Vui lòng thử ảnh rõ nét hơn.'));
+      }
+    } catch (err) {
+      alert('Lỗi xử lý bảng: ' + err.message);
+    } finally {
+      if (loading) loading.classList.add('hidden');
+      if (idle) idle.classList.remove('hidden');
+    }
+  };
+
+  reader.readAsDataURL(file);
+}
+
+function clearTableImage() {
+  const fileInput = document.getElementById('tableFileInput');
+  if (fileInput) fileInput.value = '';
+  const previewBar = document.getElementById('tableImagePreviewBar');
+  if (previewBar) previewBar.classList.add('hidden');
+  parsedTableItems = [];
+  renderParsedTable([]);
+  updateSelectedCount();
+}
+
+function renderParsedTable(items) {
+  const tbody = document.getElementById('parsedTableTbody');
+  const emptyState = document.getElementById('tableEmptyState');
+  if (!tbody) return;
+
+  if (!items || items.length === 0) {
+    tbody.innerHTML = '';
+    if (emptyState) emptyState.classList.remove('hidden');
+    document.getElementById('totalTableCount').innerText = '0';
+    document.getElementById('selectedTableCount').innerText = '0';
+    return;
+  }
+
+  if (emptyState) emptyState.classList.add('hidden');
+  document.getElementById('totalTableCount').innerText = items.length;
+
+  // Compute consecutive schedule slot labels for display
+  const fixedSlots = ['08:30', '11:45', '15:30', '20:00'];
+  let slotDate = new Date();
+  
+  tbody.innerHTML = items.map((item, idx) => {
+    // Generate human-friendly slot text
+    const slotIdx = idx % 4;
+    const dayOffset = Math.floor(idx / 4);
+    const d = new Date();
+    d.setDate(d.getDate() + dayOffset);
+    const dateStr = d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+    const slotLabel = `${fixedSlots[slotIdx]} · ${dateStr}`;
+
+    const specsDisplay = item.cpu ? `${item.cpu} · ${item.ram} · ${item.ssd}` : (item.rawSpecs || 'Đang cập nhật cấu hình');
+
+    return `
+      <tr class="hover:bg-[#FAF8F5] transition-colors border-b border-neutral-200">
+        <td class="p-3 text-center">
+          <input type="checkbox" 
+                 class="item-checkbox w-4 h-4 accent-[#18181B] rounded cursor-pointer" 
+                 data-index="${idx}" 
+                 ${item.selected ? 'checked' : ''} 
+                 onchange="toggleRowSelection(${idx}, this.checked)" />
+        </td>
+        <td class="p-3">
+          <span class="neo-sticker sticker-lavender font-mono font-bold text-xs">#${item.machineCode}</span>
+        </td>
+        <td class="p-3 font-bold text-[#18181B]">
+          ${item.machineName}
+        </td>
+        <td class="p-3 text-neutral-700">
+          <div>${specsDisplay}</div>
+          ${item.screen ? `<div class="text-[11px] text-neutral-500 font-mono mt-0.5">🖥️ ${item.screen}</div>` : ''}
+        </td>
+        <td class="p-3 text-center">
+          ${item.isTouch ? 
+            `<span class="neo-sticker sticker-green text-[10px] font-bold">✓ Cảm ứng</span>` : 
+            `<span class="neo-sticker sticker-white text-[10px] text-neutral-500">Không</span>`
+          }
+        </td>
+        <td class="p-3">
+          <input type="text" 
+                 class="neo-input px-2 py-1 text-xs font-bold w-28 text-emerald-800" 
+                 value="${item.price || ''}" 
+                 placeholder="VD: 5.5 triệu"
+                 onchange="updateItemPrice(${idx}, this.value)" />
+        </td>
+        <td class="p-3">
+          <span class="neo-sticker sticker-yellow font-mono text-[11px] font-bold">
+            ⏰ ${slotLabel}
+          </span>
+        </td>
+        <td class="p-3 text-center">
+          <button onclick="previewPostItem(${idx})" class="neo-btn neo-btn-white px-2.5 py-1 text-[11px] font-bold" title="Xem trước bài viết hoàn chỉnh">
+            <span>👁️ Xem bài</span>
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function toggleRowSelection(index, checked) {
+  if (parsedTableItems[index]) {
+    parsedTableItems[index].selected = checked;
+  }
+  updateSelectedCount();
+}
+
+function toggleSelectAllTableRows(checked) {
+  parsedTableItems.forEach(item => {
+    item.selected = checked;
+  });
+  const checkboxes = document.querySelectorAll('.item-checkbox');
+  checkboxes.forEach(cb => cb.checked = checked);
+  updateSelectedCount();
+}
+
+function updateItemPrice(index, newPrice) {
+  if (parsedTableItems[index]) {
+    parsedTableItems[index].price = newPrice;
+    // Update the price in post content
+    if (parsedTableItems[index].postContent) {
+      parsedTableItems[index].postContent = parsedTableItems[index].postContent.replace(
+        /GIÁ ƯU ĐÃI HÔM NAY: .*/,
+        `GIÁ ƯU ĐÃI HÔM NAY: ${newPrice} (Giá công khai - Bao giá toàn quốc!)`
+      );
+    }
+  }
+}
+
+function updateSelectedCount() {
+  const selectedCount = parsedTableItems.filter(i => i.selected).length;
+  const countEl = document.getElementById('selectedTableCount');
+  const btn = document.getElementById('batchScheduleBtn');
+  const selectAll = document.getElementById('selectAllCheckbox');
+
+  if (countEl) countEl.innerText = selectedCount;
+
+  if (selectAll) {
+    selectAll.checked = selectedCount > 0 && selectedCount === parsedTableItems.length;
+  }
+
+  if (btn) {
+    if (selectedCount === 0) {
+      btn.disabled = true;
+      btn.classList.add('opacity-50', 'cursor-not-allowed');
+    } else {
+      btn.disabled = false;
+      btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+  }
+}
+
+function previewPostItem(index) {
+  const item = parsedTableItems[index];
+  if (!item) return;
+
+  const modal = document.getElementById('postPreviewModal');
+  const title = document.getElementById('previewModalTitle');
+  const content = document.getElementById('previewModalContent');
+
+  if (title) title.innerText = `BÀI ĐĂNG FACEBOOK · MÃ #${item.machineCode}: ${item.machineName}`;
+  if (content) content.innerText = item.postContent || 'Chưa có nội dung.';
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closePostPreviewModal() {
+  const modal = document.getElementById('postPreviewModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function copyPreviewModalContent() {
+  const content = document.getElementById('previewModalContent')?.innerText;
+  if (!content) return;
+  navigator.clipboard.writeText(content).then(() => {
+    alert('📋 Đã sao chép nội dung bài đăng!');
+  });
+}
+
+async function submitBatchSchedule() {
+  const selectedItems = parsedTableItems.filter(i => i.selected);
+  if (selectedItems.length === 0) {
+    alert('Vui lòng chọn ít nhất 1 máy để lên lịch!');
+    return;
+  }
+
+  if (!confirm(`Bạn có chắc chắn muốn lên lịch tự động cho ${selectedItems.length} máy vào hàng đợi?\n\n• Các máy sẽ được xếp lần lượt vào các khung giờ vàng (08:30, 11:45, 15:30, 20:00).\n• Trước mỗi bài đăng 20 phút, hệ thống sẽ gửi email tới ${appSettings.notificationEmail || 'bạn'} kèm link nạp ảnh 1-chạm.\n• Nếu tới giờ mà chưa nạp ảnh, bài đăng sẽ được tự động bỏ qua để bảo vệ Fanpage.`)) {
+    return;
+  }
+
+  const btn = document.getElementById('batchScheduleBtn');
+  const originalText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span>⏳ Đang lên lịch hàng loạt...</span>';
+
+  try {
+    const res = await fetch('/api/batch-schedule', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: selectedItems })
+    });
+    const result = await res.json();
+
+    if (result.success) {
+      alert(`🎉 Thành công! ${result.message}\n\nĐang chuyển sang tab Hàng đợi lên lịch để theo dõi.`);
+      await loadPosts();
+      switchTab('queue');
+    } else {
+      alert('❌ Lỗi lên lịch: ' + (result.error || 'Không xác định'));
+    }
+  } catch (err) {
+    alert('❌ Lỗi kết nối máy chủ: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalText;
   }
 }

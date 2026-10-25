@@ -8,11 +8,13 @@ require('dotenv').config();
 const { generatePostWithGemini, sanitizeRawText } = require('./services/gemini');
 const { verifyPageToken } = require('./services/facebook');
 const { sendTestEmail } = require('./services/mailer');
+const { parseStockTableFromImage } = require('./services/tableParser');
 const {
   startScheduler,
   executePost,
   checkAndPublishDuePosts,
   getNextAvailableScheduleTime,
+  getConsecutiveScheduleSlots,
   getPosts,
   savePosts,
   getSettings,
@@ -129,6 +131,111 @@ app.post('/api/upload-media', upload.array('files', 15), (req, res) => {
       size: f.size
     }));
     res.json({ success: true, files });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Route: Quick Upload Page for mobile 1-click photo upload from email
+app.get('/quick-upload', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'quick-upload.html'));
+});
+
+// Parse Excel Stock Table Image into structured items
+app.post('/api/parse-table', async (req, res) => {
+  try {
+    const { imageBase64 } = req.body;
+    const settings = getSettings();
+    const items = await parseStockTableFromImage(imageBase64, settings);
+    res.json({ success: true, count: items.length, items });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Batch schedule multiple items from stock table
+app.post('/api/batch-schedule', async (req, res) => {
+  try {
+    const { items = [] } = req.body;
+    if (items.length === 0) {
+      return res.status(400).json({ success: false, error: 'Danh sách máy trống.' });
+    }
+
+    const posts = getPosts();
+    const slots = getConsecutiveScheduleSlots(items.length);
+    const newPosts = [];
+
+    items.forEach((item, index) => {
+      const scheduledTime = slots[index] || getNextAvailableScheduleTime();
+      const newPost = {
+        id: 'post_' + (Date.now() + index),
+        machineCode: (item.machineCode || 'MÁY').toUpperCase(),
+        machineName: item.machineName || 'Laptop Nhật Bãi',
+        content: item.postContent || '',
+        price: item.price || '',
+        mediaFiles: [], // Starts empty, waiting for photos
+        scheduledTime,
+        status: 'pending_media', // Waiting for media from email reminder
+        mediaReminderSent: false,
+        createdAt: new Date().toISOString()
+      };
+      posts.unshift(newPost);
+      newPosts.push(newPost);
+    });
+
+    savePosts(posts);
+    res.json({
+      success: true,
+      count: newPosts.length,
+      message: `Đã lên lịch hàng loạt thành công cho ${newPosts.length} máy!`,
+      posts: newPosts
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Get single post details
+app.get('/api/posts/:id', (req, res) => {
+  const posts = getPosts();
+  const post = posts.find(p => p.id === req.params.id);
+  if (!post) return res.status(404).json({ error: 'Không tìm thấy bài viết.' });
+  res.json(post);
+});
+
+// Attach media to a post from Mobile Quick-Upload or Web
+app.post('/api/posts/:id/attach-media', upload.array('files', 15), (req, res) => {
+  try {
+    const posts = getPosts();
+    const post = posts.find(p => p.id === req.params.id);
+    if (!post) return res.status(404).json({ error: 'Không tìm thấy bài viết.' });
+
+    const newFiles = (req.files || []).map(f => ({
+      originalname: f.originalname,
+      filename: f.filename,
+      path: f.path,
+      url: `/uploads/${f.filename}`,
+      mimetype: f.mimetype,
+      size: f.size
+    }));
+
+    if (!post.mediaFiles) post.mediaFiles = [];
+    post.mediaFiles = [...post.mediaFiles, ...newFiles];
+
+    if (req.body.cloudLink) {
+      post.cloudLink = req.body.cloudLink;
+    }
+
+    // Now that media is supplied, move post to queued (ready to publish)
+    if (post.mediaFiles.length > 0 || post.cloudLink) {
+      post.status = 'queued';
+    }
+
+    post.mediaReminderSent = true;
+    savePosts(posts);
+
+    console.log(`[QuickUpload] 📸 Đã cập nhật ${newFiles.length} tệp media cho bài [${post.id}] - Mã #${post.machineCode}`);
+    res.json({ success: true, post, message: 'Đã cập nhật hình ảnh thành công!' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

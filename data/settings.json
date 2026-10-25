@@ -17,6 +17,10 @@
     "Gói cài win miễn phí"
   ],
   "depositNote": "Cọc 300k cho đơn đầu tiên, hỗ trợ call video check legit trực tiếp",
+  "emailNotificationEnabled": true,
+  "notificationEmail": "nguyennhu19022008@gmail.com",
+  "smtpUser": "nguyennhu19022008@gmail.com",
+  "smtpPass": "qxjpfavmyvvvqzpv",
   "scheduleTimes": [
     "08:30",
     "11:45",
