@@ -332,7 +332,15 @@ async function uploadMediaFiles(files) {
     const result = await res.json();
 
     if (result.success && result.files) {
-      currentMediaFiles = [...currentMediaFiles, ...result.files];
+      const combined = [...currentMediaFiles, ...result.files];
+      // Auto-deduplicate media by originalname + size to prevent uploading identical photos
+      const seenMedia = new Set();
+      currentMediaFiles = combined.filter(f => {
+        const key = `${f.originalname}_${f.size}`;
+        if (seenMedia.has(key)) return false;
+        seenMedia.add(key);
+        return true;
+      });
       renderMediaPreviews();
     }
   } catch (err) {
@@ -663,6 +671,81 @@ async function deletePost(id) {
   }
 }
 
+// ======================== AUTO DEDUPLICATION LOGIC ========================
+
+function normalizeMachineCode(code) {
+  if (!code) return '';
+  let str = String(code).trim().toUpperCase();
+  str = str.replace(/^(MÃ|MA|CODE|#)\s*:?\s*/i, '');
+  return str.trim();
+}
+
+function isValidMachineCode(code) {
+  const norm = normalizeMachineCode(code);
+  if (!norm) return false;
+  const genericWords = ['MÁY', 'MAY', 'LAPTOP', 'KHÔNG', 'NONE', 'UNKNOWN', 'NULL'];
+  if (genericWords.includes(norm)) return false;
+  return norm.length >= 2;
+}
+
+/**
+ * Merges new items into existing list, auto-deduplicating by machineCode:
+ * If an item code already exists in table, the OLD item is replaced by the NEW item!
+ */
+function mergeAndDeduplicateTableItems(existingList, newItems) {
+  const map = new Map();
+  const replacedCodes = [];
+
+  // 1. Existing items
+  existingList.forEach((item, idx) => {
+    const norm = normalizeMachineCode(item.machineCode);
+    const key = isValidMachineCode(norm) ? `code_${norm}` : `idx_${idx}`;
+    map.set(key, item);
+  });
+
+  // 2. Incoming items: latest replaces older!
+  newItems.forEach((item, idx) => {
+    const norm = normalizeMachineCode(item.machineCode);
+    const key = isValidMachineCode(norm) ? `code_${norm}` : `new_${idx}_${Date.now()}`;
+    if (map.has(key)) {
+      if (isValidMachineCode(norm) && !replacedCodes.includes(norm)) {
+        replacedCodes.push(norm);
+      }
+    }
+    map.set(key, {
+      ...item,
+      selected: true
+    });
+  });
+
+  const merged = Array.from(map.values()).map((item, idx) => ({
+    ...item,
+    originalIndex: idx
+  }));
+
+  return {
+    merged,
+    replacedCount: replacedCodes.length,
+    replacedCodes
+  };
+}
+
+function showTableDedupAlert(message, type = 'info') {
+  const alertBox = document.getElementById('tableDedupAlert');
+  if (!alertBox) return;
+  alertBox.innerHTML = `
+    <div class="flex items-center gap-2">
+      <span class="text-base">⚡</span>
+      <span>${message}</span>
+    </div>
+    <button onclick="document.getElementById('tableDedupAlert').classList.add('hidden')" class="text-neutral-500 hover:text-black font-black px-1.5 py-0.5">✕</button>
+  `;
+  alertBox.className = type === 'success' 
+    ? 'p-3 bg-[#ECFDF5] border-2 border-emerald-600 rounded-lg text-xs font-bold text-emerald-900 flex items-center justify-between shadow-[2px_2px_0px_#18181B]'
+    : 'p-3 bg-[#FFFBEB] border-2 border-amber-500 rounded-lg text-xs font-bold text-amber-900 flex items-center justify-between shadow-[2px_2px_0px_#18181B]';
+  alertBox.classList.remove('hidden');
+}
+
 // ======================== BATCH STOCK TABLE & OCR ========================
 
 function setupTableDragAndDrop() {
@@ -671,8 +754,8 @@ function setupTableDragAndDrop() {
   if (!dropZone || !fileInput) return;
 
   fileInput.addEventListener('change', (e) => {
-    if (e.target.files && e.target.files[0]) {
-      parseTableImageFile(e.target.files[0]);
+    if (e.target.files && e.target.files.length) {
+      parseTableImageFiles(e.target.files);
     }
   });
 
@@ -694,8 +777,8 @@ function setupTableDragAndDrop() {
 
   dropZone.addEventListener('drop', (e) => {
     const files = e.dataTransfer.files;
-    if (files && files[0]) {
-      parseTableImageFile(files[0]);
+    if (files && files.length) {
+      parseTableImageFiles(files);
     }
   });
 }
@@ -714,13 +797,16 @@ async function loadSampleTableData() {
     });
     const data = await res.json();
     if (data.success && data.items) {
-      parsedTableItems = data.items.map((item, idx) => ({
-        ...item,
-        selected: true,
-        originalIndex: idx
-      }));
+      const { merged, replacedCount, replacedCodes } = mergeAndDeduplicateTableItems(parsedTableItems, data.items);
+      parsedTableItems = merged;
       renderParsedTable(parsedTableItems);
       updateSelectedCount();
+
+      if (replacedCount > 0) {
+        showTableDedupAlert(`⚡ Đã tự động xóa ${replacedCount} máy cũ bị trùng mã (#${replacedCodes.join(', #')}) và cập nhật bằng thông tin mới nhất!`, 'success');
+      } else {
+        showTableDedupAlert(`✓ Đã nạp thành công ${data.items.length} mã máy từ mẫu bảng kho.`, 'success');
+      }
     } else {
       alert('Không thể nạp dữ liệu mẫu: ' + (data.error || 'Lỗi không xác định'));
     }
@@ -732,13 +818,13 @@ async function loadSampleTableData() {
   }
 }
 
-function parseTableImageFile(file) {
-  if (!file.type.startsWith('image/')) {
-    alert('Vui lòng chọn một tệp hình ảnh (PNG, JPG, WebP)!');
+async function parseTableImageFiles(fileList) {
+  const files = Array.from(fileList).filter(f => f.type.startsWith('image/'));
+  if (files.length === 0) {
+    alert('Vui lòng chọn một hoặc nhiều tệp hình ảnh (PNG, JPG, WebP)!');
     return;
   }
 
-  const reader = new FileReader();
   const loading = document.getElementById('dropZoneLoading');
   const idle = document.getElementById('dropZoneIdle');
   const previewBar = document.getElementById('tableImagePreviewBar');
@@ -748,40 +834,60 @@ function parseTableImageFile(file) {
   if (loading) loading.classList.remove('hidden');
   if (idle) idle.classList.add('hidden');
 
-  reader.onload = async (e) => {
-    const base64Data = e.target.result;
-    if (previewThumb) previewThumb.src = base64Data;
-    if (previewName) previewName.innerText = file.name;
-    if (previewBar) previewBar.classList.remove('hidden');
+  let totalNewItems = [];
+  let totalReplacedCodes = [];
 
-    try {
+  try {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const base64Data = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => resolve(e.target.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      if (i === 0) {
+        if (previewThumb) previewThumb.src = base64Data;
+        if (previewName) previewName.innerText = files.length > 1 ? `${files.length} ảnh bảng kho` : file.name;
+        if (previewBar) previewBar.classList.remove('hidden');
+      }
+
       const res = await fetch('/api/parse-table', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageBase64: base64Data })
       });
       const data = await res.json();
-
       if (data.success && data.items && data.items.length > 0) {
-        parsedTableItems = data.items.map((item, idx) => ({
-          ...item,
-          selected: true,
-          originalIndex: idx
-        }));
-        renderParsedTable(parsedTableItems);
-        updateSelectedCount();
-      } else {
-        alert('Không tìm thấy dữ liệu máy trong ảnh: ' + (data.error || 'Vui lòng thử ảnh rõ nét hơn.'));
+        totalNewItems.push(...data.items);
+        if (data.replacedCodes && data.replacedCodes.length) {
+          totalReplacedCodes.push(...data.replacedCodes);
+        }
       }
-    } catch (err) {
-      alert('Lỗi xử lý bảng: ' + err.message);
-    } finally {
-      if (loading) loading.classList.add('hidden');
-      if (idle) idle.classList.remove('hidden');
     }
-  };
 
-  reader.readAsDataURL(file);
+    if (totalNewItems.length > 0) {
+      const { merged, replacedCount, replacedCodes } = mergeAndDeduplicateTableItems(parsedTableItems, totalNewItems);
+      parsedTableItems = merged;
+      renderParsedTable(parsedTableItems);
+      updateSelectedCount();
+
+      const allReplaced = Array.from(new Set([...totalReplacedCodes, ...replacedCodes]));
+      if (allReplaced.length > 0) {
+        showTableDedupAlert(`🎉 Đã nạp thành công! Hệ thống đã tự động phát hiện và xóa ${allReplaced.length} máy cũ bị trùng mã (#${allReplaced.join(', #')}), thay thế bằng thông tin mã mới nhất!`, 'success');
+      } else {
+        showTableDedupAlert(`✓ Đã nạp thành công ${totalNewItems.length} máy từ ảnh bảng kho. Không có mã nào bị trùng lặp.`, 'success');
+      }
+    } else {
+      alert('Không tìm thấy dữ liệu máy trong ảnh: Vui lòng thử lại với ảnh rõ nét hơn.');
+    }
+  } catch (err) {
+    alert('Lỗi xử lý bảng: ' + err.message);
+  } finally {
+    if (loading) loading.classList.add('hidden');
+    if (idle) idle.classList.remove('hidden');
+  }
 }
 
 function clearTableImage() {

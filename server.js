@@ -15,6 +15,7 @@ const {
   upsertPostToDb,
   deletePostFromDb
 } = require('./services/supabase');
+const { normalizeMachineCode, isValidMachineCode, deduplicateItemsByCode } = require('./utils/dedup');
 const {
   startScheduler,
   executePost,
@@ -161,19 +162,29 @@ app.get('/quick-upload', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'quick-upload.html'));
 });
 
-// Parse Excel Stock Table Image into structured items
+// Parse Excel Stock Table Image into structured items (with auto-deduplication)
 app.post('/api/parse-table', async (req, res) => {
   try {
     const { imageBase64 } = req.body;
     const settings = getSettings();
-    const items = await parseStockTableFromImage(imageBase64, settings);
-    res.json({ success: true, count: items.length, items });
+    const rawItems = await parseStockTableFromImage(imageBase64, settings);
+
+    // Auto-deduplicate parsed items: if duplicate machine codes exist in table/images, keep newest!
+    const { dedupedItems, replacedCount, replacedCodes } = deduplicateItemsByCode(rawItems);
+
+    res.json({
+      success: true,
+      count: dedupedItems.length,
+      replacedCount,
+      replacedCodes,
+      items: dedupedItems
+    });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// Batch schedule multiple items from stock table
+// Batch schedule multiple items from stock table (with auto-deduplication & old queue replacement)
 app.post('/api/batch-schedule', async (req, res) => {
   try {
     const { items = [] } = req.body;
@@ -181,11 +192,35 @@ app.post('/api/batch-schedule', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Danh sách máy trống.' });
     }
 
-    const posts = getPosts();
-    const slots = getConsecutiveScheduleSlots(items.length);
+    // 1. Deduplicate inside the incoming items: if user selected duplicate codes, keep the newest one!
+    const { dedupedItems } = deduplicateItemsByCode(items);
+
+    let posts = getPosts();
+    const replacedCodes = [];
+
+    // 2. Check against existing queue: If any item code is already in queue (queued or pending_media),
+    // delete the old post so the new post replaces it cleanly!
+    for (const item of dedupedItems) {
+      const norm = normalizeMachineCode(item.machineCode);
+      if (isValidMachineCode(norm)) {
+        const oldIndex = posts.findIndex(p => 
+          (p.status === 'queued' || p.status === 'pending_media' || p.status === 'skipped_no_media') &&
+          normalizeMachineCode(p.machineCode) === norm
+        );
+        if (oldIndex !== -1) {
+          const oldPost = posts[oldIndex];
+          console.log(`[Deduplicate] 🗑️ Tự động xóa bài cũ #${norm} (ID: ${oldPost.id}) trong hàng đợi để thay bằng bài mới.`);
+          posts.splice(oldIndex, 1);
+          deletePostFromDb(oldPost.id).catch(e => console.warn('Supabase post delete notice:', e.message));
+          if (!replacedCodes.includes(norm)) replacedCodes.push(norm);
+        }
+      }
+    }
+
+    const slots = getConsecutiveScheduleSlots(dedupedItems.length);
     const newPosts = [];
 
-    items.forEach((item, index) => {
+    dedupedItems.forEach((item, index) => {
       const scheduledTime = slots[index] || getNextAvailableScheduleTime();
       const newPost = {
         id: 'post_' + (Date.now() + index),
@@ -208,10 +243,17 @@ app.post('/api/batch-schedule', async (req, res) => {
       upsertPostToDb(np).catch(e => console.warn('Supabase post sync notice:', e.message));
     }
 
+    let message = `Đã lên lịch hàng loạt thành công cho ${newPosts.length} máy!`;
+    if (replacedCodes.length > 0) {
+      message += ` (Đã tự động xóa ${replacedCodes.length} mã cũ bị trùng: #${replacedCodes.join(', #')}, thay bằng mã mới)`;
+    }
+
     res.json({
       success: true,
       count: newPosts.length,
-      message: `Đã lên lịch hàng loạt thành công cho ${newPosts.length} máy!`,
+      replacedCount: replacedCodes.length,
+      replacedCodes,
+      message,
       posts: newPosts
     });
   } catch (error) {
@@ -305,7 +347,7 @@ app.get('/api/posts', (req, res) => {
   res.json(posts);
 });
 
-// 8. Create or Schedule a Post
+// 8. Create or Schedule a Post (with auto-deduplication: replaces old post if same machine code is in queue)
 app.post('/api/posts', async (req, res) => {
   try {
     const {
@@ -318,7 +360,24 @@ app.post('/api/posts', async (req, res) => {
       publishImmediately = false
     } = req.body;
 
-    const posts = getPosts();
+    let posts = getPosts();
+    const normCode = normalizeMachineCode(machineCode);
+    let replacedOldPost = null;
+
+    // Auto-deduplication: Check if an existing queued post has the exact same machine code
+    if (isValidMachineCode(normCode)) {
+      const oldIndex = posts.findIndex(p => 
+        (p.status === 'queued' || p.status === 'pending_media' || p.status === 'skipped_no_media') &&
+        normalizeMachineCode(p.machineCode) === normCode
+      );
+      if (oldIndex !== -1) {
+        replacedOldPost = posts[oldIndex];
+        console.log(`[Deduplicate] 🗑️ Tìm thấy bài cũ trùng mã #${normCode} (ID: ${replacedOldPost.id}). Xóa mã cũ để thay thế bằng mã mới.`);
+        posts.splice(oldIndex, 1);
+        deletePostFromDb(replacedOldPost.id).catch(e => console.warn('Supabase post delete notice:', e.message));
+      }
+    }
+
     const newPost = {
       id: 'post_' + Date.now(),
       machineCode: (machineCode || 'MÁY').toUpperCase(),
@@ -338,7 +397,14 @@ app.post('/api/posts', async (req, res) => {
       executePost(newPost).then(() => {
         console.log(`[Instant Post] Hoàn tất đăng ngay bài ${newPost.id}`);
       });
-      return res.json({ success: true, post: newPost, message: 'Đang tiến hành đăng bài lên Fanpage...' });
+      return res.json({
+        success: true,
+        post: newPost,
+        replacedOldPost: !!replacedOldPost,
+        message: replacedOldPost
+          ? `Đã đăng ngay mã #${newPost.machineCode}! (Đã tự động xóa bài cũ trùng mã trong hàng đợi)`
+          : 'Đang tiến hành đăng bài lên Fanpage...'
+      });
     } else {
       posts.unshift(newPost);
       savePosts(posts);
@@ -346,7 +412,10 @@ app.post('/api/posts', async (req, res) => {
       return res.json({
         success: true,
         post: newPost,
-        message: `Đã đưa bài vào hàng đợi lên lịch lúc: ${new Date(newPost.scheduledTime).toLocaleString('vi-VN')}`
+        replacedOldPost: !!replacedOldPost,
+        message: replacedOldPost
+          ? `Đã xếp mã #${newPost.machineCode} vào hàng đợi lúc ${new Date(newPost.scheduledTime).toLocaleString('vi-VN')}! (Đã tự động xóa bài cũ trùng mã)`
+          : `Đã đưa bài vào hàng đợi lên lịch lúc: ${new Date(newPost.scheduledTime).toLocaleString('vi-VN')}`
       });
     }
   } catch (error) {

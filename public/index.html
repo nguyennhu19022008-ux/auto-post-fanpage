@@ -20,7 +20,7 @@
   <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
   <link rel="apple-touch-icon" href="/icons/icon.svg" />
 
-  <link rel="stylesheet" href="/css/style.css?v=20261026_nop0">
+  <link rel="stylesheet" href="/css/style.css?v=20261026_dedup">
 </head>
 <body class="bg-[#FDFBF7] text-[#18181B] min-h-screen">
 
@@ -327,17 +327,20 @@
 
               <!-- Drag and drop zone -->
               <div id="tableDropZone" class="border-2 border-dashed border-[#18181B] rounded-xl p-6 sm:p-8 text-center bg-[#FAF8F5] hover:bg-[#F3EFE6] transition-all cursor-pointer relative group">
-                <input type="file" id="tableFileInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                <input type="file" id="tableFileInput" multiple accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
                 
                 <div id="dropZoneIdle" class="space-y-3">
                   <div class="w-14 h-14 mx-auto rounded-full bg-[#E0E7FF] border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">
                     📥
                   </div>
                   <div>
-                    <div class="text-sm font-black text-[#18181B]">Kéo thả ảnh chụp bảng Excel vào đây, hoặc click để chọn tệp</div>
-                    <p class="text-xs text-neutral-600 mt-1">Hệ thống AI Gemini Vision sẽ tự động đọc từng dòng: STT, Mã máy, Tên máy, Cấu hình, Màn cảm ứng, Giá vốn</p>
+                    <div class="text-sm font-black text-[#18181B]">Kéo thả 1 hoặc nhiều ảnh bảng Excel vào đây, hoặc click để chọn</div>
+                    <p class="text-xs text-neutral-600 mt-1">Hệ thống tự động bóc tách từng mã máy và <strong>tự động xóa trùng</strong>: nếu có mã trùng lặp (ví dụ 001), mã cũ sẽ tự động bị xóa và thay bằng mã mới nhất.</p>
                   </div>
                   <div class="inline-flex items-center gap-2 neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold pointer-events-none">
+                    <span>📁 Chọn ảnh bảng kho (Có thể chọn nhiều ảnh)</span>
+                  </div>
+                </div>
                     <span>📁 Chọn ảnh từ máy tính</span>
                   </div>
                 </div>
@@ -398,17 +401,23 @@
         </div>
 
         <!-- Parsed Data Table Section -->
+        <div id="tableDedupAlert" class="hidden"></div>
+
         <div id="parsedTableContainer" class="neo-card p-5 bg-white space-y-4">
           
           <!-- Table Toolbar -->
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b-2 border-[#18181B]">
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 flex-wrap">
               <label class="flex items-center gap-2 cursor-pointer select-none">
                 <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAllTableRows(this.checked)" class="w-4 h-4 accent-[#18181B] rounded cursor-pointer" checked />
                 <span class="text-xs font-black text-[#18181B] uppercase">Chọn tất cả</span>
               </label>
               <span class="neo-sticker sticker-lavender font-mono text-xs">
                 <span id="selectedTableCount">0</span> / <span id="totalTableCount">0</span> máy được chọn
+              </span>
+              <span class="neo-sticker sticker-yellow font-bold text-xs" title="Tự động phát hiện mã máy trùng lặp, xóa mã cũ và thay bằng mã mới">
+                <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+                <span>⚡ Tự động xóa trùng: BẬT</span>
               </span>
             </div>
 
@@ -665,7 +674,7 @@
 
   </div>
 
-  <script src="/js/app.js?v=20261026_nop0"></script>
+  <script src="/js/app.js?v=20261026_dedup"></script>
   <!-- Modal: Post Preview -->
   <div id="postPreviewModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
     <div class="neo-card bg-white max-w-2xl w-full p-6 space-y-4 max-h-[90vh] flex flex-col shadow-[6px_6px_0px_#18181B]">
