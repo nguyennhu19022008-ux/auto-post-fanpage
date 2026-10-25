@@ -343,7 +343,8 @@ function setupDragAndDrop() {
 
 function handleFileSelect(event) {
   const files = event.target.files;
-  if (files.length) uploadMediaFiles(files);
+  if (files && files.length) uploadMediaFiles(files);
+  event.target.value = ''; // Reset so the user can select more files or pick the same file again
 }
 
 async function uploadMediaFiles(files) {
@@ -386,25 +387,39 @@ function renderMediaPreviews() {
   currentMediaFiles.forEach((file, index) => {
     const isVideo = file.mimetype?.startsWith('video/') || /\.(mp4|mov|avi)$/i.test(file.url);
     const item = document.createElement('div');
-    item.className = 'relative group rounded-lg overflow-hidden border border-white/20 bg-black aspect-video flex items-center justify-center';
+    item.className = 'relative group rounded-lg overflow-hidden border-2 border-[#18181B] bg-black aspect-video flex items-center justify-center shadow-[2px_2px_0px_#18181B]';
 
     if (isVideo) {
       item.innerHTML = `
         <video src="${file.url}" class="w-full h-full object-cover"></video>
         <div class="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-none">
-          <span class="text-white text-lg font-bold">▶ Video</span>
+          <span class="text-white text-xs font-bold font-mono">▶ Video</span>
         </div>
-        <button onclick="removeMediaItem(${index})" class="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition">✕</button>
+        <span class="absolute bottom-1 left-1 bg-black/75 text-white text-[9px] px-1 font-mono rounded">#${index + 1}</span>
+        <button onclick="removeMediaItem(${index})" class="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition shadow">✕</button>
       `;
     } else {
       item.innerHTML = `
         <img src="${file.url}" class="w-full h-full object-cover">
-        <button onclick="removeMediaItem(${index})" class="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition">✕</button>
+        <span class="absolute bottom-1 left-1 bg-black/75 text-white text-[9px] px-1 font-mono rounded">#${index + 1}</span>
+        <button onclick="removeMediaItem(${index})" class="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition shadow">✕</button>
       `;
     }
 
     container.appendChild(item);
   });
+
+  // If there are already files uploaded, render a "+ Thêm ảnh khác" tile in the gallery
+  if (currentMediaFiles.length > 0) {
+    const addMoreTile = document.createElement('div');
+    addMoreTile.className = 'border-2 border-dashed border-[#18181B] bg-white hover:bg-[#FEF08A]/50 rounded-lg aspect-video flex flex-col items-center justify-center cursor-pointer transition shadow-[2px_2px_0px_#18181B] text-center p-2';
+    addMoreTile.onclick = () => document.getElementById('fileInput').click();
+    addMoreTile.innerHTML = `
+      <span class="text-2xl font-bold text-[#18181B] leading-none">+</span>
+      <span class="text-[10px] font-black uppercase text-[#18181B] mt-1">Thêm ảnh khác</span>
+    `;
+    container.appendChild(addMoreTile);
+  }
 
   updateFacebookPreview();
 }
@@ -425,7 +440,7 @@ function updateFacebookPreview() {
     previewContent.innerText = content;
   }
 
-  // Render media preview in FB feed layout
+  // Render media preview in FB feed layout (multi-photo grid)
   if (currentMediaFiles.length === 0) {
     mediaContainer.classList.add('hidden');
     mediaContainer.innerHTML = '';
@@ -436,6 +451,20 @@ function updateFacebookPreview() {
 
     mediaContainer.innerHTML = currentMediaFiles.slice(0, 4).map((f, idx) => {
       const isVideo = f.mimetype?.startsWith('video/') || /\.(mp4|mov|avi)$/i.test(f.url);
+      
+      // If 5+ photos, display "+N" overlay on the 4th item like real Facebook
+      if (idx === 3 && currentMediaFiles.length > 4) {
+        const remaining = currentMediaFiles.length - 3;
+        return `
+          <div class="relative w-full h-full min-h-[140px] bg-black overflow-hidden">
+            <img src="${f.url}" class="w-full h-full object-cover opacity-60">
+            <div class="absolute inset-0 flex items-center justify-center text-white text-2xl font-black">
+              +${remaining}
+            </div>
+          </div>
+        `;
+      }
+
       if (isVideo) {
         return `<video src="${f.url}" class="fb-media-item" controls></video>`;
       } else {
@@ -524,18 +553,34 @@ function renderQueueList(posts) {
     const scheduledDate = new Date(post.scheduledTime).toLocaleString('vi-VN', {
       hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric'
     });
-    const firstImg = post.mediaFiles?.[0]?.url;
+    const mCount = post.mediaFiles?.length || 0;
+
+    let mediaThumbHtml = '';
+    if (mCount === 0) {
+      mediaThumbHtml = `<div class="w-16 h-16 rounded-lg bg-[#FAF5EE] border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] flex items-center justify-center text-[10px] text-neutral-400 font-bold font-mono text-center p-1">Chưa có ảnh</div>`;
+    } else if (mCount === 1) {
+      mediaThumbHtml = `<img src="${post.mediaFiles[0].url}" class="w-16 h-16 rounded-lg object-cover border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B]">`;
+    } else {
+      mediaThumbHtml = `
+        <div class="relative w-16 h-16 rounded-lg overflow-hidden border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B]">
+          <img src="${post.mediaFiles[0].url}" class="w-full h-full object-cover">
+          <span class="absolute bottom-0 right-0 bg-[#FDE047] text-black text-[10px] px-1 font-black border-t border-l border-[#18181B]">
+            +${mCount}
+          </span>
+        </div>
+      `;
+    }
 
     return `
       <div class="neo-card p-4 sm:p-5 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-white shadow-[3px_3px_0px_#18181B]">
         <div class="flex gap-4 items-center">
-          ${firstImg ? `<img src="${firstImg}" class="w-16 h-16 rounded-lg object-cover border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B]">` : `<div class="w-16 h-16 rounded-lg bg-[#FAF5EE] border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] flex items-center justify-center text-xs text-neutral-500 font-bold font-mono">No Media</div>`}
+          ${mediaThumbHtml}
           <div>
             <div class="flex items-center gap-2 flex-wrap">
               <span class="neo-sticker sticker-lavender font-mono font-bold">#${post.machineCode}</span>
               ${post.price ? `<span class="neo-sticker sticker-yellow font-bold">${post.price}</span>` : ''}
               ${post.status === 'pending_media' ? `<span class="neo-sticker sticker-yellow text-[11px] font-bold">📬 Chờ ảnh (nhắc trước 20p)</span>` : ''}
-              ${post.status === 'queued' ? `<span class="neo-sticker sticker-green text-[11px] font-bold">⏳ Sẵn sàng đăng</span>` : ''}
+              ${post.status === 'queued' ? `<span class="neo-sticker sticker-green text-[11px] font-bold">⏳ Sẵn sàng đăng (${mCount} ảnh)</span>` : ''}
               ${post.status === 'skipped_no_media' ? `<span class="neo-sticker sticker-coral text-[11px] font-bold">⚠️ Bỏ qua (thiếu ảnh)</span>` : ''}
               ${post.status === 'processing' ? `<span class="neo-sticker sticker-lavender text-[11px] font-bold">⚙️ Đang đăng</span>` : ''}
             </div>
@@ -543,17 +588,15 @@ function renderQueueList(posts) {
             <div class="text-xs text-neutral-500 font-medium mt-1 flex items-center gap-2">
               <span>⏰ Giờ hẹn: <strong class="text-emerald-700 font-mono">${scheduledDate}</strong></span>
               <span>·</span>
-              <span>📁 ${post.mediaFiles?.length || 0} media</span>
+              <span>📁 <strong class="text-indigo-700">${mCount} ảnh/video</strong></span>
             </div>
           </div>
         </div>
 
         <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-          ${post.status === 'pending_media' ? `
-            <a href="/quick-upload?id=${post.id}" target="_blank" class="neo-btn neo-btn-lavender px-3 py-1.5 text-xs font-black" title="Nạp ảnh hoặc video trực tiếp">
-              <span>📸 Nạp ảnh ngay</span>
-            </a>
-          ` : ''}
+          <a href="/quick-upload?id=${post.id}" target="_blank" class="neo-btn neo-btn-lavender px-3 py-1.5 text-xs font-black" title="Xem hoặc thêm ảnh/video">
+            <span>📸 ${mCount > 0 ? `Thêm ảnh (${mCount})` : 'Nạp ảnh'}</span>
+          </a>
           <button onclick="publishPostNow('${post.id}')" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-black">
             <span>⚡ Đăng ngay</span>
           </button>

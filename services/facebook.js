@@ -35,14 +35,25 @@ async function verifyPageToken(pageId, pageToken) {
   }
 }
 
+function resolveMediaFilePath(filePath) {
+  if (filePath && fs.existsSync(filePath)) return filePath;
+  if (filePath) {
+    const filename = path.basename(filePath);
+    const candidate = path.join(__dirname, '..', 'public', 'uploads', filename);
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  return filePath;
+}
+
 /**
  * Upload an un-published photo to get photo ID (for multi-image album)
  */
 async function uploadUnpublishedPhoto(pageId, pageToken, filePath) {
+  const resolved = resolveMediaFilePath(filePath);
   const form = new FormData();
   form.append('published', 'false');
   form.append('access_token', pageToken);
-  form.append('source', fs.createReadStream(filePath));
+  form.append('source', fs.createReadStream(resolved));
 
   const response = await axios.post(`${BASE_URL}/${pageId}/photos`, form, {
     headers: form.getHeaders(),
@@ -56,11 +67,12 @@ async function uploadUnpublishedPhoto(pageId, pageToken, filePath) {
  * Upload a video to the Fanpage
  */
 async function uploadVideo(pageId, pageToken, filePath, description, title = '') {
+  const resolved = resolveMediaFilePath(filePath);
   const form = new FormData();
   form.append('access_token', pageToken);
   form.append('description', description);
   if (title) form.append('title', title);
-  form.append('source', fs.createReadStream(filePath));
+  form.append('source', fs.createReadStream(resolved));
 
   const response = await axios.post(`${BASE_URL}/${pageId}/videos`, form, {
     headers: form.getHeaders(),
@@ -110,11 +122,12 @@ async function publishPostToFanpage(postData, userSettings) {
 
     // 2. Single photo post
     if (imageFiles.length === 1) {
-      console.log(`[FB API] Đang đăng 1 ảnh lên Fanpage: ${imageFiles[0].path}`);
+      const resolved = resolveMediaFilePath(imageFiles[0].path);
+      console.log(`[FB API] Đang đăng 1 ảnh lên Fanpage: ${resolved}`);
       const form = new FormData();
       form.append('message', content);
       form.append('access_token', pageToken);
-      form.append('source', fs.createReadStream(imageFiles[0].path));
+      form.append('source', fs.createReadStream(resolved));
 
       const response = await axios.post(`${BASE_URL}/${pageId}/photos`, form, {
         headers: form.getHeaders(),

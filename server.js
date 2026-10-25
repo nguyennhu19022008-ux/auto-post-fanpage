@@ -119,8 +119,8 @@ app.post('/api/generate-content', async (req, res) => {
   }
 });
 
-// 5. Upload Media Files (Images / Videos)
-app.post('/api/upload-media', upload.array('files', 15), (req, res) => {
+// 5. Upload Media Files (Images / Videos - Up to 35 files)
+app.post('/api/upload-media', upload.array('files', 35), (req, res) => {
   try {
     const files = req.files.map(f => ({
       originalname: f.originalname,
@@ -203,8 +203,8 @@ app.get('/api/posts/:id', (req, res) => {
   res.json(post);
 });
 
-// Attach media to a post from Mobile Quick-Upload or Web
-app.post('/api/posts/:id/attach-media', upload.array('files', 15), (req, res) => {
+// Attach media to a post from Mobile Quick-Upload or Web (Up to 35 files)
+app.post('/api/posts/:id/attach-media', upload.array('files', 35), (req, res) => {
   try {
     const posts = getPosts();
     const post = posts.find(p => p.id === req.params.id);
@@ -239,6 +239,19 @@ app.post('/api/posts/:id/attach-media', upload.array('files', 15), (req, res) =>
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+});
+
+// Remove a media file from a post
+app.delete('/api/posts/:id/media/:filename', (req, res) => {
+  const posts = getPosts();
+  const post = posts.find(p => p.id === req.params.id);
+  if (!post) return res.status(404).json({ error: 'Không tìm thấy bài viết.' });
+
+  if (post.mediaFiles) {
+    post.mediaFiles = post.mediaFiles.filter(m => m.filename !== req.params.filename);
+  }
+  savePosts(posts);
+  res.json({ success: true, post });
 });
 
 // 6. Get Next Suggested Schedule Slot

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tải Ảnh Nhanh - Laptop Vương Gia</title>
+  <title>Tải Album Ảnh - Laptop Vương Gia</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,33 +11,34 @@
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FDFBF7; color: #18181B; }
     .neo-card { background: #FFFFFF; border: 2.5px solid #18181B; border-radius: 12px; box-shadow: 4px 4px 0px #18181B; }
-    .neo-btn { border: 2px solid #18181B; border-radius: 8px; box-shadow: 3px 3px 0px #18181B; font-weight: 800; transition: all 0.15s ease; }
+    .neo-btn { border: 2px solid #18181B; border-radius: 8px; box-shadow: 3px 3px 0px #18181B; font-weight: 800; transition: all 0.15s ease; cursor: pointer; user-select: none; }
     .neo-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0px #18181B; }
     .neo-input { border: 2px solid #18181B; border-radius: 8px; box-shadow: 2px 2px 0px #18181B; }
+    .neo-sticker { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.25rem 0.65rem; font-size: 0.75rem; font-weight: 800; border: 1.5px solid #18181B; box-shadow: 2px 2px 0px #18181B; border-radius: 6px; }
   </style>
 </head>
-<body class="min-h-screen p-4 flex flex-col items-center justify-center">
+<body class="min-h-screen p-3 sm:p-5 flex flex-col items-center justify-center">
 
-  <div class="w-full max-w-lg neo-card p-5 sm:p-7 space-y-5">
+  <div class="w-full max-w-lg neo-card p-4 sm:p-6 space-y-4">
     
     <!-- Top Header -->
     <div class="border-b-2 border-[#18181B] pb-3 text-center">
       <div class="inline-block px-3 py-1 bg-[#FDE047] border-2 border-[#18181B] rounded-full text-xs font-black uppercase tracking-wider mb-2 shadow-[2px_2px_0px_#18181B]">
-        ⚡ CẬP NHẬT ẢNH NHANH 1-CHẠM
+        ⚡ CẬP NHẬT ALBUM ẢNH NHANH 1-CHẠM
       </div>
-      <h1 class="text-xl font-black text-[#18181B] tracking-tight">CUNG CẤP ẢNH / VIDEO MÁY</h1>
-      <p class="text-xs text-neutral-600 font-bold mt-1">Chuẩn bị xuất bản lên Fanpage Laptop Vương Gia</p>
+      <h1 class="text-xl font-black text-[#18181B] tracking-tight">CUNG CẤP ALBUM ẢNH & VIDEO</h1>
+      <p class="text-xs text-neutral-600 font-bold mt-1">Xuất bản bài viết kèm album nhiều ảnh lên Fanpage Laptop Vương Gia</p>
     </div>
 
     <!-- Machine Info Box -->
-    <div id="machineInfoBox" class="p-3.5 bg-[#FFFBEB] border-2 border-[#18181B] rounded-lg space-y-1.5 shadow-[2px_2px_0px_#18181B]">
+    <div id="machineInfoBox" class="p-3 bg-[#FFFBEB] border-2 border-[#18181B] rounded-lg space-y-1.5 shadow-[2px_2px_0px_#18181B]">
       <div class="flex justify-between items-center">
         <span class="text-xs font-bold text-neutral-600 uppercase">Mã máy:</span>
-        <span class="text-base font-black text-blue-700 font-mono" id="infoMachineCode">#...</span>
+        <span class="text-base font-black text-indigo-700 font-mono" id="infoMachineCode">#...</span>
       </div>
       <div class="flex justify-between items-center">
         <span class="text-xs font-bold text-neutral-600 uppercase">Tên máy:</span>
-        <span class="text-sm font-black text-[#18181B]" id="infoMachineName">Đang tải...</span>
+        <span class="text-xs font-black text-[#18181B] truncate max-w-[250px]" id="infoMachineName">Đang tải...</span>
       </div>
       <div class="flex justify-between items-center">
         <span class="text-xs font-bold text-neutral-600 uppercase">Giờ đăng dự kiến:</span>
@@ -45,29 +46,65 @@
       </div>
     </div>
 
-    <!-- Upload Options -->
-    <div class="space-y-4">
+    <!-- Main Upload Section -->
+    <div id="uploadControlsArea" class="space-y-4">
       
-      <!-- Option 1: Pick from phone camera / library -->
-      <div>
-        <label class="text-xs font-black uppercase tracking-wider block mb-2">
-          Cách 1: Chọn ảnh / video từ máy hoặc điện thoại
-        </label>
-        <div onclick="document.getElementById('mobileFileInput').click()" class="border-2 border-dashed border-[#18181B] bg-[#FAF5EE] hover:bg-[#FEF08A]/40 rounded-xl p-5 text-center cursor-pointer transition">
-          <input type="file" id="mobileFileInput" multiple accept="image/*,video/*" class="hidden" onchange="handleMobileFiles(event)">
-          <div class="text-3xl mb-1">📸</div>
-          <div class="text-sm font-black text-[#18181B]">Chạm vào đây để chọn ảnh</div>
-          <div class="text-[11px] text-neutral-500 font-medium mt-0.5">Hỗ trợ chọn nhiều ảnh cùng lúc & video ngắn</div>
+      <!-- Option 1: Multi-image picker & Camera -->
+      <div class="space-y-2">
+        <div class="flex justify-between items-center">
+          <label class="text-xs font-black uppercase tracking-wider block">
+            CÁCH 1: CHỌN HOẶC CHỤP NHIỀU ẢNH
+          </label>
+          <span id="selectedCountBadge" class="neo-sticker bg-[#E0E7FF] text-[#18181B] text-[11px] font-mono">
+            0 ảnh đã chọn
+          </span>
+        </div>
+
+        <!-- Two Quick Action Buttons for Mobile -->
+        <div class="grid grid-cols-2 gap-2.5">
+          <!-- Button A: Open Camera directly on mobile -->
+          <button type="button" onclick="document.getElementById('cameraFileInput').click()" class="neo-btn bg-[#FDE047] hover:bg-yellow-300 py-2.5 px-3 text-xs font-black flex items-center justify-center gap-1.5">
+            <span>📷 Chụp ảnh máy</span>
+          </button>
+          <input type="file" id="cameraFileInput" capture="environment" accept="image/*" class="hidden" onchange="handleNewFiles(event)">
+
+          <!-- Button B: Pick Multiple from Photo Gallery / Computer -->
+          <button type="button" onclick="document.getElementById('galleryFileInput').click()" class="neo-btn bg-[#FFFFFF] hover:bg-neutral-100 py-2.5 px-3 text-xs font-black flex items-center justify-center gap-1.5">
+            <span>🖼️ Chọn từ thư viện</span>
+          </button>
+          <input type="file" id="galleryFileInput" multiple accept="image/*,video/*" class="hidden" onchange="handleNewFiles(event)">
+        </div>
+
+        <!-- Dropzone / Drag Area -->
+        <div id="mobileDropZone" onclick="document.getElementById('galleryFileInput').click()" class="border-2 border-dashed border-[#18181B] bg-[#FAF5EE] hover:bg-[#FEF08A]/40 rounded-xl p-4 text-center cursor-pointer transition">
+          <div class="text-2xl mb-1">📁</div>
+          <div class="text-xs font-bold text-[#18181B]">Bấm vào đây để chọn thêm ảnh từ máy hoặc kéo thả</div>
+          <div class="text-[11px] text-neutral-500 font-medium mt-0.5">Tự động cộng dồn nhiều ảnh (mặt trước, màn hình, bàn phím, sạc...)</div>
         </div>
       </div>
 
-      <!-- Preview Selected Media -->
-      <div id="previewContainer" class="grid grid-cols-3 gap-2 max-h-36 overflow-y-auto hidden"></div>
+      <!-- Existing Uploaded Photos Gallery (if post already had photos) -->
+      <div id="existingGalleryArea" class="hidden space-y-2 pt-2 border-t border-neutral-200">
+        <div class="flex justify-between items-center text-xs">
+          <span class="font-bold text-neutral-700 uppercase">Ảnh đã lưu trước đó:</span>
+          <span id="existingCountText" class="text-neutral-500 font-mono text-[11px]"></span>
+        </div>
+        <div id="existingMediaContainer" class="grid grid-cols-3 sm:grid-cols-4 gap-2"></div>
+      </div>
+
+      <!-- Newly Selected Photos Gallery (with Add More tile) -->
+      <div id="newGalleryArea" class="hidden space-y-2 pt-2 border-t border-neutral-200">
+        <div class="flex justify-between items-center text-xs">
+          <span class="font-bold text-indigo-700 uppercase">Ảnh mới vừa chọn (sẵn sàng tải lên):</span>
+          <button type="button" onclick="clearAllNewFiles()" class="text-[11px] text-red-600 hover:underline font-bold">Xóa tất cả</button>
+        </div>
+        <div id="previewGridContainer" class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-56 overflow-y-auto p-1 bg-[#FAF8F5] border border-neutral-300 rounded-lg"></div>
+      </div>
 
       <!-- Option 2: Paste Google Drive / Cloud Link -->
-      <div>
+      <div class="pt-2 border-t border-neutral-200">
         <label class="text-xs font-black uppercase tracking-wider block mb-1">
-          Cách 2: Hoặc dán link Google Drive / Link ảnh
+          CÁCH 2: HOẶC DÁN LINK GOOGLE DRIVE / LINK ẢNH
         </label>
         <input type="url" id="cloudLinkInput" placeholder="https://drive.google.com/drive/folders/..." class="neo-input w-full p-2.5 text-xs">
       </div>
@@ -75,29 +112,35 @@
     </div>
 
     <!-- Submit Button -->
-    <div class="pt-2">
+    <div class="pt-2" id="submitActionArea">
       <button id="submitBtn" onclick="submitMedia()" class="neo-btn bg-[#16A34A] hover:bg-emerald-700 text-white w-full py-3.5 text-sm font-black uppercase tracking-wide flex items-center justify-center gap-2 shadow-[4px_4px_0px_#18181B]">
         <span id="spinner" class="hidden animate-spin">🌀</span>
-        <span>✅ XÁC NHẬN - SẴN SÀNG ĐĂNG BÀI ➔</span>
+        <span id="submitBtnText">✅ XÁC NHẬN - SẴN SÀNG ĐĂNG BÀI ➔</span>
       </button>
     </div>
 
     <!-- Success Screen (Hidden by default) -->
-    <div id="successBox" class="hidden text-center space-y-3 py-4">
+    <div id="successBox" class="hidden text-center space-y-3 py-6">
       <div class="text-5xl">🎉</div>
-      <h2 class="text-lg font-black text-emerald-700">ĐÃ LƯU ẢNH THÀNH CÔNG!</h2>
-      <p class="text-xs text-neutral-700 font-bold">
-        Bài viết đã sẵn sàng và sẽ tự động được hệ thống đăng lên Fanpage vào đúng giờ hẹn!
+      <h2 class="text-lg font-black text-emerald-700">ĐÃ LƯU ALBUM ẢNH THÀNH CÔNG!</h2>
+      <p id="successMessageDetail" class="text-xs text-neutral-700 font-bold max-w-sm mx-auto">
+        Bài viết đã đủ ảnh và sẵn sàng. Hệ thống sẽ tự động đăng lên Fanpage vào đúng khung giờ hẹn!
       </p>
-      <button onclick="window.close()" class="neo-btn bg-[#FDE047] text-[#18181B] px-5 py-2 text-xs font-black">
-        Đóng cửa sổ này
-      </button>
+      <div class="pt-2 flex justify-center gap-3">
+        <button onclick="window.location.reload()" class="neo-btn bg-white text-[#18181B] px-4 py-2 text-xs font-bold">
+          Xem lại album
+        </button>
+        <button onclick="window.close()" class="neo-btn bg-[#FDE047] text-[#18181B] px-5 py-2 text-xs font-black">
+          Đóng cửa sổ
+        </button>
+      </div>
     </div>
 
   </div>
 
   <script>
     let selectedFiles = [];
+    let existingFiles = [];
     const urlParams = new URLSearchParams(window.location.search);
     const postId = urlParams.get('id');
 
@@ -113,34 +156,183 @@
           document.getElementById('infoMachineCode').innerText = '#' + (post.machineCode || 'N/A');
           document.getElementById('infoMachineName').innerText = post.machineName || 'Laptop Nhật Bãi';
           document.getElementById('infoScheduledTime').innerText = new Date(post.scheduledTime).toLocaleString('vi-VN');
+          if (post.cloudLink) {
+            document.getElementById('cloudLinkInput').value = post.cloudLink;
+          }
+          if (post.mediaFiles && post.mediaFiles.length > 0) {
+            existingFiles = post.mediaFiles;
+            renderExistingMedia();
+          }
+          updateTotalCounter();
         }
       } catch (e) {
-        console.error(e);
+        console.error('Error fetching post:', e);
       }
     }
 
-    function handleMobileFiles(e) {
-      selectedFiles = Array.from(e.target.files);
-      const container = document.getElementById('previewContainer');
-      container.innerHTML = '';
-      if (selectedFiles.length > 0) {
-        container.classList.remove('hidden');
-        selectedFiles.forEach(file => {
-          const div = document.createElement('div');
-          div.className = 'border-2 border-[#18181B] rounded-lg aspect-square overflow-hidden bg-black flex items-center justify-center';
-          const img = document.createElement('img');
-          img.src = URL.createObjectURL(file);
-          img.className = 'w-full h-full object-cover';
-          div.appendChild(img);
-          container.appendChild(div);
-        });
+    function renderExistingMedia() {
+      const area = document.getElementById('existingGalleryArea');
+      const container = document.getElementById('existingMediaContainer');
+      const countText = document.getElementById('existingCountText');
+
+      if (!existingFiles || existingFiles.length === 0) {
+        area.classList.add('hidden');
+        container.innerHTML = '';
+        return;
       }
+
+      area.classList.remove('hidden');
+      countText.innerText = `${existingFiles.length} tệp`;
+      container.innerHTML = existingFiles.map((file, idx) => `
+        <div class="relative rounded-lg overflow-hidden border border-[#18181B] aspect-square bg-black shadow-[1.5px_1.5px_0px_#18181B]">
+          <img src="${file.url}" class="w-full h-full object-cover">
+          <span class="absolute bottom-1 left-1 bg-black/70 text-white text-[9px] px-1 font-mono rounded">#${idx + 1}</span>
+          <button type="button" onclick="deleteExistingMedia('${file.filename}')" class="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold shadow">
+            ✕
+          </button>
+        </div>
+      `).join('');
+    }
+
+    async function deleteExistingMedia(filename) {
+      if (!confirm('Xóa ảnh này khỏi bài viết?')) return;
+      try {
+        const res = await fetch(`/api/posts/${postId}/media/${filename}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success && data.post) {
+          existingFiles = data.post.mediaFiles || [];
+          renderExistingMedia();
+          updateTotalCounter();
+        }
+      } catch (err) {
+        alert('Lỗi xóa ảnh: ' + err.message);
+      }
+    }
+
+    function handleNewFiles(e) {
+      const incoming = Array.from(e.target.files || []);
+      if (incoming.length > 0) {
+        // Append new files without overwriting existing selections
+        selectedFiles = [...selectedFiles, ...incoming];
+        e.target.value = ''; // Reset input to allow selecting or taking more pictures
+        renderNewFilesGallery();
+        updateTotalCounter();
+      }
+    }
+
+    function removeSelectedFile(idx) {
+      selectedFiles.splice(idx, 1);
+      renderNewFilesGallery();
+      updateTotalCounter();
+    }
+
+    function clearAllNewFiles() {
+      selectedFiles = [];
+      renderNewFilesGallery();
+      updateTotalCounter();
+    }
+
+    function renderNewFilesGallery() {
+      const area = document.getElementById('newGalleryArea');
+      const container = document.getElementById('previewGridContainer');
+
+      if (selectedFiles.length === 0) {
+        area.classList.add('hidden');
+        container.innerHTML = '';
+        return;
+      }
+
+      area.classList.remove('hidden');
+      container.innerHTML = '';
+
+      // Render thumbnails for each newly selected file
+      selectedFiles.forEach((file, idx) => {
+        const div = document.createElement('div');
+        div.className = 'relative rounded-lg overflow-hidden border border-[#18181B] aspect-square bg-black shadow-[1.5px_1.5px_0px_#18181B]';
+
+        const isVideo = file.type.startsWith('video/');
+        if (isVideo) {
+          div.innerHTML = `
+            <video src="${URL.createObjectURL(file)}" class="w-full h-full object-cover"></video>
+            <div class="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-none text-white text-[11px] font-bold">▶ Video</div>
+            <span class="absolute bottom-1 left-1 bg-black/80 text-white text-[9px] px-1 font-mono rounded">Mới #${idx + 1}</span>
+            <button type="button" onclick="removeSelectedFile(${idx})" class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold shadow">✕</button>
+          `;
+        } else {
+          div.innerHTML = `
+            <img src="${URL.createObjectURL(file)}" class="w-full h-full object-cover">
+            <span class="absolute bottom-1 left-1 bg-black/80 text-white text-[9px] px-1 font-mono rounded">Mới #${idx + 1}</span>
+            <button type="button" onclick="removeSelectedFile(${idx})" class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold shadow">✕</button>
+          `;
+        }
+
+        container.appendChild(div);
+      });
+
+      // Append "+ Thêm ảnh khác" tile inside grid
+      const addTile = document.createElement('div');
+      addTile.className = 'border-2 border-dashed border-[#18181B] rounded-lg aspect-square bg-white hover:bg-yellow-50 flex flex-col items-center justify-center cursor-pointer transition p-1 text-center';
+      addTile.onclick = () => document.getElementById('galleryFileInput').click();
+      addTile.innerHTML = `
+        <span class="text-xl">+</span>
+        <span class="text-[10px] font-bold text-[#18181B]">Thêm ảnh</span>
+      `;
+      container.appendChild(addTile);
+    }
+
+    function updateTotalCounter() {
+      const total = existingFiles.length + selectedFiles.length;
+      const badge = document.getElementById('selectedCountBadge');
+      const submitText = document.getElementById('submitBtnText');
+
+      if (badge) {
+        badge.innerText = `${total} ảnh/video`;
+        badge.className = total > 0 
+          ? 'neo-sticker bg-[#DCFCE7] text-emerald-900 text-[11px] font-mono font-bold' 
+          : 'neo-sticker bg-[#E0E7FF] text-[#18181B] text-[11px] font-mono';
+      }
+
+      if (submitText) {
+        if (total > 0) {
+          submitText.innerText = `✅ XÁC NHẬN - SẴN SÀNG ĐĂNG (${total} ẢNH) ➔`;
+        } else {
+          submitText.innerText = `✅ XÁC NHẬN - SẴN SÀNG ĐĂNG BÀI ➔`;
+        }
+      }
+    }
+
+    // Drag and Drop support
+    const dropZone = document.getElementById('mobileDropZone');
+    if (dropZone) {
+      ['dragenter', 'dragover'].forEach(name => {
+        dropZone.addEventListener(name, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.add('bg-yellow-100', 'border-yellow-600');
+        }, false);
+      });
+      ['dragleave', 'drop'].forEach(name => {
+        dropZone.addEventListener(name, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.remove('bg-yellow-100', 'border-yellow-600');
+        }, false);
+      });
+      dropZone.addEventListener('drop', (e) => {
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          selectedFiles = [...selectedFiles, ...Array.from(e.dataTransfer.files)];
+          renderNewFilesGallery();
+          updateTotalCounter();
+        }
+      });
     }
 
     async function submitMedia() {
       const cloudLink = document.getElementById('cloudLinkInput').value.trim();
-      if (selectedFiles.length === 0 && !cloudLink) {
-        alert('Vui lòng chọn ít nhất 1 ảnh hoặc dán link ảnh/drive.');
+      const totalMedia = existingFiles.length + selectedFiles.length;
+
+      if (totalMedia === 0 && !cloudLink) {
+        alert('Vui lòng chọn ít nhất 1 ảnh hoặc dán link Google Drive/ảnh thực tế.');
         return;
       }
 
@@ -161,11 +353,16 @@
         const result = await res.json();
         if (result.success) {
           document.getElementById('machineInfoBox').classList.add('hidden');
-          document.querySelector('.space-y-4').classList.add('hidden');
-          btn.classList.add('hidden');
+          document.getElementById('uploadControlsArea').classList.add('hidden');
+          document.getElementById('submitActionArea').classList.add('hidden');
+          
+          const totalAfter = result.post?.mediaFiles?.length || totalMedia;
+          document.getElementById('successMessageDetail').innerText = 
+            `Bài viết đã được cập nhật thành công ${totalAfter} ảnh/video và chuyển sang trạng thái sẵn sàng xuất bản!`;
+          
           document.getElementById('successBox').classList.remove('hidden');
         } else {
-          alert('Lỗi: ' + result.error);
+          alert('Lỗi: ' + (result.error || 'Không thể lưu ảnh'));
         }
       } catch (err) {
         alert('Lỗi gửi ảnh: ' + err.message);
