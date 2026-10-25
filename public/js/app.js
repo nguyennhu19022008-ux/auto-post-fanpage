@@ -2,62 +2,16 @@
 let appSettings = {};
 let currentMediaFiles = [];
 let allPosts = [];
-let isPage0Active = true;
 let parsedTableItems = [];
+let isDashboardInitialized = false;
 
-// ======================== PAGE 0 LOGIC ========================
-
-function copyContact(text, btn) {
-  navigator.clipboard.writeText(text).then(() => {
-    const originalText = btn.innerText;
-    btn.innerText = 'ĐÃ CHÉP';
-    btn.style.background = '#10b981';
-    btn.style.color = '#fff';
-    setTimeout(() => {
-      btn.innerText = originalText;
-      btn.style.background = '#ffffff';
-      btn.style.color = '#000000';
-    }, 2000);
-  });
-}
-
-function toggleP0Card(show) {
-  const card = document.getElementById('copyrightCard');
-  const floating = document.getElementById('floatingReopen');
-  if (show) {
-    card.style.display = 'block';
-    floating.style.display = 'none';
-  } else {
-    card.style.display = 'none';
-    floating.style.display = 'flex';
-  }
-}
-
-document.getElementById('closeP0Btn')?.addEventListener('click', () => toggleP0Card(false));
-
-function enterDashboard() {
-  isPage0Active = false;
-  document.getElementById('page0').style.display = 'none';
-  document.getElementById('mainApp').classList.remove('hidden');
+// Auto-initialize Dashboard on page load
+document.addEventListener('DOMContentLoaded', () => {
+  initDashboard();
+});
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
   initDashboard();
 }
-
-function returnToPage0() {
-  isPage0Active = true;
-  document.getElementById('page0').style.display = 'flex';
-  document.getElementById('mainApp').classList.add('hidden');
-  toggleP0Card(true);
-}
-
-// Keyboard shortcuts for Page 0
-window.addEventListener('keydown', (e) => {
-  if (isPage0Active) {
-    if (e.key === 'ArrowRight' || e.key === 'Enter' || e.code === 'Space') {
-      e.preventDefault();
-      enterDashboard();
-    }
-  }
-});
 
 // ======================== TAB NAVIGATION ========================
 
@@ -98,6 +52,8 @@ function switchTab(tabName) {
 // ======================== INITIALIZE & SETTINGS ========================
 
 async function initDashboard() {
+  if (isDashboardInitialized) return;
+  isDashboardInitialized = true;
   await loadSettings();
   await loadNextSlot();
   await loadPosts();

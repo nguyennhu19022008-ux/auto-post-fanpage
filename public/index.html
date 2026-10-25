@@ -20,80 +20,12 @@
   <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
   <link rel="apple-touch-icon" href="/icons/icon.svg" />
 
-  <link rel="stylesheet" href="/css/style.css?v=20261026_pwa">
+  <link rel="stylesheet" href="/css/style.css?v=20261026_nop0">
 </head>
 <body class="bg-[#FDFBF7] text-[#18181B] min-h-screen">
 
-  <!-- ======================== PAGE 0 / COPYRIGHT SLIDE (PURE MONOCHROME) ======================== -->
-  <section id="page0">
-    <div class="bg-wall">
-      <div class="row-marquee"><span>DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp;</span></div>
-      <div class="row-marquee"><span>DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp;</span></div>
-      <div class="row-marquee"><span>DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp;</span></div>
-      <div class="row-marquee"><span>DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp;</span></div>
-      <div class="row-marquee"><span>DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp;</span></div>
-    </div>
-
-    <div class="p0-card" id="copyrightCard">
-      <div class="p0-header">
-        <div class="text-xs tracking-wider flex items-center gap-2">
-          <span>🛡️</span> INTELLECTUAL PROPERTY CERTIFICATE /// 2026
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="p0-badge">ID: VG-LAPTOP-AUTOFB-2026</span>
-          <button class="p0-close-btn" id="closeP0Btn" title="Tắt bảng thông tin">✕</button>
-        </div>
-      </div>
-
-      <div class="p0-headline">
-        <div class="text-xs text-neutral-400 mb-1 tracking-widest uppercase">CHỨNG NHẬN QUYỀN TÁC GIẢ & THIẾT KẾ ĐỘC BẢN</div>
-        <h1>DESIGN BY <span>VUONGGIA</span></h1>
-        <div class="inline-block mt-3 bg-white text-black px-3 py-1 font-bold text-xs tracking-wider">
-          THUỘC QUYỀN SỞ HỮU CỦA VUONGGIA
-        </div>
-      </div>
-
-      <div class="p0-clause">
-        <div class="font-bold mb-1 flex items-center justify-center gap-1.5 text-amber-300">
-          ⚠️ ĐIỀU KHOẢN NGHIÊM NGẶT: KHÔNG THƯƠNG MẠI HÓA
-        </div>
-        <p class="text-neutral-300 text-xs sm:text-sm">
-          Hệ thống web và toàn bộ mã nguồn, cấu trúc giao diện, tài nguyên hình ảnh được chuyển giao với điều kiện cam kết: 
-          <strong class="text-white">TUYỆT ĐỐI KHÔNG THƯƠNG MẠI, MUA BÁN, SANG NHƯỢNG DƯỚI MỌI HÌNH THỨC SAU KHI ĐÃ SỞ HỮU.</strong>
-        </p>
-      </div>
-
-      <div class="p0-contacts">
-        <div class="p0-contact-box">
-          <div class="text-xs text-neutral-400 flex justify-between items-center">
-            <span>✉️ EMAIL LIÊN HỆ:</span>
-            <button class="p0-copy-btn" onclick="copyContact('nguyennhu19022008@gmail.com', this)">SAO CHÉP</button>
-          </div>
-          <div class="mt-2 font-bold text-sm tracking-wide text-white truncate">nguyennhu19022008@gmail.com</div>
-        </div>
-        <div class="p0-contact-box">
-          <div class="text-xs text-neutral-400 flex justify-between items-center">
-            <span>📞 HOTLINE / ZALO:</span>
-            <button class="p0-copy-btn" onclick="copyContact('0876637806', this)">SAO CHÉP</button>
-          </div>
-          <div class="mt-1 font-mono text-2xl font-bold tracking-wider text-white">0876637806</div>
-        </div>
-      </div>
-
-      <div class="p0-footer-action">
-        <div class="text-xs text-neutral-400">Nhấn phím <kbd class="px-1.5 py-0.5 bg-neutral-800 border border-neutral-600 rounded text-[11px] text-white">[→]</kbd>, <kbd class="px-1.5 py-0.5 bg-neutral-800 border border-neutral-600 rounded text-[11px] text-white">[Space]</kbd> hoặc <kbd class="px-1.5 py-0.5 bg-neutral-800 border border-neutral-600 rounded text-[11px] text-white">[Enter]</kbd> để bắt đầu</div>
-        <button class="p0-start-btn" onclick="enterDashboard()">VÀO HỆ THỐNG ĐĂNG BÀI (TRANG 01) →</button>
-      </div>
-    </div>
-
-    <div class="p0-floating-reopen" id="floatingReopen">
-      <button class="p0-start-btn" style="background:#000; color:#fff; border: 1.5px solid #fff;" onclick="toggleP0Card(true)">ℹ️ MỞ BẢNG THÔNG TIN BẢN QUYỀN</button>
-      <button class="p0-start-btn" onclick="enterDashboard()">VÀO HỆ THỐNG ĐĂNG BÀI (TRANG 01) →</button>
-    </div>
-  </section>
-
-  <!-- ======================== PAGE 1 / MAIN DASHBOARD (WARM NEO-BRUTALIST) ======================== -->
-  <div id="mainApp" class="hidden min-h-screen flex flex-col">
+  <!-- ======================== MAIN DASHBOARD ======================== -->
+  <div id="mainApp" class="min-h-screen flex flex-col">
     
     <!-- Top Sticky Header -->
     <header class="border-b-2 border-[#18181B] bg-[#FFFFFF] sticky top-0 z-40 px-4 lg:px-8 py-3.5 shadow-[0_2px_0px_#18181B]">
@@ -126,10 +58,6 @@
 
           <button onclick="showPwaInstallModal()" id="pwaInstallHeaderBtn" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-black shadow-[2.5px_2.5px_0px_#18181B]" title="Cài đặt ứng dụng về màn hình điện thoại">
             <span>📲 Cài App</span>
-          </button>
-
-          <button onclick="returnToPage0()" class="neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold" title="Xem lại slide bản quyền">
-            <span>🛡️ Bản quyền [P0]</span>
           </button>
         </div>
       </div>
@@ -737,7 +665,7 @@
 
   </div>
 
-  <script src="/js/app.js?v=20261026_pwa"></script>
+  <script src="/js/app.js?v=20261026_nop0"></script>
   <!-- Modal: Post Preview -->
   <div id="postPreviewModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
     <div class="neo-card bg-white max-w-2xl w-full p-6 space-y-4 max-h-[90vh] flex flex-col shadow-[6px_6px_0px_#18181B]">
