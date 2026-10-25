@@ -78,6 +78,18 @@ function switchTab(tabName) {
     }
   });
 
+  // Sync mobile bottom dock
+  ['studio', 'table', 'queue', 'history', 'settings'].forEach(t => {
+    const mobileBtn = document.getElementById(`mobileDockBtn-${t}`);
+    if (mobileBtn) {
+      if (t === tabName) {
+        mobileBtn.classList.add('active');
+      } else {
+        mobileBtn.classList.remove('active');
+      }
+    }
+  });
+
   if (tabName === 'queue' || tabName === 'history') {
     loadPosts();
   }
@@ -528,6 +540,17 @@ async function loadPosts() {
 
     document.getElementById('queueCount').innerText = queuedPosts.length;
     document.getElementById('historyCount').innerText = historyPosts.length;
+
+    // Update mobile bottom dock queue badge
+    const mobileBadge = document.getElementById('mobileQueueBadge');
+    if (mobileBadge) {
+      if (queuedPosts.length > 0) {
+        mobileBadge.innerText = queuedPosts.length;
+        mobileBadge.classList.remove('hidden');
+      } else {
+        mobileBadge.classList.add('hidden');
+      }
+    }
 
     renderQueueList(queuedPosts);
     renderHistoryList(historyPosts);
@@ -1008,4 +1031,69 @@ async function submitBatchSchedule() {
     btn.disabled = false;
     btn.innerHTML = originalText;
   }
+}
+
+// ======================== PWA & SERVICE WORKER LOGIC ========================
+
+let deferredPwaPrompt = null;
+
+// Register Service Worker for offline shell and lightning fast caching
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => {
+        console.log('✅ ServiceWorker registered:', reg.scope);
+      })
+      .catch(err => {
+        console.warn('⚠️ ServiceWorker registration failed:', err);
+      });
+  });
+}
+
+// Capture Android / Chrome beforeinstallprompt event
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPwaPrompt = e;
+  
+  // Show direct 1-click install button inside modal
+  const nativeBox = document.getElementById('androidNativeInstallBox');
+  if (nativeBox) {
+    nativeBox.classList.remove('hidden');
+  }
+
+  // Highlight header button
+  const installBtn = document.getElementById('pwaInstallHeaderBtn');
+  if (installBtn) {
+    installBtn.classList.add('animate-pulse');
+  }
+});
+
+window.addEventListener('appinstalled', () => {
+  console.log('🎉 PWA successfully installed on device!');
+  deferredPwaPrompt = null;
+  const nativeBox = document.getElementById('androidNativeInstallBox');
+  if (nativeBox) nativeBox.classList.add('hidden');
+  alert('🎉 Đã cài đặt Laptop Vương Gia App thành công! Biểu tượng đã xuất hiện trên màn hình chính của bạn.');
+});
+
+function showPwaInstallModal() {
+  const modal = document.getElementById('pwaInstallModal');
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closePwaInstallModal() {
+  const modal = document.getElementById('pwaInstallModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+async function triggerPwaPrompt() {
+  if (!deferredPwaPrompt) {
+    alert('Vui lòng làm theo hướng dẫn các bước trên màn hình để thêm ứng dụng vào Màn hình chính!');
+    return;
+  }
+  deferredPwaPrompt.prompt();
+  const choiceResult = await deferredPwaPrompt.userChoice;
+  console.log('PWA prompt user choice:', choiceResult.outcome);
+  deferredPwaPrompt = null;
+  closePwaInstallModal();
 }

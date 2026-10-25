@@ -1,0 +1,36 @@
+{
+  "name": "Laptop Vương Gia - Autopost",
+  "short_name": "Vương Gia",
+  "description": "Hệ thống tự động biên tập và đăng bài bán laptop cũ Nhật từ Zalo lên Facebook Fanpage",
+  "start_url": "/",
+  "id": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FDFBF7",
+  "theme_color": "#FDE047",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nạp bảng kho",
+      "short_name": "Bảng kho",
+      "description": "Nạp bảng Excel kho hàng loạt",
+      "url": "/#tab-table",
+      "icons": [{ "src": "/icons/icon.svg", "sizes": "96x96" }]
+    },
+    {
+      "name": "Hàng đợi lên lịch",
+      "short_name": "Hàng đợi",
+      "description": "Xem hàng đợi và nạp ảnh",
+      "url": "/#tab-queue",
+      "icons": [{ "src": "/icons/icon.svg", "sizes": "96x96" }]
+    }
+  ]
+}

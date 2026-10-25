@@ -10,7 +10,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=20261025_craft">
+  <!-- PWA & Mobile App Meta Tags -->
+  <meta name="theme-color" content="#FDE047" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Laptop Vương Gia" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+  <link rel="apple-touch-icon" href="/icons/icon.svg" />
+
+  <link rel="stylesheet" href="/css/style.css?v=20261026_pwa">
 </head>
 <body class="bg-[#FDFBF7] text-[#18181B] min-h-screen">
 
@@ -110,9 +119,13 @@
             <span>Fanpage: <strong>Laptop Vương Gia</strong> (<span class="font-mono text-[11px]">1154184381110692</span>)</span>
           </div>
 
-          <div id="topSchedulerBadge" class="neo-sticker sticker-lavender tilt-right cursor-default">
+          <div id="topSchedulerBadge" class="neo-sticker sticker-lavender tilt-right cursor-default hidden sm:inline-flex">
             <span>⏰ Khung giờ: <strong>08:30, 11:45, 15:30, 20:00</strong></span>
           </div>
+
+          <button onclick="showPwaInstallModal()" id="pwaInstallHeaderBtn" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-black shadow-[2.5px_2.5px_0px_#18181B]" title="Cài đặt ứng dụng về màn hình điện thoại">
+            <span>📲 Cài App</span>
+          </button>
 
           <button onclick="returnToPage0()" class="neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold" title="Xem lại slide bản quyền">
             <span>🛡️ Bản quyền [P0]</span>
@@ -696,9 +709,34 @@
       <div class="text-[11px] text-neutral-500 font-medium mt-1">Hệ thống hỗ trợ bán lẻ Laptop xách tay Nhật Bản bản quyền 2026 · Phong cách Warm Neo-Brutalist / Student Craft</div>
     </footer>
 
+    <!-- Mobile Bottom App Dock (Sticky on mobile screens < 1024px) -->
+    <nav class="mobile-app-dock" id="mobileAppDock" aria-label="Mobile Navigation">
+      <button onclick="switchTab('studio')" id="mobileDockBtn-studio" class="mobile-dock-btn active">
+        <span class="text-base">✍️</span>
+        <span>Studio</span>
+      </button>
+      <button onclick="switchTab('table')" id="mobileDockBtn-table" class="mobile-dock-btn">
+        <span class="text-base">📊</span>
+        <span>Bảng kho</span>
+      </button>
+      <button onclick="switchTab('queue')" id="mobileDockBtn-queue" class="mobile-dock-btn">
+        <span class="text-base">⏰</span>
+        <span>Hàng đợi</span>
+        <span id="mobileQueueBadge" class="mobile-dock-badge hidden">0</span>
+      </button>
+      <button onclick="switchTab('history')" id="mobileDockBtn-history" class="mobile-dock-btn">
+        <span class="text-base">📜</span>
+        <span>Đã đăng</span>
+      </button>
+      <button onclick="switchTab('settings')" id="mobileDockBtn-settings" class="mobile-dock-btn">
+        <span class="text-base">⚙️</span>
+        <span>Cài đặt</span>
+      </button>
+    </nav>
+
   </div>
 
-  <script src="/js/app.js?v=20261025_craft"></script>
+  <script src="/js/app.js?v=20261026_pwa"></script>
   <!-- Modal: Post Preview -->
   <div id="postPreviewModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
     <div class="neo-card bg-white max-w-2xl w-full p-6 space-y-4 max-h-[90vh] flex flex-col shadow-[6px_6px_0px_#18181B]">
@@ -720,6 +758,69 @@
         </button>
         <button onclick="closePostPreviewModal()" class="neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold">
           <span>Đóng lại</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: PWA Install App Guide -->
+  <div id="pwaInstallModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="neo-card bg-white max-w-md w-full p-6 space-y-4 shadow-[6px_6px_0px_#18181B] relative">
+      <div class="flex justify-between items-center pb-3 border-b-2 border-[#18181B]">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">📱</span>
+          <h3 class="text-sm font-black text-[#18181B] uppercase">Cài Đặt App Về Màn Hình Chính</h3>
+        </div>
+        <button onclick="closePwaInstallModal()" class="neo-btn neo-btn-white px-2 py-1 text-xs font-bold">✕ Đóng</button>
+      </div>
+
+      <!-- App Icon & Description -->
+      <div class="flex items-center gap-3.5 p-3 bg-[#FAF5EE] border-2 border-[#18181B] rounded-lg">
+        <img src="/icons/icon.svg" class="w-14 h-14 rounded-xl border border-[#18181B] shadow-[2px_2px_0px_#18181B]" alt="VG App Icon" />
+        <div>
+          <div class="text-sm font-black text-[#18181B]">Laptop Vương Gia</div>
+          <p class="text-xs text-neutral-600 mt-0.5 font-medium">Chạy độc lập toàn màn hình, mượt mà như app tải từ App Store / Google Play!</p>
+        </div>
+      </div>
+
+      <!-- Direct Android/Chrome 1-Click Install Button (Shown if supported) -->
+      <div id="androidNativeInstallBox" class="hidden">
+        <button onclick="triggerPwaPrompt()" class="neo-btn bg-[#FDE047] hover:bg-yellow-300 w-full py-3 text-xs font-black uppercase shadow-[3px_3px_0px_#18181B]">
+          <span>⚡ BẤM ĐỂ CÀI ĐẶT NGAY TRONG 1 CHẠM ➔</span>
+        </button>
+      </div>
+
+      <!-- Tab Buttons for iOS & Android guides -->
+      <div class="space-y-3 text-xs">
+        <!-- iOS Guide -->
+        <div class="p-3.5 border-2 border-[#18181B] rounded-lg bg-[#F8FAFC] space-y-2">
+          <div class="font-black text-indigo-700 flex items-center gap-1.5 uppercase">
+            <span>🍏 Dành cho iPhone / iPad (Safari):</span>
+          </div>
+          <ol class="list-decimal list-inside space-y-1.5 text-neutral-700 font-medium">
+            <li>Mở trang web bằng trình duyệt <strong>Safari</strong>.</li>
+            <li>Bấm nút <strong>Chia sẻ</strong> (biểu tượng hình vuông có mũi tên chỉ lên <span class="border border-[#18181B] px-1 py-0.5 rounded font-mono text-[11px] bg-white">⎋ / ↑</span> ở thanh dưới Safari).</li>
+            <li>Cuộn xuống và chọn <strong>"Thêm vào MH chính" (Add to Home Screen)</strong>.</li>
+            <li>Bấm <strong>Thêm (Add)</strong> ở góc trên bên phải.</li>
+          </ol>
+        </div>
+
+        <!-- Android Guide -->
+        <div class="p-3.5 border-2 border-[#18181B] rounded-lg bg-[#F0FDF4] space-y-2">
+          <div class="font-black text-emerald-800 flex items-center gap-1.5 uppercase">
+            <span>🤖 Dành cho Android (Chrome / Cốc Cốc):</span>
+          </div>
+          <ol class="list-decimal list-inside space-y-1.5 text-neutral-700 font-medium">
+            <li>Bấm vào biểu tượng <strong>Menu 3 chấm (⋮)</strong> ở góc trên bên phải trình duyệt.</li>
+            <li>Chọn <strong>"Cài đặt ứng dụng"</strong> hoặc <strong>"Thêm vào Màn hình chính"</strong>.</li>
+            <li>Xác nhận để biểu tượng app xuất hiện trên màn hình điện thoại!</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="pt-2 border-t-2 border-[#18181B] flex justify-end">
+        <button onclick="closePwaInstallModal()" class="neo-btn neo-btn-white px-4 py-2 text-xs font-bold">
+          <span>Đã hiểu, đóng lại</span>
         </button>
       </div>
     </div>

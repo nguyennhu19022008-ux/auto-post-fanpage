@@ -488,3 +488,70 @@ body {
   background: #a1a1aa;
   border-radius: 3px;
 }
+
+/* ==================== MOBILE PWA APP DOCK & STYLING ==================== */
+.mobile-app-dock {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  border-top: 2px solid #18181B;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0.4rem 0.5rem calc(0.4rem + env(safe-area-inset-bottom, 0px));
+  z-index: 50;
+  box-shadow: 0 -2px 0px #18181B;
+}
+
+@media (min-width: 1024px) {
+  .mobile-app-dock {
+    display: none !important;
+  }
+}
+
+.mobile-dock-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem 0.4rem;
+  border-radius: 8px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #52525B;
+  transition: all 0.15s ease;
+  position: relative;
+  min-width: 60px;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  user-select: none;
+}
+
+.mobile-dock-btn.active {
+  background: var(--accent-yellow);
+  color: #18181B;
+  border: 1.5px solid #18181B;
+  box-shadow: 2px 2px 0px #18181B;
+  transform: translateY(-2px);
+}
+
+.mobile-dock-badge {
+  position: absolute;
+  top: 1px;
+  right: 10px;
+  background: #EF4444;
+  color: #FFFFFF;
+  font-size: 9px;
+  font-weight: 900;
+  border-radius: 9999px;
+  padding: 0 4px;
+  border: 1px solid #18181B;
+}
+
+@media (max-width: 1023px) {
+  main {
+    padding-bottom: 6rem !important;
+  }
+}
