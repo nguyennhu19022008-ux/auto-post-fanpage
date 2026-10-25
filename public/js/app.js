@@ -471,10 +471,10 @@ function renderQueueList(posts) {
   const container = document.getElementById('queueListContainer');
   if (posts.length === 0) {
     container.innerHTML = `
-      <div class="glass-panel p-8 text-center text-slate-400 space-y-2">
-        <div class="text-3xl">📭</div>
-        <div class="text-sm font-semibold">Chưa có bài viết nào trong hàng đợi</div>
-        <p class="text-xs">Hãy qua mục <strong>AI Studio</strong> để dán tin nhắn Zalo và lên lịch đăng bài.</p>
+      <div class="neo-card p-8 text-center text-neutral-600 space-y-2 bg-white">
+        <div class="text-4xl">📭</div>
+        <div class="text-sm font-black text-[#18181B] uppercase">Chưa có bài viết nào trong hàng đợi</div>
+        <p class="text-xs text-neutral-500 font-medium">Hãy qua mục <strong>1. AI Studio & Soạn bài</strong> để dán bài Zalo và lên lịch đăng bài.</p>
       </div>
     `;
     return;
@@ -487,17 +487,18 @@ function renderQueueList(posts) {
     const firstImg = post.mediaFiles?.[0]?.url;
 
     return `
-      <div class="glass-panel p-4 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+      <div class="neo-card p-4 sm:p-5 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-white shadow-[3px_3px_0px_#18181B]">
         <div class="flex gap-4 items-center">
-          ${firstImg ? `<img src="${firstImg}" class="w-16 h-16 rounded-lg object-cover border border-white/10">` : `<div class="w-16 h-16 rounded-lg bg-neutral-800 flex items-center justify-center text-xs text-neutral-500 font-mono">No Media</div>`}
+          ${firstImg ? `<img src="${firstImg}" class="w-16 h-16 rounded-lg object-cover border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B]">` : `<div class="w-16 h-16 rounded-lg bg-[#FAF5EE] border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] flex items-center justify-center text-xs text-neutral-500 font-bold font-mono">No Media</div>`}
           <div>
-            <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 rounded text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">Mã: #${post.machineCode}</span>
-              <span class="text-xs text-amber-300 font-semibold">${post.price ? post.price : ''}</span>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="neo-sticker sticker-lavender font-mono">#${post.machineCode}</span>
+              ${post.price ? `<span class="neo-sticker sticker-yellow font-bold">${post.price}</span>` : ''}
+              <span class="neo-sticker sticker-peach text-[11px]">⏳ Chờ đăng</span>
             </div>
-            <div class="text-xs text-slate-300 mt-1 line-clamp-1 max-w-lg font-medium">${post.content.split('\n')[0]}</div>
-            <div class="text-xs text-slate-400 mt-1 flex items-center gap-2">
-              <span>⏰ Giờ đăng: <strong class="text-emerald-400 font-mono">${scheduledDate}</strong></span>
+            <div class="text-xs text-[#18181B] font-bold mt-1.5 line-clamp-1 max-w-lg">${post.content.split('\n')[0]}</div>
+            <div class="text-xs text-neutral-500 font-medium mt-1 flex items-center gap-2">
+              <span>⏰ Giờ hẹn: <strong class="text-emerald-700 font-mono">${scheduledDate}</strong></span>
               <span>·</span>
               <span>📁 ${post.mediaFiles?.length || 0} media</span>
             </div>
@@ -505,10 +506,10 @@ function renderQueueList(posts) {
         </div>
 
         <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-          <button onclick="publishPostNow('${post.id}')" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs flex items-center gap-1 transition">
+          <button onclick="publishPostNow('${post.id}')" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-black">
             <span>⚡ Đăng ngay</span>
           </button>
-          <button onclick="deletePost('${post.id}')" class="px-2.5 py-1.5 rounded-lg bg-red-950/60 hover:bg-red-900 text-red-300 text-xs border border-red-500/30 transition">
+          <button onclick="deletePost('${post.id}')" class="neo-btn neo-btn-white px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50">
             <span>Xóa</span>
           </button>
         </div>
@@ -521,9 +522,9 @@ function renderHistoryList(posts) {
   const container = document.getElementById('historyListContainer');
   if (posts.length === 0) {
     container.innerHTML = `
-      <div class="glass-panel p-8 text-center text-slate-400 space-y-2">
-        <div class="text-3xl">📝</div>
-        <div class="text-sm font-semibold">Chưa có bài viết nào được đăng</div>
+      <div class="neo-card p-8 text-center text-neutral-600 space-y-2 bg-white">
+        <div class="text-4xl">📝</div>
+        <div class="text-sm font-black text-[#18181B] uppercase">Chưa có bài viết nào được đăng</div>
       </div>
     `;
     return;
@@ -535,32 +536,32 @@ function renderHistoryList(posts) {
     const firstImg = post.mediaFiles?.[0]?.url;
 
     return `
-      <div class="glass-panel p-4 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+      <div class="neo-card p-4 sm:p-5 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-white shadow-[3px_3px_0px_#18181B]">
         <div class="flex gap-4 items-center">
-          ${firstImg ? `<img src="${firstImg}" class="w-16 h-16 rounded-lg object-cover border border-white/10">` : `<div class="w-16 h-16 rounded-lg bg-neutral-800 flex items-center justify-center text-xs text-neutral-500 font-mono">No Media</div>`}
+          ${firstImg ? `<img src="${firstImg}" class="w-16 h-16 rounded-lg object-cover border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B]">` : `<div class="w-16 h-16 rounded-lg bg-[#FAF5EE] border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] flex items-center justify-center text-xs text-neutral-500 font-bold font-mono">No Media</div>`}
           <div>
-            <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 rounded text-xs font-bold ${isSuccess ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="neo-sticker ${isSuccess ? 'sticker-green' : 'sticker-coral'}">
                 ${isSuccess ? '✅ Đã đăng thành công' : '❌ Thất bại'}
               </span>
-              <span class="text-xs font-mono text-slate-300">#${post.machineCode}</span>
-              ${post.isSimulation ? `<span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20">Mô phỏng (Test)</span>` : ''}
+              <span class="neo-sticker sticker-lavender font-mono">#${post.machineCode}</span>
+              ${post.isSimulation ? `<span class="neo-sticker sticker-yellow text-[10px]">Mô phỏng (Test)</span>` : ''}
             </div>
-            <div class="text-xs text-slate-300 mt-1 line-clamp-1 max-w-lg">${post.content.split('\n')[0]}</div>
-            <div class="text-xs text-slate-400 mt-1">
-              <span>Đăng lúc: ${postDate}</span>
-              ${post.errorMessage ? `<span class="text-red-400 ml-2">(${post.errorMessage})</span>` : ''}
+            <div class="text-xs text-[#18181B] font-bold mt-1.5 line-clamp-1 max-w-lg">${post.content.split('\n')[0]}</div>
+            <div class="text-xs text-neutral-500 font-medium mt-1">
+              <span>Đăng lúc: <strong>${postDate}</strong></span>
+              ${post.errorMessage ? `<span class="text-red-600 ml-2">(${post.errorMessage})</span>` : ''}
             </div>
           </div>
         </div>
 
         <div class="flex items-center gap-2 w-full md:w-auto justify-end">
           ${post.fbPostUrl ? `
-            <a href="${post.fbPostUrl}" target="_blank" class="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-blue-400 font-semibold text-xs flex items-center gap-1 border border-neutral-700 transition">
+            <a href="${post.fbPostUrl}" target="_blank" class="neo-btn neo-btn-lavender px-3 py-1.5 text-xs font-black">
               <span>Xem trên FB ↗</span>
             </a>
           ` : ''}
-          <button onclick="deletePost('${post.id}')" class="px-2.5 py-1.5 rounded-lg bg-neutral-800 hover:bg-red-950 text-slate-400 hover:text-red-300 text-xs transition">
+          <button onclick="deletePost('${post.id}')" class="neo-btn neo-btn-white px-2.5 py-1.5 text-xs font-bold text-neutral-500 hover:text-red-600">
             <span>Xóa</span>
           </button>
         </div>

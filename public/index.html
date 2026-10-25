@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hệ Thống Tự Động Đăng Bài Laptop Lên Fanpage - DESIGN BY VUONGGIA</title>
+  <title>Laptop Vương Gia - Hệ Thống Đăng Bài Fanpage Neo-Brutalist</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts -->
+  <!-- Google Fonts: Plus Jakarta Sans, Caveat, Space Mono, Anton -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=20261025">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=20261025_craft">
 </head>
-<body class="bg-[#0a0c10] text-slate-100 min-h-screen">
+<body class="bg-[#FDFBF7] text-[#18181B] min-h-screen">
 
-  <!-- ======================== PAGE 0 / COPYRIGHT SLIDE (MANDATORY) ======================== -->
+  <!-- ======================== PAGE 0 / COPYRIGHT SLIDE (PURE MONOCHROME) ======================== -->
   <section id="page0">
     <div class="bg-wall">
       <div class="row-marquee"><span>DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp;</span></div>
@@ -82,140 +82,155 @@
     </div>
   </section>
 
-  <!-- ======================== PAGE 1 / MAIN APPLICATION DASHBOARD ======================== -->
+  <!-- ======================== PAGE 1 / MAIN DASHBOARD (WARM NEO-BRUTALIST) ======================== -->
   <div id="mainApp" class="hidden min-h-screen flex flex-col">
     
-    <!-- Top Navigation Bar -->
-    <header class="border-b border-white/10 bg-[#0d1117]/80 backdrop-blur-md sticky top-0 z-40 px-4 lg:px-8 py-3">
-      <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center font-black text-white shadow-lg shadow-blue-500/20">
+    <!-- Top Sticky Header -->
+    <header class="border-b-2 border-[#18181B] bg-[#FFFFFF] sticky top-0 z-40 px-4 lg:px-8 py-3.5 shadow-[0_2px_0px_#18181B]">
+      <div class="w-full max-w-[1720px] mx-auto flex flex-wrap items-center justify-between gap-4">
+        
+        <!-- Left: Logo & Brand -->
+        <div class="flex items-center gap-3.5">
+          <div class="w-11 h-11 rounded-lg bg-[#FDE047] border-2 border-[#18181B] shadow-[2.5px_2.5px_0px_#18181B] flex items-center justify-center font-black text-xl text-[#18181B] transform -rotate-1">
             VG
           </div>
           <div>
             <div class="flex items-center gap-2">
-              <h1 class="text-base font-bold tracking-tight text-white">AUTOLAPTOP // META PUBLISHER</h1>
-              <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">v1.0 Pro</span>
+              <h1 class="text-lg font-black tracking-tight text-[#18181B]">LAPTOP VƯƠNG GIA // AUTOPOST</h1>
+              <span class="neo-sticker sticker-yellow tilt-right">PRO CRAFT</span>
             </div>
-            <p class="text-xs text-slate-400">Tự động biên tập từ Zalo & Đăng bài lên Facebook Fanpage</p>
+            <p class="text-xs text-neutral-600 font-medium">Bảng tin tự động · Biên tập từ Zalo & Đăng bài lên Facebook Fanpage</p>
           </div>
         </div>
 
-        <!-- Connection Badges & Shortcuts -->
-        <div class="flex items-center gap-3 flex-wrap text-xs">
-          <div id="topFanpageBadge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>Fanpage ID: <strong class="font-mono">61590327190720</strong></span>
+        <!-- Right: Status Stickers & Shortcuts -->
+        <div class="flex items-center gap-2.5 flex-wrap text-xs">
+          <div id="topFanpageBadge" class="neo-sticker sticker-green tilt-left cursor-default">
+            <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+            <span>Fanpage: <strong>Laptop Vương Gia</strong> (<span class="font-mono text-[11px]">1154184381110692</span>)</span>
           </div>
 
-          <div id="topSchedulerBadge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400">
-            <span>⏰ Lập lịch: <strong>08:30, 11:45, 15:30, 20:00</strong></span>
+          <div id="topSchedulerBadge" class="neo-sticker sticker-lavender tilt-right cursor-default">
+            <span>⏰ Khung giờ: <strong>08:30, 11:45, 15:30, 20:00</strong></span>
           </div>
 
-          <button onclick="returnToPage0()" class="px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-600 transition text-[11px] flex items-center gap-1">
+          <button onclick="returnToPage0()" class="neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold" title="Xem lại slide bản quyền">
             <span>🛡️ Bản quyền [P0]</span>
           </button>
         </div>
       </div>
     </header>
 
-    <!-- Navigation Tabs -->
-    <div class="border-b border-white/5 bg-[#111622]">
-      <div class="max-w-7xl mx-auto px-4 lg:px-8 flex space-x-1 sm:space-x-4 overflow-x-auto">
-        <button onclick="switchTab('studio')" id="tabBtn-studio" class="nav-tab-active px-4 py-3 text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+    <!-- Navigation Tabs (Folder Style) -->
+    <div class="border-b-2 border-[#18181B] bg-[#F4EFEA] pt-3 px-4 lg:px-8">
+      <div class="w-full max-w-[1720px] mx-auto flex space-x-2 sm:space-x-3 overflow-x-auto">
+        <button onclick="switchTab('studio')" id="tabBtn-studio" class="neo-nav-tab nav-tab-active whitespace-nowrap">
+          <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
           1. AI Studio & Soạn bài
         </button>
-        <button onclick="switchTab('queue')" id="tabBtn-queue" class="text-slate-400 hover:text-white px-4 py-3 text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          2. Hàng đợi lên lịch (<span id="queueCount">0</span>)
+        <button onclick="switchTab('queue')" id="tabBtn-queue" class="neo-nav-tab whitespace-nowrap">
+          <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          2. Hàng đợi lên lịch (<span id="queueCount" class="font-mono">0</span>)
         </button>
-        <button onclick="switchTab('history')" id="tabBtn-history" class="text-slate-400 hover:text-white px-4 py-3 text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          3. Lịch sử bài đã đăng (<span id="historyCount">0</span>)
+        <button onclick="switchTab('history')" id="tabBtn-history" class="neo-nav-tab whitespace-nowrap">
+          <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          3. Bài đã đăng (<span id="historyCount" class="font-mono">1</span>)
         </button>
-        <button onclick="switchTab('settings')" id="tabBtn-settings" class="text-slate-400 hover:text-white px-4 py-3 text-sm font-semibold flex items-center gap-2 whitespace-nowrap transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+        <button onclick="switchTab('settings')" id="tabBtn-settings" class="neo-nav-tab whitespace-nowrap">
+          <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
           4. Cài đặt Fanpage & AI
         </button>
       </div>
     </div>
 
-    <!-- Main Content Area -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-8">
+    <!-- Main Content Area (Fluid Edge-to-Edge) -->
+    <main class="flex-1 w-full max-w-[1720px] mx-auto p-4 lg:p-7">
 
       <!-- ==================== TAB 1: AI STUDIO ==================== -->
       <section id="section-studio" class="space-y-6">
         
-        <!-- Quick Action Bar -->
-        <div class="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl bg-blue-950/20 border border-blue-500/20">
+        <!-- Student Craft Notice Banner -->
+        <div class="neo-card p-4 bg-[#FFFBEB] flex flex-wrap items-center justify-between gap-3 washi-top">
           <div class="flex items-center gap-3">
-            <span class="text-2xl">✨</span>
+            <span class="text-3xl">📌</span>
             <div>
-              <h2 class="text-sm font-bold text-blue-200">AI Bóc Tách & Lọc Bỏ Thông Tin Nhạy Cảm</h2>
-              <p class="text-xs text-blue-300/80">Tự động xóa "lương 500k", "giá sỉ CTV", bóc tách CPU/RAM/SSD và tạo bài viết bán lẻ chuẩn Facebook</p>
+              <div class="flex items-center gap-2">
+                <h2 class="text-sm font-black text-[#18181B] uppercase tracking-wide">Bộ Lọc Học Đường · Tự Động Xóa Lương Kho & Tạo Bài Bán Lẻ</h2>
+                <span class="neo-sticker sticker-coral tilt-left text-[11px]">BẢO MẬT GIÁ VỐN</span>
+              </div>
+              <p class="text-xs text-neutral-700 mt-0.5">Xóa 100% "lương 500k", bóc tách vi xử lý/RAM/SSD và áp dụng mẫu bài bảo hành 3 tháng (1 tháng cảm ứng), cọc 300k check legit.</p>
             </div>
           </div>
-          <button onclick="loadSampleDell3410()" class="px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md flex items-center gap-1.5 transition">
-            <span>📋 Nạp dữ liệu mẫu Dell 3410 từ ảnh Zalo</span>
-          </button>
+          <div class="flex items-center gap-2">
+            <span class="handwritten text-indigo-700 hidden sm:inline-block">✎ Bấm nạp bài mẫu để thử ngay ➔</span>
+            <button onclick="loadSampleDell3410()" class="neo-btn neo-btn-yellow px-4 py-2 text-xs font-black shadow-[3px_3px_0px_#18181B]">
+              <span>📋 Nạp dữ liệu mẫu Dell 3410</span>
+            </button>
+          </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- 2-Column Responsive Edge-to-Edge Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
           <!-- Left Column: Input Form (7 cols) -->
-          <div class="lg:col-span-7 space-y-5">
+          <div class="lg:col-span-7 space-y-6">
             
-            <!-- Raw Text Input from Zalo -->
-            <div class="glass-panel p-5 space-y-3">
-              <div class="flex justify-between items-center">
-                <label class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-                  <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                  1. Dán nội dung thô từ nhóm Zalo
-                </label>
-                <button onclick="clearRawInput()" class="text-xs text-slate-400 hover:text-red-400 transition">Xóa trắng</button>
+            <!-- 1. Raw Input Card -->
+            <div class="neo-card p-5 sm:p-6 space-y-4">
+              <div class="flex justify-between items-center border-b-2 border-[#18181B] pb-2.5">
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-[#FDE047] border border-[#18181B]"></span>
+                  <label class="text-xs font-black uppercase tracking-wider text-[#18181B]">
+                    1. Dán nội dung thô từ nhóm Zalo
+                  </label>
+                </div>
+                <button onclick="clearRawInput()" class="neo-btn neo-btn-white px-2.5 py-1 text-[11px] font-bold text-red-600 hover:bg-red-50">
+                  Xóa trắng
+                </button>
               </div>
 
-              <textarea id="rawTextInput" rows="6" placeholder="Dán bài viết từ nhóm Zalo vào đây... (Ví dụ: Mã 046: DELL LATITUDE 3410... Giá 5.5 tr, lương 500k...)" class="w-full bg-[#0a0d14] border border-white/10 rounded-lg p-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition"></textarea>
+              <textarea id="rawTextInput" rows="6" placeholder="Dán bài viết từ nhóm Zalo vào đây... (Ví dụ: Mã 046: DELL LATITUDE 3410... Giá 5.5 tr, lương 500k...)" class="neo-input w-full p-3.5 text-sm placeholder-neutral-400 font-mono leading-relaxed"></textarea>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label class="text-xs text-slate-400 block mb-1">Mã máy nhận diện:</label>
-                  <input type="text" id="machineCodeInput" placeholder="Ví dụ: 046 hoặc HP-712" class="w-full bg-[#0a0d14] border border-white/10 rounded-lg px-3 py-2 text-sm font-mono text-emerald-400 focus:outline-none focus:border-blue-500">
+                  <label class="text-xs font-bold text-[#18181B] block mb-1">Mã máy nhận diện:</label>
+                  <input type="text" id="machineCodeInput" placeholder="Ví dụ: 046 hoặc HP-712" class="neo-input w-full px-3 py-2.5 text-sm font-mono font-bold text-blue-700">
                 </div>
                 <div>
-                  <label class="text-xs text-slate-400 block mb-1">Giá bán lẻ công khai trên Facebook:</label>
-                  <input type="text" id="customPriceInput" placeholder="Ví dụ: 5.5 triệu hoặc 5.900.000đ" class="w-full bg-[#0a0d14] border border-white/10 rounded-lg px-3 py-2 text-sm font-semibold text-amber-300 focus:outline-none focus:border-blue-500">
+                  <label class="text-xs font-bold text-[#18181B] block mb-1">Giá bán lẻ niêm yết:</label>
+                  <input type="text" id="customPriceInput" placeholder="Ví dụ: 5.5 triệu hoặc 5.900.000đ" class="neo-input w-full px-3 py-2.5 text-sm font-bold text-emerald-700">
                 </div>
               </div>
 
-              <div class="pt-2 flex justify-end">
-                <button id="generateBtn" onclick="generateAiContent()" class="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 transition">
+              <div class="pt-2">
+                <button id="generateBtn" onclick="generateAiContent()" class="neo-btn neo-btn-yellow w-full py-3 text-sm font-black uppercase tracking-wide shadow-[4px_4px_0px_#18181B] flex items-center justify-center gap-2">
                   <span id="generateSpinner" class="hidden animate-spin">🌀</span>
-                  <span>🚀 AI TẠO BÀI VIẾT BÁN LẺ</span>
+                  <span>🚀 AI TẠO BÀI VIẾT BÁN LẺ (CHUẨN MẪU CỦA BẠN)</span>
                 </button>
               </div>
             </div>
 
-            <!-- Media Upload (Photos & Video) -->
-            <div class="glass-panel p-5 space-y-4">
-              <div class="flex justify-between items-center">
-                <label class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                  2. Tải Album ảnh & Video máy thực tế
-                </label>
-                <span class="text-xs text-slate-400" id="mediaCountText">0 tệp đã chọn</span>
+            <!-- 2. Media Upload Card -->
+            <div class="neo-card p-5 sm:p-6 space-y-4">
+              <div class="flex justify-between items-center border-b-2 border-[#18181B] pb-2.5">
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-emerald-400 border border-[#18181B]"></span>
+                  <label class="text-xs font-black uppercase tracking-wider text-[#18181B]">
+                    2. Tải Album ảnh & Video máy thực tế
+                  </label>
+                </div>
+                <span class="neo-sticker sticker-lavender text-xs font-mono" id="mediaCountText">0 tệp đã chọn</span>
               </div>
 
-              <!-- Drag and drop zone -->
-              <div id="dropZone" onclick="document.getElementById('fileInput').click()" class="border-2 border-dashed border-white/20 hover:border-blue-400 rounded-xl p-6 text-center cursor-pointer transition bg-[#0d121c]/50">
+              <!-- Dotted craft dropzone -->
+              <div id="dropZone" onclick="document.getElementById('fileInput').click()" class="border-2 border-dashed border-[#18181B] hover:bg-[#FEF08A]/30 rounded-xl p-6 text-center cursor-pointer transition bg-[#FAF5EE]">
                 <input type="file" id="fileInput" multiple accept="image/*,video/*" class="hidden" onchange="handleFileSelect(event)">
                 <div class="flex flex-col items-center justify-center space-y-2">
-                  <div class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                  <div class="w-12 h-12 rounded-lg bg-[#FDE047] border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] flex items-center justify-center text-xl">
+                    📁
                   </div>
-                  <div class="text-sm font-semibold text-slate-200">Kéo thả ảnh hoặc video vào đây, hoặc <span class="text-blue-400 underline">bấm để chọn</span></div>
-                  <div class="text-xs text-slate-400">Hỗ trợ: JPG, PNG, WEBP, MP4, MOV (Tối đa 15 tệp/bài)</div>
+                  <div class="text-sm font-bold text-[#18181B]">Kéo thả ảnh hoặc video vào đây, hoặc <span class="text-blue-600 underline">bấm để chọn</span></div>
+                  <div class="text-xs text-neutral-500 font-medium">Hỗ trợ: JPG, PNG, WEBP, MP4, MOV (Tối đa 15 tệp/bài)</div>
                 </div>
               </div>
 
@@ -223,84 +238,93 @@
               <div id="mediaPreviews" class="grid grid-cols-3 sm:grid-cols-4 gap-3 max-h-48 overflow-y-auto custom-scrollbar"></div>
             </div>
 
-            <!-- Post Content Editor (Generated by AI) -->
-            <div class="glass-panel p-5 space-y-3">
-              <div class="flex justify-between items-center">
-                <label class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-                  <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
-                  3. Nội dung bài viết sẵn sàng đăng (Có thể chỉnh sửa thêm)
-                </label>
-                <span id="contentLengthBadge" class="text-xs text-slate-400">0 ký tự</span>
+            <!-- 3. Final Content Editor Card -->
+            <div class="neo-card p-5 sm:p-6 space-y-3">
+              <div class="flex justify-between items-center border-b-2 border-[#18181B] pb-2.5">
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-indigo-400 border border-[#18181B]"></span>
+                  <label class="text-xs font-black uppercase tracking-wider text-[#18181B]">
+                    3. Nội dung bài viết sẵn sàng đăng (Chỉnh sửa tùy ý)
+                  </label>
+                </div>
+                <span id="contentLengthBadge" class="neo-sticker sticker-peach text-xs font-mono">0 ký tự</span>
               </div>
-              <textarea id="finalContentInput" rows="12" class="w-full bg-[#0a0d14] border border-white/10 rounded-lg p-3.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition leading-relaxed" oninput="updateFacebookPreview()"></textarea>
+              <textarea id="finalContentInput" rows="13" class="neo-input w-full p-3.5 text-sm font-sans leading-relaxed text-[#18181B] placeholder-neutral-400" oninput="updateFacebookPreview()"></textarea>
             </div>
 
           </div>
 
-          <!-- Right Column: Live Facebook Fanpage Preview & Action (5 cols) -->
-          <div class="lg:col-span-5 space-y-5">
+          <!-- Right Column: Action Bar & Live Facebook Preview (5 cols) -->
+          <div class="lg:col-span-5 space-y-6">
             
-            <div class="sticky top-20 space-y-4">
+            <div class="sticky top-20 space-y-5">
               
-              <!-- Action Control Box -->
-              <div class="glass-panel p-5 space-y-4 border-l-4 border-l-blue-500 shadow-xl">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Lên lịch & Xuất bản bài viết</h3>
+              <!-- Quick Action & Scheduler Box -->
+              <div class="neo-card p-5 bg-[#FFF9E6] border-2 border-[#18181B] shadow-[4px_4px_0px_#18181B] space-y-4">
+                <div class="flex items-center justify-between border-b-2 border-[#18181B] pb-2.5">
+                  <h3 class="text-xs font-black uppercase tracking-wider text-[#18181B] flex items-center gap-1.5">
+                    <span>⚡</span> Xuất bản bài viết lên Fanpage
+                  </h3>
+                  <span class="neo-sticker sticker-green text-[10px]">SẴN SÀNG</span>
+                </div>
                 
-                <div class="bg-black/40 rounded-lg p-3 text-xs space-y-1.5">
-                  <div class="text-slate-400">Khung giờ đề xuất tiếp theo:</div>
-                  <div class="text-sm font-bold text-emerald-400 font-mono" id="suggestedSlotText">Đang tính toán...</div>
+                <div class="neo-card-sm p-3 bg-white space-y-1">
+                  <div class="text-[11px] font-bold text-neutral-500 uppercase">Khung giờ đề xuất tiếp theo:</div>
+                  <div class="text-base font-black text-emerald-700 font-mono" id="suggestedSlotText">Đang tính toán...</div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2">
-                  <button onclick="schedulePost(false)" class="px-4 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wide transition shadow-lg shadow-emerald-600/20 flex flex-col items-center justify-center gap-1">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  <button onclick="schedulePost(false)" class="neo-btn neo-btn-green py-3 px-3 text-xs font-black uppercase tracking-wide flex flex-col items-center justify-center gap-0.5">
                     <span>📅 ĐƯA VÀO HÀNG ĐỢI</span>
-                    <span class="text-[10px] font-normal opacity-80">(Đăng tự động đúng giờ)</span>
+                    <span class="text-[10px] font-normal opacity-90">(Đăng tự động đúng giờ)</span>
                   </button>
-                  <button onclick="schedulePost(true)" class="px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wide transition shadow-lg shadow-blue-600/20 flex flex-col items-center justify-center gap-1">
+                  <button onclick="schedulePost(true)" class="neo-btn neo-btn-yellow py-3 px-3 text-xs font-black uppercase tracking-wide flex flex-col items-center justify-center gap-0.5">
                     <span>⚡ ĐĂNG NGAY LẬP TỨC</span>
-                    <span class="text-[10px] font-normal opacity-80">(Bắn API ngay bây giờ)</span>
+                    <span class="text-[10px] font-normal opacity-90">(Bắn API ngay bây giờ)</span>
                   </button>
                 </div>
               </div>
 
-              <!-- Facebook Live Feed Simulation -->
+              <!-- Live Facebook Feed Simulation -->
               <div>
                 <div class="flex justify-between items-center mb-2 px-1">
-                  <span class="text-xs font-semibold text-slate-400">Xem trước giao diện trên Facebook:</span>
-                  <span class="text-[10px] px-2 py-0.5 rounded bg-neutral-800 text-neutral-300">Feed Preview</span>
+                  <span class="text-xs font-bold text-[#18181B] uppercase tracking-wider flex items-center gap-1">
+                    <span>📱</span> Xem trước giao diện Facebook:
+                  </span>
+                  <span class="neo-sticker sticker-lavender text-[10px]">Mobile / Feed Preview</span>
                 </div>
 
-                <div class="fb-post-preview border border-neutral-700">
+                <div class="fb-post-preview">
                   <div class="fb-post-header">
                     <div class="fb-avatar">VG</div>
                     <div>
-                      <div class="text-[14px] font-bold text-white flex items-center gap-1">
-                        <span id="previewPageName">Laptop Nhật Bãi Giá Rẻ - Gia Vương</span>
-                        <svg class="w-3.5 h-3.5 text-blue-500 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                      <div class="text-[14px] font-bold text-[#18181B] flex items-center gap-1">
+                        <span id="previewPageName">Laptop Vương Gia</span>
+                        <svg class="w-4 h-4 text-blue-600 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
                       </div>
-                      <div class="text-[12px] text-neutral-400 flex items-center gap-1">
+                      <div class="text-[12px] text-neutral-500 flex items-center gap-1">
                         <span>Vừa xong</span>
                         <span>·</span>
-                        <span>🌐</span>
+                        <span>🌐 Công khai</span>
                       </div>
                     </div>
                   </div>
 
                   <div class="fb-content" id="previewPostContent">
-                    Nội dung bài viết sẽ hiển thị tại đây sau khi AI xử lý hoặc bạn chỉnh sửa...
+                    Nội dung bài viết sẽ hiển thị tại đây sau khi bạn nạp mẫu hoặc AI tạo bài...
                   </div>
 
                   <!-- Media grid preview -->
                   <div id="previewMediaContainer" class="fb-media-grid grid-1 hidden"></div>
 
                   <!-- Post action footer -->
-                  <div class="p-3 border-t border-neutral-800 flex justify-between items-center text-xs text-neutral-400">
+                  <div class="p-3 border-t-2 border-[#18181B] bg-[#FAFAFA] flex justify-between items-center text-xs text-neutral-600 font-bold">
                     <div class="flex gap-4">
                       <span>👍 Thích</span>
                       <span>💬 Bình luận</span>
                       <span>↗️ Chia sẻ</span>
                     </div>
-                    <span class="text-blue-400 font-semibold cursor-pointer">Gửi tin nhắn</span>
+                    <span class="text-blue-700 font-extrabold cursor-pointer">Gửi tin nhắn ➔</span>
                   </div>
                 </div>
               </div>
@@ -315,13 +339,13 @@
 
       <!-- ==================== TAB 2: QUEUE ==================== -->
       <section id="section-queue" class="hidden space-y-5">
-        <div class="flex justify-between items-center">
+        <div class="neo-card p-4 bg-white flex justify-between items-center">
           <div>
-            <h2 class="text-lg font-bold text-white">Hàng Đợi Lên Lịch Đăng Bài</h2>
-            <p class="text-xs text-slate-400">Hệ thống sẽ tự động quét mỗi phút và đẩy bài lên Facebook đúng giờ hẹn</p>
+            <h2 class="text-base font-black text-[#18181B] uppercase">Hàng Đợi Lên Lịch Đăng Bài</h2>
+            <p class="text-xs text-neutral-600 font-medium">Hệ thống quét tự động mỗi phút và xuất bản bài lên Fanpage theo đúng giờ hẹn</p>
           </div>
-          <button onclick="loadPosts()" class="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-xs text-neutral-300 transition">
-            🔄 Làm mới
+          <button onclick="loadPosts()" class="neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold">
+            🔄 Làm mới danh sách
           </button>
         </div>
 
@@ -332,13 +356,13 @@
 
       <!-- ==================== TAB 3: HISTORY ==================== -->
       <section id="section-history" class="hidden space-y-5">
-        <div class="flex justify-between items-center">
+        <div class="neo-card p-4 bg-white flex justify-between items-center">
           <div>
-            <h2 class="text-lg font-bold text-white">Lịch Sử Bài Viết Đã Đăng</h2>
-            <p class="text-xs text-slate-400">Danh sách các bài đã xuất bản thành công lên Fanpage</p>
+            <h2 class="text-base font-black text-[#18181B] uppercase">Lịch Sử Bài Viết Đã Đăng</h2>
+            <p class="text-xs text-neutral-600 font-medium">Các bài viết đã được đẩy thành công lên Fanpage Facebook</p>
           </div>
-          <button onclick="loadPosts()" class="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-xs text-neutral-300 transition">
-            🔄 Làm mới
+          <button onclick="loadPosts()" class="neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold">
+            🔄 Làm mới danh sách
           </button>
         </div>
 
@@ -354,69 +378,69 @@
           
           <!-- Left: Settings Form (7 cols) -->
           <div class="lg:col-span-7 space-y-5">
-            <div class="glass-panel p-6 space-y-4">
-              <h3 class="text-sm font-bold uppercase tracking-wider text-slate-200 border-b border-white/10 pb-3 flex items-center gap-2">
+            <div class="neo-card p-6 space-y-4">
+              <h3 class="text-sm font-black uppercase tracking-wider text-[#18181B] border-b-2 border-[#18181B] pb-3 flex items-center gap-2">
                 <span>⚙️</span> Cấu hình Facebook Fanpage & Gemini AI
               </h3>
 
-              <div class="space-y-3">
+              <div class="space-y-3.5">
                 <div>
-                  <label class="text-xs text-slate-300 font-semibold block mb-1">Fanpage ID:</label>
-                  <input type="text" id="settingFanpageId" class="w-full bg-[#0a0d14] border border-white/10 rounded-lg px-3 py-2 text-sm text-emerald-400 font-mono">
-                  <span class="text-[11px] text-slate-500">ID Fanpage hiện tại của bạn: 61590327190720</span>
+                  <label class="text-xs font-bold text-[#18181B] block mb-1">Fanpage ID:</label>
+                  <input type="text" id="settingFanpageId" class="neo-input w-full px-3 py-2 text-sm font-mono font-bold text-blue-700">
+                  <span class="text-[11px] text-neutral-500 font-medium">ID Fanpage hiện tại của bạn: 1154184381110692</span>
                 </div>
 
                 <div>
                   <div class="flex justify-between items-center mb-1">
-                    <label class="text-xs text-slate-300 font-semibold">Facebook Page Access Token:</label>
-                    <button onclick="testFacebookConnection()" class="text-xs text-blue-400 hover:underline">Kiểm tra kết nối</button>
+                    <label class="text-xs font-bold text-[#18181B]">Facebook Page Access Token:</label>
+                    <button onclick="testFacebookConnection()" class="text-xs font-bold text-blue-700 hover:underline">Kiểm tra kết nối</button>
                   </div>
-                  <input type="password" id="settingPageToken" placeholder="Nhập mã Page Access Token (EAAG...)" class="w-full bg-[#0a0d14] border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-100 font-mono">
-                  <div id="fbTestResult" class="text-xs mt-1"></div>
+                  <input type="password" id="settingPageToken" placeholder="Nhập mã Page Access Token (EAAG...)" class="neo-input w-full px-3 py-2 text-sm font-mono">
+                  <div id="fbTestResult" class="text-xs mt-1.5"></div>
                 </div>
 
                 <div>
                   <div class="flex justify-between items-center mb-1">
-                    <label class="text-xs text-slate-300 font-semibold">Google Gemini API Key:</label>
-                    <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs text-blue-400 hover:underline">Lấy Key miễn phí ↗</a>
+                    <label class="text-xs font-bold text-[#18181B]">Google Gemini API Key:</label>
+                    <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs font-bold text-blue-700 hover:underline">Lấy Key miễn phí ↗</a>
                   </div>
-                  <input type="password" id="settingGeminiKey" placeholder="Nhập Gemini API Key (AIzaSy...)" class="w-full bg-[#0a0d14] border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-100 font-mono">
-                  <span class="text-[11px] text-slate-500">Gói Free của Google cho phép 15 lượt gọi/phút, hoàn toàn miễn phí trọn đời.</span>
+                  <input type="password" id="settingGeminiKey" placeholder="Nhập Gemini API Key (AIzaSy...)" class="neo-input w-full px-3 py-2 text-sm font-mono">
+                  <span class="text-[11px] text-neutral-500 font-medium">Gói Free của Google hoàn toàn miễn phí trọn đời.</span>
                 </div>
               </div>
 
-              <h3 class="text-sm font-bold uppercase tracking-wider text-slate-200 border-b border-white/10 pb-3 pt-3 flex items-center gap-2">
+              <h3 class="text-sm font-black uppercase tracking-wider text-[#18181B] border-b-2 border-[#18181B] pb-3 pt-3 flex items-center gap-2">
                 <span>📞</span> Thông tin liên hệ & Thương hiệu
               </h3>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
-                  <label class="text-xs text-slate-400 block mb-1">Tên Fanpage hiển thị:</label>
-                  <input type="text" id="settingFanpageName" class="w-full bg-[#0a0d14] border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-100">
+                  <label class="text-xs font-bold text-[#18181B] block mb-1">Tên Fanpage hiển thị:</label>
+                  <input type="text" id="settingFanpageName" class="neo-input w-full px-3 py-2 text-sm font-bold">
                 </div>
                 <div>
-                  <label class="text-xs text-slate-400 block mb-1">Số điện thoại / Zalo:</label>
-                  <input type="text" id="settingHotline" class="w-full bg-[#0a0d14] border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-100 font-mono">
+                  <label class="text-xs font-bold text-[#18181B] block mb-1">Số điện thoại / Zalo:</label>
+                  <input type="text" id="settingHotline" class="neo-input w-full px-3 py-2 text-sm font-mono font-bold">
                 </div>
               </div>
 
               <div>
-                <label class="text-xs text-slate-400 block mb-1">Chính sách bảo hành cam kết:</label>
-                <textarea id="settingWarranty" rows="2" class="w-full bg-[#0a0d14] border border-white/10 rounded-lg p-2.5 text-xs text-slate-100"></textarea>
+                <label class="text-xs font-bold text-[#18181B] block mb-1">Chính sách bảo hành cam kết:</label>
+                <textarea id="settingWarranty" rows="2" class="neo-input w-full p-2.5 text-xs"></textarea>
               </div>
 
               <div>
-                <label class="text-xs text-slate-400 block mb-1">Địa chỉ / Chính sách giao hàng:</label>
-                <input type="text" id="settingAddress" class="w-full bg-[#0a0d14] border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-100">
+                <label class="text-xs font-bold text-[#18181B] block mb-1">Địa chỉ / Chính sách giao hàng:</label>
+                <input type="text" id="settingAddress" class="neo-input w-full px-3 py-2 text-sm">
               </div>
 
               <div>
-                <label class="text-xs text-slate-400 block mb-1">Các khung giờ tự động đăng bài (cách nhau bằng dấu phẩy):</label>
-                <input type="text" id="settingScheduleTimes" placeholder="08:30, 11:45, 15:30, 20:00" class="w-full bg-[#0a0d14] border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-100 font-mono">
+                <label class="text-xs font-bold text-[#18181B] block mb-1">Các khung giờ tự động đăng bài (cách nhau bằng dấu phẩy):</label>
+                <input type="text" id="settingScheduleTimes" placeholder="08:30, 11:45, 15:30, 20:00" class="neo-input w-full px-3 py-2 text-sm font-mono">
               </div>
 
               <div class="pt-2">
-                <button onclick="saveSettingsForm()" class="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-md transition">
+                <button onclick="saveSettingsForm()" class="neo-btn neo-btn-green w-full py-3 text-sm font-black shadow-[3px_3px_0px_#18181B] uppercase tracking-wide">
                   💾 LƯU CẤU HÌNH HỆ THỐNG
                 </button>
               </div>
@@ -425,28 +449,28 @@
 
           <!-- Right: Detailed Tutorial Guide (5 cols) -->
           <div class="lg:col-span-5 space-y-4">
-            <div class="glass-panel p-5 space-y-4 text-xs leading-relaxed text-slate-300">
-              <h3 class="text-sm font-bold uppercase tracking-wider text-amber-300 flex items-center gap-2">
-                <span>📖</span> Hướng dẫn lấy Facebook Token vĩnh viễn (02 phút)
+            <div class="neo-card p-5 bg-[#FAF5EE] space-y-4 text-xs leading-relaxed text-[#18181B]">
+              <h3 class="text-sm font-black uppercase tracking-wider text-[#18181B] border-b-2 border-[#18181B] pb-2 flex items-center gap-2">
+                <span>📖</span> Hướng dẫn lấy Token Facebook vĩnh viễn (02 phút)
               </h3>
 
-              <ol class="list-decimal list-inside space-y-2 text-slate-300">
-                <li>Vào <a href="https://developers.facebook.com/tools/explorer/" target="_blank" class="text-blue-400 underline font-semibold">Facebook Graph API Explorer</a>.</li>
+              <ol class="list-decimal list-inside space-y-2 text-neutral-800 font-medium">
+                <li>Vào <a href="https://developers.facebook.com/tools/explorer/" target="_blank" class="text-blue-700 underline font-bold">Facebook Graph API Explorer</a>.</li>
                 <li>Tại mục <strong>Meta App</strong>: Chọn một App của bạn (hoặc tạo nhanh app loại <em>Business / Doanh nghiệp</em>).</li>
-                <li>Tại mục <strong>User or Page</strong>: Chọn đúng Trang Fanpage của bạn: <strong class="text-white">Laptop Nhật Bãi Giá Rẻ</strong>.</li>
+                <li>Tại mục <strong>User or Page</strong>: Chọn đúng Trang Fanpage của bạn: <strong class="text-black">Laptop Vương Gia</strong>.</li>
                 <li>Thêm 3 quyền (Permissions) sau:
-                  <ul class="list-disc list-inside ml-4 mt-1 text-slate-400 space-y-0.5">
-                    <li><code class="text-emerald-400">pages_show_list</code></li>
-                    <li><code class="text-emerald-400">pages_read_engagement</code></li>
-                    <li><code class="text-emerald-400">pages_manage_posts</code></li>
+                  <ul class="list-disc list-inside ml-4 mt-1 text-neutral-700 space-y-0.5">
+                    <li><code class="font-bold text-emerald-700">pages_show_list</code></li>
+                    <li><code class="font-bold text-emerald-700">pages_read_engagement</code></li>
+                    <li><code class="font-bold text-emerald-700">pages_manage_posts</code></li>
                   </ul>
                 </li>
                 <li>Bấm <strong>Generate Access Token</strong> và cấp quyền.</li>
                 <li>Copy mã Token đó dán vào ô bên trái là xong!</li>
               </ol>
 
-              <div class="p-3 bg-neutral-900/80 rounded-lg border border-neutral-700 text-neutral-400">
-                <strong class="text-white">💡 Mẹo kiểm thử:</strong> Bạn hoàn toàn có thể dùng hệ thống ngay bây giờ! Nếu chưa dán Token, hệ thống sẽ tự động chạy ở <em>Chế độ mô phỏng (Simulation Mode)</em> để bạn kiểm tra bài viết và media mượt mà trước khi kết nối thật.
+              <div class="neo-card-sm p-3 bg-white text-neutral-700 font-medium">
+                <strong class="text-black">💡 Chế độ sẵn sàng:</strong> Hiện tại mã Token Fanpage <strong>Laptop Vương Gia</strong> của bạn đã được kết nối và kiểm thử thành công, bạn chỉ việc soạn bài và đăng ngay!
               </div>
             </div>
           </div>
@@ -458,13 +482,13 @@
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-white/5 py-4 px-6 text-center text-xs text-slate-500">
-      <div>DESIGN BY VUONGGIA /// HOTLINE: 0876637806 /// EMAIL: nguyennhu19022008@gmail.com</div>
-      <div class="text-[11px] text-slate-600 mt-1">Hệ thống hỗ trợ bán lẻ Laptop xách tay Nhật Bản bản quyền 2026</div>
+    <footer class="border-t-2 border-[#18181B] bg-white py-4 px-6 text-center text-xs text-neutral-700 font-bold">
+      <div>DESIGN BY VUONGGIA /// HOTLINE / ZALO: 0876637806 /// EMAIL: nguyennhu19022008@gmail.com</div>
+      <div class="text-[11px] text-neutral-500 font-medium mt-1">Hệ thống hỗ trợ bán lẻ Laptop xách tay Nhật Bản bản quyền 2026 · Phong cách Warm Neo-Brutalist / Student Craft</div>
     </footer>
 
   </div>
 
-  <script src="/js/app.js?v=20261025"></script>
+  <script src="/js/app.js?v=20261025_craft"></script>
 </body>
 </html>

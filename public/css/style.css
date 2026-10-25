@@ -1,14 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 :root {
-  --bg-primary: #0a0c10;
-  --bg-card: rgba(18, 22, 31, 0.75);
-  --bg-card-border: rgba(255, 255, 255, 0.1);
-  --accent-blue: #2563eb;
-  --accent-cyan: #06b6d4;
-  --accent-green: #10b981;
-  --text-primary: #f8fafc;
-  --text-muted: #94a3b8;
+  --craft-paper: #FDFBF7;
+  --craft-ink: #18181B;
+  --craft-card-bg: #FFFFFF;
+  --accent-yellow: #FDE047;
+  --accent-green: #16A34A;
+  --accent-green-soft: #DCFCE7;
+  --accent-lavender: #E0E7FF;
+  --accent-lavender-dark: #6366F1;
+  --accent-peach: #FFEDD5;
+  --accent-coral: #FEE2E2;
+  --border-ink: 2px solid #18181B;
+  --shadow-hard: 3px 3px 0px #18181B;
+  --shadow-hard-lg: 4px 4px 0px #18181B;
+  --shadow-hard-sm: 2px 2px 0px #18181B;
 }
 
 * {
@@ -18,14 +24,14 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--craft-paper);
+  color: var(--craft-ink);
   min-height: 100vh;
   overflow-x: hidden;
 }
 
-/* ==================== PAGE 0 COPYRIGHT SLIDE ==================== */
+/* ==================== PAGE 0 COPYRIGHT SLIDE (PURE MONOCHROME) ==================== */
 #page0 {
   position: fixed;
   inset: 0;
@@ -225,28 +231,194 @@ body {
   z-index: 20;
 }
 
-/* ==================== MAIN DASHBOARD STYLES ==================== */
-.glass-panel {
-  background: var(--bg-card);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--bg-card-border);
+/* ==================== WARM NEO-BRUTALIST / STUDENT CRAFT THEME ==================== */
+
+#mainApp {
+  background-color: var(--craft-paper);
+  background-image: radial-gradient(rgba(24, 24, 27, 0.12) 1px, transparent 1px);
+  background-size: 20px 20px;
+  color: var(--craft-ink);
+  min-height: 100vh;
+}
+
+/* Neo-Brutalist Box Cards */
+.neo-card {
+  background: var(--craft-card-bg);
+  border: var(--border-ink);
   border-radius: 12px;
+  box-shadow: var(--shadow-hard);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+}
+
+.neo-card-sm {
+  background: var(--craft-card-bg);
+  border: var(--border-ink);
+  border-radius: 8px;
+  box-shadow: var(--shadow-hard-sm);
+}
+
+/* Neo Buttons */
+.neo-btn {
+  border: var(--border-ink);
+  border-radius: 8px;
+  box-shadow: var(--shadow-hard);
+  font-weight: 700;
+  transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  user-select: none;
+}
+
+.neo-btn:hover {
+  transform: translate(-1.5px, -1.5px);
+  box-shadow: 4.5px 4.5px 0px #18181B;
+}
+
+.neo-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #18181B;
+}
+
+/* Button Variants */
+.neo-btn-yellow {
+  background: var(--accent-yellow);
+  color: var(--craft-ink);
+}
+.neo-btn-yellow:hover {
+  background: #facc15;
+}
+
+.neo-btn-green {
+  background: var(--accent-green);
+  color: #FFFFFF;
+}
+.neo-btn-green:hover {
+  background: #15803d;
+}
+
+.neo-btn-lavender {
+  background: var(--accent-lavender);
+  color: var(--craft-ink);
+}
+.neo-btn-lavender:hover {
+  background: #c7d2fe;
+}
+
+.neo-btn-white {
+  background: #FFFFFF;
+  color: var(--craft-ink);
+}
+.neo-btn-white:hover {
+  background: #f4f4f5;
+}
+
+/* Neo Inputs */
+.neo-input {
+  background: #FFFFFF;
+  border: var(--border-ink);
+  border-radius: 8px;
+  box-shadow: var(--shadow-hard-sm);
+  color: var(--craft-ink);
+  font-size: 0.875rem;
+  transition: all 0.15s ease;
+}
+
+.neo-input:focus {
+  outline: none;
+  box-shadow: 3px 3px 0px var(--accent-yellow), 3px 3px 0px 2px #18181B;
+  background: #fff;
+}
+
+/* Sticker Tags & Washi Tape */
+.neo-sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  border: 1.5px solid #18181B;
+  box-shadow: 2px 2px 0px #18181B;
+  border-radius: 6px;
+  letter-spacing: 0.02em;
+}
+
+.sticker-yellow { background: var(--accent-yellow); color: #18181B; }
+.sticker-green { background: var(--accent-green-soft); color: #166534; }
+.sticker-lavender { background: var(--accent-lavender); color: #3730A3; }
+.sticker-peach { background: var(--accent-peach); color: #9A3412; }
+.sticker-coral { background: var(--accent-coral); color: #991B1B; }
+
+.tilt-left { transform: rotate(-1.5deg); }
+.tilt-right { transform: rotate(1.2deg); }
+
+.handwritten {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+/* Washi Tape Header Simulation */
+.washi-top {
+  position: relative;
+}
+.washi-top::before {
+  content: '';
+  position: absolute;
+  top: -9px;
+  left: 20px;
+  width: 55px;
+  height: 18px;
+  background: rgba(253, 224, 71, 0.75);
+  border: 1px dashed rgba(24, 24, 27, 0.3);
+  transform: rotate(-3deg);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Tab Navigation */
+.neo-nav-tab {
+  border: var(--border-ink);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  padding: 0.65rem 1.15rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  background: #FFFFFF;
+  color: var(--craft-ink);
+  transition: all 0.15s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 2px -2px 0px rgba(24, 24, 27, 0.1);
+}
+
+.neo-nav-tab:hover {
+  background: #fef08a;
 }
 
 .nav-tab-active {
-  background: rgba(37, 99, 235, 0.15);
-  color: #60a5fa;
-  border-bottom: 2px solid #3b82f6;
+  background: var(--accent-yellow) !important;
+  color: var(--craft-ink) !important;
+  box-shadow: 3px -3px 0px #18181B;
+  transform: translateY(-2px);
 }
 
-/* Facebook Feed Post Preview Simulation */
+/* Facebook Feed Post Preview Simulation (Neo-Brutalist Frame) */
 .fb-post-preview {
-  background: #242526;
-  border-radius: 8px;
-  color: #e4e6eb;
-  font-family: 'Segoe UI Historic', 'Segoe UI', Helvetica, Arial, sans-serif;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  background: #FFFFFF;
+  border: var(--border-ink);
+  border-radius: 12px;
+  color: #18181B;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  box-shadow: var(--shadow-hard);
+  overflow: hidden;
 }
 
 .fb-post-header {
@@ -254,34 +426,41 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
+  border-bottom: 1.5px solid #E4E4E7;
+  background: #FAFAFA;
 }
 
 .fb-avatar {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  background: #3a3b3c;
+  background: #1877F2;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.1);
+  font-weight: 800;
+  color: #FFFFFF;
+  border: 2px solid #18181B;
+  box-shadow: 1.5px 1.5px 0px #18181B;
 }
 
 .fb-content {
-  padding: 4px 16px 12px 16px;
-  font-size: 14.5px;
-  line-height: 1.5;
+  padding: 14px 16px;
+  font-size: 14px;
+  line-height: 1.55;
   white-space: pre-wrap;
   word-break: break-word;
+  color: #27272A;
+  background: #FFFFFF;
 }
 
 .fb-media-grid {
   display: grid;
-  gap: 2px;
-  background: #18191a;
-  max-height: 420px;
+  gap: 3px;
+  background: #E4E4E7;
+  border-top: 1.5px solid #E4E4E7;
+  border-bottom: 1.5px solid #E4E4E7;
+  max-height: 400px;
   overflow: hidden;
 }
 
@@ -302,9 +481,10 @@ body {
   height: 6px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
+  background: #f4f4f5;
+  border-radius: 3px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: #a1a1aa;
   border-radius: 3px;
 }
