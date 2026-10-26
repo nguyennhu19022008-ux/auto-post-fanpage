@@ -98,6 +98,13 @@ async function getSettings() {
   if (process.env.FB_PAGE_TOKEN) settings.facebookPageToken = process.env.FB_PAGE_TOKEN;
   if (process.env.FANPAGE_ID) settings.fanpageId = process.env.FANPAGE_ID;
   if (process.env.GEMINI_API_KEY) settings.geminiApiKey = process.env.GEMINI_API_KEY;
+  if (process.env.SMTP_USER) {
+    settings.smtpUser = settings.smtpUser || process.env.SMTP_USER;
+    if (!settings.notificationEmail) settings.notificationEmail = process.env.SMTP_USER;
+  }
+  if (process.env.SMTP_PASS) {
+    settings.smtpPass = settings.smtpPass || process.env.SMTP_PASS;
+  }
 
   return settings;
 }
@@ -200,7 +207,7 @@ async function checkAndPublishDuePosts() {
       !post.mediaReminderSent
     ) {
       console.log(`[Scheduler] 📸 Phát hiện bài [${post.id}] (Mã #${post.machineCode}) còn ${Math.round(diffMins)} phút nữa đăng nhưng chưa có ảnh.`);
-      const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+      const baseUrl = process.env.BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://auto-post-fanpage-coral.vercel.app');
       const quickUploadUrl = `${baseUrl}/quick-upload?id=${post.id}`;
       
       try {
