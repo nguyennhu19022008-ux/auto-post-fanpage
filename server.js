@@ -39,28 +39,8 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
-// Storage configuration for media uploads (supports local & Vercel /tmp)
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    let uploadDir = path.join(__dirname, 'public', 'uploads');
-    try {
-      if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
-      }
-    } catch (e) {
-      uploadDir = path.join('/tmp', 'uploads');
-      if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
-      }
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, `${uniqueSuffix}${ext}`);
-  }
-});
+// Storage configuration for media uploads: Memory storage for universal serverless/Vercel support
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage,
@@ -135,28 +115,45 @@ app.post('/api/upload-media', upload.array('files', 35), async (req, res) => {
   try {
     const files = [];
     for (const f of (req.files || [])) {
-      let publicUrl = `/uploads/${f.filename}`;
+      let fileObj = null;
       try {
-        const buffer = fs.readFileSync(f.path);
-        const supaRes = await uploadToSupabaseStorage(buffer, f.originalname, f.mimetype);
+        const supaRes = await uploadToSupabaseStorage(f.buffer, f.originalname, f.mimetype);
         if (supaRes && supaRes.url) {
-          publicUrl = supaRes.url;
+          fileObj = supaRes;
         }
       } catch (err) {
-        console.warn('[Storage] Fallback to local file:', err.message);
+        console.warn('[Storage] Supabase upload failed, using local/tmp fallback:', err.message);
       }
 
-      files.push({
-        originalname: f.originalname,
-        filename: f.filename,
-        path: f.path,
-        url: publicUrl,
-        mimetype: f.mimetype,
-        size: f.size
-      });
+      if (!fileObj) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const ext = path.extname(f.originalname) || '.jpg';
+        const filename = `${uniqueSuffix}${ext}`;
+        let localPath = null;
+        try {
+          const uploadDir = process.env.VERCEL ? path.join('/tmp', 'uploads') : path.join(__dirname, 'public', 'uploads');
+          if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+          localPath = path.join(uploadDir, filename);
+          fs.writeFileSync(localPath, f.buffer);
+        } catch (e) {
+          console.warn('[Storage] Local write notice:', e.message);
+        }
+
+        fileObj = {
+          originalname: f.originalname,
+          filename: filename,
+          path: localPath,
+          url: `/uploads/${filename}`,
+          mimetype: f.mimetype,
+          size: f.size
+        };
+      }
+
+      files.push(fileObj);
     }
     res.json({ success: true, files });
   } catch (error) {
+    console.error('[UploadMedia Error]', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -287,25 +284,41 @@ app.post('/api/posts/:id/attach-media', upload.array('files', 35), async (req, r
 
     const newFiles = [];
     for (const f of (req.files || [])) {
-      let publicUrl = `/uploads/${f.filename}`;
+      let fileObj = null;
       try {
-        const buffer = fs.readFileSync(f.path);
-        const supaRes = await uploadToSupabaseStorage(buffer, f.originalname, f.mimetype);
+        const supaRes = await uploadToSupabaseStorage(f.buffer, f.originalname, f.mimetype);
         if (supaRes && supaRes.url) {
-          publicUrl = supaRes.url;
+          fileObj = supaRes;
         }
       } catch (err) {
-        console.warn('[Storage] Fallback to local file:', err.message);
+        console.warn('[Storage] Supabase upload failed, using local/tmp fallback:', err.message);
       }
 
-      newFiles.push({
-        originalname: f.originalname,
-        filename: f.filename,
-        path: f.path,
-        url: publicUrl,
-        mimetype: f.mimetype,
-        size: f.size
-      });
+      if (!fileObj) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const ext = path.extname(f.originalname) || '.jpg';
+        const filename = `${uniqueSuffix}${ext}`;
+        let localPath = null;
+        try {
+          const uploadDir = process.env.VERCEL ? path.join('/tmp', 'uploads') : path.join(__dirname, 'public', 'uploads');
+          if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+          localPath = path.join(uploadDir, filename);
+          fs.writeFileSync(localPath, f.buffer);
+        } catch (e) {
+          console.warn('[Storage] Local write notice:', e.message);
+        }
+
+        fileObj = {
+          originalname: f.originalname,
+          filename: filename,
+          path: localPath,
+          url: `/uploads/${filename}`,
+          mimetype: f.mimetype,
+          size: f.size
+        };
+      }
+
+      newFiles.push(fileObj);
     }
 
     if (!post.mediaFiles) post.mediaFiles = [];
@@ -327,6 +340,7 @@ app.post('/api/posts/:id/attach-media', upload.array('files', 35), async (req, r
     console.log(`[QuickUpload] 📸 Đã cập nhật ${newFiles.length} tệp media cho bài [${post.id}] - Mã #${post.machineCode}`);
     res.json({ success: true, post, message: 'Đã cập nhật hình ảnh thành công!' });
   } catch (error) {
+    console.error('[AttachMedia Error]', error);
     res.status(500).json({ error: error.message });
   }
 });

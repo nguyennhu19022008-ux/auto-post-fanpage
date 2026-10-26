@@ -361,6 +361,11 @@
           method: 'POST',
           body: formData
         });
+        const contentType = res.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+          const text = await res.text();
+          throw new Error(`Máy chủ phản hồi mã lỗi HTTP ${res.status}: ${text.slice(0, 120)}`);
+        }
         const result = await res.json();
         if (result.success) {
           document.getElementById('machineInfoBox').classList.add('hidden');
