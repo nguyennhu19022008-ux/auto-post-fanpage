@@ -94,10 +94,10 @@ async function getSettings() {
     console.warn('[Scheduler] Notice: Could not read settings from Supabase:', e.message);
   }
 
-  // 3. Override or fallback with environment variables if set (useful on Vercel)
-  if (process.env.FB_PAGE_TOKEN) settings.facebookPageToken = process.env.FB_PAGE_TOKEN;
-  if (process.env.FANPAGE_ID) settings.fanpageId = process.env.FANPAGE_ID;
-  if (process.env.GEMINI_API_KEY) settings.geminiApiKey = process.env.GEMINI_API_KEY;
+  // 3. Fallback to environment variables only if NOT already configured in Supabase / settings
+  if (!settings.facebookPageToken && process.env.FB_PAGE_TOKEN) settings.facebookPageToken = process.env.FB_PAGE_TOKEN;
+  if (!settings.fanpageId && process.env.FANPAGE_ID) settings.fanpageId = process.env.FANPAGE_ID;
+  if (!settings.geminiApiKey && process.env.GEMINI_API_KEY) settings.geminiApiKey = process.env.GEMINI_API_KEY;
   if (process.env.SMTP_USER) {
     settings.smtpUser = settings.smtpUser || process.env.SMTP_USER;
     if (!settings.notificationEmail) settings.notificationEmail = process.env.SMTP_USER;
