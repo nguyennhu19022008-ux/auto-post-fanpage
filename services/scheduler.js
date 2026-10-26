@@ -1,16 +1,39 @@
+process.env.TZ = 'Asia/Ho_Chi_Minh';
 const cron = require('node-cron');
 const fs = require('fs');
 const path = require('path');
 const { publishPostToFanpage } = require('./facebook');
 const { sendPostNotification, sendMediaReminderEmail } = require('./mailer');
-const { upsertPostToDb } = require('./supabase');
+const {
+  upsertPostToDb,
+  fetchAllPostsFromDb,
+  fetchSettingsFromDb,
+  saveSettingsToDb
+} = require('./supabase');
 
 const POSTS_FILE = path.join(__dirname, '..', 'data', 'posts.json');
 const POSTS_TMP_FILE = path.join('/tmp', 'posts.json');
 const SETTINGS_FILE = path.join(__dirname, '..', 'data', 'settings.json');
 const SETTINGS_TMP_FILE = path.join('/tmp', 'settings.json');
 
-function getPosts() {
+/**
+ * Fetch all posts: Supabase is Single Source of Truth, falls back to /tmp & local file
+ */
+async function getPosts() {
+  try {
+    const dbPosts = await fetchAllPostsFromDb();
+    if (Array.isArray(dbPosts) && dbPosts.length > 0) {
+      return dbPosts;
+    }
+    // If Supabase returned an empty array, verify if local has posts as fallback
+    if (Array.isArray(dbPosts)) {
+      return dbPosts;
+    }
+  } catch (e) {
+    console.error('[Scheduler] Error fetching posts from Supabase in getPosts:', e.message);
+  }
+
+  // Fallback if Supabase is unavailable
   try {
     if (fs.existsSync(POSTS_TMP_FILE)) {
       const data = fs.readFileSync(POSTS_TMP_FILE, 'utf8');
@@ -20,14 +43,16 @@ function getPosts() {
       const data = fs.readFileSync(POSTS_FILE, 'utf8');
       return JSON.parse(data || '[]');
     }
-    return [];
-  } catch (e) {
-    console.error('Error reading posts.json:', e);
-    return [];
+  } catch (errFallback) {
+    console.error('[Scheduler] Error reading fallback posts.json:', errFallback.message);
   }
+  return [];
 }
 
-function savePosts(posts) {
+/**
+ * Save posts to local/temporary storage as cache
+ */
+async function savePosts(posts) {
   try {
     fs.writeFileSync(POSTS_FILE, JSON.stringify(posts, null, 2), 'utf8');
   } catch (e) {
@@ -35,13 +60,18 @@ function savePosts(posts) {
     try {
       fs.writeFileSync(POSTS_TMP_FILE, JSON.stringify(posts, null, 2), 'utf8');
     } catch (errTmp) {
-      console.error('Error saving posts to /tmp:', errTmp);
+      console.error('[Scheduler] Error saving posts to /tmp:', errTmp.message);
     }
   }
 }
 
-function getSettings() {
+/**
+ * Get settings: Supabase merged with local fallback & environment variables
+ */
+async function getSettings() {
   let settings = {};
+
+  // 1. Read local file as base defaults
   try {
     if (fs.existsSync(SETTINGS_TMP_FILE)) {
       const data = fs.readFileSync(SETTINGS_TMP_FILE, 'utf8');
@@ -51,10 +81,20 @@ function getSettings() {
       settings = JSON.parse(data || '{}');
     }
   } catch (e) {
-    console.error('Error reading settings.json:', e);
+    console.error('[Scheduler] Error reading local settings.json:', e.message);
   }
 
-  // Override or fallback with environment variables if set (useful on Vercel)
+  // 2. Merge with Supabase settings
+  try {
+    const dbSettings = await fetchSettingsFromDb();
+    if (dbSettings && typeof dbSettings === 'object') {
+      settings = { ...settings, ...dbSettings };
+    }
+  } catch (e) {
+    console.warn('[Scheduler] Notice: Could not read settings from Supabase:', e.message);
+  }
+
+  // 3. Override or fallback with environment variables if set (useful on Vercel)
   if (process.env.FB_PAGE_TOKEN) settings.facebookPageToken = process.env.FB_PAGE_TOKEN;
   if (process.env.FANPAGE_ID) settings.fanpageId = process.env.FANPAGE_ID;
   if (process.env.GEMINI_API_KEY) settings.geminiApiKey = process.env.GEMINI_API_KEY;
@@ -62,14 +102,25 @@ function getSettings() {
   return settings;
 }
 
-function saveSettings(newSettings) {
+/**
+ * Save settings to both Supabase and local/tmp file
+ */
+async function saveSettings(newSettings) {
+  // 1. Save to Supabase
+  try {
+    await saveSettingsToDb(newSettings);
+  } catch (errDb) {
+    console.warn('[Scheduler] Notice: Error saving settings to Supabase:', errDb.message);
+  }
+
+  // 2. Save locally / /tmp
   try {
     fs.writeFileSync(SETTINGS_FILE, JSON.stringify(newSettings, null, 2), 'utf8');
   } catch (e) {
     try {
       fs.writeFileSync(SETTINGS_TMP_FILE, JSON.stringify(newSettings, null, 2), 'utf8');
     } catch (errTmp) {
-      console.error('Error saving settings to /tmp:', errTmp);
+      console.error('[Scheduler] Error saving settings to /tmp:', errTmp.message);
     }
   }
 }
@@ -78,7 +129,7 @@ function saveSettings(newSettings) {
  * Execute posting a specific item
  */
 async function executePost(post) {
-  const settings = getSettings();
+  const settings = await getSettings();
   console.log(`[Scheduler] 🚀 Đang tiến hành đăng bài [${post.id}] - Mã máy: ${post.machineCode || 'N/A'}`);
   
   try {
@@ -102,16 +153,20 @@ async function executePost(post) {
     console.error(`[Scheduler] ❌ Thất bại đăng bài [${post.id}]:`, error.message);
   }
 
-  // Update in posts list
-  const posts = getPosts();
+  // Update in posts list & Supabase
+  const posts = await getPosts();
   const index = posts.findIndex(p => p.id === post.id);
   if (index !== -1) {
     posts[index] = post;
   } else {
     posts.push(post);
   }
-  savePosts(posts);
-  upsertPostToDb(post).catch(e => console.warn('Supabase post sync notice:', e.message));
+  await savePosts(posts);
+  try {
+    await upsertPostToDb(post);
+  } catch (e) {
+    console.warn('[Scheduler] Supabase post sync notice:', e.message);
+  }
 
   return post;
 }
@@ -121,10 +176,10 @@ async function executePost(post) {
  * AND send 20-minute media reminder emails for posts missing photos
  */
 async function checkAndPublishDuePosts() {
-  const settings = getSettings();
+  const settings = await getSettings();
   if (settings.autoPostEnabled === false) return;
 
-  const posts = getPosts();
+  const posts = await getPosts();
   const now = new Date();
   let hasUpdates = false;
 
@@ -180,9 +235,13 @@ async function checkAndPublishDuePosts() {
   }
 
   if (hasUpdates) {
-    savePosts(posts);
+    await savePosts(posts);
     for (const p of posts) {
-      upsertPostToDb(p).catch(e => console.warn('Supabase post sync notice:', e.message));
+      try {
+        await upsertPostToDb(p);
+      } catch (e) {
+        console.warn('[Scheduler] Supabase post sync notice:', e.message);
+      }
     }
   }
 }
@@ -190,10 +249,10 @@ async function checkAndPublishDuePosts() {
 /**
  * Calculate consecutive available slots for batch queueing
  */
-function getConsecutiveScheduleSlots(count = 1) {
-  const settings = getSettings();
+async function getConsecutiveScheduleSlots(count = 1) {
+  const settings = await getSettings();
   const scheduleTimes = settings.scheduleTimes || ['08:30', '11:45', '15:30', '20:00'];
-  const posts = getPosts();
+  const posts = await getPosts();
   const queuedTimes = posts
     .filter(p => (p.status === 'queued' || p.status === 'pending_media') && p.scheduledTime)
     .map(p => new Date(p.scheduledTime).getTime());
@@ -242,12 +301,12 @@ function startScheduler() {
 /**
  * Calculate the next available slot for a new post
  */
-function getNextAvailableScheduleTime() {
-  const settings = getSettings();
+async function getNextAvailableScheduleTime() {
+  const settings = await getSettings();
   const scheduleTimes = settings.scheduleTimes || ['08:30', '11:45', '15:30', '20:00'];
-  const posts = getPosts();
+  const posts = await getPosts();
   const queuedTimes = posts
-    .filter(p => p.status === 'queued' && p.scheduledTime)
+    .filter(p => (p.status === 'queued' || p.status === 'pending_media') && p.scheduledTime)
     .map(p => new Date(p.scheduledTime).getTime());
 
   const now = new Date();

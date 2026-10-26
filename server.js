@@ -1,3 +1,4 @@
+process.env.TZ = 'Asia/Ho_Chi_Minh';
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
@@ -68,43 +69,46 @@ const upload = multer({
 
 // ======================== API ROUTES ========================
 
-// Cron trigger endpoint for Vercel Cron Jobs
-app.get('/api/cron', async (req, res) => {
+// 1. Get current settings
+app.get('/api/settings', async (req, res) => {
   try {
-    await checkAndPublishDuePosts();
-    res.json({ success: true, timestamp: new Date().toISOString() });
+    const settings = await getSettings();
+    res.json(settings);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// 1. Get current settings
-app.get('/api/settings', (req, res) => {
-  res.json(getSettings());
-});
-
 // 2. Update settings
-app.post('/api/settings', (req, res) => {
-  const currentSettings = getSettings();
-  const newSettings = { ...currentSettings, ...req.body };
-  saveSettings(newSettings);
-  res.json({ success: true, settings: newSettings, message: 'Đã lưu cấu hình thành công!' });
+app.post('/api/settings', async (req, res) => {
+  try {
+    const currentSettings = await getSettings();
+    const newSettings = { ...currentSettings, ...req.body };
+    await saveSettings(newSettings);
+    res.json({ success: true, settings: newSettings, message: 'Đã lưu cấu hình thành công!' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // 3. Test Facebook Page Connection
 app.post('/api/test-fb', async (req, res) => {
-  const settings = getSettings();
-  const pageId = req.body.fanpageId || settings.fanpageId;
-  const token = req.body.facebookPageToken || settings.facebookPageToken;
+  try {
+    const settings = await getSettings();
+    const pageId = req.body.fanpageId || settings.fanpageId;
+    const token = req.body.facebookPageToken || settings.facebookPageToken;
 
-  const result = await verifyPageToken(pageId, token);
-  res.json(result);
+    const result = await verifyPageToken(pageId, token);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 // 3.1. Test Email Connection
 app.post('/api/test-email', async (req, res) => {
   try {
-    const currentSettings = getSettings();
+    const currentSettings = await getSettings();
     const testConfig = { ...currentSettings, ...req.body };
     const result = await sendTestEmail(testConfig);
     res.json(result);
@@ -117,7 +121,7 @@ app.post('/api/test-email', async (req, res) => {
 app.post('/api/generate-content', async (req, res) => {
   try {
     const { rawText, customPrice, imageBase64 } = req.body;
-    const settings = getSettings();
+    const settings = await getSettings();
 
     const result = await generatePostWithGemini(rawText, settings, customPrice, imageBase64);
     res.json(result);
@@ -166,7 +170,7 @@ app.get('/quick-upload', (req, res) => {
 app.post('/api/parse-table', async (req, res) => {
   try {
     const { imageBase64 } = req.body;
-    const settings = getSettings();
+    const settings = await getSettings();
     const rawItems = await parseStockTableFromImage(imageBase64, settings);
 
     // Auto-deduplicate parsed items: if duplicate machine codes exist in table/images, keep newest!
@@ -195,7 +199,7 @@ app.post('/api/batch-schedule', async (req, res) => {
     // 1. Deduplicate inside the incoming items: if user selected duplicate codes, keep the newest one!
     const { dedupedItems } = deduplicateItemsByCode(items);
 
-    let posts = getPosts();
+    let posts = await getPosts();
     const replacedCodes = [];
 
     // 2. Check against existing queue: If any item code is already in queue (queued or pending_media),
@@ -211,17 +215,18 @@ app.post('/api/batch-schedule', async (req, res) => {
           const oldPost = posts[oldIndex];
           console.log(`[Deduplicate] 🗑️ Tự động xóa bài cũ #${norm} (ID: ${oldPost.id}) trong hàng đợi để thay bằng bài mới.`);
           posts.splice(oldIndex, 1);
-          deletePostFromDb(oldPost.id).catch(e => console.warn('Supabase post delete notice:', e.message));
+          await deletePostFromDb(oldPost.id);
           if (!replacedCodes.includes(norm)) replacedCodes.push(norm);
         }
       }
     }
 
-    const slots = getConsecutiveScheduleSlots(dedupedItems.length);
+    const slots = await getConsecutiveScheduleSlots(dedupedItems.length);
     const newPosts = [];
 
-    dedupedItems.forEach((item, index) => {
-      const scheduledTime = slots[index] || getNextAvailableScheduleTime();
+    for (let index = 0; index < dedupedItems.length; index++) {
+      const item = dedupedItems[index];
+      const scheduledTime = slots[index] || (await getNextAvailableScheduleTime());
       const newPost = {
         id: 'post_' + (Date.now() + index),
         machineCode: (item.machineCode || 'MÁY').toUpperCase(),
@@ -236,11 +241,11 @@ app.post('/api/batch-schedule', async (req, res) => {
       };
       posts.unshift(newPost);
       newPosts.push(newPost);
-    });
+    }
 
-    savePosts(posts);
+    await savePosts(posts);
     for (const np of newPosts) {
-      upsertPostToDb(np).catch(e => console.warn('Supabase post sync notice:', e.message));
+      await upsertPostToDb(np);
     }
 
     let message = `Đã lên lịch hàng loạt thành công cho ${newPosts.length} máy!`;
@@ -262,17 +267,21 @@ app.post('/api/batch-schedule', async (req, res) => {
 });
 
 // Get single post details
-app.get('/api/posts/:id', (req, res) => {
-  const posts = getPosts();
-  const post = posts.find(p => p.id === req.params.id);
-  if (!post) return res.status(404).json({ error: 'Không tìm thấy bài viết.' });
-  res.json(post);
+app.get('/api/posts/:id', async (req, res) => {
+  try {
+    const posts = await getPosts();
+    const post = posts.find(p => p.id === req.params.id);
+    if (!post) return res.status(404).json({ error: 'Không tìm thấy bài viết.' });
+    res.json(post);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Attach media to a post from Mobile Quick-Upload or Web (Up to 35 files)
 app.post('/api/posts/:id/attach-media', upload.array('files', 35), async (req, res) => {
   try {
-    const posts = getPosts();
+    const posts = await getPosts();
     const post = posts.find(p => p.id === req.params.id);
     if (!post) return res.status(404).json({ error: 'Không tìm thấy bài viết.' });
 
@@ -312,7 +321,7 @@ app.post('/api/posts/:id/attach-media', upload.array('files', 35), async (req, r
     }
 
     post.mediaReminderSent = true;
-    savePosts(posts);
+    await savePosts(posts);
     await upsertPostToDb(post);
 
     console.log(`[QuickUpload] 📸 Đã cập nhật ${newFiles.length} tệp media cho bài [${post.id}] - Mã #${post.machineCode}`);
@@ -323,28 +332,41 @@ app.post('/api/posts/:id/attach-media', upload.array('files', 35), async (req, r
 });
 
 // Remove a media file from a post
-app.delete('/api/posts/:id/media/:filename', (req, res) => {
-  const posts = getPosts();
-  const post = posts.find(p => p.id === req.params.id);
-  if (!post) return res.status(404).json({ error: 'Không tìm thấy bài viết.' });
+app.delete('/api/posts/:id/media/:filename', async (req, res) => {
+  try {
+    const posts = await getPosts();
+    const post = posts.find(p => p.id === req.params.id);
+    if (!post) return res.status(404).json({ error: 'Không tìm thấy bài viết.' });
 
-  if (post.mediaFiles) {
-    post.mediaFiles = post.mediaFiles.filter(m => m.filename !== req.params.filename);
+    if (post.mediaFiles) {
+      post.mediaFiles = post.mediaFiles.filter(m => m.filename !== req.params.filename);
+    }
+    await savePosts(posts);
+    await upsertPostToDb(post);
+    res.json({ success: true, post });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-  savePosts(posts);
-  res.json({ success: true, post });
 });
 
 // 6. Get Next Suggested Schedule Slot
-app.get('/api/next-slot', (req, res) => {
-  const nextSlot = getNextAvailableScheduleTime();
-  res.json({ nextSlot });
+app.get('/api/next-slot', async (req, res) => {
+  try {
+    const nextSlot = await getNextAvailableScheduleTime();
+    res.json({ nextSlot });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // 7. Get All Posts (Queued, Posted, Draft)
-app.get('/api/posts', (req, res) => {
-  const posts = getPosts();
-  res.json(posts);
+app.get('/api/posts', async (req, res) => {
+  try {
+    const posts = await getPosts();
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // 8. Create or Schedule a Post (with auto-deduplication: replaces old post if same machine code is in queue)
@@ -360,7 +382,7 @@ app.post('/api/posts', async (req, res) => {
       publishImmediately = false
     } = req.body;
 
-    let posts = getPosts();
+    let posts = await getPosts();
     const normCode = normalizeMachineCode(machineCode);
     let replacedOldPost = null;
 
@@ -374,10 +396,11 @@ app.post('/api/posts', async (req, res) => {
         replacedOldPost = posts[oldIndex];
         console.log(`[Deduplicate] 🗑️ Tìm thấy bài cũ trùng mã #${normCode} (ID: ${replacedOldPost.id}). Xóa mã cũ để thay thế bằng mã mới.`);
         posts.splice(oldIndex, 1);
-        deletePostFromDb(replacedOldPost.id).catch(e => console.warn('Supabase post delete notice:', e.message));
+        await deletePostFromDb(replacedOldPost.id);
       }
     }
 
+    const nextAvailableTime = await getNextAvailableScheduleTime();
     const newPost = {
       id: 'post_' + Date.now(),
       machineCode: (machineCode || 'MÁY').toUpperCase(),
@@ -385,17 +408,19 @@ app.post('/api/posts', async (req, res) => {
       content: content || '',
       price: price || '',
       mediaFiles: mediaFiles || [],
-      scheduledTime: publishImmediately ? new Date().toISOString() : (scheduledTime || getNextAvailableScheduleTime()),
+      scheduledTime: publishImmediately ? new Date().toISOString() : (scheduledTime || nextAvailableTime),
       status: publishImmediately ? 'processing' : 'queued',
       createdAt: new Date().toISOString()
     };
 
     if (publishImmediately) {
       posts.unshift(newPost);
-      savePosts(posts);
+      await savePosts(posts);
+      await upsertPostToDb(newPost);
       // Run immediately
-      executePost(newPost).then(() => {
+      executePost(newPost).then(async (executedPost) => {
         console.log(`[Instant Post] Hoàn tất đăng ngay bài ${newPost.id}`);
+        await upsertPostToDb(executedPost);
       });
       return res.json({
         success: true,
@@ -407,8 +432,8 @@ app.post('/api/posts', async (req, res) => {
       });
     } else {
       posts.unshift(newPost);
-      savePosts(posts);
-      upsertPostToDb(newPost).catch(e => console.warn('Supabase post sync notice:', e.message));
+      await savePosts(posts);
+      await upsertPostToDb(newPost);
       return res.json({
         success: true,
         post: newPost,
@@ -425,29 +450,37 @@ app.post('/api/posts', async (req, res) => {
 
 // 9. Trigger Post Immediately
 app.post('/api/posts/:id/publish-now', async (req, res) => {
-  const posts = getPosts();
-  const post = posts.find(p => p.id === req.params.id);
-  if (!post) {
-    return res.status(404).json({ error: 'Không tìm thấy bài viết.' });
-  }
+  try {
+    const posts = await getPosts();
+    const post = posts.find(p => p.id === req.params.id);
+    if (!post) {
+      return res.status(404).json({ error: 'Không tìm thấy bài viết.' });
+    }
 
-  const updatedPost = await executePost(post);
-  upsertPostToDb(updatedPost).catch(e => console.warn('Supabase post sync notice:', e.message));
-  res.json({ success: true, post: updatedPost, message: 'Đã thực thi đăng bài thành công!' });
+    const updatedPost = await executePost(post);
+    await upsertPostToDb(updatedPost);
+    res.json({ success: true, post: updatedPost, message: 'Đã thực thi đăng bài thành công!' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // 10. Delete a Post
-app.delete('/api/posts/:id', (req, res) => {
-  let posts = getPosts();
-  const initialLength = posts.length;
-  posts = posts.filter(p => p.id !== req.params.id);
+app.delete('/api/posts/:id', async (req, res) => {
+  try {
+    let posts = await getPosts();
+    const initialLength = posts.length;
+    posts = posts.filter(p => p.id !== req.params.id);
 
-  if (posts.length !== initialLength) {
-    savePosts(posts);
-    deletePostFromDb(req.params.id).catch(e => console.warn('Supabase delete notice:', e.message));
-    res.json({ success: true, message: 'Đã xóa bài viết khỏi danh sách.' });
-  } else {
-    res.status(404).json({ error: 'Không tìm thấy bài viết.' });
+    if (posts.length !== initialLength) {
+      await savePosts(posts);
+      await deletePostFromDb(req.params.id);
+      res.json({ success: true, message: 'Đã xóa bài viết khỏi danh sách.' });
+    } else {
+      res.status(404).json({ error: 'Không tìm thấy bài viết.' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 

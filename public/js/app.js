@@ -499,7 +499,8 @@ async function schedulePost(publishImmediately = false) {
 async function loadPosts() {
   try {
     const res = await fetch('/api/posts');
-    allPosts = await res.json();
+    const data = await res.json();
+    allPosts = Array.isArray(data) ? data : [];
 
     const queuedPosts = allPosts.filter(p => p.status === 'queued' || p.status === 'processing' || p.status === 'pending_media' || p.status === 'skipped_no_media');
     const historyPosts = allPosts.filter(p => p.status === 'posted' || p.status === 'failed');
@@ -522,6 +523,7 @@ async function loadPosts() {
     renderHistoryList(historyPosts);
   } catch (err) {
     console.error('Error fetching posts:', err);
+    if (!Array.isArray(allPosts)) allPosts = [];
   }
 }
 

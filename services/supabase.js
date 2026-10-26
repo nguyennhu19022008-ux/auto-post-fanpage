@@ -102,18 +102,22 @@ async function fetchAllPostsFromDb() {
         }));
       }
     } catch (err) {
-      // Supabase table might not exist yet, fallback
+      console.warn('[Supabase fetchAllPosts Exception]', err.message);
     }
   }
 
-  // Fallback to local posts.json
+  // Fallback to /tmp/posts.json or local posts.json
+  const tmpFile = path.join('/tmp', 'posts.json');
   const localFile = path.join(__dirname, '..', 'data', 'posts.json');
   try {
+    if (fs.existsSync(tmpFile)) {
+      return JSON.parse(fs.readFileSync(tmpFile, 'utf8') || '[]');
+    }
     if (fs.existsSync(localFile)) {
       return JSON.parse(fs.readFileSync(localFile, 'utf8') || '[]');
     }
   } catch (e) {
-    console.error('Error reading local posts:', e);
+    console.error('Error reading fallback local posts:', e);
   }
   return [];
 }
