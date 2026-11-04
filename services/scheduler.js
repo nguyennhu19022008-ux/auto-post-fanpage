@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { publishPostToFanpage } = require('./facebook');
 const { sendPostNotification, sendMediaReminderEmail } = require('./mailer');
+const { sendPostPublishedTelegram, sendMediaReminderTelegram } = require('./telegram');
 const {
   upsertPostToDb,
   fetchAllPostsFromDb,
@@ -153,6 +154,11 @@ async function executePost(post) {
     sendPostNotification(post, settings).catch(err => {
       console.error('[Scheduler] Gửi email thông báo bị lỗi:', err.message);
     });
+
+    // Gửi Telegram thông báo tự động tới người dùng
+    sendPostPublishedTelegram(post, settings).catch(err => {
+      console.error('[Scheduler] Gửi Telegram thông báo bị lỗi:', err.message);
+    });
   } catch (error) {
     post.status = 'failed';
     post.failedAt = new Date().toISOString();
@@ -212,10 +218,11 @@ async function checkAndPublishDuePosts() {
       
       try {
         await sendMediaReminderEmail(post, quickUploadUrl, settings);
+        await sendMediaReminderTelegram(post, quickUploadUrl, settings);
         post.mediaReminderSent = true;
         hasUpdates = true;
       } catch (err) {
-        console.error('[Scheduler] Gửi mail nhắc ảnh thất bại:', err.message);
+        console.error('[Scheduler] Gửi mail/telegram nhắc ảnh thất bại:', err.message);
       }
     }
 

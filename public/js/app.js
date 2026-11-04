@@ -86,6 +86,12 @@ async function loadSettings() {
         document.getElementById('settingSmtpUser').value = appSettings.smtpUser || appSettings.email || 'nguyennhu19022008@gmail.com';
         document.getElementById('settingSmtpPass').value = appSettings.smtpPass || '';
       }
+
+      // Telegram Bot fields
+      if (document.getElementById('settingTelegramBotToken')) {
+        document.getElementById('settingTelegramBotToken').value = appSettings.telegramBotToken || '';
+        document.getElementById('settingTelegramChatId').value = appSettings.telegramChatId || '';
+      }
     }
 
     // Update top header badge
@@ -117,7 +123,9 @@ async function saveSettingsForm() {
     emailNotificationEnabled: document.getElementById('settingEmailEnabled')?.checked ?? true,
     notificationEmail: document.getElementById('settingNotificationEmail')?.value.trim() || 'nguyennhu19022008@gmail.com',
     smtpUser: document.getElementById('settingSmtpUser')?.value.trim() || '',
-    smtpPass: document.getElementById('settingSmtpPass')?.value.trim() || ''
+    smtpPass: document.getElementById('settingSmtpPass')?.value.trim() || '',
+    telegramBotToken: document.getElementById('settingTelegramBotToken')?.value.trim() || '',
+    telegramChatId: document.getElementById('settingTelegramChatId')?.value.trim() || ''
   };
 
   try {
@@ -180,6 +188,61 @@ async function testEmailConnection() {
       resultDiv.innerHTML = `<span class="text-emerald-700 font-bold">✅ Đã gửi email kiểm thử thành công tới <strong>${notificationEmail}</strong>! Hãy kiểm tra hòm thư của bạn.</span>`;
     } else {
       resultDiv.innerHTML = `<span class="text-red-600 font-bold">❌ ${data.error}</span>`;
+    }
+  } catch (err) {
+    resultDiv.innerHTML = `<span class="text-red-600 font-bold">❌ Lỗi: ${err.message}</span>`;
+  }
+}
+
+async function setupTelegramWebhook() {
+  const resultDiv = document.getElementById('telegramStatusResult');
+  const token = document.getElementById('settingTelegramBotToken').value.trim();
+  if (!token) {
+    alert('Vui lòng nhập Telegram Bot Token trước khi kích hoạt Webhook!');
+    return;
+  }
+
+  resultDiv.innerHTML = '<span class="text-indigo-700 font-bold">⏳ Đang kết nối Webhook tới Telegram...</span>';
+  try {
+    const res = await fetch('/api/telegram/setup-webhook', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ telegramBotToken: token })
+    });
+    const data = await res.json();
+    if (data.success) {
+      resultDiv.innerHTML = `<span class="text-emerald-700 font-bold">✅ ${data.message}</span>`;
+      await saveSettingsForm();
+    } else {
+      resultDiv.innerHTML = `<span class="text-red-600 font-bold">❌ Lỗi: ${data.error}</span>`;
+    }
+  } catch (err) {
+    resultDiv.innerHTML = `<span class="text-red-600 font-bold">❌ Lỗi kết nối: ${err.message}</span>`;
+  }
+}
+
+async function testTelegramMessage() {
+  const resultDiv = document.getElementById('telegramStatusResult');
+  const token = document.getElementById('settingTelegramBotToken').value.trim();
+  const chatId = document.getElementById('settingTelegramChatId').value.trim();
+
+  if (!token || !chatId) {
+    alert('Vui lòng nhập cả Telegram Bot Token và Chat ID để gửi tin nhắn thử nghiệm!');
+    return;
+  }
+
+  resultDiv.innerHTML = '<span class="text-indigo-700 font-bold">⏳ Đang gửi tin nhắn thử nghiệm tới Telegram...</span>';
+  try {
+    const res = await fetch('/api/telegram/test-message', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ telegramBotToken: token, telegramChatId: chatId })
+    });
+    const data = await res.json();
+    if (data.success) {
+      resultDiv.innerHTML = `<span class="text-emerald-700 font-bold">✅ ${data.message} (Hãy kiểm tra app Telegram của anh!)</span>`;
+    } else {
+      resultDiv.innerHTML = `<span class="text-red-600 font-bold">❌ Lỗi: ${data.error}</span>`;
     }
   } catch (err) {
     resultDiv.innerHTML = `<span class="text-red-600 font-bold">❌ Lỗi: ${err.message}</span>`;

@@ -9,6 +9,11 @@ require('dotenv').config();
 const { generatePostWithGemini, sanitizeRawText } = require('./services/gemini');
 const { verifyPageToken } = require('./services/facebook');
 const { sendTestEmail } = require('./services/mailer');
+const {
+  handleTelegramUpdate,
+  setTelegramWebhook,
+  sendTelegramMessage
+} = require('./services/telegram');
 const { parseStockTableFromImage } = require('./services/tableParser');
 const {
   uploadToSupabaseStorage,
@@ -94,6 +99,87 @@ app.post('/api/test-email', async (req, res) => {
     res.json(result);
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+// 3.2. Telegram Webhook (Processes updates from Telegram)
+app.post('/api/telegram-webhook', async (req, res) => {
+  // Respond 200 immediately to Telegram so webhook never times out
+  res.status(200).json({ ok: true });
+
+  try {
+    const settings = await getSettings();
+    await handleTelegramUpdate(req.body, settings, {
+      getPosts,
+      savePosts,
+      upsertPostToDb,
+      publishPost: executePost
+    });
+  } catch (err) {
+    console.error('[Server] Telegram Webhook Error:', err);
+  }
+});
+
+// 3.3. Setup Telegram Webhook
+app.post('/api/telegram/setup-webhook', async (req, res) => {
+  try {
+    const settings = await getSettings();
+    const token = req.body.telegramBotToken || settings.telegramBotToken || process.env.TELEGRAM_BOT_TOKEN;
+    if (!token) {
+      return res.status(400).json({ success: false, error: 'Chưa có Telegram Bot Token. Vui lòng nhập token trước.' });
+    }
+
+    const host = req.get('host');
+    const protocol = req.protocol === 'https' || req.get('x-forwarded-proto') === 'https' ? 'https' : 'http';
+    const baseUrl = process.env.BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `${protocol}://${host}`);
+    const webhookUrl = `${baseUrl}/api/telegram-webhook`;
+
+    const result = await setTelegramWebhook(token, webhookUrl);
+    res.json({
+      success: true,
+      webhookUrl,
+      result,
+      message: `Đã kích hoạt Webhook thành công tới: ${webhookUrl}`
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 3.4. Test Telegram Message
+app.post('/api/telegram/test-message', async (req, res) => {
+  try {
+    const settings = await getSettings();
+    const token = req.body.telegramBotToken || settings.telegramBotToken || process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = req.body.telegramChatId || settings.telegramChatId || process.env.TELEGRAM_CHAT_ID;
+
+    if (!token || !chatId) {
+      return res.status(400).json({ success: false, error: 'Vui lòng cung cấp cả Bot Token và Chat ID để gửi tin nhắn thử.' });
+    }
+
+    const testText = `
+🔔 <b>XIN CHÀO ANH VƯƠNG GIA!</b>
+────────────────────────
+Đây là tin nhắn thử nghiệm từ hệ thống <b>Laptop Vương Gia Autopost</b>.
+Kết nối giữa Telegram Bot và Fanpage đã sẵn sàng 100%!
+
+Từ bây giờ anh có thể:
+1️⃣ Chọn 1 video + nhiều ảnh, dán bài Zalo vào Chú thích và gửi vào đây.
+2️⃣ Bấm <b>[⚡ Đăng ngay]</b> khi muốn xuất bản tức thì.
+────────────────────────
+    `.trim();
+
+    await sendTelegramMessage(token, chatId, testText, {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🌐 Mở Dashboard Web', url: 'https://auto-post-fanpage-coral.vercel.app' }]
+        ]
+      }
+    });
+
+    res.json({ success: true, message: 'Đã gửi tin nhắn thử nghiệm thành công tới Telegram!' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 

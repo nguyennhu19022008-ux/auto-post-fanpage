@@ -20,7 +20,7 @@
   <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
   <link rel="apple-touch-icon" href="/icons/icon.svg" />
 
-  <link rel="stylesheet" href="/css/style.css?v=20261104_library_video">
+  <link rel="stylesheet" href="/css/style.css?v=20261104_telegram_bot">
 </head>
 <body class="bg-[#FDFBF7] text-[#18181B] min-h-screen">
 
@@ -608,6 +608,41 @@
                 </div>
               </div>
 
+              <!-- Telegram Bot Assistant Configuration -->
+              <h3 class="text-xs font-black uppercase tracking-wider text-[#18181B] border-b-2 border-[#18181B] pb-2 pt-2 flex items-center justify-between">
+                <span class="flex items-center gap-2">
+                  <span class="text-base">🤖</span> Trợ lý ảo Chatbot Telegram (Đăng 1 chạm từ Zalo)
+                </span>
+                <span class="neo-sticker bg-[#818CF8] text-white text-[10px] font-bold">0đ Miễn phí</span>
+              </h3>
+
+              <div class="space-y-3">
+                <div>
+                  <div class="flex justify-between items-center mb-1">
+                    <label class="text-xs font-bold text-[#18181B]">Telegram Bot Token:</label>
+                    <button type="button" onclick="setupTelegramWebhook()" class="text-xs font-bold text-indigo-700 hover:underline">🔗 Kích hoạt Webhook</button>
+                  </div>
+                  <input type="password" id="settingTelegramBotToken" placeholder="1234567890:ABCdefGHIjklMNOpqrs..." class="neo-input w-full px-3 py-2 text-sm font-mono">
+                  <span class="text-[11px] text-neutral-500 font-medium">Lấy miễn phí từ @BotFather trên Telegram.</span>
+                </div>
+
+                <div>
+                  <div class="flex justify-between items-center mb-1">
+                    <label class="text-xs font-bold text-[#18181B]">Telegram Chat ID của bạn:</label>
+                    <button type="button" onclick="testTelegramMessage()" class="text-xs font-bold text-indigo-700 hover:underline">🔔 Gửi tin nhắn thử</button>
+                  </div>
+                  <input type="text" id="settingTelegramChatId" placeholder="VD: 123456789 (chat /start với Bot sẽ thấy mã này)" class="neo-input w-full px-3 py-2 text-sm font-mono">
+                  <span class="text-[11px] text-neutral-500 font-medium">ID tài khoản Telegram của bạn để Bot gửi báo cáo và nhận media.</span>
+                </div>
+
+                <div id="telegramStatusResult" class="text-xs font-bold"></div>
+
+                <div class="p-2.5 bg-[#EEF2FF] border border-[#18181B] rounded-lg text-[11px] text-neutral-800 font-medium">
+                  💡 <strong>Cách tạo Bot Telegram trong 01 phút:</strong>
+                  Mở Telegram tìm <b>@BotFather</b> ➔ Nhắn <code>/newbot</code> ➔ Đặt tên bot (VD: <i>Laptop Vương Gia Bot</i>) ➔ Nhận mã <b>Token</b> dán vào ô trên ➔ Bấm <b>Kích hoạt Webhook</b>!
+                </div>
+              </div>
+
               <div class="pt-2">
                 <button onclick="saveSettingsForm()" class="neo-btn neo-btn-green w-full py-3 text-sm font-black shadow-[3px_3px_0px_#18181B] uppercase tracking-wide">
                   💾 LƯU CẤU HÌNH HỆ THỐNG
@@ -641,6 +676,25 @@
               <div class="neo-card-sm p-3 bg-white text-neutral-700 font-medium">
                 <strong class="text-black">💡 Chế độ sẵn sàng:</strong> Hiện tại mã Token Fanpage <strong>Laptop Vương Gia</strong> của bạn đã được kết nối và kiểm thử thành công, bạn chỉ việc soạn bài và đăng ngay!
               </div>
+            </div>
+
+            <!-- Guide 2: Telegram Bot Setup -->
+            <div class="neo-card p-5 bg-[#EEF2FF] space-y-3 text-xs leading-relaxed text-[#18181B]">
+              <h3 class="text-sm font-black uppercase tracking-wider text-[#18181B] border-b-2 border-[#18181B] pb-2 flex items-center justify-between">
+                <span class="flex items-center gap-2"><span>🤖</span> Hướng dẫn tạo Bot Telegram (01 phút)</span>
+                <span class="neo-sticker bg-[#FDE047] text-black text-[10px]">Cực Dễ</span>
+              </h3>
+
+              <ol class="list-decimal list-inside space-y-1.5 text-neutral-800 font-medium">
+                <li>Mở app <strong>Telegram</strong> trên điện thoại hoặc máy tính.</li>
+                <li>Tìm kiếm tài khoản <strong class="text-indigo-800">@BotFather</strong> (có tích xanh chính thức).</li>
+                <li>Bấm <strong>Start</strong> và gửi lệnh: <code>/newbot</code>.</li>
+                <li>Đặt tên cho Bot (VD: <em>Laptop Vuong Gia Bot</em>).</li>
+                <li>Đặt username cho Bot (phải kết thúc bằng <em>bot</em>, VD: <em>VuongGiaLaptop_bot</em>).</li>
+                <li>Copy đoạn <strong>HTTP API Token</strong> dài (VD: <code>7123456789:AAH...</code>) dán vào ô <strong>Telegram Bot Token</strong> bên trái.</li>
+                <li>Bấm nút <strong>🔗 Kích hoạt Webhook</strong>.</li>
+                <li>Mở con bot bạn vừa tạo, bấm <strong>/start</strong> để lấy mã Chat ID, sau đó dán vào ô Chat ID và bấm <strong>Gửi tin nhắn thử</strong> là xong!</li>
+              </ol>
             </div>
           </div>
 
@@ -683,7 +737,7 @@
 
   </div>
 
-  <script src="/js/app.js?v=20261104_library_video"></script>
+  <script src="/js/app.js?v=20261104_telegram_bot"></script>
   <!-- Modal: Post Preview -->
   <div id="postPreviewModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
     <div class="neo-card bg-white max-w-2xl w-full p-6 space-y-4 max-h-[90vh] flex flex-col shadow-[6px_6px_0px_#18181B]">

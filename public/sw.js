@@ -1,8 +1,8 @@
-const CACHE_NAME = 'vg-laptop-app-v8';
+const CACHE_NAME = 'vg-laptop-app-v9';
 const STATIC_ASSETS = [
   '/',
-  '/css/style.css?v=20261104_library_video',
-  '/js/app.js?v=20261104_library_video',
+  '/css/style.css?v=20261104_telegram_bot',
+  '/js/app.js?v=20261104_telegram_bot',
   '/manifest.json',
   '/icons/icon.svg',
   '/quick-upload.html'
