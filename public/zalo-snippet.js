@@ -209,19 +209,47 @@
     const loadingToast = showToast(`Đang bóc tách AI và ${actionName}...`, 'loading');
 
     try {
-      const response = await fetch(`${defaultServerUrl}/api/extension/push-post`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          rawText: data.text,
-          mediaUrls: data.mediaUrls,
-          publishImmediately: publishImmediately
-        })
-      });
+      let result;
 
-      const result = await response.json();
+      // Delegate to Background Service Worker to bypass Zalo Web page CSP completely
+      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+        result = await new Promise((resolve) => {
+          chrome.runtime.sendMessage({
+            action: 'pushPost',
+            serverUrl: defaultServerUrl,
+            payload: {
+              rawText: data.text,
+              mediaUrls: data.mediaUrls,
+              publishImmediately: publishImmediately
+            }
+          }, (res) => {
+            if (chrome.runtime.lastError) {
+              resolve({ success: false, error: chrome.runtime.lastError.message });
+            } else if (!res) {
+              resolve({ success: false, error: 'Không nhận được phản hồi từ extension' });
+            } else if (!res.success && res.error) {
+              resolve({ success: false, error: res.error });
+            } else {
+              resolve(res.data || res);
+            }
+          });
+        });
+      } else {
+        // Direct fetch fallback for non-extension environments
+        const response = await fetch(`${defaultServerUrl}/api/extension/push-post`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            rawText: data.text,
+            mediaUrls: data.mediaUrls,
+            publishImmediately: publishImmediately
+          })
+        });
+        result = await response.json();
+      }
+
       loadingToast.remove();
 
       if (result.success) {
@@ -248,14 +276,49 @@
   }
 
   /**
+   * Check if an element is strictly inside the active chat message timeline
+   * and NOT in the left sidebar, navigation icons, search bar, or pinned header
+   */
+  function isInsideChatMessageArea(el) {
+    if (!el || !(el instanceof Element)) return false;
+
+    // 1. Immediately reject sidebar, navigation, search, pinned banner, and avatar
+    const blacklisted = el.closest(
+      '.nav-bar, #main-tab, .sidebar-left, #conversationList, .chat-list, ' +
+      '.chat-sidebar, .pin-message, .chat-header, #chat-header, .header-search, ' +
+      '[data-id*="conv"], [data-id="div_Search"], .banner, [data-id="avatar"], ' +
+      '.main-tab, .left-bar, .sub-tab, .bubble-tab, #header-search'
+    );
+    if (blacklisted) return false;
+
+    // 2. Reject if element is in the left sidebar area (width < 340px)
+    const rect = el.getBoundingClientRect();
+    if (rect.left < 340 && rect.width < 350) {
+      return false;
+    }
+
+    // 3. Must be inside the main chat view or message viewport
+    const insideChatArea = el.closest(
+      '#chatViewContainer, .chat-view, #messageViewContainer, .message-view-container, ' +
+      '.chat-thread, .chat-box, .msg-list, [class*="chatView"], [class*="messageList"], ' +
+      '[id*="chatView"], #messageView, .message-view'
+    );
+    if (insideChatArea) return true;
+
+    // If no specific container class, check if it's in the chat area (left > 320px)
+    return rect.left >= 320;
+  }
+
+  /**
    * Inject 1-Click Action Buttons into a Zalo message bubble
    */
   function injectButtons(messageEl) {
+    if (!isInsideChatMessageArea(messageEl)) return;
     if (messageEl.querySelector('.vg-zalo-btn-wrapper')) return;
 
     // Check if element is a valid message bubble or card
     const hasText = Boolean(messageEl.querySelector('.rich-text-content, .text-content, .card--text, [data-translate-inner]'));
-    const hasPhoto = Boolean(messageEl.querySelector('.card--photo, .card--album, img:not([class*="avatar"])'));
+    const hasPhoto = Boolean(messageEl.querySelector('.card--photo, .card--album, .card--group-photo, img:not([class*="avatar"])'));
     
     // Ignore non-message elements (like system banners, date separators)
     if (!hasText && !hasPhoto) return;
@@ -303,6 +366,19 @@
    * Scan DOM and inject buttons into all available messages
    */
   function scanAndInject() {
+    // 1. Cleanup any misinjected buttons on sidebar / navigation / search
+    document.querySelectorAll('.vg-zalo-btn-wrapper').forEach(wrapper => {
+      if (!isInsideChatMessageArea(wrapper)) {
+        wrapper.remove();
+      }
+    });
+
+    // 2. Find the chat view container
+    const chatContainer = document.querySelector(
+      '#chatViewContainer, .chat-view, #messageViewContainer, .message-view-container, ' +
+      '.chat-thread, .chat-box, [id*="chatView"], #messageView'
+    ) || document.body;
+
     const candidateSelectors = [
       '.msg-item',
       '.chat-item',
@@ -310,14 +386,18 @@
       '.card--text',
       '.card--photo',
       '.card--album',
-      '[data-id]'
+      '.card--group-photo',
+      'div[data-id^="msg_"]',
+      'div[id^="msg-"]'
     ];
 
-    const elements = document.querySelectorAll(candidateSelectors.join(', '));
+    const elements = chatContainer.querySelectorAll(candidateSelectors.join(', '));
     elements.forEach(el => {
-      // Find suitable container to attach button
+      if (!isInsideChatMessageArea(el)) return;
       const bubble = el.closest('.msg-item, .chat-item, .card') || el;
-      injectButtons(bubble);
+      if (isInsideChatMessageArea(bubble)) {
+        injectButtons(bubble);
+      }
     });
   }
 
