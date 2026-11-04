@@ -4,6 +4,7 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const axios = require('axios');
 require('dotenv').config();
 
 const { generatePostWithGemini, sanitizeRawText } = require('./services/gemini');
@@ -547,6 +548,113 @@ app.post('/api/posts', async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// 8.1. Dedicated 1-Click Push from Chrome Extension (Zalo Web)
+app.post('/api/extension/push-post', async (req, res) => {
+  try {
+    const { rawText, mediaUrls = [], publishImmediately = false, customPrice = '' } = req.body;
+    if (!rawText && (!mediaUrls || mediaUrls.length === 0)) {
+      return res.status(400).json({ success: false, error: 'Thiếu nội dung hoặc ảnh/video từ Zalo.' });
+    }
+
+    const settings = await getSettings();
+
+    // 1. AI or Fallback parse post content
+    const textToParse = rawText || 'Laptop xách tay Nhật Bản chính hãng';
+    const generated = await generatePostWithGemini(textToParse, settings, customPrice);
+
+    let machineCode = '';
+    const codeMatch = textToParse.match(/(?:mã|ms|code|#)\s*[:.]?\s*([a-zA-Z0-9]+)/i);
+    if (codeMatch) machineCode = codeMatch[1].toUpperCase();
+    const finalCode = machineCode || generated.machineCode || String(Date.now()).slice(-4);
+    const finalName = generated.machineName || `Laptop #${finalCode}`;
+
+    // 2. Download media URLs and upload directly to Supabase Storage
+    const uploadedMediaFiles = [];
+    if (Array.isArray(mediaUrls) && mediaUrls.length > 0) {
+      console.log(`[Extension] 📥 Đang tải ${mediaUrls.length} tệp media từ Zalo CDN...`);
+      for (let i = 0; i < mediaUrls.length; i++) {
+        const mUrl = mediaUrls[i];
+        if (!mUrl || !mUrl.startsWith('http')) continue;
+
+        try {
+          const mediaRes = await axios.get(mUrl, {
+            responseType: 'arraybuffer',
+            timeout: 30000,
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+              'Referer': 'https://chat.zalo.me/'
+            }
+          });
+          const buffer = Buffer.from(mediaRes.data);
+          const contentType = mediaRes.headers['content-type'] || '';
+          const isVideo = contentType.startsWith('video/') || /\.(mp4|mov|avi)$/i.test(mUrl);
+          const ext = isVideo ? '.mp4' : '.jpg';
+          const mime = isVideo ? 'video/mp4' : 'image/jpeg';
+          const originalName = `zalo_${finalCode}_${i + 1}${ext}`;
+
+          const uploaded = await uploadToSupabaseStorage(buffer, originalName, mime);
+          uploadedMediaFiles.push(uploaded);
+          console.log(`[Extension] ✅ Đã lưu media #${i + 1} lên Supabase Storage:`, uploaded.url);
+        } catch (downloadErr) {
+          console.warn(`[Extension] ⚠️ Không thể tải trực tiếp URL #${i + 1} (${mUrl}):`, downloadErr.message);
+        }
+      }
+    }
+
+    // 3. Build Post Object
+    const scheduledTime = await getNextAvailableScheduleTime();
+    const newPost = {
+      id: `post_${Date.now()}`,
+      machineCode: finalCode,
+      machineName: finalName,
+      content: generated.content,
+      price: generated.price || customPrice || '',
+      mediaFiles: uploadedMediaFiles,
+      scheduledTime: scheduledTime,
+      status: uploadedMediaFiles.length > 0 ? 'queued' : 'pending_media',
+      mediaReminderSent: false,
+      cloudLink: null,
+      createdAt: new Date().toISOString(),
+      postedAt: null,
+      failedAt: null,
+      skippedAt: null,
+      fbPostId: null,
+      fbPostUrl: null,
+      isSimulation: false,
+      lastMessage: 'Được tạo bởi Zalo Chrome Extension'
+    };
+
+    // 4. Save to Posts list & Supabase DB
+    const posts = await getPosts();
+    posts.unshift(newPost);
+    await savePosts(posts);
+    await upsertPostToDb(newPost);
+
+    // 5. If publishImmediately is true, publish to Facebook right away!
+    if (publishImmediately) {
+      console.log(`[Extension] ⚡ Đang tiến hành đăng ngay bài [${newPost.id}] lên Facebook...`);
+      const published = await executePost(newPost);
+      await upsertPostToDb(published);
+      return res.json({
+        success: true,
+        post: published,
+        fbPostUrl: published.fbPostUrl,
+        message: 'Đã xuất bản thành công bài viết lên Facebook Fanpage!'
+      });
+    }
+
+    return res.json({
+      success: true,
+      post: newPost,
+      message: `Đã đưa bài #${finalCode} vào hàng đợi lên lịch lúc ${new Date(scheduledTime).toLocaleString('vi-VN')}!`
+    });
+
+  } catch (error) {
+    console.error('[Extension Push Error]', error);
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 

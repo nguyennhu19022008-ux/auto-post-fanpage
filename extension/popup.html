@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Laptop Vương Gia // Autopost Helper</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      width: 320px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #FDFBF7;
+      color: #18181B;
+      padding: 16px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px solid #18181B;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+    .badge-icon {
+      background: #FDE047;
+      width: 36px;
+      height: 36px;
+      border: 2px solid #18181B;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 16px;
+      box-shadow: 2px 2px 0px #18181B;
+    }
+    .title {
+      font-size: 13px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .subtitle {
+      font-size: 11px;
+      color: #71717A;
+      font-weight: 600;
+    }
+    .card {
+      background: #FFFFFF;
+      border: 2px solid #18181B;
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: 3px 3px 0px #18181B;
+      margin-bottom: 12px;
+    }
+    .label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 2px solid #18181B;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: monospace;
+      outline: none;
+      background: #FAF8F5;
+    }
+    .input:focus {
+      background: #FFFFFF;
+      border-color: #4F46E5;
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #18181B;
+      margin-top: 8px;
+    }
+    .status-online {
+      background: #DCFCE7;
+      color: #166534;
+    }
+    .status-offline {
+      background: #FEE2E2;
+      color: #991B1B;
+    }
+    .btn {
+      width: 100%;
+      background: #FDE047;
+      color: #18181B;
+      border: 2px solid #18181B;
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 2px 2px 0px #18181B;
+      transition: transform 0.1s;
+      margin-top: 6px;
+    }
+    .btn:hover {
+      background: #FEF08A;
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0px #18181B;
+    }
+    .btn:active {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0px #18181B;
+    }
+    .btn-secondary {
+      background: #FFFFFF;
+    }
+    .instructions {
+      font-size: 11px;
+      color: #52525B;
+      line-height: 1.5;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="badge-icon">VG</div>
+    <div>
+      <div class="title">Zalo 1-Click Pusher</div>
+      <div class="subtitle">Laptop Vương Gia Fanpage</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <label class="label">Địa chỉ máy chủ (Backend):</label>
+    <input type="text" id="backendUrlInput" class="input" value="https://auto-post-fanpage-coral.vercel.app">
+    
+    <div id="connectionStatus" class="status-pill status-online">
+      <span style="font-size: 8px;">●</span> Đang kết nối Vercel Production
+    </div>
+
+    <button id="saveBtn" class="btn" style="margin-top: 10px;">💾 Lưu Cấu Hình</button>
+  </div>
+
+  <div class="card" style="margin-bottom: 0;">
+    <div class="label">Cách Sử Dụng:</div>
+    <div class="instructions">
+      1. Mở trang <a href="https://chat.zalo.me" target="_blank" style="color: #4F46E5; font-weight: 700;">chat.zalo.me</a>.<br>
+      2. Tại mỗi bài viết trong nhóm thợ, bạn sẽ thấy nút vàng <b>[⚡ ĐĂNG FANPAGE]</b>.<br>
+      3. Bấm 1 click là bài tự động bóc cấu hình và đăng lên Facebook kèm toàn bộ ảnh HD & video!
+    </div>
+    <button id="openDashboardBtn" class="btn btn-secondary" style="margin-top: 10px;">🌐 Mở Dashboard Quản Lý</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

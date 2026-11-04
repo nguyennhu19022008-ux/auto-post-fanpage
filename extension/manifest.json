@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "Laptop Vương Gia // Zalo Autopost 1-Click",
+  "version": "1.0.0",
+  "description": "Đẩy trực tiếp bài viết Zalo kèm toàn bộ ảnh HD & video lên Fanpage Facebook chỉ với 1 cú click",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://chat.zalo.me/*",
+    "https://*.zadn.vn/*",
+    "https://auto-post-fanpage-coral.vercel.app/*",
+    "http://localhost:3000/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chat.zalo.me/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "styles.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
