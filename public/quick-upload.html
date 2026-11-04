@@ -60,28 +60,40 @@
     <!-- Main Upload Section -->
     <div id="uploadControlsArea" class="space-y-4">
       
-      <!-- Option 1: Multi-image picker & Camera -->
+      <!-- Option 1: Multi-media picker, Video & Camera -->
       <div class="space-y-2">
         <div class="flex justify-between items-center">
           <label class="text-xs font-black uppercase tracking-wider block">
-            CÁCH 1: CHỌN HOẶC CHỤP NHIỀU ẢNH
+            CÁCH 1: CHỌN HOẶC QUAY / CHỤP ẢNH & VIDEO
           </label>
           <span id="selectedCountBadge" class="neo-sticker bg-[#E0E7FF] text-[#18181B] text-[11px] font-mono">
-            0 ảnh đã chọn
+            0 ảnh/video đã chọn
           </span>
         </div>
 
-        <!-- Two Quick Action Buttons for Mobile -->
-        <div class="grid grid-cols-2 gap-2.5">
-          <!-- Button A: Open Camera directly on mobile -->
-          <button type="button" onclick="document.getElementById('cameraFileInput').click()" class="neo-btn bg-[#FDE047] hover:bg-yellow-300 py-2.5 px-3 text-xs font-black flex items-center justify-center gap-1.5">
-            <span>📷 Chụp ảnh máy</span>
+        <!-- Four Quick Action Buttons for Mobile & Desktop -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <!-- Button A: Chụp ảnh trực tiếp từ camera -->
+          <button type="button" onclick="document.getElementById('cameraPhotoInput').click()" class="neo-btn bg-[#FDE047] hover:bg-yellow-300 py-2.5 px-2 text-xs font-black flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_#18181B]">
+            <span>📷 Chụp ảnh</span>
           </button>
-          <input type="file" id="cameraFileInput" capture="environment" accept="image/*" class="hidden" onchange="handleNewFiles(event)">
+          <input type="file" id="cameraPhotoInput" capture="environment" accept="image/*" class="hidden" onchange="handleNewFiles(event)">
 
-          <!-- Button B: Pick Multiple from Photo Gallery / Computer -->
-          <button type="button" onclick="document.getElementById('galleryFileInput').click()" class="neo-btn bg-[#FFFFFF] hover:bg-neutral-100 py-2.5 px-3 text-xs font-black flex items-center justify-center gap-1.5">
-            <span>🖼️ Chọn từ thư viện</span>
+          <!-- Button B: Quay video trực tiếp từ camera -->
+          <button type="button" onclick="document.getElementById('cameraVideoInput').click()" class="neo-btn bg-[#F43F5E] hover:bg-rose-600 text-white py-2.5 px-2 text-xs font-black flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_#18181B]">
+            <span>🎥 Quay video</span>
+          </button>
+          <input type="file" id="cameraVideoInput" capture="environment" accept="video/*" class="hidden" onchange="handleNewFiles(event)">
+
+          <!-- Button C: Chọn video từ thiết bị -->
+          <button type="button" onclick="document.getElementById('galleryVideoInput').click()" class="neo-btn bg-[#818CF8] hover:bg-indigo-500 text-white py-2.5 px-2 text-xs font-black flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_#18181B]">
+            <span>🎬 Thêm video</span>
+          </button>
+          <input type="file" id="galleryVideoInput" multiple accept="video/*" class="hidden" onchange="handleNewFiles(event)">
+
+          <!-- Button D: Chọn ảnh từ thư viện -->
+          <button type="button" onclick="document.getElementById('galleryFileInput').click()" class="neo-btn bg-[#FFFFFF] hover:bg-neutral-100 py-2.5 px-2 text-xs font-black flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_#18181B]">
+            <span>🖼️ Chọn ảnh</span>
           </button>
           <input type="file" id="galleryFileInput" multiple accept="image/*,video/*" class="hidden" onchange="handleNewFiles(event)">
         </div>
@@ -89,8 +101,8 @@
         <!-- Dropzone / Drag Area -->
         <div id="mobileDropZone" onclick="document.getElementById('galleryFileInput').click()" class="border-2 border-dashed border-[#18181B] bg-[#FAF5EE] hover:bg-[#FEF08A]/40 rounded-xl p-4 text-center cursor-pointer transition">
           <div class="text-2xl mb-1">📁</div>
-          <div class="text-xs font-bold text-[#18181B]">Bấm vào đây để chọn thêm ảnh từ máy hoặc kéo thả</div>
-          <div class="text-[11px] text-neutral-500 font-medium mt-0.5">Tự động cộng dồn nhiều ảnh (mặt trước, màn hình, bàn phím, sạc...)</div>
+          <div class="text-xs font-bold text-[#18181B]">Bấm vào đây để chọn ảnh hoặc video từ máy (hoặc kéo thả)</div>
+          <div class="text-[11px] text-neutral-500 font-medium mt-0.5">Hỗ trợ đầy đủ: Video (MP4, MOV...) & Ảnh (JPG, PNG, WebP)</div>
         </div>
       </div>
 
@@ -181,6 +193,13 @@
       }
     }
 
+    function isVideoFile(f) {
+      if (!f) return false;
+      const type = f.type || f.mimetype || '';
+      const name = f.name || f.filename || f.url || f.originalname || '';
+      return type.startsWith('video/') || /\.(mp4|mov|avi|mkv|webm|3gp)$/i.test(name);
+    }
+
     function renderExistingMedia() {
       const area = document.getElementById('existingGalleryArea');
       const container = document.getElementById('existingMediaContainer');
@@ -193,20 +212,42 @@
       }
 
       area.classList.remove('hidden');
-      countText.innerText = `${existingFiles.length} tệp`;
-      container.innerHTML = existingFiles.map((file, idx) => `
-        <div class="relative rounded-lg overflow-hidden border border-[#18181B] aspect-square bg-black shadow-[1.5px_1.5px_0px_#18181B]">
-          <img src="${file.url}" class="w-full h-full object-cover">
-          <span class="absolute bottom-1 left-1 bg-black/70 text-white text-[9px] px-1 font-mono rounded">#${idx + 1}</span>
-          <button type="button" onclick="deleteExistingMedia('${file.filename}')" class="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold shadow">
-            ✕
-          </button>
-        </div>
-      `).join('');
+      const videoCount = existingFiles.filter(isVideoFile).length;
+      const imgCount = existingFiles.length - videoCount;
+      countText.innerText = videoCount > 0 
+        ? `${videoCount} video · ${imgCount} ảnh` 
+        : `${existingFiles.length} tệp`;
+
+      container.innerHTML = existingFiles.map((file, idx) => {
+        const isVideo = isVideoFile(file);
+        if (isVideo) {
+          return `
+            <div class="relative rounded-lg overflow-hidden border border-[#18181B] aspect-square bg-black shadow-[1.5px_1.5px_0px_#18181B] group">
+              <video src="${file.url}" preload="metadata" muted playsinline class="w-full h-full object-cover"></video>
+              <div class="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-none text-white text-[11px] font-black">
+                ▶ Video
+              </div>
+              <span class="absolute bottom-1 left-1 bg-black/80 text-white text-[9px] px-1 font-mono rounded">#${idx + 1}</span>
+              <button type="button" onclick="deleteExistingMedia('${file.filename}')" class="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold shadow">
+                ✕
+              </button>
+            </div>
+          `;
+        }
+        return `
+          <div class="relative rounded-lg overflow-hidden border border-[#18181B] aspect-square bg-black shadow-[1.5px_1.5px_0px_#18181B]">
+            <img src="${file.url}" class="w-full h-full object-cover">
+            <span class="absolute bottom-1 left-1 bg-black/70 text-white text-[9px] px-1 font-mono rounded">#${idx + 1}</span>
+            <button type="button" onclick="deleteExistingMedia('${file.filename}')" class="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold shadow">
+              ✕
+            </button>
+          </div>
+        `;
+      }).join('');
     }
 
     async function deleteExistingMedia(filename) {
-      if (!confirm('Xóa ảnh này khỏi bài viết?')) return;
+      if (!confirm('Xóa tệp này khỏi bài viết?')) return;
       try {
         const res = await fetch(`/api/posts/${postId}/media/${filename}`, { method: 'DELETE' });
         const data = await res.json();
@@ -216,7 +257,7 @@
           updateTotalCounter();
         }
       } catch (err) {
-        alert('Lỗi xóa ảnh: ' + err.message);
+        alert('Lỗi xóa tệp: ' + err.message);
       }
     }
 
@@ -261,11 +302,11 @@
         const div = document.createElement('div');
         div.className = 'relative rounded-lg overflow-hidden border border-[#18181B] aspect-square bg-black shadow-[1.5px_1.5px_0px_#18181B]';
 
-        const isVideo = file.type.startsWith('video/');
+        const isVideo = isVideoFile(file);
         if (isVideo) {
           div.innerHTML = `
-            <video src="${URL.createObjectURL(file)}" class="w-full h-full object-cover"></video>
-            <div class="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-none text-white text-[11px] font-bold">▶ Video</div>
+            <video src="${URL.createObjectURL(file)}" preload="metadata" muted playsinline class="w-full h-full object-cover"></video>
+            <div class="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-none text-white text-[11px] font-black">▶ Video</div>
             <span class="absolute bottom-1 left-1 bg-black/80 text-white text-[9px] px-1 font-mono rounded">Mới #${idx + 1}</span>
             <button type="button" onclick="removeSelectedFile(${idx})" class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold shadow">✕</button>
           `;
@@ -280,24 +321,37 @@
         container.appendChild(div);
       });
 
-      // Append "+ Thêm ảnh khác" tile inside grid
+      // Append "+ Thêm tệp" tile inside grid
       const addTile = document.createElement('div');
       addTile.className = 'border-2 border-dashed border-[#18181B] rounded-lg aspect-square bg-white hover:bg-yellow-50 flex flex-col items-center justify-center cursor-pointer transition p-1 text-center';
       addTile.onclick = () => document.getElementById('galleryFileInput').click();
       addTile.innerHTML = `
         <span class="text-xl">+</span>
-        <span class="text-[10px] font-bold text-[#18181B]">Thêm ảnh</span>
+        <span class="text-[10px] font-bold text-[#18181B]">Thêm tệp</span>
       `;
       container.appendChild(addTile);
     }
 
     function updateTotalCounter() {
-      const total = existingFiles.length + selectedFiles.length;
+      const allFiles = [...existingFiles, ...selectedFiles];
+      const total = allFiles.length;
+      const videoCount = allFiles.filter(isVideoFile).length;
+      const imageCount = total - videoCount;
+
+      let summaryText = '0 ảnh/video';
+      if (videoCount > 0 && imageCount > 0) {
+        summaryText = `${videoCount} video · ${imageCount} ảnh`;
+      } else if (videoCount > 0) {
+        summaryText = `${videoCount} video`;
+      } else if (imageCount > 0) {
+        summaryText = `${imageCount} ảnh`;
+      }
+
       const badge = document.getElementById('selectedCountBadge');
       const submitText = document.getElementById('submitBtnText');
 
       if (badge) {
-        badge.innerText = `${total} ảnh/video`;
+        badge.innerText = `${summaryText} đã chọn`;
         badge.className = total > 0 
           ? 'neo-sticker bg-[#DCFCE7] text-emerald-900 text-[11px] font-mono font-bold' 
           : 'neo-sticker bg-[#E0E7FF] text-[#18181B] text-[11px] font-mono';
@@ -305,7 +359,7 @@
 
       if (submitText) {
         if (total > 0) {
-          submitText.innerText = `✅ XÁC NHẬN - SẴN SÀNG ĐĂNG (${total} ẢNH) ➔`;
+          submitText.innerText = `✅ XÁC NHẬN - SẴN SÀNG ĐĂNG (${summaryText.toUpperCase()}) ➔`;
         } else {
           submitText.innerText = `✅ XÁC NHẬN - SẴN SÀNG ĐĂNG BÀI ➔`;
         }
@@ -343,7 +397,7 @@
       const totalMedia = existingFiles.length + selectedFiles.length;
 
       if (totalMedia === 0 && !cloudLink) {
-        alert('Vui lòng chọn ít nhất 1 ảnh hoặc dán link Google Drive/ảnh thực tế.');
+        alert('Vui lòng chọn hoặc quay ít nhất 1 ảnh/video, hoặc dán link Google Drive.');
         return;
       }
 
@@ -381,7 +435,7 @@
           alert('Lỗi: ' + (result.error || 'Không thể lưu ảnh'));
         }
       } catch (err) {
-        alert('Lỗi gửi ảnh: ' + err.message);
+        alert('Lỗi gửi media: ' + err.message);
       } finally {
         btn.disabled = false;
         spinner.classList.add('hidden');

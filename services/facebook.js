@@ -73,21 +73,37 @@ async function uploadUnpublishedPhoto(pageId, pageToken, filePath, fileUrl = '')
  * Upload a video to the Fanpage
  */
 async function uploadVideo(pageId, pageToken, filePath, description, title = '', fileUrl = '') {
+  // If a public Cloud URL (Supabase) is provided, Facebook downloads the video directly
+  if (fileUrl && fileUrl.startsWith('http')) {
+    console.log(`[FB API] 🎬 Đang đăng video trực tiếp từ Cloud URL: ${fileUrl}`);
+    const response = await axios.post(
+      `${BASE_URL}/${pageId}/videos`,
+      null,
+      {
+        params: {
+          file_url: fileUrl,
+          description: description,
+          title: title || 'Laptop Vương Gia',
+          access_token: pageToken
+        },
+        timeout: 180000 // 3 minutes timeout for video processing
+      }
+    );
+    return response.data;
+  }
+
+  // Fallback: Local stream upload
   const form = new FormData();
   form.append('access_token', pageToken);
   form.append('description', description);
   if (title) form.append('title', title);
 
-  if (fileUrl && fileUrl.startsWith('http')) {
-    form.append('file_url', fileUrl);
-  } else {
-    const resolved = resolveMediaFilePath(filePath);
-    form.append('source', fs.createReadStream(resolved));
-  }
+  const resolved = resolveMediaFilePath(filePath);
+  form.append('source', fs.createReadStream(resolved));
 
   const response = await axios.post(`${BASE_URL}/${pageId}/videos`, form, {
     headers: form.getHeaders(),
-    timeout: 120000 // Videos may take longer
+    timeout: 180000 // 3 minutes timeout
   });
 
   return response.data;
@@ -99,7 +115,8 @@ async function uploadVideo(pageId, pageToken, filePath, description, title = '',
 async function publishPostToFanpage(postData, userSettings) {
   const pageId = userSettings.fanpageId;
   const pageToken = userSettings.facebookPageToken;
-  const { content, mediaFiles = [], title = '' } = postData;
+  const { content, mediaFiles = [] } = postData;
+  const videoTitle = postData.title || (postData.machineName ? `Laptop ${postData.machineName}` : 'Laptop Vương Gia');
 
   // Check if credentials are present; if not, run in Test/Simulation Mode
   if (!pageToken || pageToken.trim() === '') {
@@ -115,10 +132,13 @@ async function publishPostToFanpage(postData, userSettings) {
 
   try {
     // 1. If there's a video file among media
-    const videoFile = mediaFiles.find(f => f.mimetype?.startsWith('video/') || /\.(mp4|mov|avi|mkv)$/i.test(f.filename || f.path));
+    const videoFile = mediaFiles.find(f => 
+      f.mimetype?.startsWith('video/') || 
+      /\.(mp4|mov|avi|mkv|webm|3gp)$/i.test(f.filename || f.path || f.url || f.originalname)
+    );
     if (videoFile) {
-      console.log(`[FB API] Đang tải lên video: ${videoFile.path}`);
-      const videoResult = await uploadVideo(pageId, pageToken, videoFile.path, content, title);
+      console.log(`[FB API] 🎬 Đang xử lý đăng video: ${videoFile.url || videoFile.path}`);
+      const videoResult = await uploadVideo(pageId, pageToken, videoFile.path, content, videoTitle, videoFile.url);
       const videoId = videoResult.id;
       return {
         success: true,
@@ -129,7 +149,10 @@ async function publishPostToFanpage(postData, userSettings) {
     }
 
     // Filter image files
-    const imageFiles = mediaFiles.filter(f => !f.mimetype?.startsWith('video/') && !/\.(mp4|mov|avi|mkv)$/i.test(f.filename || f.path));
+    const imageFiles = mediaFiles.filter(f => 
+      !f.mimetype?.startsWith('video/') && 
+      !/\.(mp4|mov|avi|mkv|webm|3gp)$/i.test(f.filename || f.path || f.url || f.originalname)
+    );
 
     // 2. Single photo post
     if (imageFiles.length === 1) {

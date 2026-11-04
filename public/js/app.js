@@ -317,6 +317,23 @@ function handleFileSelect(event) {
   event.target.value = ''; // Reset so the user can select more files or pick the same file again
 }
 
+// Helper to determine if a media item is a video
+function isVideoFile(file) {
+  if (!file) return false;
+  const mt = (file.mimetype || '').toLowerCase();
+  const url = (file.url || file.filename || file.originalname || '').toLowerCase();
+  return mt.startsWith('video/') || /\.(mp4|mov|avi|mkv|webm|3gp)$/i.test(url);
+}
+
+function formatMediaCountText(files) {
+  const vCount = (files || []).filter(isVideoFile).length;
+  const pCount = (files || []).length - vCount;
+  if (!files || files.length === 0) return '0 tệp đã chọn';
+  if (vCount > 0 && pCount > 0) return `${vCount} video · ${pCount} ảnh đã chọn`;
+  if (vCount > 0) return `${vCount} video đã chọn`;
+  return `${pCount} ảnh đã chọn`;
+}
+
 async function uploadMediaFiles(files) {
   const formData = new FormData();
   for (let i = 0; i < files.length; i++) {
@@ -348,14 +365,14 @@ async function uploadMediaFiles(files) {
   } catch (err) {
     alert('Lỗi tải tệp: ' + err.message);
   } finally {
-    mediaCountText.innerText = `${currentMediaFiles.length} tệp đã chọn`;
+    mediaCountText.innerText = formatMediaCountText(currentMediaFiles);
   }
 }
 
 function removeMediaItem(index) {
   currentMediaFiles.splice(index, 1);
   renderMediaPreviews();
-  document.getElementById('mediaCountText').innerText = `${currentMediaFiles.length} tệp đã chọn`;
+  document.getElementById('mediaCountText').innerText = formatMediaCountText(currentMediaFiles);
 }
 
 function renderMediaPreviews() {
@@ -363,38 +380,38 @@ function renderMediaPreviews() {
   container.innerHTML = '';
 
   currentMediaFiles.forEach((file, index) => {
-    const isVideo = file.mimetype?.startsWith('video/') || /\.(mp4|mov|avi)$/i.test(file.url);
+    const isVideo = isVideoFile(file);
     const item = document.createElement('div');
     item.className = 'relative group rounded-lg overflow-hidden border-2 border-[#18181B] bg-black aspect-video flex items-center justify-center shadow-[2px_2px_0px_#18181B]';
 
     if (isVideo) {
       item.innerHTML = `
-        <video src="${file.url}" class="w-full h-full object-cover"></video>
+        <video src="${file.url}" class="w-full h-full object-cover" preload="metadata" muted playsinline></video>
         <div class="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-none">
-          <span class="text-white text-xs font-bold font-mono">▶ Video</span>
+          <span class="bg-[#F43F5E] text-white text-[10px] font-black font-mono px-2 py-0.5 rounded shadow">▶ VIDEO</span>
         </div>
-        <span class="absolute bottom-1 left-1 bg-black/75 text-white text-[9px] px-1 font-mono rounded">#${index + 1}</span>
-        <button onclick="removeMediaItem(${index})" class="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition shadow">✕</button>
+        <span class="absolute bottom-1 left-1 bg-black/80 text-white text-[9px] px-1 font-mono rounded">#${index + 1}</span>
+        <button onclick="removeMediaItem(${index})" class="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-90 hover:opacity-100 transition shadow">✕</button>
       `;
     } else {
       item.innerHTML = `
-        <img src="${file.url}" class="w-full h-full object-cover">
-        <span class="absolute bottom-1 left-1 bg-black/75 text-white text-[9px] px-1 font-mono rounded">#${index + 1}</span>
-        <button onclick="removeMediaItem(${index})" class="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition shadow">✕</button>
+        <img src="${file.url}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'w-full h-full bg-[#FAF5EE] flex items-center justify-center text-[10px] font-mono text-neutral-400 font-bold\\\'>Ảnh lỗi</div>';" class="w-full h-full object-cover">
+        <span class="absolute bottom-1 left-1 bg-black/80 text-white text-[9px] px-1 font-mono rounded">#${index + 1}</span>
+        <button onclick="removeMediaItem(${index})" class="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-90 hover:opacity-100 transition shadow">✕</button>
       `;
     }
 
     container.appendChild(item);
   });
 
-  // If there are already files uploaded, render a "+ Thêm ảnh khác" tile in the gallery
+  // If there are already files uploaded, render a "+ Thêm ảnh/video" tile in the gallery
   if (currentMediaFiles.length > 0) {
     const addMoreTile = document.createElement('div');
     addMoreTile.className = 'border-2 border-dashed border-[#18181B] bg-white hover:bg-[#FEF08A]/50 rounded-lg aspect-video flex flex-col items-center justify-center cursor-pointer transition shadow-[2px_2px_0px_#18181B] text-center p-2';
     addMoreTile.onclick = () => document.getElementById('fileInput').click();
     addMoreTile.innerHTML = `
       <span class="text-2xl font-bold text-[#18181B] leading-none">+</span>
-      <span class="text-[10px] font-black uppercase text-[#18181B] mt-1">Thêm ảnh khác</span>
+      <span class="text-[10px] font-black uppercase text-[#18181B] mt-1">Thêm tệp</span>
     `;
     container.appendChild(addMoreTile);
   }
@@ -428,15 +445,18 @@ function updateFacebookPreview() {
     mediaContainer.className = `fb-media-grid grid-${Math.min(count, 4)}`;
 
     mediaContainer.innerHTML = currentMediaFiles.slice(0, 4).map((f, idx) => {
-      const isVideo = f.mimetype?.startsWith('video/') || /\.(mp4|mov|avi)$/i.test(f.url);
+      const isVideo = isVideoFile(f);
       
-      // If 5+ photos, display "+N" overlay on the 4th item like real Facebook
+      // If 5+ files, display "+N" overlay on the 4th item like real Facebook
       if (idx === 3 && currentMediaFiles.length > 4) {
         const remaining = currentMediaFiles.length - 3;
         return `
-          <div class="relative w-full h-full min-h-[140px] bg-black overflow-hidden">
-            <img src="${f.url}" class="w-full h-full object-cover opacity-60">
-            <div class="absolute inset-0 flex items-center justify-center text-white text-2xl font-black">
+          <div class="relative w-full h-full min-h-[140px] bg-black overflow-hidden flex items-center justify-center">
+            ${isVideo 
+              ? `<video src="${f.url}" class="w-full h-full object-cover opacity-60" preload="metadata" muted playsinline></video>`
+              : `<img src="${f.url}" class="w-full h-full object-cover opacity-60" onerror="this.onerror=null; this.src='data:image/svg+xml,...';">`
+            }
+            <div class="absolute inset-0 flex items-center justify-center text-white text-2xl font-black bg-black/40">
               +${remaining}
             </div>
           </div>
@@ -444,9 +464,14 @@ function updateFacebookPreview() {
       }
 
       if (isVideo) {
-        return `<video src="${f.url}" class="fb-media-item" controls></video>`;
+        return `
+          <div class="relative w-full h-full min-h-[140px] bg-black overflow-hidden flex items-center justify-center rounded">
+            <video src="${f.url}" class="w-full h-full object-cover" controls preload="metadata" playsinline></video>
+            <span class="absolute top-2 left-2 bg-[#F43F5E] text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow pointer-events-none">▶ VIDEO</span>
+          </div>
+        `;
       } else {
-        return `<img src="${f.url}" class="fb-media-item">`;
+        return `<img src="${f.url}" class="fb-media-item" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'w-full h-full min-h-[140px] bg-[#FAF5EE] flex items-center justify-center text-xs font-mono text-neutral-400 font-bold\\\'>Ảnh máy</div>';">`;
       }
     }).join('');
   }
@@ -544,20 +569,26 @@ function renderQueueList(posts) {
     const scheduledDate = new Date(post.scheduledTime).toLocaleString('vi-VN', {
       hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric'
     });
-    const mCount = post.mediaFiles?.length || 0;
+    const mFiles = post.mediaFiles || [];
+    const mCount = mFiles.length;
+    const vCount = mFiles.filter(isVideoFile).length;
+    const pCount = mCount - vCount;
 
     let mediaThumbHtml = '';
     if (mCount === 0) {
-      mediaThumbHtml = `<div class="w-16 h-16 rounded-lg bg-[#FAF5EE] border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] flex items-center justify-center text-[10px] text-neutral-400 font-bold font-mono text-center p-1">Chưa có ảnh</div>`;
-    } else if (mCount === 1) {
-      mediaThumbHtml = `<img src="${post.mediaFiles[0].url}" class="w-16 h-16 rounded-lg object-cover border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B]">`;
+      mediaThumbHtml = `<div class="w-16 h-16 rounded-lg bg-[#FAF5EE] border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] flex items-center justify-center text-[10px] text-neutral-400 font-bold font-mono text-center p-1 shrink-0">Chưa có media</div>`;
     } else {
+      const firstMedia = mFiles[0];
+      const isFirstVideo = isVideoFile(firstMedia);
       mediaThumbHtml = `
-        <div class="relative w-16 h-16 rounded-lg overflow-hidden border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B]">
-          <img src="${post.mediaFiles[0].url}" class="w-full h-full object-cover">
-          <span class="absolute bottom-0 right-0 bg-[#FDE047] text-black text-[10px] px-1 font-black border-t border-l border-[#18181B]">
-            +${mCount}
-          </span>
+        <div class="relative w-16 h-16 rounded-lg overflow-hidden border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] bg-black flex items-center justify-center shrink-0">
+          ${isFirstVideo 
+            ? `<video src="${firstMedia.url}" class="w-full h-full object-cover" preload="metadata" muted playsinline></video>
+               <span class="absolute inset-0 flex items-center justify-center bg-black/40 text-white text-[12px] font-bold">▶</span>`
+            : `<img src="${firstMedia.url}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'w-16 h-16 rounded-lg bg-[#FAF5EE] border-2 border-[#18181B] flex items-center justify-center text-[9px] font-mono font-bold text-neutral-500 text-center\\\'>#${post.machineCode}</div>';" class="w-full h-full object-cover">`
+          }
+          ${mCount > 1 ? `<span class="absolute bottom-0 right-0 bg-[#FDE047] text-black text-[9px] px-1 font-black border-t border-l border-[#18181B]">+${mCount}</span>` : ''}
+          ${vCount > 0 ? `<span class="absolute top-0 left-0 bg-[#F43F5E] text-white text-[8px] font-black px-1 border-b border-r border-[#18181B]">🎬</span>` : ''}
         </div>
       `;
     }
@@ -570,23 +601,24 @@ function renderQueueList(posts) {
             <div class="flex items-center gap-2 flex-wrap">
               <span class="neo-sticker sticker-lavender font-mono font-bold">#${post.machineCode}</span>
               ${post.price ? `<span class="neo-sticker sticker-yellow font-bold">${post.price}</span>` : ''}
-              ${post.status === 'pending_media' ? `<span class="neo-sticker sticker-yellow text-[11px] font-bold">📬 Chờ ảnh (nhắc trước 20p)</span>` : ''}
-              ${post.status === 'queued' ? `<span class="neo-sticker sticker-green text-[11px] font-bold">⏳ Sẵn sàng đăng (${mCount} ảnh)</span>` : ''}
-              ${post.status === 'skipped_no_media' ? `<span class="neo-sticker sticker-coral text-[11px] font-bold">⚠️ Bỏ qua (thiếu ảnh)</span>` : ''}
+              ${vCount > 0 ? `<span class="neo-sticker bg-[#F43F5E] text-white text-[10px] font-black">🎬 ${vCount} Video</span>` : ''}
+              ${post.status === 'pending_media' ? `<span class="neo-sticker sticker-yellow text-[11px] font-bold">📬 Chờ ảnh/video (nhắc trước 20p)</span>` : ''}
+              ${post.status === 'queued' ? `<span class="neo-sticker sticker-green text-[11px] font-bold">⏳ Sẵn sàng (${vCount > 0 ? `${vCount} video · ` : ''}${pCount} ảnh)</span>` : ''}
+              ${post.status === 'skipped_no_media' ? `<span class="neo-sticker sticker-coral text-[11px] font-bold">⚠️ Bỏ qua (thiếu media)</span>` : ''}
               ${post.status === 'processing' ? `<span class="neo-sticker sticker-lavender text-[11px] font-bold">⚙️ Đang đăng</span>` : ''}
             </div>
             <div class="text-xs text-[#18181B] font-bold mt-1.5 line-clamp-1 max-w-lg">${post.content.split('\n')[0]}</div>
             <div class="text-xs text-neutral-500 font-medium mt-1 flex items-center gap-2">
               <span>⏰ Giờ hẹn: <strong class="text-emerald-700 font-mono">${scheduledDate}</strong></span>
               <span>·</span>
-              <span>📁 <strong class="text-indigo-700">${mCount} ảnh/video</strong></span>
+              <span>📁 <strong class="text-indigo-700">${vCount > 0 ? `${vCount} video · ` : ''}${pCount} ảnh</strong></span>
             </div>
           </div>
         </div>
 
         <div class="flex items-center gap-2 w-full md:w-auto justify-end">
           <a href="/quick-upload?id=${post.id}" target="_blank" class="neo-btn neo-btn-lavender px-3 py-1.5 text-xs font-black" title="Xem hoặc thêm ảnh/video">
-            <span>📸 ${mCount > 0 ? `Thêm ảnh (${mCount})` : 'Nạp ảnh'}</span>
+            <span>🎬 ${mCount > 0 ? `Thêm media (${mCount})` : 'Nạp ảnh/video'}</span>
           </a>
           <button onclick="publishPostNow('${post.id}')" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-black">
             <span>⚡ Đăng ngay</span>
@@ -615,12 +647,36 @@ function renderHistoryList(posts) {
   container.innerHTML = posts.map(post => {
     const isSuccess = post.status === 'posted';
     const postDate = new Date(post.postedAt || post.failedAt || post.createdAt).toLocaleString('vi-VN');
-    const firstImg = post.mediaFiles?.[0]?.url;
+    const mFiles = post.mediaFiles || [];
+    const mCount = mFiles.length;
+    const firstMedia = mFiles[0];
+    const isFirstVideo = firstMedia ? isVideoFile(firstMedia) : false;
+
+    let historyThumbHtml = '';
+    if (!firstMedia) {
+      historyThumbHtml = `<div class="w-16 h-16 rounded-lg bg-[#FAF5EE] border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] flex items-center justify-center text-xs text-neutral-500 font-bold font-mono shrink-0">No Media</div>`;
+    } else if (isFirstVideo) {
+      historyThumbHtml = `
+        <div class="relative w-16 h-16 rounded-lg overflow-hidden border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] bg-black flex items-center justify-center shrink-0">
+          <video src="${firstMedia.url}" class="w-full h-full object-cover" preload="metadata" muted playsinline></video>
+          <span class="absolute inset-0 flex items-center justify-center bg-black/40 text-white text-[12px] font-bold">▶</span>
+          ${mCount > 1 ? `<span class="absolute bottom-0 right-0 bg-[#FDE047] text-black text-[9px] px-1 font-black border-t border-l border-[#18181B]">+${mCount}</span>` : ''}
+          <span class="absolute top-0 left-0 bg-[#F43F5E] text-white text-[8px] font-black px-1 border-b border-r border-[#18181B]">🎬</span>
+        </div>
+      `;
+    } else {
+      historyThumbHtml = `
+        <div class="relative w-16 h-16 rounded-lg overflow-hidden border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] bg-neutral-100 flex items-center justify-center shrink-0">
+          <img src="${firstMedia.url}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'w-16 h-16 rounded-lg bg-[#FAF5EE] border-2 border-[#18181B] flex items-center justify-center text-[9px] font-mono font-bold text-neutral-500 text-center\\\'>#${post.machineCode}</div>';" class="w-full h-full object-cover">
+          ${mCount > 1 ? `<span class="absolute bottom-0 right-0 bg-[#FDE047] text-black text-[9px] px-1 font-black border-t border-l border-[#18181B]">+${mCount}</span>` : ''}
+        </div>
+      `;
+    }
 
     return `
       <div class="neo-card p-4 sm:p-5 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-white shadow-[3px_3px_0px_#18181B]">
         <div class="flex gap-4 items-center">
-          ${firstImg ? `<img src="${firstImg}" class="w-16 h-16 rounded-lg object-cover border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B]">` : `<div class="w-16 h-16 rounded-lg bg-[#FAF5EE] border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] flex items-center justify-center text-xs text-neutral-500 font-bold font-mono">No Media</div>`}
+          ${historyThumbHtml}
           <div>
             <div class="flex items-center gap-2 flex-wrap">
               <span class="neo-sticker ${isSuccess ? 'sticker-green' : 'sticker-coral'}">

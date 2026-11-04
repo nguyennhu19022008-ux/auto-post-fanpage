@@ -127,7 +127,8 @@ app.post('/api/upload-media', upload.array('files', 35), async (req, res) => {
 
       if (!fileObj) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        const ext = path.extname(f.originalname) || '.jpg';
+        const isVideo = (f.mimetype && f.mimetype.startsWith('video/')) || /\.(mp4|mov|avi|mkv|webm|3gp)$/i.test(f.originalname || '');
+        const ext = path.extname(f.originalname) || (isVideo ? '.mp4' : '.jpg');
         const filename = `${uniqueSuffix}${ext}`;
         let localPath = null;
         try {
@@ -144,7 +145,7 @@ app.post('/api/upload-media', upload.array('files', 35), async (req, res) => {
           filename: filename,
           path: localPath,
           url: `/uploads/${filename}`,
-          mimetype: f.mimetype,
+          mimetype: f.mimetype || (isVideo ? 'video/mp4' : 'image/jpeg'),
           size: f.size
         };
       }
@@ -296,7 +297,8 @@ app.post('/api/posts/:id/attach-media', upload.array('files', 35), async (req, r
 
       if (!fileObj) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        const ext = path.extname(f.originalname) || '.jpg';
+        const isVideo = (f.mimetype && f.mimetype.startsWith('video/')) || /\.(mp4|mov|avi|mkv|webm|3gp)$/i.test(f.originalname || '');
+        const ext = path.extname(f.originalname) || (isVideo ? '.mp4' : '.jpg');
         const filename = `${uniqueSuffix}${ext}`;
         let localPath = null;
         try {
@@ -313,7 +315,7 @@ app.post('/api/posts/:id/attach-media', upload.array('files', 35), async (req, r
           filename: filename,
           path: localPath,
           url: `/uploads/${filename}`,
-          mimetype: f.mimetype,
+          mimetype: f.mimetype || (isVideo ? 'video/mp4' : 'image/jpeg'),
           size: f.size
         };
       }

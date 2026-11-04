@@ -22,13 +22,16 @@ async function uploadToSupabaseStorage(fileBuffer, originalFilename, mimetype) {
   if (!supabase) return null;
 
   try {
-    const ext = path.extname(originalFilename) || '.jpg';
+    const isVideo = (mimetype && mimetype.startsWith('video/')) || /\.(mp4|mov|avi|mkv|webm|3gp)$/i.test(originalFilename || '');
+    const defaultExt = isVideo ? '.mp4' : '.jpg';
+    const ext = path.extname(originalFilename) || defaultExt;
+    const resolvedMime = mimetype || (isVideo ? 'video/mp4' : 'image/jpeg');
     const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
 
     const { data, error } = await supabase.storage
       .from(BUCKET_NAME)
       .upload(uniqueName, fileBuffer, {
-        contentType: mimetype || 'image/jpeg',
+        contentType: resolvedMime,
         upsert: true
       });
 
@@ -44,7 +47,7 @@ async function uploadToSupabaseStorage(fileBuffer, originalFilename, mimetype) {
     return {
       filename: uniqueName,
       originalname: originalFilename,
-      mimetype: mimetype || 'image/jpeg',
+      mimetype: resolvedMime,
       url: publicUrlData.publicUrl,
       size: fileBuffer.length,
       storage: 'supabase'

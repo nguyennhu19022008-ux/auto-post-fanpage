@@ -20,7 +20,7 @@
   <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
   <link rel="apple-touch-icon" href="/icons/icon.svg" />
 
-  <link rel="stylesheet" href="/css/style.css?v=20261026_supabase_fix">
+  <link rel="stylesheet" href="/css/style.css?v=20261104_video_support">
 </head>
 <body class="bg-[#FDFBF7] text-[#18181B] min-h-screen">
 
@@ -168,15 +168,37 @@
                 <span class="neo-sticker sticker-lavender text-xs font-mono" id="mediaCountText">0 tệp đã chọn</span>
               </div>
 
+              <!-- Quick action buttons for mobile & desktop -->
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <button type="button" onclick="document.getElementById('studioCameraPhoto').click()" class="neo-btn bg-[#FDE047] hover:bg-yellow-300 py-2 px-2 text-xs font-black flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_#18181B]">
+                  <span>📷 Chụp ảnh</span>
+                </button>
+                <input type="file" id="studioCameraPhoto" capture="environment" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+
+                <button type="button" onclick="document.getElementById('studioCameraVideo').click()" class="neo-btn bg-[#F43F5E] hover:bg-rose-600 text-white py-2 px-2 text-xs font-black flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_#18181B]">
+                  <span>🎥 Quay video</span>
+                </button>
+                <input type="file" id="studioCameraVideo" capture="environment" accept="video/*" class="hidden" onchange="handleFileSelect(event)">
+
+                <button type="button" onclick="document.getElementById('studioVideoFile').click()" class="neo-btn bg-[#818CF8] hover:bg-indigo-500 text-white py-2 px-2 text-xs font-black flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_#18181B]">
+                  <span>🎬 Thêm video</span>
+                </button>
+                <input type="file" id="studioVideoFile" multiple accept="video/*" class="hidden" onchange="handleFileSelect(event)">
+
+                <button type="button" onclick="document.getElementById('fileInput').click()" class="neo-btn bg-white hover:bg-neutral-100 py-2 px-2 text-xs font-black flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_#18181B]">
+                  <span>📁 Chọn tệp</span>
+                </button>
+              </div>
+
               <!-- Dotted craft dropzone -->
-              <div id="dropZone" onclick="document.getElementById('fileInput').click()" class="border-2 border-dashed border-[#18181B] hover:bg-[#FEF08A]/30 rounded-xl p-6 text-center cursor-pointer transition bg-[#FAF5EE]">
+              <div id="dropZone" onclick="document.getElementById('fileInput').click()" class="border-2 border-dashed border-[#18181B] hover:bg-[#FEF08A]/30 rounded-xl p-5 text-center cursor-pointer transition bg-[#FAF5EE]">
                 <input type="file" id="fileInput" multiple accept="image/*,video/*" class="hidden" onchange="handleFileSelect(event)">
-                <div class="flex flex-col items-center justify-center space-y-2">
-                  <div class="w-12 h-12 rounded-lg bg-[#FDE047] border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] flex items-center justify-center text-xl">
+                <div class="flex flex-col items-center justify-center space-y-1.5">
+                  <div class="w-10 h-10 rounded-lg bg-[#FDE047] border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] flex items-center justify-center text-lg">
                     📁
                   </div>
-                  <div class="text-sm font-bold text-[#18181B]">Kéo thả ảnh hoặc video vào đây, hoặc <span class="text-blue-600 underline">bấm để chọn</span></div>
-                  <div class="text-xs text-neutral-500 font-medium">Hỗ trợ: JPG, PNG, WEBP, MP4, MOV (Tối đa 15 tệp/bài)</div>
+                  <div class="text-xs sm:text-sm font-bold text-[#18181B]">Kéo thả ảnh hoặc video vào đây, hoặc <span class="text-blue-600 underline">bấm để chọn</span></div>
+                  <div class="text-[11px] text-neutral-500 font-medium">Hỗ trợ đầy đủ: Video (MP4, MOV, WebM) & Ảnh (JPG, PNG, WebP) - Tối đa 35 tệp/bài</div>
                 </div>
               </div>
 
@@ -671,7 +693,7 @@
 
   </div>
 
-  <script src="/js/app.js?v=20261026_supabase_fix"></script>
+  <script src="/js/app.js?v=20261104_video_support"></script>
   <!-- Modal: Post Preview -->
   <div id="postPreviewModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
     <div class="neo-card bg-white max-w-2xl w-full p-6 space-y-4 max-h-[90vh] flex flex-col shadow-[6px_6px_0px_#18181B]">
