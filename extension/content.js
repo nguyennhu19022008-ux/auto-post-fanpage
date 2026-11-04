@@ -191,19 +191,47 @@
     const loadingToast = showToast(`Đang bóc tách AI và ${actionName}...`, 'loading');
 
     try {
-      const response = await fetch(`${defaultServerUrl}/api/extension/push-post`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          rawText: data.text,
-          mediaUrls: data.mediaUrls,
-          publishImmediately: publishImmediately
-        })
-      });
+      let result;
 
-      const result = await response.json();
+      // Delegate to Background Service Worker to bypass Zalo Web page CSP completely
+      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+        result = await new Promise((resolve) => {
+          chrome.runtime.sendMessage({
+            action: 'pushPost',
+            serverUrl: defaultServerUrl,
+            payload: {
+              rawText: data.text,
+              mediaUrls: data.mediaUrls,
+              publishImmediately: publishImmediately
+            }
+          }, (res) => {
+            if (chrome.runtime.lastError) {
+              resolve({ success: false, error: chrome.runtime.lastError.message });
+            } else if (!res) {
+              resolve({ success: false, error: 'Không nhận được phản hồi từ extension' });
+            } else if (!res.success && res.error) {
+              resolve({ success: false, error: res.error });
+            } else {
+              resolve(res.data || res);
+            }
+          });
+        });
+      } else {
+        // Direct fetch fallback for non-extension environments
+        const response = await fetch(`${defaultServerUrl}/api/extension/push-post`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            rawText: data.text,
+            mediaUrls: data.mediaUrls,
+            publishImmediately: publishImmediately
+          })
+        });
+        result = await response.json();
+      }
+
       loadingToast.remove();
 
       if (result.success) {

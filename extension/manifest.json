@@ -12,6 +12,9 @@
     "https://auto-post-fanpage-coral.vercel.app/*",
     "http://localhost:3000/*"
   ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
