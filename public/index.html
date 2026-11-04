@@ -20,7 +20,7 @@
   <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
   <link rel="apple-touch-icon" href="/icons/icon.svg" />
 
-  <link rel="stylesheet" href="/css/style.css?v=20261104_video_support">
+  <link rel="stylesheet" href="/css/style.css?v=20261104_library_video">
 </head>
 <body class="bg-[#FDFBF7] text-[#18181B] min-h-screen">
 
@@ -168,25 +168,15 @@
                 <span class="neo-sticker sticker-lavender text-xs font-mono" id="mediaCountText">0 tệp đã chọn</span>
               </div>
 
-              <!-- Quick action buttons for mobile & desktop -->
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <button type="button" onclick="document.getElementById('studioCameraPhoto').click()" class="neo-btn bg-[#FDE047] hover:bg-yellow-300 py-2 px-2 text-xs font-black flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_#18181B]">
-                  <span>📷 Chụp ảnh</span>
-                </button>
-                <input type="file" id="studioCameraPhoto" capture="environment" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
-
-                <button type="button" onclick="document.getElementById('studioCameraVideo').click()" class="neo-btn bg-[#F43F5E] hover:bg-rose-600 text-white py-2 px-2 text-xs font-black flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_#18181B]">
-                  <span>🎥 Quay video</span>
-                </button>
-                <input type="file" id="studioCameraVideo" capture="environment" accept="video/*" class="hidden" onchange="handleFileSelect(event)">
-
-                <button type="button" onclick="document.getElementById('studioVideoFile').click()" class="neo-btn bg-[#818CF8] hover:bg-indigo-500 text-white py-2 px-2 text-xs font-black flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_#18181B]">
-                  <span>🎬 Thêm video</span>
+              <!-- Quick action buttons for Video & Photo from Library -->
+              <div class="grid grid-cols-2 gap-3">
+                <button type="button" onclick="document.getElementById('studioVideoFile').click()" class="neo-btn bg-[#818CF8] hover:bg-indigo-600 text-white py-2.5 px-3 text-xs sm:text-sm font-black flex items-center justify-center gap-2 shadow-[2px_2px_0px_#18181B]">
+                  <span>🎬 Thêm video từ thư viện</span>
                 </button>
                 <input type="file" id="studioVideoFile" multiple accept="video/*" class="hidden" onchange="handleFileSelect(event)">
 
-                <button type="button" onclick="document.getElementById('fileInput').click()" class="neo-btn bg-white hover:bg-neutral-100 py-2 px-2 text-xs font-black flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_#18181B]">
-                  <span>📁 Chọn tệp</span>
+                <button type="button" onclick="document.getElementById('fileInput').click()" class="neo-btn bg-white hover:bg-neutral-100 py-2.5 px-3 text-xs sm:text-sm font-black flex items-center justify-center gap-2 shadow-[2px_2px_0px_#18181B]">
+                  <span>📁 Chọn ảnh từ thư viện</span>
                 </button>
               </div>
 
@@ -693,7 +683,7 @@
 
   </div>
 
-  <script src="/js/app.js?v=20261104_video_support"></script>
+  <script src="/js/app.js?v=20261104_library_video"></script>
   <!-- Modal: Post Preview -->
   <div id="postPreviewModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
     <div class="neo-card bg-white max-w-2xl w-full p-6 space-y-4 max-h-[90vh] flex flex-col shadow-[6px_6px_0px_#18181B]">

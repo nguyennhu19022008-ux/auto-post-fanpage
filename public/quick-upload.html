@@ -60,40 +60,28 @@
     <!-- Main Upload Section -->
     <div id="uploadControlsArea" class="space-y-4">
       
-      <!-- Option 1: Multi-media picker, Video & Camera -->
+      <!-- Option 1: Multi-media picker (Video & Photo) -->
       <div class="space-y-2">
         <div class="flex justify-between items-center">
           <label class="text-xs font-black uppercase tracking-wider block">
-            CÁCH 1: CHỌN HOẶC QUAY / CHỤP ẢNH & VIDEO
+            CÁCH 1: CHỌN ẢNH & VIDEO TỪ THƯ VIỆN
           </label>
           <span id="selectedCountBadge" class="neo-sticker bg-[#E0E7FF] text-[#18181B] text-[11px] font-mono">
             0 ảnh/video đã chọn
           </span>
         </div>
 
-        <!-- Four Quick Action Buttons for Mobile & Desktop -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          <!-- Button A: Chụp ảnh trực tiếp từ camera -->
-          <button type="button" onclick="document.getElementById('cameraPhotoInput').click()" class="neo-btn bg-[#FDE047] hover:bg-yellow-300 py-2.5 px-2 text-xs font-black flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_#18181B]">
-            <span>📷 Chụp ảnh</span>
-          </button>
-          <input type="file" id="cameraPhotoInput" capture="environment" accept="image/*" class="hidden" onchange="handleNewFiles(event)">
-
-          <!-- Button B: Quay video trực tiếp từ camera -->
-          <button type="button" onclick="document.getElementById('cameraVideoInput').click()" class="neo-btn bg-[#F43F5E] hover:bg-rose-600 text-white py-2.5 px-2 text-xs font-black flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_#18181B]">
-            <span>🎥 Quay video</span>
-          </button>
-          <input type="file" id="cameraVideoInput" capture="environment" accept="video/*" class="hidden" onchange="handleNewFiles(event)">
-
-          <!-- Button C: Chọn video từ thiết bị -->
-          <button type="button" onclick="document.getElementById('galleryVideoInput').click()" class="neo-btn bg-[#818CF8] hover:bg-indigo-500 text-white py-2.5 px-2 text-xs font-black flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_#18181B]">
-            <span>🎬 Thêm video</span>
+        <!-- Action Buttons for Video & Photo from Library -->
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Button: Chọn video từ thư viện -->
+          <button type="button" onclick="document.getElementById('galleryVideoInput').click()" class="neo-btn bg-[#818CF8] hover:bg-indigo-600 text-white py-3 px-3 text-xs sm:text-sm font-black flex items-center justify-center gap-2 shadow-[2px_2px_0px_#18181B]">
+            <span>🎬 Thêm video từ thư viện</span>
           </button>
           <input type="file" id="galleryVideoInput" multiple accept="video/*" class="hidden" onchange="handleNewFiles(event)">
 
-          <!-- Button D: Chọn ảnh từ thư viện -->
-          <button type="button" onclick="document.getElementById('galleryFileInput').click()" class="neo-btn bg-[#FFFFFF] hover:bg-neutral-100 py-2.5 px-2 text-xs font-black flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_#18181B]">
-            <span>🖼️ Chọn ảnh</span>
+          <!-- Button: Chọn ảnh từ thư viện -->
+          <button type="button" onclick="document.getElementById('galleryFileInput').click()" class="neo-btn bg-[#FFFFFF] hover:bg-neutral-100 py-3 px-3 text-xs sm:text-sm font-black flex items-center justify-center gap-2 shadow-[2px_2px_0px_#18181B]">
+            <span>🖼️ Chọn ảnh từ thư viện</span>
           </button>
           <input type="file" id="galleryFileInput" multiple accept="image/*,video/*" class="hidden" onchange="handleNewFiles(event)">
         </div>
