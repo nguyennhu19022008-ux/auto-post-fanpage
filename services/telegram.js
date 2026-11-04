@@ -407,6 +407,52 @@ async function processCompleteMediaGroup(group, token, settings, { getPosts, sav
       }
     }
 
+    const posts = await getPosts();
+
+    // If NO caption was sent, check if there is an active post awaiting media
+    if (!caption) {
+      const targetPost = posts.find(p => p.status === 'pending_media') ||
+        posts.find(p => p.status === 'queued' && (Date.now() - new Date(p.createdAt).getTime() < 2 * 3600 * 1000));
+
+      if (targetPost) {
+        if (!Array.isArray(targetPost.mediaFiles)) targetPost.mediaFiles = [];
+        targetPost.mediaFiles.push(...uploadedMediaFiles);
+        if (targetPost.status === 'pending_media') {
+          targetPost.status = 'queued';
+        }
+        await savePosts(posts);
+        await upsertPostToDb(targetPost);
+
+        const vCount = targetPost.mediaFiles.filter(f => f.mimetype?.startsWith('video/') || /\.(mp4|mov)$/i.test(f.url)).length;
+        const pCount = targetPost.mediaFiles.length - vCount;
+        const scheduledTimeStr = new Date(targetPost.scheduledTime).toLocaleString('vi-VN', {
+          hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit'
+        });
+
+        const replyMsg = `
+🎉 <b>ĐÃ BỔ SUNG ALBUM VÀO MÃ #${targetPost.machineCode}!</b>
+────────────────────────
+💻 <b>Tên máy:</b> ${escapeHtml(targetPost.machineName || 'Laptop')}
+📁 <b>Tổng media hiện có:</b> ${vCount > 0 ? `<b>${vCount} video</b> · ` : ''}<b>${pCount} ảnh</b>
+⏰ <b>Giờ hẹn đăng:</b> <b>${scheduledTimeStr}</b>
+Trạng thái: <b>⏳ Sẵn sàng xuất bản lên Fanpage</b>
+────────────────────────
+        `.trim();
+
+        await sendTelegramMessage(token, chatId, replyMsg, {
+          reply_markup: {
+            inline_keyboard: [
+              [
+                { text: `⚡ Đăng Facebook Ngay #${targetPost.machineCode}`, callback_data: `action:publish_now:${targetPost.id}` },
+                { text: '❌ Hủy Bài', callback_data: `action:cancel_post:${targetPost.id}` }
+              ]
+            ]
+          }
+        });
+        return;
+      }
+    }
+
     // 2. Process caption or raw text
     const rawText = caption || 'Laptop Nhật xách tay chất lượng cao';
     let machineCode = '';
@@ -441,7 +487,6 @@ async function processCompleteMediaGroup(group, token, settings, { getPosts, sav
     };
 
     // Save post
-    const posts = await getPosts();
     posts.unshift(newPost);
     await savePosts(posts);
     await upsertPostToDb(newPost);
