@@ -1,6 +1,6 @@
 const axios = require('axios');
 const { generatePostWithGemini } = require('./gemini');
-const { uploadToSupabaseStorage } = require('./supabase');
+const { uploadToSupabaseStorage, saveSettingsToDb } = require('./supabase');
 const { publishPostToFanpage } = require('./facebook');
 
 const TELEGRAM_API_BASE = 'https://api.telegram.org/bot';
@@ -192,6 +192,12 @@ async function handleTelegramUpdate(update, settings, { getPosts, savePosts, ups
   const caption = (message.caption || '').trim();
   const mediaGroupId = message.media_group_id;
 
+  // Auto-record chatId in settings so user never has to copy-paste it manually
+  if (chatId && (!settings.telegramChatId || settings.telegramChatId !== String(chatId))) {
+    settings.telegramChatId = String(chatId);
+    saveSettingsToDb(settings).catch(e => console.warn('[Telegram] Auto-save chatId notice:', e.message));
+  }
+
   // 2. Handle Slash Commands
   if (text.startsWith('/')) {
     await handleCommands(message, token, settings, { getPosts, savePosts });
@@ -240,8 +246,8 @@ Bot giúp anh tự động hóa 100% quy trình đăng bài lên <b>Laptop Vươ
 • /status : Kiểm tra kết nối Fanpage và cấu hình
 • /help : Xem hướng dẫn chi tiết
 ────────────────────────
-💡 <i>Mã Chat ID của anh:</i> <code>${chatId}</code>
-<i>(Hãy copy mã này dán vào mục Cài đặt trên Web nếu chưa lưu nhé!)</i>
+✅ <i>Tài khoản Telegram của anh đã được tự động liên kết thành công!</i>
+(Chat ID: <code>${chatId}</code>)
     `.trim();
 
     await sendTelegramMessage(token, chatId, welcomeText, {
