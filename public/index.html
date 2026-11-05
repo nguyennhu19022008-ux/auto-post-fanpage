@@ -20,9 +20,97 @@
   <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
   <link rel="apple-touch-icon" href="/icons/icon.svg" />
 
-  <link rel="stylesheet" href="/css/style.css?v=20261106_v14_cockpit">
+  <link rel="stylesheet" href="/css/style.css?v=20261106_v15_cockpit_slide0">
 </head>
 <body class="bg-[#FDFBF7] text-[#18181B] min-h-screen">
+
+  <!-- ======================== PAGE 0 / SLIDE 0: DESIGN BY VUONGGIA ======================== -->
+  <div id="slide0Modal" class="fixed inset-0 bg-[#000000] text-[#FFFFFF] z-50 flex flex-col justify-center items-center overflow-hidden transition-opacity duration-300">
+    <!-- Animated Typography Wallpaper: 5 rows inclined -32deg -->
+    <div class="slide0-bg-wall">
+      <div class="slide0-row"><span>DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+      <div class="slide0-row"><span>DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+      <div class="slide0-row"><span>DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+      <div class="slide0-row"><span>DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+      <div class="slide0-row"><span>DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+    </div>
+
+    <!-- Central Frosted Glass Certificate Card -->
+    <div class="relative z-10 w-full max-w-2xl mx-4 sm:mx-6 p-6 sm:p-8 bg-black/60 backdrop-blur-md border-2 border-white shadow-[0_0_80px_rgba(0,0,0,0.95)] anim-stamp-impact font-mono" id="slide0Card">
+      <!-- Header with Close Button -->
+      <div class="flex justify-between items-center border-b border-white/40 pb-3 mb-5">
+        <div class="text-[11px] sm:text-xs tracking-wider text-neutral-300 font-bold flex items-center gap-1.5">
+          <span>🛡️</span>
+          <span>INTELLECTUAL PROPERTY CERTIFICATE /// 2026</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="bg-white text-black font-bold px-2 py-0.5 text-[10px] tracking-widest">ID: VG-LAPTOPAUTOPOST-2026-IP</span>
+          <button onclick="toggleSlide0Card(false)" class="text-white hover:bg-white hover:text-black border border-white/60 px-2 py-0.5 text-xs font-bold transition" title="Đóng bảng để ngắm typography">✕</button>
+        </div>
+      </div>
+
+      <!-- Headline -->
+      <div class="text-center my-4">
+        <div class="text-[10px] sm:text-xs text-neutral-400 tracking-wider mb-2">CHỨNG NHẬN QUYỀN TÁC GIẢ & THIẾT KẾ ĐỘC BẢN</div>
+        <h1 class="text-4xl sm:text-5xl font-black font-['Anton'] uppercase tracking-tight text-white leading-none">
+          DESIGN BY <span class="bg-white text-black px-3 py-0.5 inline-block -skew-x-6">VUONGGIA</span>
+        </h1>
+        <div class="inline-block mt-3 bg-white text-black px-3 py-1 font-bold text-xs">
+          THUỘC QUYỀN SỞ HỮU CỦA VUONGGIA
+        </div>
+      </div>
+
+      <!-- Non-commercial Strict Clause -->
+      <div class="bg-neutral-950/80 border border-white/80 p-3 sm:p-4 text-center my-4 text-xs leading-relaxed">
+        <div class="font-bold text-amber-400 mb-1 flex items-center justify-center gap-1.5">
+          <span>⚠️</span>
+          <span>ĐIỀU KHOẢN NGHIÊM NGẶT: KHÔNG THƯƠNG MẠI HÓA</span>
+        </div>
+        <p class="text-neutral-300">
+          Hệ thống web và toàn bộ mã nguồn, cấu trúc giao diện, tài nguyên hình ảnh được chuyển giao với điều kiện cam kết: 
+          <strong class="text-white">TUYỆT ĐỐI KHÔNG THƯƠNG MẠI, MUA BÁN, SANG NHƯỢNG DƯỚI MỌI HÌNH THỨC SAU KHI ĐÃ SỞ HỮU.</strong>
+        </p>
+      </div>
+
+      <!-- Contacts with 1-Click Copy -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4 text-xs">
+        <div class="bg-neutral-950/80 border border-white/60 p-3">
+          <div class="flex justify-between items-center text-neutral-400 text-[11px] mb-1">
+            <span>✉️ EMAIL:</span>
+            <button onclick="copySlide0Contact('nguyennhu19022008@gmail.com', this)" class="bg-white text-black text-[10px] font-bold px-2 py-0.5 hover:bg-neutral-200 transition">SAO CHÉP</button>
+          </div>
+          <div class="font-bold text-white break-all text-[11px]">nguyennhu19022008@gmail.com</div>
+        </div>
+        <div class="bg-neutral-950/80 border border-white/60 p-3">
+          <div class="flex justify-between items-center text-neutral-400 text-[11px] mb-1">
+            <span>📞 HOTLINE / ZALO:</span>
+            <button onclick="copySlide0Contact('0876637806', this)" class="bg-white text-black text-[10px] font-bold px-2 py-0.5 hover:bg-neutral-200 transition">SAO CHÉP</button>
+          </div>
+          <div class="font-bold text-white font-['Anton'] text-lg tracking-wider">0876637806</div>
+        </div>
+      </div>
+
+      <!-- Footer Action -->
+      <div class="pt-4 border-t border-white/30 flex flex-wrap justify-between items-center gap-3">
+        <div class="text-[11px] text-neutral-400">
+          Nhấn <kbd class="border border-white/40 px-1 py-0.5 rounded text-[10px]">[→]</kbd>, <kbd class="border border-white/40 px-1 py-0.5 rounded text-[10px]">[Enter]</kbd> hoặc click nút:
+        </div>
+        <button onclick="closeSlide0Modal()" class="bg-white text-black border-2 border-white px-5 py-2 font-black text-xs hover:bg-neutral-200 transition shadow-[0_0_15px_rgba(255,255,255,0.4)] tracking-wide">
+          VÀO BẢNG ĐIỀU HÀNH TỰ ĐỘNG (PAGE 01) →
+        </button>
+      </div>
+    </div>
+
+    <!-- Floating Reopen Buttons (Visible when Card is closed) -->
+    <div id="slide0FloatingBar" class="fixed bottom-6 left-1/2 -translate-x-1/2 hidden z-20 flex items-center gap-3">
+      <button onclick="toggleSlide0Card(true)" class="bg-black text-white border-2 border-white px-4 py-2 font-bold text-xs hover:bg-white hover:text-black transition">
+        ℹ️ MỞ BẢNG BẢN QUYỀN
+      </button>
+      <button onclick="closeSlide0Modal()" class="bg-white text-black border-2 border-white px-5 py-2 font-black text-xs hover:bg-neutral-200 transition">
+        VÀO BẢNG ĐIỀU HÀNH →
+      </button>
+    </div>
+  </div>
 
   <!-- ======================== MAIN DASHBOARD ======================== -->
   <div id="mainApp" class="min-h-screen flex flex-col">
@@ -33,9 +121,9 @@
         
         <!-- Left: Logo & Brand -->
         <div class="flex items-center gap-3.5">
-          <div class="w-11 h-11 rounded-lg bg-[#FDE047] border-2 border-[#18181B] shadow-[2.5px_2.5px_0px_#18181B] flex items-center justify-center font-black text-xl text-[#18181B] transform -rotate-1">
+          <button onclick="openSlide0Modal()" class="w-11 h-11 rounded-lg bg-[#FDE047] border-2 border-[#18181B] shadow-[2.5px_2.5px_0px_#18181B] flex items-center justify-center font-black text-xl text-[#18181B] transform -rotate-1 cursor-pointer hover:scale-105 transition" title="Bản quyền & Giấy chứng nhận DESIGN BY VUONGGIA">
             VG
-          </div>
+          </button>
           <div>
             <div class="flex items-center gap-2">
               <h1 class="text-lg font-black tracking-tight text-[#18181B]">LAPTOP VƯƠNG GIA // AUTOPOST</h1>
@@ -658,7 +746,7 @@
     </div>
   </div>
 
-  <script src="/js/app.js?v=20261106_v14_cockpit"></script>
+  <script src="/js/app.js?v=20261106_v15_cockpit_slide0"></script>
   <!-- Modal: Post Preview -->
   <div id="postPreviewModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4" onclick="if(event.target === this) closePostPreviewModal()">
     <div class="neo-card bg-white max-w-2xl w-full p-4 sm:p-6 space-y-3.5 max-h-[92vh] flex flex-col shadow-[6px_6px_0px_#18181B]">

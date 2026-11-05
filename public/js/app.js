@@ -23,6 +23,74 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
   initDashboard();
 }
 
+// ======================== PAGE 0 / SLIDE 0: DESIGN BY VUONGGIA ========================
+let isSlide0Active = true;
+
+function closeSlide0Modal() {
+  const modal = document.getElementById('slide0Modal');
+  if (modal) {
+    modal.classList.add('opacity-0', 'pointer-events-none');
+    setTimeout(() => { modal.style.display = 'none'; }, 300);
+    isSlide0Active = false;
+    sessionStorage.setItem('vg_slide0_seen', 'true');
+  }
+}
+
+function openSlide0Modal() {
+  const modal = document.getElementById('slide0Modal');
+  if (modal) {
+    modal.style.display = 'flex';
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    isSlide0Active = true;
+    toggleSlide0Card(true);
+  }
+}
+
+function toggleSlide0Card(show) {
+  const card = document.getElementById('slide0Card');
+  const bar = document.getElementById('slide0FloatingBar');
+  if (card) card.style.display = show ? 'block' : 'none';
+  if (bar) {
+    if (show) {
+      bar.classList.add('hidden');
+    } else {
+      bar.classList.remove('hidden');
+    }
+  }
+}
+
+function copySlide0Contact(val, btn) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(val);
+  }
+  const orig = btn.innerText;
+  btn.innerText = 'ĐÃ CHÉP';
+  btn.classList.add('bg-emerald-400');
+  setTimeout(() => {
+    btn.innerText = orig;
+    btn.classList.remove('bg-emerald-400');
+  }, 2000);
+}
+
+// Keyboard navigation for Page 0
+window.addEventListener('keydown', (e) => {
+  if (isSlide0Active && (e.key === 'ArrowRight' || e.key === 'Enter' || e.key === ' ')) {
+    e.preventDefault();
+    closeSlide0Modal();
+  }
+});
+
+// Auto-check session on initial boot
+document.addEventListener('DOMContentLoaded', () => {
+  if (sessionStorage.getItem('vg_slide0_seen') === 'true') {
+    const modal = document.getElementById('slide0Modal');
+    if (modal) {
+      modal.style.display = 'none';
+      isSlide0Active = false;
+    }
+  }
+});
+
 // ======================== TAB NAVIGATION (STREAMLINED 4 TABS) ========================
 
 const ALL_TABS = ['cockpit', 'queue', 'datapost', 'settings'];
@@ -1725,7 +1793,7 @@ let deferredPwaPrompt = null;
 // Register Service Worker for offline shell and lightning fast caching
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js?v=20261106_v14_cockpit')
+    navigator.serviceWorker.register('/sw.js?v=20261106_v15_cockpit_slide0')
       .then(reg => {
         reg.update(); // Immediately check for SW script updates
         console.log('✅ ServiceWorker registered and updated:', reg.scope);
