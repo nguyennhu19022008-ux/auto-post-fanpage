@@ -91,9 +91,29 @@
   }
 
   /**
+   * Helper: Convert browser in-memory blob: URL to base64 Data URL
+   */
+  async function blobUrlToBase64(blobUrl) {
+    if (!blobUrl || !blobUrl.startsWith('blob:')) return null;
+    try {
+      const res = await fetch(blobUrl);
+      const blob = await res.blob();
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(blob);
+      });
+    } catch (e) {
+      console.warn('[VG Zalo] Lỗi chuyển blob sang base64:', e);
+      return null;
+    }
+  }
+
+  /**
    * Extract all content and media from a Zalo message bubble
    */
-  function extractMessageData(messageEl) {
+  async function extractMessageData(messageEl) {
     // 1. Extract Text Content
     let text = '';
     const textSelectors = [
@@ -123,39 +143,43 @@
     }
 
     // 2. Extract Media (Images & Videos)
-    const mediaUrls = new Set();
+    const rawMediaList = [];
 
-    // A. Image Tags
-    const imgElements = messageEl.querySelectorAll('img');
-    imgElements.forEach(img => {
-      // Exclude avatars, emojis, system icons
-      const classes = (img.className || '').toLowerCase();
-      const src = img.getAttribute('data-original') || img.getAttribute('data-src') || img.getAttribute('src') || '';
-      
-      if (
-        classes.includes('avatar') ||
-        classes.includes('emoji') ||
-        classes.includes('icon') ||
-        src.includes('avatar') ||
-        src.includes('emoji') ||
-        src.includes('static.zalo.me')
-      ) {
-        return;
-      }
+    function collectFrom(el) {
+      if (!el) return;
+      const imgElements = el.querySelectorAll('img');
+      imgElements.forEach(img => {
+        const classes = (img.className || '').toLowerCase();
+        const src = img.getAttribute('data-original') || img.getAttribute('data-src') || img.getAttribute('src') || '';
+        
+        if (
+          classes.includes('avatar') ||
+          classes.includes('emoji') ||
+          classes.includes('icon') ||
+          src.includes('avatar') ||
+          src.includes('emoji') ||
+          src.includes('static.zalo.me') ||
+          src.includes('iconlike')
+        ) {
+          return;
+        }
 
-      if (src && src.startsWith('http')) {
-        mediaUrls.add(normalizeZaloMediaUrl(src));
-      }
-    });
+        if (src && (src.startsWith('http') || src.startsWith('blob:'))) {
+          rawMediaList.push(src);
+        }
+      });
 
-    // B. Video Tags & Video Links
-    const videoElements = messageEl.querySelectorAll('video, [data-video-url], a[href*=".mp4"]');
-    videoElements.forEach(v => {
-      const vSrc = v.getAttribute('data-video-url') || v.getAttribute('src') || v.getAttribute('href') || '';
-      if (vSrc && vSrc.startsWith('http')) {
-        mediaUrls.add(normalizeZaloMediaUrl(vSrc));
-      }
-    });
+      const videoElements = el.querySelectorAll('video, [data-video-url], a[href*=".mp4"]');
+      videoElements.forEach(v => {
+        const vSrc = v.getAttribute('data-video-url') || v.getAttribute('src') || v.getAttribute('href') || '';
+        if (vSrc && (vSrc.startsWith('http') || vSrc.startsWith('blob:'))) {
+          rawMediaList.push(vSrc);
+        }
+      });
+    }
+
+    // Collect from current message
+    collectFrom(messageEl);
 
     // 3. Smart Neighbor Merge:
     // If current message has NO text (only photos), check previous or next message by same sender in chat
@@ -163,29 +187,44 @@
       const prev = messageEl.previousElementSibling;
       if (prev) {
         const prevTextEl = prev.querySelector('.rich-text-content, .text-content, .card--text');
-        if (prevTextEl) {
-          text = prevTextEl.innerText.trim();
+        text = prevTextEl ? prevTextEl.innerText.trim() : prev.innerText.trim();
+      }
+      if (!text) {
+        const next = messageEl.nextElementSibling;
+        if (next) {
+          const nextTextEl = next.querySelector('.rich-text-content, .text-content, .card--text');
+          text = nextTextEl ? nextTextEl.innerText.trim() : next.innerText.trim();
         }
       }
     }
 
     // If current message has NO media (only text), check neighboring message for album/photos
-    if (mediaUrls.size === 0) {
-      const next = messageEl.nextElementSibling;
-      if (next) {
-        const nextImgs = next.querySelectorAll('img');
-        nextImgs.forEach(img => {
-          const src = img.getAttribute('data-original') || img.getAttribute('src') || '';
-          if (src && src.startsWith('http') && !src.includes('avatar') && !src.includes('emoji')) {
-            mediaUrls.add(normalizeZaloMediaUrl(src));
-          }
-        });
+    if (rawMediaList.length === 0) {
+      collectFrom(messageEl.nextElementSibling);
+      if (rawMediaList.length === 0) {
+        collectFrom(messageEl.previousElementSibling);
+      }
+    }
+
+    // 4. Resolve media (convert blob: to base64, normalize CDN URLs)
+    const mediaUrls = [];
+    const seen = new Set();
+
+    for (const src of rawMediaList) {
+      if (seen.has(src)) continue;
+      seen.add(src);
+
+      if (src.startsWith('blob:')) {
+        const base64 = await blobUrlToBase64(src);
+        if (base64) mediaUrls.push(base64);
+      } else {
+        mediaUrls.push(normalizeZaloMediaUrl(src));
       }
     }
 
     return {
       text,
-      mediaUrls: Array.from(mediaUrls)
+      mediaUrls
     };
   }
 
@@ -331,10 +370,12 @@
     publishBtn.className = 'vg-zalo-autopost-btn';
     publishBtn.title = 'Bấm để AI bóc tách cấu hình, tải ảnh và ĐĂNG NGAY lên Fanpage Facebook';
     publishBtn.innerHTML = '⚡ ĐĂNG FANPAGE';
-    publishBtn.onclick = (e) => {
+    publishBtn.onclick = async (e) => {
       e.stopPropagation();
       e.preventDefault();
-      const data = extractMessageData(messageEl);
+      publishBtn.disabled = true;
+      publishBtn.innerHTML = '🌀 Đang nạp ảnh...';
+      const data = await extractMessageData(messageEl);
       pushToFacebook(data, true, publishBtn);
     };
 
@@ -343,10 +384,12 @@
     scheduleBtn.className = 'vg-zalo-autopost-btn vg-btn-secondary';
     scheduleBtn.title = 'Bấm để đưa bài vào Hàng Đợi (Đăng tự động vào khung giờ vàng tiếp theo)';
     scheduleBtn.innerHTML = '⏳ LÊN LỊCH';
-    scheduleBtn.onclick = (e) => {
+    scheduleBtn.onclick = async (e) => {
       e.stopPropagation();
       e.preventDefault();
-      const data = extractMessageData(messageEl);
+      scheduleBtn.disabled = true;
+      scheduleBtn.innerHTML = '🌀 Đang nạp ảnh...';
+      const data = await extractMessageData(messageEl);
       pushToFacebook(data, false, scheduleBtn);
     };
 
