@@ -32,6 +32,9 @@ function closeSlide0Modal() {
     modal.classList.add('opacity-0', 'pointer-events-none');
     setTimeout(() => { modal.style.display = 'none'; }, 300);
     isSlide0Active = false;
+    document.body.classList.remove('overflow-hidden');
+    const dock = document.getElementById('mobileAppDock');
+    if (dock) dock.classList.remove('hidden');
     sessionStorage.setItem('vg_slide0_seen', 'true');
   }
 }
@@ -42,6 +45,9 @@ function openSlide0Modal() {
     modal.style.display = 'flex';
     modal.classList.remove('opacity-0', 'pointer-events-none');
     isSlide0Active = true;
+    document.body.classList.add('overflow-hidden');
+    const dock = document.getElementById('mobileAppDock');
+    if (dock) dock.classList.add('hidden');
     toggleSlide0Card(true);
   }
 }
@@ -88,6 +94,10 @@ document.addEventListener('DOMContentLoaded', () => {
       modal.style.display = 'none';
       isSlide0Active = false;
     }
+  } else {
+    document.body.classList.add('overflow-hidden');
+    const dock = document.getElementById('mobileAppDock');
+    if (dock) dock.classList.add('hidden');
   }
 });
 
