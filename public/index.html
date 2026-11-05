@@ -777,29 +777,40 @@
 
   </div>
 
-  <script src="/js/app.js?v=20261104_telegram_bot"></script>
+  <script src="/js/app.js?v=20261105_queue_preview"></script>
   <!-- Modal: Post Preview -->
-  <div id="postPreviewModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
-    <div class="neo-card bg-white max-w-2xl w-full p-6 space-y-4 max-h-[90vh] flex flex-col shadow-[6px_6px_0px_#18181B]">
-      <div class="flex justify-between items-center pb-3 border-b-2 border-[#18181B]">
-        <div class="flex items-center gap-2">
-          <span class="text-xl">📄</span>
-          <h3 class="text-sm font-black text-[#18181B] uppercase" id="previewModalTitle">Mẫu Bài Đăng Facebook</h3>
+  <div id="postPreviewModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4" onclick="if(event.target === this) closePostPreviewModal()">
+    <div class="neo-card bg-white max-w-2xl w-full p-4 sm:p-6 space-y-3.5 max-h-[92vh] flex flex-col shadow-[6px_6px_0px_#18181B]">
+      <div class="flex justify-between items-center pb-3 border-b-2 border-[#18181B] gap-2">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="text-xl shrink-0">📄</span>
+          <h3 class="text-sm font-black text-[#18181B] uppercase truncate" id="previewModalTitle">Chi Tiết Bài Đăng Facebook</h3>
         </div>
-        <button onclick="closePostPreviewModal()" class="neo-btn neo-btn-white px-2 py-1 text-xs font-bold">✕ Đóng</button>
+        <button onclick="closePostPreviewModal()" class="neo-btn neo-btn-white px-2.5 py-1 text-xs font-bold shrink-0">✕ Đóng</button>
       </div>
 
-      <div class="flex-1 overflow-y-auto pr-2">
-        <pre id="previewModalContent" class="whitespace-pre-wrap font-sans text-xs sm:text-sm text-[#18181B] leading-relaxed bg-[#FAF8F5] p-4 rounded-lg border border-neutral-300"></pre>
+      <!-- Meta Badges Bar -->
+      <div id="previewModalMeta" class="flex flex-wrap items-center gap-2 text-xs"></div>
+
+      <!-- Media Thumbnails Preview -->
+      <div id="previewModalMedia" class="hidden"></div>
+
+      <!-- Post Content Body -->
+      <div class="flex-1 overflow-y-auto pr-1">
+        <div class="text-[11px] font-bold text-neutral-500 uppercase tracking-wide mb-1">Nội dung bài viết:</div>
+        <pre id="previewModalContent" class="whitespace-pre-wrap font-sans text-xs sm:text-sm text-[#18181B] leading-relaxed bg-[#FAF8F5] p-3.5 sm:p-4 rounded-lg border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] select-text"></pre>
       </div>
 
-      <div class="pt-3 border-t-2 border-[#18181B] flex justify-end gap-2">
-        <button onclick="copyPreviewModalContent()" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-bold">
+      <!-- Action Buttons Footer -->
+      <div class="pt-3 border-t-2 border-[#18181B] flex justify-between items-center gap-2 flex-wrap" id="previewModalActions">
+        <button onclick="copyPreviewModalContent()" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-bold shadow-[2px_2px_0px_#18181B]">
           <span>📋 Sao chép nội dung</span>
         </button>
-        <button onclick="closePostPreviewModal()" class="neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold">
-          <span>Đóng lại</span>
-        </button>
+        <div class="flex items-center gap-2" id="previewModalExtraActions">
+          <button onclick="closePostPreviewModal()" class="neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold">
+            <span>Đóng lại</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>

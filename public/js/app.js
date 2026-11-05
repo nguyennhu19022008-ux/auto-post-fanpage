@@ -380,6 +380,69 @@ function handleFileSelect(event) {
   event.target.value = ''; // Reset so the user can select more files or pick the same file again
 }
 
+// Helper to escape HTML characters safely
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// Universal Clipboard copy with iOS/WebView fallback
+function copyTextToClipboard(text, successMessage = '📋 Đã sao chép thành công!') {
+  if (!text) return;
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(() => {
+      alert(successMessage);
+    }).catch(() => {
+      fallbackCopyText(text, successMessage);
+    });
+  } else {
+    fallbackCopyText(text, successMessage);
+  }
+}
+
+function fallbackCopyText(text, successMessage) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-999999px';
+  textArea.style.top = '-999999px';
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  try {
+    document.execCommand('copy');
+    alert(successMessage);
+  } catch (err) {
+    console.error('Fallback copy failed', err);
+    prompt('Hãy sao chép thủ công bằng cách nhấn Ctrl+C hoặc giữ chọn:', text);
+  }
+  document.body.removeChild(textArea);
+}
+
+function copyPostText(postId) {
+  const post = allPosts.find(p => p.id === postId);
+  if (!post || !post.content) return;
+  copyTextToClipboard(post.content, `📋 Đã sao chép nội dung Mã #${post.machineCode || 'N/A'}!`);
+}
+
+function togglePostAccordion(postId) {
+  const el = document.getElementById(`accordion-${postId}`);
+  const btn = document.getElementById(`chevron-${postId}`);
+  if (!el) return;
+  if (el.classList.contains('hidden')) {
+    el.classList.remove('hidden');
+    if (btn) btn.innerHTML = '▲ Thu gọn nội dung text';
+  } else {
+    el.classList.add('hidden');
+    if (btn) btn.innerHTML = '▶ Xem nhanh nội dung & thông số text';
+  }
+}
+
 // Helper to determine if a media item is a video
 function isVideoFile(file) {
   if (!file) return false;
@@ -648,7 +711,7 @@ function renderQueueList(posts) {
           ${isFirstVideo 
             ? `<video src="${firstMedia.url}" class="w-full h-full object-cover" preload="metadata" muted playsinline></video>
                <span class="absolute inset-0 flex items-center justify-center bg-black/40 text-white text-[12px] font-bold">▶</span>`
-            : `<img src="${firstMedia.url}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'w-16 h-16 rounded-lg bg-[#FAF5EE] border-2 border-[#18181B] flex items-center justify-center text-[9px] font-mono font-bold text-neutral-500 text-center\\\'>#${post.machineCode}</div>';" class="w-full h-full object-cover">`
+            : `<img src="${firstMedia.url}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'w-16 h-16 rounded-lg bg-[#FAF5EE] border-2 border-[#18181B] flex items-center justify-center text-[9px] font-mono font-bold text-neutral-500 text-center\\\'>#${escapeHtml(post.machineCode)}</div>';" class="w-full h-full object-cover">`
           }
           ${mCount > 1 ? `<span class="absolute bottom-0 right-0 bg-[#FDE047] text-black text-[9px] px-1 font-black border-t border-l border-[#18181B]">+${mCount}</span>` : ''}
           ${vCount > 0 ? `<span class="absolute top-0 left-0 bg-[#F43F5E] text-white text-[8px] font-black px-1 border-b border-r border-[#18181B]">🎬</span>` : ''}
@@ -656,39 +719,67 @@ function renderQueueList(posts) {
       `;
     }
 
+    const firstLine = (post.content || '').split('\n')[0] || post.machineName || 'Laptop';
+
     return `
-      <div class="neo-card p-4 sm:p-5 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-white shadow-[3px_3px_0px_#18181B]">
-        <div class="flex gap-4 items-center">
-          ${mediaThumbHtml}
-          <div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="neo-sticker sticker-lavender font-mono font-bold">#${post.machineCode}</span>
-              ${post.price ? `<span class="neo-sticker sticker-yellow font-bold">${post.price}</span>` : ''}
-              ${vCount > 0 ? `<span class="neo-sticker bg-[#F43F5E] text-white text-[10px] font-black">🎬 ${vCount} Video</span>` : ''}
-              ${post.status === 'pending_media' ? `<span class="neo-sticker sticker-yellow text-[11px] font-bold">📬 Chờ ảnh/video (nhắc trước 20p)</span>` : ''}
-              ${post.status === 'queued' ? `<span class="neo-sticker sticker-green text-[11px] font-bold">⏳ Sẵn sàng (${vCount > 0 ? `${vCount} video · ` : ''}${pCount} ảnh)</span>` : ''}
-              ${post.status === 'skipped_no_media' ? `<span class="neo-sticker sticker-coral text-[11px] font-bold">⚠️ Bỏ qua (thiếu media)</span>` : ''}
-              ${post.status === 'processing' ? `<span class="neo-sticker sticker-lavender text-[11px] font-bold">⚙️ Đang đăng</span>` : ''}
+      <div class="neo-card p-4 sm:p-5 flex flex-col gap-3.5 bg-white shadow-[3px_3px_0px_#18181B]">
+        <div class="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+          <div class="flex gap-3.5 items-start sm:items-center">
+            ${mediaThumbHtml}
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="neo-sticker sticker-lavender font-mono font-bold">#${escapeHtml(post.machineCode)}</span>
+                ${post.price ? `<span class="neo-sticker sticker-yellow font-bold">${escapeHtml(post.price)}</span>` : ''}
+                ${vCount > 0 ? `<span class="neo-sticker bg-[#F43F5E] text-white text-[10px] font-black">🎬 ${vCount} Video</span>` : ''}
+                ${post.status === 'pending_media' ? `<span class="neo-sticker sticker-yellow text-[11px] font-bold">📬 Chờ media (nhắc trước 20p)</span>` : ''}
+                ${post.status === 'queued' ? `<span class="neo-sticker sticker-green text-[11px] font-bold">⏳ Sẵn sàng (${vCount > 0 ? `${vCount} video · ` : ''}${pCount} ảnh)</span>` : ''}
+                ${post.status === 'skipped_no_media' ? `<span class="neo-sticker sticker-coral text-[11px] font-bold">⚠️ Bỏ qua (thiếu media)</span>` : ''}
+                ${post.status === 'processing' ? `<span class="neo-sticker sticker-lavender text-[11px] font-bold">⚙️ Đang đăng</span>` : ''}
+              </div>
+              <div class="text-xs text-[#18181B] font-bold mt-1.5 line-clamp-1 max-w-lg cursor-pointer hover:text-indigo-600 transition-colors" onclick="viewQueuedPostContent('${post.id}')" title="Bấm để xem toàn bộ nội dung">
+                <span>${escapeHtml(firstLine)}</span>
+              </div>
+              <div class="text-xs text-neutral-500 font-medium mt-1 flex items-center gap-2 flex-wrap">
+                <span>⏰ Giờ hẹn: <strong class="text-emerald-700 font-mono">${scheduledDate}</strong></span>
+                <span>·</span>
+                <span>📁 <strong class="text-indigo-700">${vCount > 0 ? `${vCount} video · ` : ''}${pCount} ảnh</strong></span>
+              </div>
             </div>
-            <div class="text-xs text-[#18181B] font-bold mt-1.5 line-clamp-1 max-w-lg">${post.content.split('\n')[0]}</div>
-            <div class="text-xs text-neutral-500 font-medium mt-1 flex items-center gap-2">
-              <span>⏰ Giờ hẹn: <strong class="text-emerald-700 font-mono">${scheduledDate}</strong></span>
-              <span>·</span>
-              <span>📁 <strong class="text-indigo-700">${vCount > 0 ? `${vCount} video · ` : ''}${pCount} ảnh</strong></span>
-            </div>
+          </div>
+
+          <div class="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap pt-2 md:pt-0 border-t md:border-t-0 border-neutral-100">
+            <button onclick="viewQueuedPostContent('${post.id}')" class="neo-btn neo-btn-white px-2.5 py-1.5 text-xs font-black text-indigo-700 hover:bg-indigo-50 border-2 border-[#18181B]" title="Xem nội dung bài viết và thông số">
+              <span>👁️ Xem bài viết</span>
+            </button>
+            <a href="/quick-upload?id=${post.id}" target="_blank" class="neo-btn neo-btn-lavender px-3 py-1.5 text-xs font-black" title="Xem hoặc thêm ảnh/video">
+              <span>🎬 ${mCount > 0 ? `Media (${mCount})` : 'Nạp media'}</span>
+            </a>
+            <button onclick="publishPostNow('${post.id}')" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-black" title="Đăng bài này lên Fanpage ngay lập tức">
+              <span>⚡ Đăng ngay</span>
+            </button>
+            <button onclick="deletePost('${post.id}')" class="neo-btn neo-btn-white px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50" title="Xóa khỏi hàng đợi">
+              <span>Xóa</span>
+            </button>
           </div>
         </div>
 
-        <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-          <a href="/quick-upload?id=${post.id}" target="_blank" class="neo-btn neo-btn-lavender px-3 py-1.5 text-xs font-black" title="Xem hoặc thêm ảnh/video">
-            <span>🎬 ${mCount > 0 ? `Thêm media (${mCount})` : 'Nạp ảnh/video'}</span>
-          </a>
-          <button onclick="publishPostNow('${post.id}')" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-black">
-            <span>⚡ Đăng ngay</span>
-          </button>
-          <button onclick="deletePost('${post.id}')" class="neo-btn neo-btn-white px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50">
-            <span>Xóa</span>
-          </button>
+        <!-- Inline Accordion Quick Expand (Toggleable) -->
+        <div class="pt-2 border-t border-neutral-200">
+          <div class="flex items-center justify-between">
+            <button type="button" onclick="togglePostAccordion('${post.id}')" class="text-[11px] font-black text-neutral-700 hover:text-black flex items-center gap-1.5 py-0.5">
+              <span id="chevron-${post.id}">▶ Xem nhanh nội dung & thông số text</span>
+            </button>
+            <button type="button" onclick="copyPostText('${post.id}')" class="text-[11px] font-bold text-indigo-700 hover:underline">
+              📋 Sao chép text
+            </button>
+          </div>
+          <div id="accordion-${post.id}" class="hidden mt-2 p-3 bg-[#FAF8F5] border-2 border-[#18181B] rounded-lg text-xs text-[#18181B] leading-relaxed select-text shadow-[2px_2px_0px_#18181B]">
+            <pre class="whitespace-pre-wrap font-sans text-xs text-[#18181B] leading-relaxed">${escapeHtml(post.content || 'Chưa có nội dung.')}</pre>
+            <div class="mt-2.5 pt-2 border-t border-neutral-300 flex justify-end gap-2">
+              <button type="button" onclick="copyPostText('${post.id}')" class="neo-btn neo-btn-yellow px-2.5 py-1 text-[11px] font-bold">📋 Sao chép nội dung</button>
+              <button type="button" onclick="viewQueuedPostContent('${post.id}')" class="neo-btn neo-btn-lavender px-2.5 py-1 text-[11px] font-bold">🔍 Chi tiết đầy đủ</button>
+            </div>
+          </div>
         </div>
       </div>
     `;
@@ -730,41 +821,69 @@ function renderHistoryList(posts) {
     } else {
       historyThumbHtml = `
         <div class="relative w-16 h-16 rounded-lg overflow-hidden border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] bg-neutral-100 flex items-center justify-center shrink-0">
-          <img src="${firstMedia.url}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'w-16 h-16 rounded-lg bg-[#FAF5EE] border-2 border-[#18181B] flex items-center justify-center text-[9px] font-mono font-bold text-neutral-500 text-center\\\'>#${post.machineCode}</div>';" class="w-full h-full object-cover">
+          <img src="${firstMedia.url}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'w-16 h-16 rounded-lg bg-[#FAF5EE] border-2 border-[#18181B] flex items-center justify-center text-[9px] font-mono font-bold text-neutral-500 text-center\\\'>#${escapeHtml(post.machineCode)}</div>';" class="w-full h-full object-cover">
           ${mCount > 1 ? `<span class="absolute bottom-0 right-0 bg-[#FDE047] text-black text-[9px] px-1 font-black border-t border-l border-[#18181B]">+${mCount}</span>` : ''}
         </div>
       `;
     }
 
+    const firstLine = (post.content || '').split('\n')[0] || post.machineName || 'Laptop';
+
     return `
-      <div class="neo-card p-4 sm:p-5 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-white shadow-[3px_3px_0px_#18181B]">
-        <div class="flex gap-4 items-center">
-          ${historyThumbHtml}
-          <div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="neo-sticker ${isSuccess ? 'sticker-green' : 'sticker-coral'}">
-                ${isSuccess ? '✅ Đã đăng thành công' : '❌ Thất bại'}
-              </span>
-              <span class="neo-sticker sticker-lavender font-mono">#${post.machineCode}</span>
-              ${post.isSimulation ? `<span class="neo-sticker sticker-yellow text-[10px]">Mô phỏng (Test)</span>` : ''}
+      <div class="neo-card p-4 sm:p-5 flex flex-col gap-3.5 bg-white shadow-[3px_3px_0px_#18181B]">
+        <div class="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+          <div class="flex gap-3.5 items-start sm:items-center">
+            ${historyThumbHtml}
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="neo-sticker ${isSuccess ? 'sticker-green' : 'sticker-coral'}">
+                  ${isSuccess ? '✅ Đã đăng thành công' : '❌ Thất bại'}
+                </span>
+                <span class="neo-sticker sticker-lavender font-mono">#${escapeHtml(post.machineCode)}</span>
+                ${post.isSimulation ? `<span class="neo-sticker sticker-yellow text-[10px]">Mô phỏng (Test)</span>` : ''}
+              </div>
+              <div class="text-xs text-[#18181B] font-bold mt-1.5 line-clamp-1 max-w-lg cursor-pointer hover:text-indigo-600 transition-colors" onclick="viewQueuedPostContent('${post.id}')" title="Bấm để xem lại bài đăng">
+                <span>${escapeHtml(firstLine)}</span>
+              </div>
+              <div class="text-xs text-neutral-500 font-medium mt-1">
+                <span>Đăng lúc: <strong>${postDate}</strong></span>
+                ${post.errorMessage ? `<span class="text-red-600 ml-2">(${escapeHtml(post.errorMessage)})</span>` : ''}
+              </div>
             </div>
-            <div class="text-xs text-[#18181B] font-bold mt-1.5 line-clamp-1 max-w-lg">${post.content.split('\n')[0]}</div>
-            <div class="text-xs text-neutral-500 font-medium mt-1">
-              <span>Đăng lúc: <strong>${postDate}</strong></span>
-              ${post.errorMessage ? `<span class="text-red-600 ml-2">(${post.errorMessage})</span>` : ''}
-            </div>
+          </div>
+
+          <div class="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap pt-2 md:pt-0 border-t md:border-t-0 border-neutral-100">
+            <button onclick="viewQueuedPostContent('${post.id}')" class="neo-btn neo-btn-white px-2.5 py-1.5 text-xs font-black text-neutral-800 hover:bg-neutral-100 border-2 border-[#18181B]" title="Xem lại toàn bộ nội dung bài viết">
+              <span>👁️ Xem bài viết</span>
+            </button>
+            ${post.fbPostUrl ? `
+              <a href="${post.fbPostUrl}" target="_blank" class="neo-btn neo-btn-lavender px-3 py-1.5 text-xs font-black">
+                <span>Xem trên FB ↗</span>
+              </a>
+            ` : ''}
+            <button onclick="deletePost('${post.id}')" class="neo-btn neo-btn-white px-2.5 py-1.5 text-xs font-bold text-neutral-500 hover:text-red-600">
+              <span>Xóa</span>
+            </button>
           </div>
         </div>
 
-        <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-          ${post.fbPostUrl ? `
-            <a href="${post.fbPostUrl}" target="_blank" class="neo-btn neo-btn-lavender px-3 py-1.5 text-xs font-black">
-              <span>Xem trên FB ↗</span>
-            </a>
-          ` : ''}
-          <button onclick="deletePost('${post.id}')" class="neo-btn neo-btn-white px-2.5 py-1.5 text-xs font-bold text-neutral-500 hover:text-red-600">
-            <span>Xóa</span>
-          </button>
+        <!-- Inline Accordion Quick Expand (Toggleable) -->
+        <div class="pt-2 border-t border-neutral-200">
+          <div class="flex items-center justify-between">
+            <button type="button" onclick="togglePostAccordion('${post.id}')" class="text-[11px] font-black text-neutral-700 hover:text-black flex items-center gap-1.5 py-0.5">
+              <span id="chevron-${post.id}">▶ Xem nhanh nội dung & thông số text</span>
+            </button>
+            <button type="button" onclick="copyPostText('${post.id}')" class="text-[11px] font-bold text-indigo-700 hover:underline">
+              📋 Sao chép text
+            </button>
+          </div>
+          <div id="accordion-${post.id}" class="hidden mt-2 p-3 bg-[#FAF8F5] border-2 border-[#18181B] rounded-lg text-xs text-[#18181B] leading-relaxed select-text shadow-[2px_2px_0px_#18181B]">
+            <pre class="whitespace-pre-wrap font-sans text-xs text-[#18181B] leading-relaxed">${escapeHtml(post.content || 'Chưa có nội dung.')}</pre>
+            <div class="mt-2.5 pt-2 border-t border-neutral-300 flex justify-end gap-2">
+              <button type="button" onclick="copyPostText('${post.id}')" class="neo-btn neo-btn-yellow px-2.5 py-1 text-[11px] font-bold">📋 Sao chép nội dung</button>
+              <button type="button" onclick="viewQueuedPostContent('${post.id}')" class="neo-btn neo-btn-lavender px-2.5 py-1 text-[11px] font-bold">🔍 Chi tiết đầy đủ</button>
+            </div>
+          </div>
         </div>
       </div>
     `;
@@ -1167,11 +1286,140 @@ function previewPostItem(index) {
 
   const modal = document.getElementById('postPreviewModal');
   const title = document.getElementById('previewModalTitle');
+  const meta = document.getElementById('previewModalMeta');
+  const mediaContainer = document.getElementById('previewModalMedia');
   const content = document.getElementById('previewModalContent');
+  const extraActions = document.getElementById('previewModalExtraActions');
 
-  if (title) title.innerText = `BÀI ĐĂNG FACEBOOK · MÃ #${item.machineCode}: ${item.machineName}`;
+  if (title) title.innerText = `BÀI ĐĂNG FACEBOOK · MÃ #${item.machineCode || 'N/A'}: ${item.machineName || ''}`;
+  
+  if (meta) {
+    meta.innerHTML = `
+      <span class="neo-sticker sticker-lavender font-mono font-bold">#${escapeHtml(item.machineCode)}</span>
+      ${item.price ? `<span class="neo-sticker sticker-yellow font-bold">${escapeHtml(item.price)}</span>` : ''}
+      <span class="neo-sticker sticker-green text-[11px] font-bold">Bản xem trước AI</span>
+    `;
+    meta.classList.remove('hidden');
+  }
+
+  if (mediaContainer) {
+    mediaContainer.innerHTML = '';
+    mediaContainer.classList.add('hidden');
+  }
+
   if (content) content.innerText = item.postContent || 'Chưa có nội dung.';
+  
+  if (extraActions) {
+    extraActions.innerHTML = `
+      <button onclick="closePostPreviewModal()" class="neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold">
+        <span>Đóng lại</span>
+      </button>
+    `;
+  }
+
   if (modal) modal.classList.remove('hidden');
+}
+
+function viewQueuedPostContent(postId) {
+  const post = allPosts.find(p => p.id === postId);
+  if (!post) {
+    alert('Không tìm thấy thông tin bài đăng!');
+    return;
+  }
+
+  const modal = document.getElementById('postPreviewModal');
+  const title = document.getElementById('previewModalTitle');
+  const meta = document.getElementById('previewModalMeta');
+  const mediaContainer = document.getElementById('previewModalMedia');
+  const content = document.getElementById('previewModalContent');
+  const extraActions = document.getElementById('previewModalExtraActions');
+
+  const scheduledDate = post.scheduledTime 
+    ? new Date(post.scheduledTime).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' })
+    : 'Chưa đặt lịch';
+  const mFiles = post.mediaFiles || [];
+  const vCount = mFiles.filter(isVideoFile).length;
+  const pCount = mFiles.length - vCount;
+
+  if (title) {
+    title.innerText = `MÃ #${post.machineCode || 'N/A'}: ${post.machineName || 'Laptop'}`;
+  }
+
+  if (meta) {
+    meta.innerHTML = `
+      <span class="neo-sticker sticker-lavender font-mono font-bold">#${escapeHtml(post.machineCode)}</span>
+      ${post.price ? `<span class="neo-sticker sticker-yellow font-bold">${escapeHtml(post.price)}</span>` : ''}
+      <span class="neo-sticker font-mono text-[11px]">⏰ ${escapeHtml(scheduledDate)}</span>
+      <span class="neo-sticker font-bold text-[11px] text-indigo-700 bg-indigo-50 border border-indigo-200">📁 ${vCount > 0 ? `${vCount} video · ` : ''}${pCount} ảnh</span>
+      ${post.status === 'queued' ? `<span class="neo-sticker sticker-green text-[11px] font-bold">⏳ Trong hàng đợi</span>` : ''}
+      ${post.status === 'pending_media' ? `<span class="neo-sticker sticker-yellow text-[11px] font-bold">📬 Chờ media</span>` : ''}
+      ${post.status === 'posted' ? `<span class="neo-sticker sticker-green text-[11px] font-bold">✅ Đã đăng Facebook</span>` : ''}
+      ${post.status === 'failed' ? `<span class="neo-sticker sticker-coral text-[11px] font-bold">❌ Đăng thất bại</span>` : ''}
+    `;
+    meta.classList.remove('hidden');
+  }
+
+  if (mediaContainer) {
+    if (mFiles.length > 0) {
+      mediaContainer.innerHTML = `
+        <div class="text-[11px] font-bold text-neutral-500 uppercase tracking-wide mb-1.5">Ảnh / Video đính kèm (${mFiles.length}):</div>
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
+          ${mFiles.map((m, idx) => {
+            const isVid = isVideoFile(m);
+            return `
+              <div class="relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] bg-black shrink-0">
+                ${isVid 
+                  ? `<video src="${m.url}" class="w-full h-full object-cover" muted preload="metadata"></video><span class="absolute inset-0 flex items-center justify-center bg-black/40 text-white text-xs font-bold">▶</span>`
+                  : `<a href="${m.url}" target="_blank" title="Bấm mở ảnh gốc HD"><img src="${m.url}" class="w-full h-full object-cover"></a>`
+                }
+                <span class="absolute top-0 right-0 bg-[#FDE047] text-black text-[9px] px-1 font-black border-b border-l border-[#18181B]">#${idx + 1}</span>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+      mediaContainer.classList.remove('hidden');
+    } else {
+      mediaContainer.innerHTML = `
+        <div class="p-2.5 bg-[#FAF5EE] border-2 border-dashed border-neutral-400 rounded-lg text-xs text-neutral-500 font-medium flex items-center justify-between">
+          <span>⚠️ Chưa có ảnh/video đính kèm cho máy này.</span>
+          <a href="/quick-upload?id=${post.id}" target="_blank" class="neo-btn neo-btn-lavender px-2 py-1 text-[11px] font-bold shrink-0">🎬 Nạp ảnh ngay</a>
+        </div>
+      `;
+      mediaContainer.classList.remove('hidden');
+    }
+  }
+
+  if (content) {
+    content.innerText = post.content || 'Chưa có nội dung bài đăng.';
+  }
+
+  if (extraActions) {
+    extraActions.innerHTML = `
+      <a href="/quick-upload?id=${post.id}" target="_blank" class="neo-btn neo-btn-lavender px-3 py-1.5 text-xs font-black">
+        <span>🎬 Media (${mFiles.length})</span>
+      </a>
+      ${post.status === 'queued' || post.status === 'pending_media' ? `
+        <button onclick="publishPostNow('${post.id}'); closePostPreviewModal();" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-black">
+          <span>⚡ Đăng ngay</span>
+        </button>
+      ` : ''}
+      ${post.fbPostUrl ? `
+        <a href="${post.fbPostUrl}" target="_blank" class="neo-btn neo-btn-lavender px-3 py-1.5 text-xs font-black">
+          <span>Xem trên FB ↗</span>
+        </a>
+      ` : ''}
+      <button onclick="closePostPreviewModal()" class="neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold">
+        <span>Đóng lại</span>
+      </button>
+    `;
+  }
+
+  if (modal) {
+    modal.classList.remove('hidden');
+    const scrollContainer = modal.querySelector('.overflow-y-auto');
+    if (scrollContainer) scrollContainer.scrollTop = 0;
+  }
 }
 
 function closePostPreviewModal() {
@@ -1182,10 +1430,15 @@ function closePostPreviewModal() {
 function copyPreviewModalContent() {
   const content = document.getElementById('previewModalContent')?.innerText;
   if (!content) return;
-  navigator.clipboard.writeText(content).then(() => {
-    alert('📋 Đã sao chép nội dung bài đăng!');
-  });
+  copyTextToClipboard(content, '📋 Đã sao chép nội dung bài đăng!');
 }
+
+// Close modal with Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closePostPreviewModal();
+  }
+});
 
 async function submitBatchSchedule() {
   const selectedItems = parsedTableItems.filter(i => i.selected);
