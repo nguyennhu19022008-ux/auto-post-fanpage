@@ -5,3 +5,4 @@ public/uploads/*
 !public/uploads/.gitkeep
 *.log
 .agents/
+data/zalo_batch_*.json
