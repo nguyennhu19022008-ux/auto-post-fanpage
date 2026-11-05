@@ -571,35 +571,55 @@ app.post('/api/extension/push-post', async (req, res) => {
     const finalCode = machineCode || generated.machineCode || String(Date.now()).slice(-4);
     const finalName = generated.machineName || `Laptop #${finalCode}`;
 
-    // 2. Download media URLs and upload directly to Supabase Storage
+    // 2. Download media URLs or decode base64 and upload directly to Supabase Storage
     const uploadedMediaFiles = [];
     if (Array.isArray(mediaUrls) && mediaUrls.length > 0) {
-      console.log(`[Extension] 📥 Đang tải ${mediaUrls.length} tệp media từ Zalo CDN...`);
+      console.log(`[Extension] 📥 Đang xử lý ${mediaUrls.length} tệp media...`);
       for (let i = 0; i < mediaUrls.length; i++) {
         const mUrl = mediaUrls[i];
-        if (!mUrl || !mUrl.startsWith('http')) continue;
+        if (!mUrl) continue;
 
         try {
-          const mediaRes = await axios.get(mUrl, {
-            responseType: 'arraybuffer',
-            timeout: 30000,
-            headers: {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-              'Referer': 'https://chat.zalo.me/'
-            }
-          });
-          const buffer = Buffer.from(mediaRes.data);
-          const contentType = mediaRes.headers['content-type'] || '';
-          const isVideo = contentType.startsWith('video/') || /\.(mp4|mov|avi)$/i.test(mUrl);
-          const ext = isVideo ? '.mp4' : '.jpg';
-          const mime = isVideo ? 'video/mp4' : 'image/jpeg';
-          const originalName = `zalo_${finalCode}_${i + 1}${ext}`;
+          let buffer;
+          let mime = 'image/jpeg';
+          let ext = '.jpg';
 
+          // A. Handle Base64 Data URLs (from browser blobs)
+          if (mUrl.startsWith('data:')) {
+            const matches = mUrl.match(/^data:([^;]+);base64,(.+)$/);
+            if (matches) {
+              mime = matches[1];
+              buffer = Buffer.from(matches[2], 'base64');
+              const isVideo = mime.startsWith('video/');
+              ext = isVideo ? '.mp4' : (mime.includes('png') ? '.png' : '.jpg');
+            } else {
+              continue;
+            }
+          } else if (mUrl.startsWith('http')) {
+            // B. Handle HTTP / HTTPS direct CDN URLs
+            const mediaRes = await axios.get(mUrl, {
+              responseType: 'arraybuffer',
+              timeout: 30000,
+              headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Referer': 'https://chat.zalo.me/'
+              }
+            });
+            buffer = Buffer.from(mediaRes.data);
+            const contentType = mediaRes.headers['content-type'] || '';
+            const isVideo = contentType.startsWith('video/') || /\.(mp4|mov|avi)$/i.test(mUrl);
+            ext = isVideo ? '.mp4' : '.jpg';
+            mime = isVideo ? 'video/mp4' : 'image/jpeg';
+          } else {
+            continue;
+          }
+
+          const originalName = `zalo_${finalCode}_${i + 1}${ext}`;
           const uploaded = await uploadToSupabaseStorage(buffer, originalName, mime);
           uploadedMediaFiles.push(uploaded);
           console.log(`[Extension] ✅ Đã lưu media #${i + 1} lên Supabase Storage:`, uploaded.url);
-        } catch (downloadErr) {
-          console.warn(`[Extension] ⚠️ Không thể tải trực tiếp URL #${i + 1} (${mUrl}):`, downloadErr.message);
+        } catch (mediaErr) {
+          console.warn(`[Extension] ⚠️ Lỗi xử lý media #${i + 1}:`, mediaErr.message);
         }
       }
     }
