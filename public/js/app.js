@@ -1486,13 +1486,23 @@ let deferredPwaPrompt = null;
 // Register Service Worker for offline shell and lightning fast caching
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
+    navigator.serviceWorker.register('/sw.js?v=20261105_v11')
       .then(reg => {
-        console.log('✅ ServiceWorker registered:', reg.scope);
+        reg.update(); // Immediately check for SW script updates
+        console.log('✅ ServiceWorker registered and updated:', reg.scope);
       })
       .catch(err => {
         console.warn('⚠️ ServiceWorker registration failed:', err);
       });
+  });
+
+  // Reload page once when a new service worker takes control so user sees updates immediately
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!refreshing) {
+      refreshing = true;
+      window.location.reload();
+    }
   });
 }
 

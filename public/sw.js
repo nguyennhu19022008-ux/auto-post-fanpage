@@ -1,8 +1,8 @@
-const CACHE_NAME = 'vg-laptop-app-v9';
+const CACHE_NAME = 'vg-laptop-app-v11';
 const STATIC_ASSETS = [
   '/',
   '/css/style.css?v=20261104_telegram_bot',
-  '/js/app.js?v=20261104_telegram_bot',
+  '/js/app.js?v=20261105_queue_preview',
   '/manifest.json',
   '/icons/icon.svg',
   '/quick-upload.html'
@@ -11,7 +11,7 @@ const STATIC_ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[ServiceWorker] Caching App Shell assets');
+      console.log('[ServiceWorker] Caching fresh App Shell assets');
       return cache.addAll(STATIC_ASSETS);
     })
   );
@@ -24,7 +24,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         keyList.map((key) => {
           if (key !== CACHE_NAME) {
-            console.log('[ServiceWorker] Removing old cache:', key);
+            console.log('[ServiceWorker] Deleting obsolete cache:', key);
             return caches.delete(key);
           }
         })
@@ -37,7 +37,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // For API endpoints, always use Network First
+  // 1. API calls: Always Network Only (or offline JSON error)
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       fetch(event.request).catch(() => {
@@ -49,10 +49,13 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // For static shell assets: Stale-While-Revalidate
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      const fetchPromise = fetch(event.request)
+  // 2. HTML Navigation & Scripts/Styles: NETWORK FIRST (Zero Stale UI)
+  const isHtml = event.request.mode === 'navigate' || url.pathname === '/' || url.pathname.endsWith('.html');
+  const isCode = url.pathname.startsWith('/js/') || url.pathname.startsWith('/css/');
+
+  if (isHtml || isCode) {
+    event.respondWith(
+      fetch(event.request)
         .then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
             const responseToCache = networkResponse.clone();
@@ -62,9 +65,26 @@ self.addEventListener('fetch', (event) => {
           }
           return networkResponse;
         })
-        .catch(() => cachedResponse);
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
 
-      return cachedResponse || fetchPromise;
+  // 3. Static assets (images, icons, fonts): Cache First with background revalidation
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      return fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      });
     })
   );
 });
