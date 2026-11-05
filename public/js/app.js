@@ -23,11 +23,24 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
   initDashboard();
 }
 
-// ======================== TAB NAVIGATION ========================
+// ======================== TAB NAVIGATION (STREAMLINED 4 TABS) ========================
 
-const ALL_TABS = ['studio', 'table', 'datapost', 'queue', 'history', 'settings'];
+const ALL_TABS = ['cockpit', 'queue', 'datapost', 'settings'];
 
 function switchTab(tabName) {
+  // Graceful aliases for legacy or shortcut calls
+  if (tabName === 'studio') {
+    openManualPostModal();
+    return;
+  }
+  if (tabName === 'table') {
+    tabName = 'cockpit';
+  }
+  if (tabName === 'history') {
+    tabName = 'settings';
+    switchSettingsSubTab('history');
+  }
+
   ALL_TABS.forEach(t => {
     const section = document.getElementById(`section-${t}`);
     const btn = document.getElementById(`tabBtn-${t}`);
@@ -56,10 +69,204 @@ function switchTab(tabName) {
     }
   });
 
-  if (tabName === 'datapost') {
+  if (tabName === 'cockpit') {
+    loadCockpitStatus();
+  } else if (tabName === 'datapost') {
     fetchModelTemplates();
-  } else if (tabName === 'queue' || tabName === 'history') {
+  } else if (tabName === 'queue') {
     loadPosts();
+  } else if (tabName === 'settings') {
+    loadPosts();
+  }
+}
+
+// Sub-Tab switcher inside Tab 4 (Settings & History)
+function switchSettingsSubTab(sub) {
+  const historyView = document.getElementById('settingsHistoryView');
+  const configView = document.getElementById('settingsConfigView');
+  const btnHistory = document.getElementById('settingsSubTabBtn-history');
+  const btnConfig = document.getElementById('settingsSubTabBtn-config');
+
+  if (sub === 'history') {
+    if (historyView) historyView.classList.remove('hidden');
+    if (configView) configView.classList.add('hidden');
+    if (btnHistory) {
+      btnHistory.classList.add('neo-btn-yellow');
+      btnHistory.classList.remove('neo-btn-white');
+    }
+    if (btnConfig) {
+      btnConfig.classList.add('neo-btn-white');
+      btnConfig.classList.remove('neo-btn-yellow');
+    }
+    loadPosts();
+  } else {
+    if (historyView) historyView.classList.add('hidden');
+    if (configView) configView.classList.remove('hidden');
+    if (btnConfig) {
+      btnConfig.classList.add('neo-btn-yellow');
+      btnConfig.classList.remove('neo-btn-white');
+    }
+    if (btnHistory) {
+      btnHistory.classList.add('neo-btn-white');
+      btnHistory.classList.remove('neo-btn-yellow');
+    }
+  }
+}
+
+// Modal helper: Manual single post
+function openManualPostModal() {
+  const modal = document.getElementById('manualPostModal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+  }
+}
+
+function closeManualPostModal() {
+  const modal = document.getElementById('manualPostModal');
+  if (modal) {
+    modal.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+  }
+}
+
+// Autonomous Cockpit: Load real-time status and timeline
+async function loadCockpitStatus() {
+  try {
+    const res = await fetch('/api/cockpit/status');
+    const data = await res.json();
+    if (!data || !data.success) return;
+
+    // 1. Update metric numbers
+    const queueTotalEl = document.getElementById('cockpitQueueTotal');
+    if (queueTotalEl) queueTotalEl.innerText = data.queueCount;
+
+    const templateTotalEl = document.getElementById('cockpitTemplateTotal');
+    if (templateTotalEl) templateTotalEl.innerText = data.templateCount;
+
+    // 2. Next Post details
+    const nextPost = data.nextPost;
+    const nextPostTitleEl = document.getElementById('cockpitNextPostTitle');
+    const nextPostPriceEl = document.getElementById('cockpitNextPostPrice');
+    const nextSlotBadgeEl = document.getElementById('cockpitNextSlotBadge');
+    const countdownEl = document.getElementById('cockpitCountdown');
+
+    if (nextPost) {
+      const scheduledTime = nextPost.scheduled_time || nextPost.scheduledTime;
+      const formattedDate = formatScheduleDate(scheduledTime);
+      if (nextSlotBadgeEl) nextSlotBadgeEl.innerText = formattedDate;
+      const code = nextPost.product_code || nextPost.machineCode || nextPost.code || 'MÁY';
+      const name = nextPost.product_name || nextPost.machineName || 'Laptop';
+      if (nextPostTitleEl) nextPostTitleEl.innerText = `#${code}: ${name}`;
+      if (nextPostPriceEl) nextPostPriceEl.innerText = nextPost.price || 'Giá ưu đãi';
+      
+      const diffMs = new Date(scheduledTime).getTime() - Date.now();
+      if (diffMs > 0) {
+        const diffMins = Math.round(diffMs / 60000);
+        const hours = Math.floor(diffMins / 60);
+        const mins = diffMins % 60;
+        if (countdownEl) {
+          countdownEl.innerText = hours > 0 ? `⏳ Còn ~${hours}h ${mins}m` : `⏳ Còn ~${mins} phút`;
+        }
+      } else {
+        if (countdownEl) countdownEl.innerText = `⏳ Đã đến giờ đăng!`;
+      }
+
+      const publishBtn = document.getElementById('cockpitPublishNowBtn');
+      if (publishBtn) {
+        publishBtn.onclick = () => publishPostNow(nextPost.id);
+      }
+      const viewBtn = document.getElementById('cockpitViewNextBtn');
+      if (viewBtn) {
+        viewBtn.onclick = () => openPostPreviewModal(nextPost.id);
+      }
+    } else {
+      if (nextSlotBadgeEl) nextSlotBadgeEl.innerText = 'Trống';
+      if (nextPostTitleEl) nextPostTitleEl.innerText = 'Chưa có bài nào trong hàng đợi';
+      if (nextPostPriceEl) nextPostPriceEl.innerText = '---';
+      if (countdownEl) countdownEl.innerText = 'Đã hết bài';
+    }
+
+    // 3. Coverage text
+    const coverageEl = document.getElementById('cockpitCoverageText');
+    if (coverageEl) {
+      if (data.scheduledUntil) {
+        const untilDate = formatScheduleDate(data.scheduledUntil);
+        coverageEl.innerHTML = `Lịch bài phủ kín liên tục đến <strong>${escapeHtml(untilDate)}</strong>.`;
+      } else {
+        coverageEl.innerText = 'Hàng đợi đang cần thêm bài đăng mới.';
+      }
+    }
+
+    // 4. Render Recent Timeline
+    renderCockpitTimeline(data.recentUpcoming || []);
+  } catch (err) {
+    console.error('[Cockpit] Lỗi nạp trạng thái:', err);
+  }
+}
+
+function renderCockpitTimeline(posts) {
+  const container = document.getElementById('cockpitTimelineList');
+  if (!container) return;
+
+  if (posts.length === 0) {
+    container.innerHTML = `<div class="py-6 text-center text-xs text-neutral-500 font-medium">Hiện chưa có bài đăng nào sắp diễn ra. Bấm nút tuần hoàn để nạp bài ngay!</div>`;
+    return;
+  }
+
+  container.innerHTML = posts.map(post => {
+    const scheduledTime = post.scheduled_time || post.scheduledTime;
+    const formattedDate = formatScheduleDate(scheduledTime);
+    const code = post.product_code || post.machineCode || post.code || 'MÁY';
+    const name = post.product_name || post.machineName || 'Laptop';
+    const pCount = (post.media_files || post.mediaFiles || []).length;
+    const price = post.price || '';
+
+    return `
+      <div class="py-3 flex flex-wrap items-center justify-between gap-3 hover:bg-[#FDFBF7] transition px-2 rounded-lg">
+        <div class="flex items-center gap-3">
+          <span class="font-mono text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-1 rounded">
+            ⏰ ${escapeHtml(formattedDate)}
+          </span>
+          <div>
+            <div class="text-xs font-black text-[#18181B] flex items-center gap-2">
+              <span class="neo-sticker sticker-blue text-[10px]">#${escapeHtml(code)}</span>
+              <span>${escapeHtml(name)}</span>
+            </div>
+            <div class="text-[11px] text-neutral-500 font-medium flex items-center gap-2 mt-0.5">
+              <span>📁 ${pCount} ảnh/video</span>
+              ${price ? `<span>·</span><span class="font-bold text-emerald-700">${escapeHtml(price)}</span>` : ''}
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="openPostPreviewModal('${post.id}')" class="neo-btn neo-btn-white px-2.5 py-1 text-xs font-bold">
+            👁️ Xem
+          </button>
+          <button onclick="publishPostNow('${post.id}')" class="neo-btn neo-btn-yellow px-2.5 py-1 text-xs font-black">
+            ⚡ Đăng ngay
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// 1-Click trigger circular fill from Cockpit
+async function triggerCircularFill() {
+  try {
+    const res = await fetch('/api/data-post/trigger-circular', { method: 'POST' });
+    const data = await res.json();
+    if (data.success) {
+      alert(`✓ ${data.message || 'Đã kích hoạt tuần hoàn thành công!'}`);
+      loadCockpitStatus();
+      loadPosts();
+    } else {
+      alert(`⚠️ ${data.error || 'Chưa thể kích hoạt tuần hoàn.'}`);
+    }
+  } catch (err) {
+    alert(`Lỗi: ${err.message}`);
   }
 }
 
@@ -71,8 +278,8 @@ async function initDashboard() {
   await loadSettings();
   await loadNextSlot();
   await loadPosts();
+  await loadCockpitStatus();
   setupDragAndDrop();
-  setupTableDragAndDrop();
   setupDataPostEventListeners();
   fetchModelTemplates(false);
 }
@@ -1500,7 +1707,7 @@ let deferredPwaPrompt = null;
 // Register Service Worker for offline shell and lightning fast caching
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js?v=20261105_v12')
+    navigator.serviceWorker.register('/sw.js?v=20261105_v13_cockpit')
       .then(reg => {
         reg.update(); // Immediately check for SW script updates
         console.log('✅ ServiceWorker registered and updated:', reg.scope);

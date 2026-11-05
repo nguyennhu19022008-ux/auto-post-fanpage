@@ -1,11 +1,10 @@
-const CACHE_NAME = 'vg-laptop-app-v12';
+const CACHE_NAME = 'vg-laptop-app-v13';
 const STATIC_ASSETS = [
   '/',
-  '/css/style.css?v=20261105_datapost',
-  '/js/app.js?v=20261105_datapost',
+  '/css/style.css?v=20261105_v13_cockpit',
+  '/js/app.js?v=20261105_v13_cockpit',
   '/manifest.json',
-  '/icons/icon.svg',
-  '/quick-upload.html'
+  '/icons/icon.svg'
 ];
 
 self.addEventListener('install', (event) => {

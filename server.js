@@ -66,6 +66,37 @@ app.get('/api/settings', async (req, res) => {
   }
 });
 
+// 1.1. Autonomous Cockpit Status Overview
+app.get('/api/cockpit/status', async (req, res) => {
+  try {
+    const posts = await getPosts();
+    const queuedPosts = posts.filter(p => p.status === 'queued' || p.status === 'processing' || p.status === 'pending_media' || p.status === 'skipped_no_media');
+    const historyPosts = posts.filter(p => p.status === 'posted');
+    const templates = await dataPostService.getModelTemplates();
+
+    const sortedQueued = [...queuedPosts].sort((a, b) => {
+      const tA = new Date(a.scheduled_time || a.scheduledTime || 0).getTime();
+      const tB = new Date(b.scheduled_time || b.scheduledTime || 0).getTime();
+      return tA - tB;
+    });
+
+    const nextPost = sortedQueued[0] || null;
+    const lastPost = sortedQueued[sortedQueued.length - 1] || null;
+
+    res.json({
+      success: true,
+      queueCount: queuedPosts.length,
+      historyCount: historyPosts.length,
+      templateCount: templates.length,
+      nextPost,
+      scheduledUntil: lastPost ? (lastPost.scheduled_time || lastPost.scheduledTime) : null,
+      recentUpcoming: sortedQueued.slice(0, 6)
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // 2. Update settings
 app.post('/api/settings', async (req, res) => {
   try {
