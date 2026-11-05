@@ -1,4 +1,5 @@
 const axios = require('axios');
+require('dotenv').config();
 
 const GEMINI_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];
 
@@ -237,9 +238,258 @@ YÊU CẦU NGHIÊM NGẶT VỀ CẤU TRÚC VÀ NỘI DUNG:
   }
 }
 
+/**
+ * Algorithmic fallback rewrite for circular posts (4 rotating themes)
+ * Converts single-machine lot post into curated model showcase post ("Laptop tuyển chọn Nhật Bản")
+ * with reordered specs, fresh opening hooks, varied emojis, and hashtags.
+ */
+function fallbackCircularRewrite(template, style = 'featured_review') {
+  if (!template) return '';
+  const model = template.model_name || 'Laptop Tuyển Chọn Nhật Bản';
+  const brand = template.brand || 'Nhật Bản';
+  const cpu = template.cpu || 'Intel Core mạnh mẽ';
+  const ram = template.ram || '8GB';
+  const ssd = template.ssd || '256GB SSD';
+  const screen = template.screen || 'Màn hình sắc nét chuẩn HD/FHD';
+  const config = template.standard_config || `${cpu} / RAM ${ram} / SSD ${ssd} / Màn ${screen}`;
+  const price = template.price_display || (template.price_min ? `${(template.price_min / 1e6).toFixed(1)} triệu` : 'Liên hệ báo giá tốt nhất');
+  const modelTag = (template.model_name || 'Laptop').replace(/[^a-zA-Z0-9]/g, '');
+
+  const normStyle = String(style || 'featured_review').toLowerCase();
+
+  // 1. Theme: Flash Sale / Budget Value (flash_sale, hook_budget, budget, deal)
+  if (normStyle.includes('flash') || normStyle.includes('sale') || normStyle.includes('budget') || normStyle === 'deal') {
+    return `🔥 [TIÊU ĐIỂM GIÁ TỐT] — ${model.toUpperCase()} CHUẨN NỘI ĐỊA NHẬT
+────────────────────────────
+⚡ CƠ HỘI SỞ HỮU DÒNG MÁY DOANH NHÂN CAO CẤP VỚI GIÁ CỰC TỐT:
+💰 GIÁ ƯU ĐÃI ĐẦU TƯ: ${price}
+🚀 Ổ cứng SSD: ${ssd} (khởi động Windows chỉ trong 3 giây, mở file dung lượng lớn trong chớp mắt)
+⚡ Vi xử lý: ${cpu} (xung nhịp ổn định, đáp ứng đa nhiệm văn phòng, kế toán và giải trí mượt mà)
+⚡ Bộ nhớ RAM: ${ram} (thoải mái chạy đồng thời nhiều tác vụ nặng mà không lo tràn RAM)
+🖥️ Màn hình: ${screen} (góc nhìn rộng, lớp phủ chống lóa dịu mắt bảo vệ thị lực)
+🔹 Vỏ máy nguyên khối cứng cáp, vượt qua các bài test khắt khe nội địa Nhật Bản.
+────────────────────────────
+🎁 BỘ QUÀ TẶNG TRỌN GÓI:
+• Túi chống sốc cao cấp + Chuột không dây thời trang
+• Sạc zin chuẩn thông số kỹ thuật nhà sản xuất
+• Gói cài đặt Windows và phần mềm văn phòng trọn đời miễn phí
+🛡️ CHÍNH SÁCH BẢO HÀNH CHU ĐÁO:
+✅ Bao test 7 ngày lỗi 1 đổi 1. Bảo hành phần cứng chu đáo từ 1 - 3 tháng.
+✅ Cọc 300k kiểm tra legit, hỗ trợ video call trực tiếp xem máy thực tế.
+✅ Đồng kiểm tận tay - Đúng hàng đúng chất lượng mới thanh toán.
+📲 Hotline / Zalo đặt hàng: 0876637806
+💬 Inbox ngay nhận báo giá ưu đãi và video chi tiết góc cạnh máy!
+#LaptopGiaRe #LaptopTuyenChon #GiaUuDai #LaptopVuongGia #${modelTag}`;
+  }
+
+  // 2. Theme: Military Durability / Curated Japanese Pick (curated_pick, hook_durability, durability, military)
+  if (normStyle.includes('curated') || normStyle.includes('durability') || normStyle.includes('pick') || normStyle.includes('military')) {
+    return `🌟 [HÀNG TUYỂN CHỌN LOẠI A] — ${model.toUpperCase()}
+────────────────────────────
+✨ Đỉnh cao độ bền và sự thanh lịch từ thị trường Nhật Bản:
+🛡️ Khung vỏ hợp kim cứng cáp, chịu lực va đập vượt trội chuẩn quân đội bền bỉ qua năm tháng.
+⌨️ Bàn phím chống tràn, hành trình phím sâu, cảm giác gõ êm tay không gây mỏi ngón khi gõ văn bản dài.
+🖥️ Màn hình hiển thị: ${screen} (độ tương phản cao, hình ảnh trung thực, chống mỏi mắt hiệu quả).
+🔹 Trái tim vận hành: ${cpu} phối hợp cùng RAM ${ram} xử lý tác vụ trơn tru, ổn định suốt ngày dài.
+🔹 Lưu trữ siêu tốc: ${ssd} bảo đảm an toàn dữ liệu và tốc độ truy xuất tức thì.
+🔹 Linh kiện nguyên bản 100% tuyển chọn khắt khe, pin bền bỉ.
+💰 TẦM GIÁ ĐẦU TƯ: ${price}
+────────────────────────────
+🎁 ƯU ĐÃI ĐI KÈM THEO MÁY:
+• Tặng đầy đủ phụ kiện: Túi chống sốc thời trang, chuột quang không dây, sạc zin chính hãng.
+• Hỗ trợ vệ sinh, bảo dưỡng và tra keo tản nhiệt định kỳ hoàn toàn miễn phí.
+🛡️ CAM KẾT CHẤT LƯỢNG VÀNG:
+✅ Đúng máy - đúng cấu hình nguyên zin, bao test đổi mới linh hoạt 7 ngày đầu.
+✅ Bảo hành phần cứng trách nhiệm 1 - 3 tháng, hỗ trợ kỹ thuật tận tâm 24/7.
+✅ Hỗ trợ video call check máy thực tế trước khi gửi hàng, cọc 300k an tâm tuyệt đối.
+☎️ Hotline tư vấn trực tiếp: 0876637806
+#LaptopChuanZin #HangTuyenChon #LaptopDoanhNhan #DoBenChuanNhat #LaptopVuongGia #${modelTag}`;
+  }
+
+  // 3. Theme: Lightweight Mobility & Practical Value (value_champion, hook_mobility, mobility, champion)
+  if (normStyle.includes('value') || normStyle.includes('champion') || normStyle.includes('mobility')) {
+    return `🏆 [LỰA CHỌN THỰC CHIẾN SỐ 1] — ${model.toUpperCase()}
+────────────────────────────
+💻 Bền bỉ, mượt mà và tối ưu chi phí cho công việc văn phòng, lập trình và học tập:
+✈️ Thiết kế tinh gọn, trọng lượng nhẹ nhàng, lý tưởng cho người hay di chuyển công tác và học tập.
+🔋 Thời lượng pin ấn tượng, hệ thống tản nhiệt thông minh giữ máy luôn mát mẻ khi làm việc liên tục.
+🔹 Cấu hình thực chiến: ${config}
+🔹 Xử lý mượt các ứng dụng Word, Excel nặng hàng nghìn dòng, Photoshop 2D và đa nhiệm nhiều tab.
+🔹 Bàn phím nảy tốt, touchpad mượt mà, kết nối WiFi tốc độ cao bắt sóng khỏe.
+💰 MỨC GIÁ HỢP LÝ: ${price}
+────────────────────────────
+🎁 PHỤ KIỆN TẶNG KÈM: Túi chống sốc + Chuột không dây + Sạc xịn chuẩn dòng
+🛡️ BẢO HÀNH CHU ĐÁO:
+✅ 1 đổi 1 trong 7 ngày nếu phát sinh lỗi phần cứng, bảo hành chu đáo 1 - 3 tháng.
+✅ Cọc 300k hỗ trợ xem máy qua video call chân thực, kiểm tra ưng ý mới nhận hàng.
+📲 Hotline / Zalo: 0876637806
+💬 Nhắn tin ngay để giữ máy đẹp tuyển chọn loại A!
+#LaptopBenBi #LaptopVanPhong #LaptopGiaTot #LaptopDiDong #LaptopVuongGia #${modelTag}`;
+  }
+
+  // 4. Theme: Office Productivity & Detailed Review (featured_review, hook_office, office, default)
+  return `✨ [REVIEW CHI TIẾT DÒNG MÁY] — ${model.toUpperCase()}
+────────────────────────────
+🌟 Vì sao dòng máy này luôn nằm trong top bán chạy tại Laptop Vương Gia?
+🔹 Vi xử lý trung tâm: ${cpu} (xử lý đa nhiệm mượt mà tác vụ Office, phần mềm quản lý, duyệt web)
+🔹 Bộ nhớ RAM: ${ram} (chuyển đổi qua lại giữa hàng chục cửa sổ làm việc trơn tru, không giật lag)
+🔹 Ổ cứng lưu trữ: ${ssd} (tốc độ đọc ghi cao, mở ứng dụng và khởi động máy trong vài giây)
+🔹 Màn hình hiển thị: ${screen} (góc nhìn rộng, độ sáng tốt phục vụ cả trong nhà lẫn ngoài trời)
+🔹 Bàn phím tiêu chuẩn cao, thiết kế thanh lịch đĩnh đạc mang phong cách doanh nhân Nhật Bản.
+💰 KHOẢNG GIÁ ƯU ĐÃI: ${price}
+────────────────────────────
+🎁 TRỌN BỘ PHỤ KIỆN CAO CẤP:
+• Tặng túi chống sốc cao cấp + Chuột không dây thời trang
+• Sạc zin chuẩn máy + Gói cài win trọn đời
+🛡️ CHÍNH SÁCH HẬU MÃI TOÀN DIỆN:
+✅ Bao test 7 ngày lỗi 1 đổi 1. Bảo hành phần cứng chu đáo từ 1 - 3 tháng.
+✅ Cọc 300k check legit, gọi video call xem máy trực tiếp trước khi chốt đơn.
+✅ Giao hàng toàn quốc - Đồng kiểm kiểm tra máy thoải mái trước khi thanh toán.
+📲 Liên hệ ngay Hotline / Zalo: 0876637806
+💬 Inbox Fanpage Laptop Vương Gia để nhận video test máy chi tiết!
+#LaptopDoanhNhan #LaptopVuongGia #ReviewLaptop #LaptopVanPhong #${modelTag}`;
+}
+
+/**
+ * Generate circular post rewrite with Gemini API (4 rotating themes)
+ * Converts single-machine lot post into curated model showcase post with reordered specs,
+ * fresh opening hooks, varied emojis, and hashtags.
+ */
+async function generateCircularPostRewrite(template, style = 'featured_review') {
+  if (!template) {
+    throw new Error('Vui lòng cung cấp dữ liệu Model Template.');
+  }
+
+  const apiKey = process.env.GEMINI_API_KEY;
+
+  // Fallback immediately if no API key configured
+  if (!apiKey || apiKey.trim() === '') {
+    const fallbackContent = fallbackCircularRewrite(template, style);
+    const resultObj = {
+      content: fallbackContent,
+      isAIGenerated: false,
+      modelUsed: 'algorithmic_fallback',
+      message: 'Đã tạo bài viết tuần hoàn bằng bộ mẫu thuật toán (Chưa cấu hình GEMINI_API_KEY).'
+    };
+    resultObj.toString = function() { return this.content; };
+    return resultObj;
+  }
+
+  const model = template.model_name || 'Laptop Nhật Bãi';
+  const brand = template.brand || 'Nhật Bản';
+  const cpu = template.cpu || 'Intel Core mạnh mẽ';
+  const ram = template.ram || '8GB';
+  const ssd = template.ssd || '256GB SSD';
+  const screen = template.screen || 'Màn hình sắc nét';
+  const price = template.price_display || (template.price_min ? `${(template.price_min / 1e6).toFixed(1)} triệu` : 'Liên hệ báo giá tốt nhất');
+  const modelTag = (template.model_name || 'Laptop').replace(/[^a-zA-Z0-9]/g, '');
+
+  const normStyle = String(style || 'featured_review').toLowerCase();
+  let themeName = 'Hiệu Năng & Văn Phòng Thực Chiến (Office Productivity)';
+  let themeGuide = 'Nhấn mạnh hiệu năng CPU & RAM, làm việc văn phòng đa nhiệm Excel/Word mượt mà, gõ phím êm ái cả ngày không mỏi tay.';
+  let requiredTitle = `✨ [REVIEW CHI TIẾT DÒNG MÁY] — ${model.toUpperCase()}`;
+  let specEmphasis = 'Đưa thông số CPU và RAM lên đầu, tiếp theo là SSD và Màn hình';
+  let themeEmojis = '✨, 💼, ⚡, 🔹, 💰, 🎁, 🛡️, 📲, 💬';
+  let hashtags = `#LaptopDoanhNhan #LaptopVuongGia #ReviewLaptop #LaptopVanPhong #${modelTag}`;
+
+  if (normStyle.includes('flash') || normStyle.includes('sale') || normStyle.includes('budget') || normStyle === 'deal') {
+    themeName = 'Tối Ưu Ngân Sách & Giá Trị Vượt Giá Tiền (Budget Value)';
+    themeGuide = 'Nhấn mạnh mức giá ưu đãi, cấu hình vượt trội trong tầm giá, tối ưu chi phí đầu tư cho doanh nghiệp và cá nhân.';
+    requiredTitle = `🔥 [TIÊU ĐIỂM GIÁ TỐT] — ${model.toUpperCase()} CHUẨN NỘI ĐIA NHẬT`;
+    specEmphasis = 'Đưa mức giá ưu đãi và ổ cứng SSD siêu tốc lên đầu, tiếp theo là CPU, RAM, Màn hình';
+    themeEmojis = '🔥, ⚡, 🚀, 🔹, 💰, 🎁, 🛡️, 📲, 💬';
+    hashtags = `#LaptopGiaRe #LaptopTuyenChon #GiaUuDai #LaptopVuongGia #${modelTag}`;
+  } else if (normStyle.includes('curated') || normStyle.includes('durability') || normStyle.includes('pick') || normStyle.includes('military')) {
+    themeName = 'Độ Bền Chuẩn Quân Đội & Tuyển Chọn Nhật Bản (Military Durability)';
+    themeGuide = 'Nhấn mạnh khung hợp kim cứng cáp, bàn phím chống tràn, độ bền nồi đồng cối đá đạt chuẩn quân sự, máy nguyên zin 100%.';
+    requiredTitle = `🌟 [HÀNG TUYỂN CHỌN LOẠI A] — ${model.toUpperCase()}`;
+    specEmphasis = 'Đưa tiêu chuẩn độ bền khung vỏ và bàn phím chống tràn lên đầu, tiếp theo là màn hình chống chói, CPU và RAM';
+    themeEmojis = '🌟, 💎, 🛡️, 🔹, 💰, 🎁, ✅, ☎️';
+    hashtags = `#LaptopChuanZin #HangTuyenChon #LaptopDoanhNhan #DoBenChuanNhat #LaptopVuongGia #${modelTag}`;
+  } else if (normStyle.includes('value') || normStyle.includes('champion') || normStyle.includes('mobility')) {
+    themeName = 'Gọn Nhẹ, Di Chuyển & Thời Lượng Pin (Lightweight Mobility)';
+    themeGuide = 'Nhấn mạnh thiết kế mỏng nhẹ, pin khỏe, tối ưu cho người hay di chuyển, công tác, học tập thực chiến.';
+    requiredTitle = `🏆 [LỰA CHỌN THỰC CHIẾN SỐ 1] — ${model.toUpperCase()}`;
+    specEmphasis = 'Đưa thiết kế gọn nhẹ, pin bền bỉ lên đầu, tiếp theo là cấu hình thực chiến CPU/RAM/SSD';
+    themeEmojis = '🏆, 💻, 🎯, 🔹, 💰, 🎁, 🛡️, 📲';
+    hashtags = `#LaptopBenBi #LaptopVanPhong #LaptopGiaTot #LaptopDiDong #LaptopVuongGia #${modelTag}`;
+  }
+
+  const prompt = `
+Bạn là chuyên gia sáng tạo nội dung bán lẻ Facebook Fanpage của "Laptop Vương Gia".
+Nhiệm vụ: Viết lại bài đăng bán hàng hoàn toàn mới cho dòng laptop dưới đây theo phong cách "GIỚI THIỆU DÒNG MÁY TUYỂN CHỌN NHẬT BẢN".
+
+THÔNG TIN DÒNG MÁY GỐC:
+- Tên Model: ${model}
+- Hãng: ${brand}
+- Cấu hình chuẩn: CPU ${cpu}, RAM ${ram}, Ổ cứng SSD ${ssd}, Màn hình ${screen}
+- Giá bán tham khảo: ${price}
+
+CHỦ ĐỀ BÀI VIẾT YÊU CẦU: "${themeName}"
+GÓC NHÌN ĐẶC TRƯNG: ${themeGuide}
+
+DÒNG TIÊU ĐỀ ĐẦU TIÊN BẮT BUỘC (PHẢI BẮT ĐẦU CHÍNH XÁC BẰNG DÒNG NÀY):
+${requiredTitle}
+
+QUY TẮC BẮT BUỘC ĐỂ TRÁNH TRÙNG LẶP FACEBOOK (CHỐNG DUPLICATE SPAM):
+1. TUYỆT ĐỐI KHÔNG dùng mã máy đơn lẻ tạm thời dạng #101, #046, Lô 5. Chuyển thành bài giới thiệu dòng máy tuyển chọn: "${model.toUpperCase()}".
+2. ĐẢO THỨ TỰ TRÌNH BÀY THÔNG SỐ: ${specEmphasis}.
+3. BIẾN THIÊN EMOJI & ICON: Sử dụng bộ icon đa dạng [${themeEmojis}] phù hợp phong cách.
+4. CAM KẾT & QUÀ TẶNG:
+   - Bao test 7 ngày lỗi 1 đổi 1. Bảo hành phần cứng chu đáo từ 1 - 3 tháng.
+   - Cọc 300k kiểm tra legit, gọi video call check máy trực tiếp.
+   - Quà tặng: Túi chống sốc cao cấp, chuột không dây thời trang, sạc zin theo máy, gói cài win trọn đời.
+   - Hotline / Zalo: 0876637806.
+5. HASHTAGS BẮT BUỘC Ở CUỐI BÀI:
+   ${hashtags}
+
+ĐẦU RA: Trả về DUY NHẤT nội dung bài viết Facebook hoàn chỉnh, không có markdown code block (\`\`\`), không có lời giải thích bên ngoài.
+`;
+
+  try {
+    const contents = [{ role: 'user', parts: [{ text: prompt }] }];
+    const result = await callGeminiWithFallback(contents, apiKey);
+
+    // Strip markdown code fences if Gemini wrapped it
+    let cleanText = result.text.trim();
+    if (cleanText.startsWith('```')) {
+      cleanText = cleanText.replace(/^```[a-zA-Z]*\n?/, '').replace(/\n?```$/, '').trim();
+    }
+
+    // Ensure first line has the required unique title to guarantee test 3.5 & 4.2 compliance
+    if (!cleanText.startsWith(requiredTitle.split(' — ')[0])) {
+      cleanText = `${requiredTitle}\n────────────────────────────\n${cleanText}`;
+    }
+
+    const resultObj = {
+      content: cleanText,
+      isAIGenerated: true,
+      modelUsed: result.model,
+      style: normStyle,
+      message: `Đã sinh bài viết tuần hoàn thành công bằng ${result.model}!`
+    };
+    resultObj.toString = function() { return this.content; };
+    return resultObj;
+  } catch (error) {
+    console.warn(`[Gemini API] Lỗi sinh bài viết tuần hoàn (${error.message}). Tự động kích hoạt fallback thuật toán...`);
+    const fallbackContent = fallbackCircularRewrite(template, style);
+    const resultObj = {
+      content: fallbackContent,
+      isAIGenerated: false,
+      modelUsed: 'algorithmic_fallback',
+      style: normStyle,
+      message: `Gemini API lỗi (${error.message}). Đã sử dụng bộ tạo bài tuần hoàn thuật toán thay thế.`
+    };
+    resultObj.toString = function() { return this.content; };
+    return resultObj;
+  }
+}
+
 module.exports = {
   sanitizeRawText,
   fallbackGeneratePost,
   generatePostWithGemini,
-  callGeminiWithFallback
+  callGeminiWithFallback,
+  generateCircularPostRewrite,
+  fallbackCircularRewrite
 };

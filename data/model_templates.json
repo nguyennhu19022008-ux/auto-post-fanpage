@@ -1,0 +1,514 @@
+[
+  {
+    "id": "tpl_dell_lat_5350",
+    "model_key": "dell-latitude-5350__intel-core-ultra-5__16gb__256gb-ssd__133-inch-fhd-ips",
+    "model_name": "Dell Latitude 5350",
+    "brand": "Dell",
+    "cpu": "Intel Core Ultra 5",
+    "ram": "16GB",
+    "ssd": "256GB SSD",
+    "screen": "13.3 inch FHD IPS",
+    "standard_config": "Ultra 5 / 16GB / 256GB SSD / 13.3\" IPS Chống chói",
+    "price_min": 13000000,
+    "price_max": 14500000,
+    "price_display": "13.9 triệu",
+    "price_range_category": "above_12m",
+    "status": "active",
+    "base_ai_prompt": "Laptop doanh nhân cao cấp thế hệ mới 2024, trang bị chip Intel Core Ultra 5 tích hợp NPU AI thông minh, vỏ hợp kim magie siêu nhẹ và chuẩn độ bền quân đội Mỹ MIL-STD-810H.",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545141-962277818.jpg",
+        "size": 194419,
+        "storage": "supabase",
+        "filename": "1793096545141-962277818.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_front.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545885-412751655.jpg",
+        "size": 137721,
+        "storage": "supabase",
+        "filename": "1793096545885-412751655.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_keyboard.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547033-359836312.jpg",
+        "size": 112904,
+        "storage": "supabase",
+        "filename": "1793096547033-359836312.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_side.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547703-425915759.jpg",
+        "size": 161942,
+        "storage": "supabase",
+        "filename": "1793096547703-425915759.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_ports.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096548836-575482563.jpg",
+        "size": 180772,
+        "storage": "supabase",
+        "filename": "1793096548836-575482563.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_back.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096549734-428300807.jpg",
+        "size": 97817,
+        "storage": "supabase",
+        "filename": "1793096549734-428300807.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_overview.jpg"
+      }
+    ],
+    "tags": [
+      "Doanh nhân",
+      "Văn phòng",
+      "Mỏng nhẹ",
+      "Đời mới 2024"
+    ],
+    "post_count": 113,
+    "last_posted_at": "2026-11-05T15:24:17.211Z",
+    "created_at": "2026-11-01T08:00:00Z",
+    "updated_at": "2026-11-05T15:24:17.409Z"
+  },
+  {
+    "id": "tpl_hp_envy_x360_14",
+    "model_key": "hp-envy-x360-14__intel-core-ultra-5-125u__16gb__512gb-ssd__14-inch-fhd-cam-ung-xoay-360",
+    "model_name": "HP Envy x360 14",
+    "brand": "HP",
+    "cpu": "Intel Core Ultra 5 125U",
+    "ram": "16GB",
+    "ssd": "512GB SSD",
+    "screen": "14 inch FHD Cảm ứng xoay 360°",
+    "standard_config": "Ultra 5 125U / 16GB / 512GB SSD / 14\" Cảm ứng xoay 360°",
+    "price_min": 12500000,
+    "price_max": 15500000,
+    "price_display": "13.5 - 15.5 triệu",
+    "price_range_category": "above_12m",
+    "status": "active",
+    "base_ai_prompt": "Dòng laptop xoay gập 2-in-1 cao cấp hàng đầu từ HP, màn hình cảm ứng vuốt chạm mượt mà kèm bản lề 360 độ gập như iPad, vỏ nhôm nguyên khối màu bạc sang trọng.",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096687803-731324845.jpg",
+        "size": 46597,
+        "storage": "supabase",
+        "filename": "1793096687803-731324845.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_envy_14_1.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096688177-60235549.jpg",
+        "size": 39379,
+        "storage": "supabase",
+        "filename": "1793096688177-60235549.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_envy_14_2.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096688587-699817184.jpg",
+        "size": 43319,
+        "storage": "supabase",
+        "filename": "1793096688587-699817184.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_envy_14_3.jpg"
+      }
+    ],
+    "tags": [
+      "2-in-1",
+      "Cảm ứng",
+      "Văn phòng cao cấp",
+      "Vỏ nhôm"
+    ],
+    "post_count": 24,
+    "last_posted_at": "2026-11-05T15:24:29.578Z",
+    "created_at": "2026-11-01T08:30:00Z",
+    "updated_at": "2026-11-05T15:24:29.773Z"
+  },
+  {
+    "id": "tpl_hp_envy_x360_13",
+    "model_key": "hp-envy-x360-13-3__ryzen-5-4500u__8gb__256gb__13-3-inch",
+    "model_name": "HP Envy x360 13.3",
+    "brand": "HP",
+    "cpu": "AMD Ryzen 5 4500U",
+    "ram": "8GB",
+    "ssd": "256GB SSD",
+    "screen": "13.3 inch FHD Cảm ứng xoay 360°",
+    "standard_config": "Ryzen 5 / 8GB / 256GB SSD / 13.3\" Cảm ứng 360°",
+    "price_min": 6500000,
+    "price_max": 7500000,
+    "price_display": "6.5 - 7.5 triệu",
+    "price_range_category": "5m_8m",
+    "status": "active",
+    "base_ai_prompt": "Chiếc laptop 2-trong-1 siêu nhỏ gọn và thời trang, chip AMD Ryzen 5 mạnh mẽ đa nhiệm cùng màn hình cảm ứng sắc nét, đáp ứng trọn vẹn cả nhu cầu học tập, làm việc và giải trí sáng tạo.",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096590975-411484908.jpg",
+        "size": 137337,
+        "storage": "supabase",
+        "filename": "1793096590975-411484908.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_envy_13_1.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096591867-523181260.jpg",
+        "size": 136018,
+        "storage": "supabase",
+        "filename": "1793096591867-523181260.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_envy_13_2.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096593070-200164422.jpg",
+        "size": 134940,
+        "storage": "supabase",
+        "filename": "1793096593070-200164422.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_envy_13_3.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096594076-580876128.jpg",
+        "size": 131357,
+        "storage": "supabase",
+        "filename": "1793096594076-580876128.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_envy_13_4.jpg"
+      }
+    ],
+    "tags": [
+      "2-in-1",
+      "Cảm ứng",
+      "Nhỏ gọn",
+      "Văn phòng"
+    ],
+    "post_count": 4,
+    "last_posted_at": "2026-11-02T09:15:00Z",
+    "created_at": "2026-11-01T09:00:00Z",
+    "updated_at": "2026-11-02T09:15:00Z"
+  },
+  {
+    "id": "tpl_hp_elitebook_630_g9",
+    "model_key": "hp-elitebook-630-g9__i5-1235u__16gb__256gb__13-3-inch",
+    "model_name": "HP EliteBook 630 G9",
+    "brand": "HP",
+    "cpu": "Intel Core i5-1235U",
+    "ram": "16GB",
+    "ssd": "256GB SSD",
+    "screen": "13.3 inch FHD IPS",
+    "standard_config": "i5-1235U / 16GB / 256GB SSD / 13.3\" FHD",
+    "price_min": 8300000,
+    "price_max": 8800000,
+    "price_display": "8.3 - 8.8 triệu",
+    "price_range_category": "8m_12m",
+    "status": "active",
+    "base_ai_prompt": "Chiến binh doanh nghiệp thế hệ 12 của HP, thiết kế khung nhôm nguyên khối cứng cáp, bàn phím chống tràn, bảo mật vân tay và nhận diện khuôn mặt IR Camera đẳng cấp.",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793348697733-781797711.jpg",
+        "size": 95951,
+        "storage": "supabase",
+        "filename": "1793348697733-781797711.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_elite_630_g9_1.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793348698786-735708326.jpg",
+        "size": 126156,
+        "storage": "supabase",
+        "filename": "1793348698786-735708326.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_elite_630_g9_2.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793880993077-940381395.jpg",
+        "size": 145020,
+        "storage": "supabase",
+        "filename": "1793880993077-940381395.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_elite_630_g9_3.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793880993717-316524388.jpg",
+        "size": 128450,
+        "storage": "supabase",
+        "filename": "1793880993717-316524388.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_elite_630_g9_4.jpg"
+      }
+    ],
+    "tags": [
+      "Doanh nhân",
+      "Bền bỉ",
+      "Vỏ nhôm",
+      "Đời cao"
+    ],
+    "post_count": 6,
+    "last_posted_at": "2026-11-04T16:00:00Z",
+    "created_at": "2026-11-01T09:30:00Z",
+    "updated_at": "2026-11-04T16:00:00Z"
+  },
+  {
+    "id": "tpl_dell_lat_5320",
+    "model_key": "dell-latitude-5320__i5-1145g7__8gb__256gb__13-3-inch",
+    "model_name": "Dell Latitude 5320",
+    "brand": "Dell",
+    "cpu": "Intel Core i5-1145G7",
+    "ram": "8GB",
+    "ssd": "256GB SSD",
+    "screen": "13.3 inch FHD IPS",
+    "standard_config": "i5-1145G7 / 8GB / 256GB SSD / 13.3\" FHD IPS",
+    "price_min": 5900000,
+    "price_max": 6500000,
+    "price_display": "5.9 - 6.5 triệu",
+    "price_range_category": "5m_8m",
+    "status": "active",
+    "base_ai_prompt": "Mẫu laptop quốc dân cho văn phòng và sinh viên: Dell Latitude 5320 chuẩn xách tay Nhật Bản, bàn phím gõ êm ái hàng đầu, thời lượng pin trâu và cực kỳ bền bỉ.",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793880660069-501070229.jpg",
+        "size": 153510,
+        "storage": "supabase",
+        "filename": "1793880660069-501070229.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_5320_1.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793880660931-902780702.jpg",
+        "size": 126192,
+        "storage": "supabase",
+        "filename": "1793880660931-902780702.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_5320_2.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793880661635-696976523.jpg",
+        "size": 89473,
+        "storage": "supabase",
+        "filename": "1793880661635-696976523.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_5320_3.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793880662760-738318432.jpg",
+        "size": 96470,
+        "storage": "supabase",
+        "filename": "1793880662760-738318432.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_5320_4.jpg"
+      }
+    ],
+    "tags": [
+      "Doanh nhân",
+      "Chuẩn Nhật",
+      "Phím êm",
+      "Siêu bền"
+    ],
+    "post_count": 7,
+    "last_posted_at": "2026-11-05T08:00:00Z",
+    "created_at": "2026-11-01T10:00:00Z",
+    "updated_at": "2026-11-05T08:00:00Z"
+  },
+  {
+    "id": "tpl_hp_probook_430_g8",
+    "model_key": "hp-probook-430-g8__i5-1135g7__16gb__256gb__13-3-inch",
+    "model_name": "HP ProBook 430 G8",
+    "brand": "HP",
+    "cpu": "Intel Core i5-1135G7",
+    "ram": "16GB",
+    "ssd": "256GB SSD",
+    "screen": "13.3 inch FHD IPS",
+    "standard_config": "i5-1135G7 / 16GB / 256GB SSD / 13.3\" FHD",
+    "price_min": 7500000,
+    "price_max": 8200000,
+    "price_display": "7.5 - 8.2 triệu",
+    "price_range_category": "5m_8m",
+    "status": "active",
+    "base_ai_prompt": "Dòng ProBook vỏ nhôm sang trọng của HP, trang bị sẵn 16GB RAM mượt mà đa nhiệm, màn hình IPS chống chói chống mỏi mắt cho dân kế toán và văn phòng làm việc cả ngày.",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793879874885-241298331.jpg",
+        "size": 128586,
+        "storage": "supabase",
+        "filename": "1793879874885-241298331.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_probook_430_1.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793879876309-686407318.jpg",
+        "size": 100865,
+        "storage": "supabase",
+        "filename": "1793879876309-686407318.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_probook_430_2.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793879876936-58142258.jpg",
+        "size": 81208,
+        "storage": "supabase",
+        "filename": "1793879876936-58142258.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_probook_430_3.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793879878078-330176826.jpg",
+        "size": 74079,
+        "storage": "supabase",
+        "filename": "1793879878078-330176826.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_probook_430_4.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793879879248-363271001.jpg",
+        "size": 66622,
+        "storage": "supabase",
+        "filename": "1793879879248-363271001.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_probook_430_5.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793879879987-138457557.jpg",
+        "size": 73390,
+        "storage": "supabase",
+        "filename": "1793879879987-138457557.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_probook_430_6.jpg"
+      }
+    ],
+    "tags": [
+      "Văn phòng",
+      "Vỏ nhôm",
+      "16GB RAM",
+      "Nhỏ gọn"
+    ],
+    "post_count": 2,
+    "last_posted_at": "2026-11-03T11:00:00Z",
+    "created_at": "2026-11-01T10:30:00Z",
+    "updated_at": "2026-11-03T11:00:00Z"
+  },
+  {
+    "id": "tpl_thinkpad_t480s",
+    "model_key": "thinkpad-t480s__intel-core-i5-8350u__16gb__256gb-nvme-ssd__14-inch-fhd-ips-chong-choi",
+    "model_name": "ThinkPad T480s",
+    "brand": "ThinkPad",
+    "cpu": "Intel Core i5-8350U",
+    "ram": "16GB",
+    "ssd": "256GB NVMe SSD",
+    "screen": "14 inch FHD IPS Chống chói",
+    "standard_config": "Core i5 / 16GB / 256GB SSD / 14\" FHD IPS Bàn phím số 1",
+    "price_min": 5800000,
+    "price_max": 6800000,
+    "price_display": "6.5 triệu (Xả kho cuối năm)",
+    "price_range_category": "5m_8m",
+    "status": "active",
+    "base_ai_prompt": "Huyền thoại ThinkPad mỏng nhẹ dòng s, khung sợi carbon siêu bền, cảm giác gõ phím vô đối thế giới laptop, hỗ trợ 2 cổng sạc Type-C Thunderbolt và tản nhiệt êm ái.",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793881184742-50486176.jpg",
+        "size": 169988,
+        "storage": "supabase",
+        "filename": "1793881184742-50486176.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "thinkpad_t480s_1.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793881185484-280334922.jpg",
+        "size": 64936,
+        "storage": "supabase",
+        "filename": "1793881185484-280334922.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "thinkpad_t480s_2.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793881185916-805878701.jpg",
+        "size": 99319,
+        "storage": "supabase",
+        "filename": "1793881185916-805878701.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "thinkpad_t480s_3.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793881186852-508811718.jpg",
+        "size": 113963,
+        "storage": "supabase",
+        "filename": "1793881186852-508811718.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "thinkpad_t480s_4.jpg"
+      }
+    ],
+    "tags": [
+      "Lập trình",
+      "Bàn phím sướng",
+      "Bền bỉ quân đội",
+      "Văn phòng"
+    ],
+    "post_count": 10,
+    "last_posted_at": "2026-11-05T13:45:55.664Z",
+    "created_at": "2026-11-01T11:00:00Z",
+    "updated_at": "2026-11-05T15:23:29.415Z"
+  },
+  {
+    "id": "tpl_dell_inspiron_5490",
+    "model_key": "dell-inspiron-5490__i5-10210u__8gb__256gb__14-inch",
+    "model_name": "Dell Inspiron 5490",
+    "brand": "Dell",
+    "cpu": "Intel Core i5-10210U",
+    "ram": "8GB",
+    "ssd": "256GB SSD",
+    "screen": "14 inch FHD IPS Viền mỏng",
+    "standard_config": "i5-10210U / 8GB / 256GB SSD / 14\" FHD IPS",
+    "price_min": 6200000,
+    "price_max": 6900000,
+    "price_display": "6.2 - 6.9 triệu",
+    "price_range_category": "5m_8m",
+    "status": "active",
+    "base_ai_prompt": "Thiết kế viền màn hình siêu mỏng hiện đại, nâng bàn phím tự động công thái học khi mở máy, cấu hình mượt mà cho đồ họa 2D nhẹ và công việc văn phòng.",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793881364982-562267064.jpg",
+        "size": 130524,
+        "storage": "supabase",
+        "filename": "1793881364982-562267064.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_5490_1.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793881366451-825720641.jpg",
+        "size": 114950,
+        "storage": "supabase",
+        "filename": "1793881366451-825720641.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_5490_2.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793881250872-449555112.jpg",
+        "size": 163130,
+        "storage": "supabase",
+        "filename": "1793881250872-449555112.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_5490_3.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793881251960-419833166.jpg",
+        "size": 150981,
+        "storage": "supabase",
+        "filename": "1793881251960-419833166.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_5490_4.jpg"
+      }
+    ],
+    "tags": [
+      "Thời trang",
+      "Viền mỏng",
+      "Văn phòng",
+      "Dell"
+    ],
+    "post_count": 1,
+    "last_posted_at": "2026-11-02T16:45:00Z",
+    "created_at": "2026-11-01T11:30:00Z",
+    "updated_at": "2026-11-02T16:45:00Z"
+  }
+]

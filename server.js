@@ -34,6 +34,7 @@ const {
   getSettings,
   saveSettings
 } = require('./services/scheduler');
+const dataPostService = require('./services/dataPost');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -736,6 +737,148 @@ app.get(['/api/cron', '/api/cron-check'], async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ========================================================
+// 12. DATA POST & CIRCULAR ENGINE API ROUTES
+// ========================================================
+
+// 12.1. Get Model Templates with Filters
+app.get('/api/data-post/templates', async (req, res) => {
+  try {
+    const templates = await dataPostService.getModelTemplates({
+      brand: req.query.brand,
+      price_range: req.query.price_range || req.query.priceRange,
+      status: req.query.status,
+      search: req.query.search
+    });
+    res.json({
+      success: true,
+      count: templates.length,
+      data: templates,
+      templates
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 12.2. Get Single Model Template by ID
+app.get('/api/data-post/templates/:id', async (req, res) => {
+  try {
+    const template = await dataPostService.getModelTemplateById(req.params.id);
+    if (!template) {
+      return res.status(404).json({ success: false, error: 'Không tìm thấy Model Template.' });
+    }
+    res.json({ success: true, data: template, template });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 12.3. Create Model Template
+app.post('/api/data-post/templates', async (req, res) => {
+  try {
+    const template = await dataPostService.createModelTemplate(req.body);
+    res.status(201).json({
+      success: true,
+      data: template,
+      template,
+      message: 'Đã tạo Model Template thành công!'
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+// 12.4. Update Model Template
+app.put('/api/data-post/templates/:id', async (req, res) => {
+  try {
+    const updated = await dataPostService.updateModelTemplate(req.params.id, req.body);
+    res.json({
+      success: true,
+      data: updated,
+      template: updated,
+      message: 'Đã cập nhật Model Template thành công!'
+    });
+  } catch (error) {
+    const status = error.message.includes('Không tìm thấy') ? 404 : 400;
+    res.status(status).json({ success: false, error: error.message });
+  }
+});
+
+// 12.5. Delete Model Template
+app.delete('/api/data-post/templates/:id', async (req, res) => {
+  try {
+    const result = await dataPostService.deleteModelTemplate(req.params.id);
+    res.json(result);
+  } catch (error) {
+    const status = error.message.includes('Không tìm thấy') ? 404 : 400;
+    res.status(status).json({ success: false, error: error.message });
+  }
+});
+
+// 12.6. Smart Match Model Template from Zalo Text
+app.post('/api/data-post/smart-match', async (req, res) => {
+  try {
+    const rawText = req.body.raw_text !== undefined ? req.body.raw_text : req.body.rawText;
+    const result = await dataPostService.smartMatchTemplate(rawText);
+    res.json({ success: true, ...result });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 12.7. Get Circular Queue
+app.get('/api/data-post/queue', async (req, res) => {
+  try {
+    const queue = await dataPostService.getCircularQueue();
+    res.json({
+      success: true,
+      count: queue.length,
+      data: queue
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 12.8. Enqueue Circular Post
+app.post('/api/data-post/queue', async (req, res) => {
+  try {
+    const result = await dataPostService.enqueueCircularPost(req.body);
+    res.status(201).json({
+      success: true,
+      queue_id: result.queue_id,
+      status: result.status,
+      data: result.data,
+      message: 'Đã đưa bài vào hàng đợi tuần hoàn thành công!'
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+// 12.9. Delete Circular Queue Item
+app.delete('/api/data-post/queue/:id', async (req, res) => {
+  try {
+    const result = await dataPostService.deleteCircularQueueItem(req.params.id);
+    res.json(result);
+  } catch (error) {
+    const status = error.message.includes('Không tìm thấy') ? 404 : 400;
+    res.status(status).json({ success: false, error: error.message });
+  }
+});
+
+// 12.10. Trigger Circular Post Immediately
+app.post('/api/data-post/queue/trigger-post', async (req, res) => {
+  try {
+    const result = await dataPostService.triggerCircularPost(req.body);
+    res.json(result);
+  } catch (error) {
+    const status = (error.message.includes('Không tìm thấy') || error.message.includes('Vui lòng') || error.message.includes('thiếu')) ? 400 : 500;
+    res.status(status).json({ success: false, error: error.message });
   }
 });
 

@@ -7,6 +7,14 @@ let isDashboardInitialized = false;
 
 let isSampleDataLoaded = false;
 
+// DATA POST & Circular Engine Global State
+let modelTemplatesList = [];
+let dataPostFilters = { brand: 'all', price_range: 'all', status: 'all', search: '', sort: 'newest' };
+let activeMediaTemplateId = null;
+let currentSmartMatchTemplate = null;
+let dataPostSearchDebounceTimer = null;
+let smartMatchDebounceTimer = null;
+
 // Auto-initialize Dashboard on page load
 document.addEventListener('DOMContentLoaded', () => {
   initDashboard();
@@ -17,8 +25,10 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
 
 // ======================== TAB NAVIGATION ========================
 
+const ALL_TABS = ['studio', 'table', 'datapost', 'queue', 'history', 'settings'];
+
 function switchTab(tabName) {
-  ['studio', 'table', 'queue', 'history', 'settings'].forEach(t => {
+  ALL_TABS.forEach(t => {
     const section = document.getElementById(`section-${t}`);
     const btn = document.getElementById(`tabBtn-${t}`);
     if (section && btn) {
@@ -35,7 +45,7 @@ function switchTab(tabName) {
   });
 
   // Sync mobile bottom dock
-  ['studio', 'table', 'queue', 'history', 'settings'].forEach(t => {
+  ALL_TABS.forEach(t => {
     const mobileBtn = document.getElementById(`mobileDockBtn-${t}`);
     if (mobileBtn) {
       if (t === tabName) {
@@ -46,7 +56,9 @@ function switchTab(tabName) {
     }
   });
 
-  if (tabName === 'queue' || tabName === 'history') {
+  if (tabName === 'datapost') {
+    fetchModelTemplates();
+  } else if (tabName === 'queue' || tabName === 'history') {
     loadPosts();
   }
 }
@@ -61,6 +73,8 @@ async function initDashboard() {
   await loadPosts();
   setupDragAndDrop();
   setupTableDragAndDrop();
+  setupDataPostEventListeners();
+  fetchModelTemplates(false);
 }
 
 async function loadSettings() {
@@ -1486,7 +1500,7 @@ let deferredPwaPrompt = null;
 // Register Service Worker for offline shell and lightning fast caching
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js?v=20261105_v11')
+    navigator.serviceWorker.register('/sw.js?v=20261105_v12')
       .then(reg => {
         reg.update(); // Immediately check for SW script updates
         console.log('✅ ServiceWorker registered and updated:', reg.scope);
@@ -1553,3 +1567,1000 @@ async function triggerPwaPrompt() {
   deferredPwaPrompt = null;
   closePwaInstallModal();
 }
+
+// ========================================================
+// DATA POST (KHO MODEL MẪU & TUẦN HOÀN) CONTROLLER
+// ========================================================
+
+/**
+ * Setup Event Listeners for Instant Search & Smart Match
+ */
+function setupDataPostEventListeners() {
+  // 1. Instant Search Debounce 150ms
+  const searchInput = document.getElementById('dataPostSearchInput');
+  const clearSearchBtn = document.getElementById('dataPostClearSearchBtn');
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value;
+      if (clearSearchBtn) {
+        if (query.trim()) clearSearchBtn.classList.remove('hidden');
+        else clearSearchBtn.classList.add('hidden');
+      }
+
+      clearTimeout(dataPostSearchDebounceTimer);
+      dataPostSearchDebounceTimer = setTimeout(() => {
+        dataPostFilters.search = query;
+        fetchModelTemplates(false);
+      }, 150);
+    });
+  }
+
+  // 2. Smart Match in AI Studio on rawTextInput
+  const rawTextInput = document.getElementById('rawTextInput');
+  if (rawTextInput) {
+    const runSmartMatchCheck = (text) => {
+      clearTimeout(smartMatchDebounceTimer);
+      if (!text || text.length < 10) {
+        hideSmartMatchBanner();
+        return;
+      }
+
+      smartMatchDebounceTimer = setTimeout(async () => {
+        try {
+          const res = await fetch('/api/data-post/smart-match', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ raw_text: text })
+          });
+          const json = await res.json();
+          if (json.success && json.matched && json.template) {
+            currentSmartMatchTemplate = json.template;
+            showSmartMatchBanner(json.template);
+          } else {
+            hideSmartMatchBanner();
+          }
+        } catch (err) {
+          hideSmartMatchBanner();
+        }
+      }, 200);
+    };
+
+    rawTextInput.addEventListener('input', (e) => {
+      runSmartMatchCheck(e.target.value.trim());
+    });
+
+    rawTextInput.addEventListener('paste', () => {
+      setTimeout(() => {
+        runSmartMatchCheck(rawTextInput.value.trim());
+      }, 50);
+    });
+  }
+}
+
+/**
+ * Fetch Model Templates with current filters
+ */
+async function fetchModelTemplates(showLoading = true) {
+  const container = document.getElementById('modelTemplatesContainer');
+  const loadingState = document.getElementById('dataPostLoadingState');
+  const emptyState = document.getElementById('dataPostEmptyState');
+
+  if (showLoading && loadingState) loadingState.classList.remove('hidden');
+  if (emptyState) emptyState.classList.add('hidden');
+
+  try {
+    const params = new URLSearchParams();
+    if (dataPostFilters.brand && dataPostFilters.brand !== 'all') {
+      params.append('brand', dataPostFilters.brand);
+    }
+    if (dataPostFilters.price_range && dataPostFilters.price_range !== 'all') {
+      params.append('price_range', dataPostFilters.price_range);
+    }
+    if (dataPostFilters.status && dataPostFilters.status !== 'all') {
+      params.append('status', dataPostFilters.status);
+    }
+    if (dataPostFilters.search && dataPostFilters.search.trim()) {
+      params.append('search', dataPostFilters.search.trim());
+    }
+
+    const url = `/api/data-post/templates${params.toString() ? '?' + params.toString() : ''}`;
+    const res = await fetch(url);
+    const json = await res.json();
+
+    if (json.success && (json.data || json.templates)) {
+      modelTemplatesList = json.data || json.templates;
+    } else {
+      modelTemplatesList = [];
+    }
+
+    // Sort templates
+    sortModelTemplates(modelTemplatesList, dataPostFilters.sort);
+
+    // Update Badges & Counters
+    updateDataPostCounters(modelTemplatesList);
+
+    // Render cards
+    renderModelCards(modelTemplatesList);
+
+  } catch (err) {
+    console.error('Error fetching model templates:', err);
+    if (container) {
+      container.innerHTML = `
+        <div class="col-span-full py-12 text-center text-red-600 neo-card bg-red-50 p-6">
+          <div class="text-3xl mb-2">⚠️</div>
+          <div class="text-sm font-black">Lỗi kết nối khi nạp danh sách Model Template</div>
+          <p class="text-xs text-neutral-600 mt-1">${escapeHtml(err.message)}</p>
+          <button onclick="fetchModelTemplates()" class="mt-3 neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold">
+            🔄 Thử lại
+          </button>
+        </div>`;
+    }
+  } finally {
+    if (loadingState) loadingState.classList.add('hidden');
+  }
+}
+
+/**
+ * Sort Model Templates
+ */
+function sortModelTemplates(list, sortKey) {
+  if (!Array.isArray(list)) return;
+  switch (sortKey) {
+    case 'most_posted':
+      list.sort((a, b) => (b.post_count || 0) - (a.post_count || 0));
+      break;
+    case 'last_posted':
+      list.sort((a, b) => new Date(b.last_posted_at || 0) - new Date(a.last_posted_at || 0));
+      break;
+    case 'price_asc':
+      list.sort((a, b) => (a.price_min || 0) - (b.price_min || 0));
+      break;
+    case 'price_desc':
+      list.sort((a, b) => (b.price_min || b.price_max || 0) - (a.price_min || a.price_max || 0));
+      break;
+    case 'newest':
+    default:
+      list.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+      break;
+  }
+}
+
+/**
+ * Update UI counters for Data Post
+ */
+function updateDataPostCounters(list) {
+  const total = list.length;
+  const activeCount = list.filter(t => (t.status || 'active') === 'active').length;
+  let totalPhotos = 0;
+  list.forEach(t => {
+    if (Array.isArray(t.media_files)) totalPhotos += t.media_files.length;
+  });
+
+  const badgeNav = document.getElementById('modelTemplateCountBadge');
+  if (badgeNav) badgeNav.innerText = total;
+
+  const statModels = document.getElementById('statTotalModels');
+  if (statModels) statModels.innerText = total;
+
+  const statActive = document.getElementById('statActiveCircular');
+  if (statActive) statActive.innerText = activeCount;
+
+  const statPhotos = document.getElementById('statTotalHdPhotos');
+  if (statPhotos) statPhotos.innerText = totalPhotos;
+
+  const mobileBadge = document.getElementById('mobileDataPostBadge');
+  if (mobileBadge) {
+    mobileBadge.innerText = total;
+    if (total > 0) mobileBadge.classList.remove('hidden');
+    else mobileBadge.classList.add('hidden');
+  }
+}
+
+/**
+ * Render Model Cards into #modelTemplatesContainer
+ */
+function renderModelCards(templates) {
+  const container = document.getElementById('modelTemplatesContainer');
+  const emptyState = document.getElementById('dataPostEmptyState');
+
+  if (!container) return;
+  container.innerHTML = '';
+
+  if (!templates || templates.length === 0) {
+    if (emptyState) emptyState.classList.remove('hidden');
+    return;
+  }
+  if (emptyState) emptyState.classList.add('hidden');
+
+  templates.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'neo-card p-4 sm:p-5 bg-white flex flex-col justify-between gap-3.5 shadow-[3px_3px_0px_#18181B] hover:shadow-[5px_5px_0px_#18181B] transition-all';
+
+    const brand = t.brand || 'LAPTOP';
+    const isCircularActive = (t.status || 'active') === 'active';
+    const postCount = t.post_count || 0;
+    const lastPosted = t.last_posted_at ? new Date(t.last_posted_at).toLocaleDateString('vi-VN') : 'Chưa đăng';
+    const mediaFiles = Array.isArray(t.media_files) ? t.media_files : [];
+
+    // Mini Gallery HTML (up to 4 thumbnails)
+    let galleryHtml = '';
+    if (mediaFiles.length > 0) {
+      const thumbs = mediaFiles.slice(0, 4).map((f, idx) => {
+        const isMore = idx === 3 && mediaFiles.length > 4;
+        const moreBadge = isMore ? `<div class="gallery-more-overlay">+${mediaFiles.length - 3} HD ➔</div>` : '';
+        const isVideo = isVideoFile(f);
+        const videoBadge = isVideo ? `<span class="absolute top-1 left-1 bg-rose-600 text-white text-[9px] font-black px-1 rounded z-10">🎬</span>` : '';
+
+        return `
+          <div class="gallery-thumb-box" onclick="openMediaManagerModal('${t.id}')" title="Xem kho ảnh HD">
+            <img src="${escapeHtml(f.url)}" alt="${escapeHtml(t.model_name)}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='/icons/icon.svg';" />
+            ${videoBadge}
+            ${moreBadge}
+          </div>
+        `;
+      }).join('');
+
+      galleryHtml = `<div class="grid grid-cols-4 gap-2 pt-1">${thumbs}</div>`;
+    } else {
+      galleryHtml = `
+        <div onclick="openMediaManagerModal('${t.id}')" class="border-2 border-dashed border-[#18181B] bg-[#FAF5EE] rounded-lg p-3 text-center cursor-pointer hover:bg-yellow-50 text-xs font-bold text-neutral-600">
+          🖼️ Bấm để nạp album ảnh HD Supabase
+        </div>
+      `;
+    }
+
+    // Hardware Specs Pills
+    const specsItems = [];
+    if (t.cpu) specsItems.push(`CPU: ${t.cpu}`);
+    if (t.ram) specsItems.push(`RAM: ${t.ram}`);
+    if (t.ssd) specsItems.push(`SSD: ${t.ssd}`);
+    if (t.screen) specsItems.push(`Màn: ${t.screen}`);
+
+    const specsPills = specsItems.map(s => `<span class="model-spec-tag">${escapeHtml(s)}</span>`).join(' ');
+
+    const priceText = t.price_display || (t.price_min ? `${(t.price_min / 1000000).toFixed(1)} triệu` : 'Liên hệ');
+
+    card.innerHTML = `
+      <!-- Top Meta Bar -->
+      <div>
+        <div class="flex items-center justify-between gap-2 mb-2">
+          <span class="neo-sticker sticker-lavender font-mono font-black text-[11px]">${escapeHtml(brand.toUpperCase())}</span>
+          <div class="flex items-center gap-1.5">
+            ${isCircularActive
+              ? `<span class="neo-sticker sticker-green text-[10px] font-bold"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span> Tuần hoàn: BẬT</span>`
+              : `<span class="neo-sticker sticker-peach text-[10px] font-bold">⏸️ Tạm dừng</span>`
+            }
+            <button onclick="openModelTemplateModal('${t.id}')" title="Chỉnh sửa model" class="neo-btn neo-btn-white px-2 py-0.5 text-xs font-black">✏️</button>
+            <button onclick="deleteModelTemplate('${t.id}')" title="Xóa model" class="neo-btn neo-btn-white px-2 py-0.5 text-xs font-black text-red-600 hover:bg-red-50">🗑️</button>
+          </div>
+        </div>
+
+        <!-- Model Title & Price -->
+        <div class="flex items-start justify-between gap-2">
+          <h3 class="font-black text-base text-[#18181B] uppercase tracking-tight line-clamp-2">${escapeHtml(t.model_name)}</h3>
+          <div class="font-mono font-black text-xs text-emerald-800 bg-[#DCFCE7] px-2 py-0.5 rounded border border-[#18181B] shadow-[1px_1px_0px_#18181B] shrink-0">
+            ${escapeHtml(priceText)}
+          </div>
+        </div>
+
+        <!-- Specs pills -->
+        <div class="flex flex-wrap gap-1.5 mt-2.5">
+          ${specsPills}
+          ${t.is_touchscreen ? `<span class="model-spec-tag bg-yellow-100">Cảm ứng</span>` : ''}
+        </div>
+      </div>
+
+      <!-- Center: Mini Photo Gallery Preview -->
+      <div class="my-1">
+        ${galleryHtml}
+      </div>
+
+      <!-- Bottom Stats & Action Buttons -->
+      <div class="space-y-2.5 pt-2 border-t border-neutral-200">
+        <div class="flex items-center justify-between text-[11px] text-neutral-600 font-medium">
+          <span>📊 Đã đăng: <strong class="font-mono text-indigo-700">${postCount} lần</strong></span>
+          <span>📅 Gần nhất: <strong class="font-mono text-neutral-800">${escapeHtml(lastPosted)}</strong></span>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="space-y-2">
+          <button onclick="createPostFromTemplate('${t.id}')" class="neo-btn neo-btn-yellow w-full py-2.5 text-xs font-black shadow-[2.5px_2.5px_0px_#18181B]">
+            ⚡ TẠO BÀI MỚI TỪ MẪU
+          </button>
+          <div class="flex gap-2">
+            <button onclick="enqueueCircularPost('${t.id}')" class="neo-btn neo-btn-green py-1.5 px-2 text-[11px] font-black shadow-[2px_2px_0px_#18181B] flex-1">
+              🔄 Tuần hoàn
+            </button>
+            <button onclick="openMediaManagerModal('${t.id}')" class="neo-btn neo-btn-white py-1.5 px-2 text-[11px] font-black shadow-[2px_2px_0px_#18181B] flex-1">
+              🖼️ Kho ảnh (${mediaFiles.length})
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+/**
+ * Action: Create New Post from Template in AI Studio
+ */
+async function createPostFromTemplate(templateId) {
+  let template = modelTemplatesList.find(t => t.id === templateId);
+  if (!template) {
+    try {
+      const res = await fetch(`/api/data-post/templates/${templateId}`);
+      const json = await res.json();
+      template = json.data || json.template;
+    } catch (e) {
+      console.warn('Fetch template fallback failed:', e);
+    }
+  }
+  if (!template) {
+    alert('Không tìm thấy thông tin template!');
+    return;
+  }
+
+  // 1. Switch to AI Studio Tab
+  switchTab('studio');
+
+  // 2. Set fresh machine code
+  const brandPrefix = (template.brand || 'LAPTOP').replace(/[^a-zA-Z]/g, '').slice(0, 3).toUpperCase();
+  const randNum = Math.floor(100 + Math.random() * 900);
+  const machineCodeInput = document.getElementById('machineCodeInput');
+  if (machineCodeInput) {
+    machineCodeInput.value = `${brandPrefix}-${randNum}`;
+  }
+
+  // 3. Set custom price
+  const customPriceInput = document.getElementById('customPriceInput');
+  if (customPriceInput) {
+    customPriceInput.value = template.price_display || (template.price_min ? `${(template.price_min / 1000000).toFixed(1)} triệu` : '');
+  }
+
+  // 4. Set raw text from base prompt or standard config
+  const rawTextInput = document.getElementById('rawTextInput');
+  if (rawTextInput) {
+    const specsText = [
+      template.model_name,
+      template.cpu ? `CPU: ${template.cpu}` : '',
+      template.ram ? `RAM: ${template.ram}` : '',
+      template.ssd ? `SSD: ${template.ssd}` : '',
+      template.screen ? `Màn hình: ${template.screen}` : ''
+    ].filter(Boolean).join(' · ');
+
+    rawTextInput.value = template.base_ai_prompt || `${template.brand} ${template.model_name}\n${specsText}\nGiá niêm yết: ${customPriceInput?.value || ''}`;
+  }
+
+  // 5. Load template's HD images into currentMediaFiles
+  if (Array.isArray(template.media_files) && template.media_files.length > 0) {
+    currentMediaFiles = template.media_files.map(f => ({
+      url: f.url,
+      filename: f.filename || (f.url ? f.url.split('/').pop() : 'photo.jpg'),
+      originalname: f.filename || f.originalname || 'photo.jpg',
+      mimetype: f.mimetype || 'image/jpeg',
+      storage: f.storage || 'supabase'
+    }));
+    renderMediaPreviews();
+    const mediaCountText = document.getElementById('mediaCountText');
+    if (mediaCountText) {
+      mediaCountText.innerText = formatMediaCountText(currentMediaFiles);
+    }
+  }
+
+  // 6. Automatically generate AI content
+  generateAiContent();
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/**
+ * Action: Enqueue Circular Post
+ */
+async function enqueueCircularPost(templateId) {
+  try {
+    const res = await fetch('/api/data-post/queue', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        template_id: templateId,
+        priority: 1,
+        rewrite_style: 'featured_review'
+      })
+    });
+    const json = await res.json();
+    if (json.success) {
+      alert(`🔄 Đã đưa model vào hàng đợi tuần hoàn thành công!\nMã hàng đợi: ${json.queue_id || 'OK'}`);
+      fetchCircularQueue();
+    } else {
+      alert(`❌ Lỗi khi đưa vào hàng đợi: ${json.error || 'Vui lòng thử lại'}`);
+    }
+  } catch (err) {
+    alert(`❌ Lỗi kết nối: ${err.message}`);
+  }
+}
+
+/**
+ * Filter handlers
+ */
+function setBrandFilter(brand) {
+  dataPostFilters.brand = brand;
+  document.querySelectorAll('.brand-filter-chip').forEach(btn => {
+    if (btn.dataset.brand === brand) {
+      btn.classList.add('neo-btn-yellow', 'active');
+      btn.classList.remove('neo-btn-white', 'text-neutral-700');
+    } else {
+      btn.classList.remove('neo-btn-yellow', 'active');
+      btn.classList.add('neo-btn-white', 'text-neutral-700');
+    }
+  });
+  fetchModelTemplates();
+}
+
+function setPriceFilter(range) {
+  dataPostFilters.price_range = range;
+  document.querySelectorAll('.price-filter-chip').forEach(btn => {
+    if (btn.dataset.price === range) {
+      btn.classList.add('neo-btn-yellow', 'active');
+      btn.classList.remove('neo-btn-white', 'text-neutral-700');
+    } else {
+      btn.classList.remove('neo-btn-yellow', 'active');
+      btn.classList.add('neo-btn-white', 'text-neutral-700');
+    }
+  });
+  fetchModelTemplates();
+}
+
+function setStatusFilter(status) {
+  dataPostFilters.status = status;
+  document.querySelectorAll('.status-filter-chip').forEach(btn => {
+    if (btn.dataset.status === status) {
+      btn.classList.add('neo-btn-yellow', 'active');
+      btn.classList.remove('neo-btn-white', 'text-neutral-700');
+    } else {
+      btn.classList.remove('neo-btn-yellow', 'active');
+      btn.classList.add('neo-btn-white', 'text-neutral-700');
+    }
+  });
+  fetchModelTemplates();
+}
+
+function onDataPostSortChange(sortKey) {
+  dataPostFilters.sort = sortKey;
+  sortModelTemplates(modelTemplatesList, sortKey);
+  renderModelCards(modelTemplatesList);
+}
+
+function clearDataPostSearch() {
+  const input = document.getElementById('dataPostSearchInput');
+  const clearBtn = document.getElementById('dataPostClearSearchBtn');
+  if (input) input.value = '';
+  if (clearBtn) clearBtn.classList.add('hidden');
+  dataPostFilters.search = '';
+  fetchModelTemplates();
+}
+
+function resetDataPostFilters() {
+  dataPostFilters = { brand: 'all', price_range: 'all', status: 'all', search: '', sort: 'newest' };
+  const searchInput = document.getElementById('dataPostSearchInput');
+  if (searchInput) searchInput.value = '';
+  const sortSelect = document.getElementById('dataPostSortSelect');
+  if (sortSelect) sortSelect.value = 'newest';
+
+  setBrandFilter('all');
+  setPriceFilter('all');
+  setStatusFilter('all');
+}
+
+/**
+ * Smart Match Media Helpers (AI Studio)
+ */
+function showSmartMatchBanner(template) {
+  const banner = document.getElementById('smartMatchBanner');
+  const modelNameEl = document.getElementById('smartMatchModelName');
+  const photoCountEl = document.getElementById('smartMatchPhotoCount');
+
+  if (modelNameEl) modelNameEl.innerText = template.model_name || '';
+  if (photoCountEl) photoCountEl.innerText = (template.media_files || []).length;
+  if (banner) banner.classList.remove('hidden');
+}
+
+function hideSmartMatchBanner() {
+  const banner = document.getElementById('smartMatchBanner');
+  if (banner) banner.classList.add('hidden');
+  currentSmartMatchTemplate = null;
+}
+
+function applySmartMatchMedia() {
+  if (!currentSmartMatchTemplate) return;
+  const files = currentSmartMatchTemplate.media_files || [];
+  if (files.length === 0) {
+    alert('Model này chưa có album ảnh HD trên Supabase Cloud.');
+    return;
+  }
+
+  // Load template HD images into currentMediaFiles, strictly preserving user custom machine code & price
+  currentMediaFiles = files.map(f => ({
+    url: f.url,
+    filename: f.filename || (f.url ? f.url.split('/').pop() : 'photo.jpg'),
+    originalname: f.filename || f.originalname || 'photo.jpg',
+    mimetype: f.mimetype || 'image/jpeg',
+    storage: f.storage || 'supabase'
+  }));
+
+  renderMediaPreviews();
+  updateFacebookPreview();
+
+  const mediaCountText = document.getElementById('mediaCountText');
+  if (mediaCountText) {
+    mediaCountText.innerText = formatMediaCountText(currentMediaFiles);
+  }
+
+  hideSmartMatchBanner();
+  alert(`⚡ Đã nạp thành công ${files.length} ảnh HD từ kho DATA POST vào bài viết!`);
+}
+
+// Global aliases for Smart Match handlers
+window.applySmartMatchMedia = applySmartMatchMedia;
+window.applySmartMatchPhotos = applySmartMatchMedia;
+window.dismissSmartMatchBanner = hideSmartMatchBanner;
+window.hideSmartMatchBanner = hideSmartMatchBanner;
+
+/**
+ * Modal 1: CRUD Model Template Modal
+ */
+function openModelTemplateModal(templateId = null) {
+  const modal = document.getElementById('modelTemplateModal');
+  const title = document.getElementById('modelTemplateModalTitle');
+  const form = document.getElementById('modelTemplateForm');
+  const preview = document.getElementById('templateFormMediaPreview');
+
+  if (form) form.reset();
+  if (preview) preview.innerHTML = '';
+  document.getElementById('templateFormId').value = '';
+
+  if (templateId) {
+    if (title) title.innerText = 'Chỉnh Sửa Model Template';
+    const t = modelTemplatesList.find(x => x.id === templateId);
+    if (t) {
+      document.getElementById('templateFormId').value = t.id;
+      document.getElementById('templateFormBrand').value = t.brand || 'Dell';
+      document.getElementById('templateFormModelName').value = t.model_name || '';
+      document.getElementById('templateFormCpu').value = t.cpu || '';
+      document.getElementById('templateFormRam').value = t.ram || '';
+      document.getElementById('templateFormSsd').value = t.ssd || '';
+      document.getElementById('templateFormScreen').value = t.screen || '';
+      document.getElementById('templateFormTouch').checked = !!t.is_touchscreen;
+      document.getElementById('templateFormPriceMin').value = t.price_min || '';
+      document.getElementById('templateFormPriceMax').value = t.price_max || '';
+      document.getElementById('templateFormPriceDisplay').value = t.price_display || '';
+      document.getElementById('templateFormStatus').value = t.status || 'active';
+      document.getElementById('templateFormBasePrompt').value = t.base_ai_prompt || '';
+
+      const urls = (t.media_files || []).map(f => f.url).join('\n');
+      document.getElementById('templateFormMediaUrls').value = urls;
+      renderTemplateFormMediaPreview(t.media_files || []);
+    }
+  } else {
+    if (title) title.innerText = 'Thêm Model Template Mới';
+  }
+
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closeModelTemplateModal() {
+  const modal = document.getElementById('modelTemplateModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function renderTemplateFormMediaPreview(files) {
+  const preview = document.getElementById('templateFormMediaPreview');
+  if (!preview) return;
+  preview.innerHTML = '';
+  files.forEach(f => {
+    const box = document.createElement('div');
+    box.className = 'w-14 h-14 rounded border border-[#18181B] overflow-hidden shrink-0 bg-black relative';
+    box.innerHTML = `<img src="${f.url}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='/icons/icon.svg';" />`;
+    preview.appendChild(box);
+  });
+}
+
+async function handleTemplateFormFileUpload(event) {
+  const files = event.target.files;
+  if (!files || files.length === 0) return;
+
+  const statusEl = document.getElementById('templateFormUploadStatus');
+  if (statusEl) statusEl.innerText = 'Đang tải ảnh lên Supabase...';
+
+  const formData = new FormData();
+  for (let i = 0; i < files.length; i++) {
+    formData.append('files', files[i]);
+  }
+
+  try {
+    const res = await fetch('/api/upload-media', {
+      method: 'POST',
+      body: formData
+    });
+    const result = await res.json();
+    if (result.success && result.files) {
+      const urlsArea = document.getElementById('templateFormMediaUrls');
+      const existingUrls = urlsArea.value.trim() ? urlsArea.value.trim().split('\n') : [];
+      const newUrls = result.files.map(f => f.url);
+      const combined = [...existingUrls, ...newUrls];
+      urlsArea.value = combined.join('\n');
+      renderTemplateFormMediaPreview(combined.map(u => ({ url: u })));
+      if (statusEl) statusEl.innerText = `Đã tải lên ${result.files.length} ảnh thành công!`;
+    }
+  } catch (err) {
+    if (statusEl) statusEl.innerText = `Lỗi: ${err.message}`;
+  }
+}
+
+async function handleModelTemplateSubmit(event) {
+  event.preventDefault();
+  const id = document.getElementById('templateFormId').value;
+  const submitBtn = document.getElementById('templateFormSubmitBtn');
+  if (submitBtn) submitBtn.disabled = true;
+
+  const mediaUrls = document.getElementById('templateFormMediaUrls').value
+    .split('\n')
+    .map(u => u.trim())
+    .filter(u => u.startsWith('http'));
+
+  const media_files = mediaUrls.map(u => ({
+    url: u,
+    filename: u.split('/').pop() || 'photo.jpg',
+    storage: 'supabase',
+    mimetype: 'image/jpeg'
+  }));
+
+  const payload = {
+    brand: document.getElementById('templateFormBrand').value,
+    model_name: document.getElementById('templateFormModelName').value.trim(),
+    cpu: document.getElementById('templateFormCpu').value.trim(),
+    ram: document.getElementById('templateFormRam').value.trim(),
+    ssd: document.getElementById('templateFormSsd').value.trim(),
+    screen: document.getElementById('templateFormScreen').value.trim(),
+    is_touchscreen: document.getElementById('templateFormTouch').checked,
+    price_min: Number(document.getElementById('templateFormPriceMin').value) || undefined,
+    price_max: Number(document.getElementById('templateFormPriceMax').value) || undefined,
+    price_display: document.getElementById('templateFormPriceDisplay').value.trim() || undefined,
+    status: document.getElementById('templateFormStatus').value,
+    base_ai_prompt: document.getElementById('templateFormBasePrompt').value.trim(),
+    media_files
+  };
+
+  try {
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `/api/data-post/templates/${id}` : '/api/data-post/templates';
+
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+
+    if (json.success) {
+      alert(json.message || 'Lưu Model Template thành công!');
+      closeModelTemplateModal();
+      fetchModelTemplates();
+    } else {
+      alert(`❌ Lỗi: ${json.error || 'Vui lòng kiểm tra lại thông tin.'}`);
+    }
+  } catch (err) {
+    alert(`❌ Lỗi kết nối: ${err.message}`);
+  } finally {
+    if (submitBtn) submitBtn.disabled = false;
+  }
+}
+
+async function deleteModelTemplate(templateId) {
+  const t = modelTemplatesList.find(x => x.id === templateId);
+  const name = t ? t.model_name : 'mẫu này';
+  if (!confirm(`Bạn có chắc chắn muốn xóa Model Template "${name}" khỏi kho?`)) return;
+
+  try {
+    const res = await fetch(`/api/data-post/templates/${templateId}`, { method: 'DELETE' });
+    const json = await res.json();
+    if (json.success) {
+      alert('Đã xóa Model Template thành công!');
+      fetchModelTemplates();
+    } else {
+      alert(`❌ Lỗi xóa template: ${json.error}`);
+    }
+  } catch (err) {
+    alert(`❌ Lỗi: ${err.message}`);
+  }
+}
+
+/**
+ * Modal 2: Media Manager Modal (Supabase HD Storage)
+ */
+function openMediaManagerModal(templateId) {
+  activeMediaTemplateId = templateId;
+  const modal = document.getElementById('mediaManagerModal');
+  const title = document.getElementById('mediaManagerTitle');
+  const template = modelTemplatesList.find(t => t.id === templateId);
+
+  if (title) {
+    title.innerText = template ? `Kho Ảnh HD: ${template.model_name}` : 'Kho Ảnh HD Model';
+  }
+
+  renderMediaManagerGrid(template ? (template.media_files || []) : []);
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closeMediaManagerModal() {
+  const modal = document.getElementById('mediaManagerModal');
+  if (modal) modal.classList.add('hidden');
+  activeMediaTemplateId = null;
+  fetchModelTemplates(false);
+}
+
+function renderMediaManagerGrid(mediaFiles) {
+  const grid = document.getElementById('mediaManagerGrid');
+  const empty = document.getElementById('mediaManagerEmpty');
+  const counter = document.getElementById('mediaManagerCounter');
+
+  if (counter) counter.innerText = `${mediaFiles.length} ảnh HD`;
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  if (!mediaFiles || mediaFiles.length === 0) {
+    if (empty) empty.classList.remove('hidden');
+    return;
+  }
+  if (empty) empty.classList.add('hidden');
+
+  mediaFiles.forEach((file, index) => {
+    const isVideo = isVideoFile(file);
+    const box = document.createElement('div');
+    box.className = 'neo-card p-2 bg-white flex flex-col gap-2 relative shadow-[2px_2px_0px_#18181B]';
+
+    box.innerHTML = `
+      <div class="aspect-square rounded-md overflow-hidden bg-black relative border border-[#18181B]">
+        ${isVideo
+          ? `<video src="${file.url}" class="w-full h-full object-cover" muted></video><span class="absolute top-1 left-1 bg-rose-600 text-white text-[9px] font-black px-1 rounded">▶ VIDEO</span>`
+          : `<img src="${file.url}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='/icons/icon.svg';" />`
+        }
+        <span class="absolute bottom-1 left-1 bg-black/80 text-white text-[9px] font-mono px-1 rounded">#${index + 1}</span>
+      </div>
+      <div class="flex items-center justify-between gap-1">
+        <button onclick="copyTextToClipboard('${escapeHtml(file.url)}', '📋 Đã sao chép link ảnh công khai!')" class="neo-btn neo-btn-white px-2 py-1 text-[10px] font-bold flex-1" title="Sao chép link">
+          📋 Link
+        </button>
+        <button onclick="deleteMediaManagerPhoto(${index})" class="neo-btn neo-btn-white px-2 py-1 text-[10px] font-bold text-red-600 hover:bg-red-50" title="Xóa ảnh này">
+          🗑️ Xóa
+        </button>
+      </div>
+    `;
+
+    grid.appendChild(box);
+  });
+}
+
+async function addUrlToMediaManager() {
+  if (!activeMediaTemplateId) return;
+  const input = document.getElementById('mediaManagerAddUrlInput');
+  const url = input?.value.trim();
+  if (!url || !url.startsWith('http')) {
+    alert('Vui lòng nhập đường dẫn URL ảnh hợp lệ (bắt đầu bằng http:// hoặc https://)');
+    return;
+  }
+
+  const template = modelTemplatesList.find(t => t.id === activeMediaTemplateId);
+  if (!template) return;
+
+  const currentFiles = Array.isArray(template.media_files) ? [...template.media_files] : [];
+  currentFiles.push({
+    url,
+    filename: url.split('/').pop() || 'photo.jpg',
+    storage: 'supabase',
+    mimetype: 'image/jpeg'
+  });
+
+  try {
+    const res = await fetch(`/api/data-post/templates/${activeMediaTemplateId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ media_files: currentFiles })
+    });
+    const json = await res.json();
+    if (json.success) {
+      template.media_files = currentFiles;
+      renderMediaManagerGrid(currentFiles);
+      if (input) input.value = '';
+    } else {
+      alert(`❌ Lỗi cập nhật: ${json.error}`);
+    }
+  } catch (err) {
+    alert(`❌ Lỗi: ${err.message}`);
+  }
+}
+
+async function handleMediaManagerUpload(event) {
+  if (!activeMediaTemplateId) return;
+  const files = event.target.files;
+  if (!files || files.length === 0) return;
+
+  const statusEl = document.getElementById('mediaManagerUploadStatus');
+  if (statusEl) {
+    statusEl.innerText = `Đang tải ${files.length} ảnh lên Supabase...`;
+    statusEl.classList.remove('hidden');
+  }
+
+  const formData = new FormData();
+  for (let i = 0; i < files.length; i++) {
+    formData.append('files', files[i]);
+  }
+
+  try {
+    const res = await fetch('/api/upload-media', {
+      method: 'POST',
+      body: formData
+    });
+    const result = await res.json();
+    if (result.success && result.files) {
+      const template = modelTemplatesList.find(t => t.id === activeMediaTemplateId);
+      if (template) {
+        const currentFiles = Array.isArray(template.media_files) ? [...template.media_files] : [];
+        const combined = [...currentFiles, ...result.files];
+        template.media_files = combined;
+
+        await fetch(`/api/data-post/templates/${activeMediaTemplateId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ media_files: combined })
+        });
+
+        renderMediaManagerGrid(combined);
+      }
+      if (statusEl) statusEl.innerText = `✅ Đã tải lên và lưu ${result.files.length} ảnh vào Supabase thành công!`;
+    }
+  } catch (err) {
+    if (statusEl) statusEl.innerText = `❌ Lỗi: ${err.message}`;
+  } finally {
+    event.target.value = '';
+    setTimeout(() => {
+      if (statusEl) statusEl.classList.add('hidden');
+    }, 4000);
+  }
+}
+
+async function deleteMediaManagerPhoto(index) {
+  if (!activeMediaTemplateId) return;
+  const template = modelTemplatesList.find(t => t.id === activeMediaTemplateId);
+  if (!template || !template.media_files) return;
+
+  if (!confirm('Bạn có chắc chắn muốn xóa ảnh này khỏi album HD?')) return;
+
+  const updatedFiles = [...template.media_files];
+  updatedFiles.splice(index, 1);
+
+  try {
+    const res = await fetch(`/api/data-post/templates/${activeMediaTemplateId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ media_files: updatedFiles })
+    });
+    const json = await res.json();
+    if (json.success) {
+      template.media_files = updatedFiles;
+      renderMediaManagerGrid(updatedFiles);
+    } else {
+      alert(`❌ Lỗi: ${json.error}`);
+    }
+  } catch (err) {
+    alert(`❌ Lỗi: ${err.message}`);
+  }
+}
+
+/**
+ * Modal 3: Circular Queue Modal
+ */
+function openCircularQueueModal() {
+  const modal = document.getElementById('circularQueueModal');
+  fetchCircularQueue();
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closeCircularQueueModal() {
+  const modal = document.getElementById('circularQueueModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+async function fetchCircularQueue() {
+  const listContainer = document.getElementById('circularQueueModalList');
+  const emptyState = document.getElementById('circularQueueModalEmpty');
+  const countText = document.getElementById('circularQueueCountText');
+
+  try {
+    const res = await fetch('/api/data-post/queue');
+    const json = await res.json();
+    const queue = json.data || json.queue || [];
+
+    if (countText) countText.innerText = `${queue.length} bài trong hàng đợi`;
+
+    if (!listContainer) return;
+    listContainer.innerHTML = '';
+
+    if (queue.length === 0) {
+      if (emptyState) emptyState.classList.remove('hidden');
+      return;
+    }
+    if (emptyState) emptyState.classList.add('hidden');
+
+    queue.forEach(item => {
+      const scheduledDate = item.scheduled_time ? new Date(item.scheduled_time).toLocaleString('vi-VN') : 'Sớm nhất';
+      const el = document.createElement('div');
+      el.className = 'p-3.5 bg-white border-2 border-[#18181B] rounded-xl flex flex-wrap items-center justify-between gap-3 shadow-[2.5px_2.5px_0px_#18181B]';
+      el.innerHTML = `
+        <div class="flex items-center gap-3">
+          <span class="text-xl">⏰</span>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="font-black text-sm text-[#18181B]">${escapeHtml(item.model_name || item.template_id || 'Model Template')}</span>
+              <span class="neo-sticker sticker-lavender text-[10px] font-mono">${escapeHtml(item.rewrite_style || 'AI Rewrite')}</span>
+            </div>
+            <div class="text-xs text-neutral-600 mt-0.5">
+              Thời gian xuất bản: <strong>${scheduledDate}</strong>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="triggerCircularPostNow('${item.id}')" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-black shadow-[2px_2px_0px_#18181B]">
+            ⚡ Đăng ngay
+          </button>
+          <button onclick="deleteCircularQueueItem('${item.id}')" class="neo-btn neo-btn-white px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50" title="Xóa khỏi hàng đợi">
+            🗑️
+          </button>
+        </div>
+      `;
+      listContainer.appendChild(el);
+    });
+
+  } catch (err) {
+    console.error('Error fetching circular queue:', err);
+  }
+}
+
+async function triggerCircularPostNow(queueId) {
+  if (!confirm('Bạn có chắc chắn muốn kích hoạt đăng ngay bài tuần hoàn này lên Facebook Fanpage?')) return;
+  try {
+    const res = await fetch('/api/data-post/queue/trigger-post', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ queue_id: queueId })
+    });
+    const json = await res.json();
+    if (json.success) {
+      alert(`✅ Đã xuất bản thành công bài đăng tuần hoàn lên Fanpage!\nLink: ${json.post?.fbPostUrl || 'Đã xuất bản'}`);
+      fetchCircularQueue();
+      fetchModelTemplates(false);
+    } else {
+      alert(`❌ Lỗi đăng bài: ${json.error}`);
+    }
+  } catch (err) {
+    alert(`❌ Lỗi: ${err.message}`);
+  }
+}
+
+async function deleteCircularQueueItem(queueId) {
+  if (!confirm('Bạn có chắc chắn muốn xóa bài này khỏi hàng đợi tuần hoàn?')) return;
+  try {
+    const res = await fetch(`/api/data-post/queue/${queueId}`, { method: 'DELETE' });
+    const json = await res.json();
+    if (json.success) {
+      fetchCircularQueue();
+    } else {
+      alert(`❌ Lỗi: ${json.error}`);
+    }
+  } catch (err) {
+    alert(`❌ Lỗi: ${err.message}`);
+  }
+}
+

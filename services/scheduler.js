@@ -258,6 +258,79 @@ async function checkAndPublishDuePosts() {
       }
     }
   }
+
+  // 3. Circular Posts Queue Integration (Milestone M3)
+  try {
+    const dataPostService = require('./dataPost');
+    const circularQueue = await dataPostService.getCircularQueue();
+    const activeCircularItems = (circularQueue || []).filter(
+      item => item.status === 'queued' || item.status === 'pending'
+    );
+
+    // 3a. Check circular items where scheduled_at <= now
+    for (const cItem of activeCircularItems) {
+      const schedTime = cItem.scheduled_time || cItem.scheduled_at;
+      if (!schedTime) continue;
+      const cDate = new Date(schedTime);
+      if (now >= cDate) {
+        console.log(`[Scheduler] 🔄 Đến giờ đăng bài tuần hoàn [${cItem.id}] - Model: ${cItem.model_name}`);
+        try {
+          await dataPostService.triggerCircularPost({ queue_id: cItem.id });
+        } catch (cErr) {
+          console.error(`[Scheduler] ❌ Lỗi xuất bản bài tuần hoàn [${cItem.id}]:`, cErr.message);
+        }
+      }
+    }
+
+    // 3b. Check vacant schedule slots (08:30, 11:45, 15:30, 20:00) when primary queue is empty
+    const scheduleTimes = settings.scheduleTimes || ['08:30', '11:45', '15:30', '20:00'];
+    const currentHours = String(now.getHours()).padStart(2, '0');
+    const currentMins = String(now.getMinutes()).padStart(2, '0');
+    const currentTimeStr = `${currentHours}:${currentMins}`;
+
+    if (scheduleTimes.includes(currentTimeStr)) {
+      // Check if primary posts have any post scheduled or posted for today's slot
+      const todaySlotDate = new Date(now);
+      const [h, m] = currentTimeStr.split(':').map(Number);
+      todaySlotDate.setHours(h, m, 0, 0);
+
+      const hasPrimaryPost = posts.some(p => {
+        if (!p.scheduledTime) return false;
+        const pDate = new Date(p.scheduledTime);
+        return Math.abs(pDate.getTime() - todaySlotDate.getTime()) < 15 * 60 * 1000 &&
+               (p.status === 'posted' || p.status === 'queued' || p.status === 'pending_media');
+      });
+
+      if (!hasPrimaryPost) {
+        console.log(`[Scheduler] 💡 Khung giờ [${currentTimeStr}] trống không có bài mới! Kích hoạt bài đăng tuần hoàn...`);
+        // Find next pending circular item or pick least-posted template
+        const nextPending = activeCircularItems.find(item => item.status === 'queued' || item.status === 'pending');
+        if (nextPending) {
+          await dataPostService.triggerCircularPost({ queue_id: nextPending.id });
+        } else {
+          // Auto-replenish from model templates
+          const templates = await dataPostService.getModelTemplates({ status: 'active' });
+          if (templates && templates.length > 0) {
+            // Sort by last_posted_at ascending (nulls first) then post_count ascending
+            const sortedTpls = [...templates].sort((a, b) => {
+              if (!a.last_posted_at && b.last_posted_at) return -1;
+              if (a.last_posted_at && !b.last_posted_at) return 1;
+              if (a.last_posted_at && b.last_posted_at) {
+                const diff = new Date(a.last_posted_at) - new Date(b.last_posted_at);
+                if (diff !== 0) return diff;
+              }
+              return (a.post_count || 0) - (b.post_count || 0);
+            });
+            const chosen = sortedTpls[0];
+            console.log(`[Scheduler] 🎯 Tự động chọn Model Template [${chosen.model_name}] để bù slot trống [${currentTimeStr}].`);
+            await dataPostService.triggerCircularPost({ template_id: chosen.id });
+          }
+        }
+      }
+    }
+  } catch (circErr) {
+    console.warn('[Scheduler] Notice in circular queue check:', circErr.message);
+  }
 }
 
 /**

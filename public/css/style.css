@@ -355,3 +355,66 @@ body {
     padding-bottom: 6rem !important;
   }
 }
+
+/* ==================== TAB DATA POST & GALLERY STYLING ==================== */
+
+.brand-filter-chip.active,
+.price-filter-chip.active,
+.status-filter-chip.active {
+  background: var(--accent-yellow) !important;
+  color: var(--craft-ink) !important;
+  font-weight: 900 !important;
+  box-shadow: 2px 2px 0px #18181B !important;
+}
+
+.gallery-thumb-box {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid #18181B;
+  box-shadow: 2px 2px 0px #18181B;
+  position: relative;
+  background-color: #18181B;
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.gallery-thumb-box:hover {
+  transform: scale(1.04);
+}
+
+.gallery-more-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-weight: 900;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+.model-spec-tag {
+  display: inline-block;
+  background-color: #FAF5EE;
+  border: 1px solid #18181B;
+  border-radius: 4px;
+  padding: 0.15rem 0.45rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #27272A;
+}
+
+/* Calm Mobile Performance: Disable hover translate on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .neo-btn:hover {
+    transform: none !important;
+  }
+  .gallery-thumb-box:hover {
+    transform: none !important;
+  }
+}
+
