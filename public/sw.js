@@ -1,8 +1,8 @@
-const CACHE_NAME = 'vg-laptop-app-v13';
+const CACHE_NAME = 'vg-laptop-app-v14';
 const STATIC_ASSETS = [
   '/',
-  '/css/style.css?v=20261105_v13_cockpit',
-  '/js/app.js?v=20261105_v13_cockpit',
+  '/css/style.css?v=20261106_v14_cockpit',
+  '/js/app.js?v=20261106_v14_cockpit',
   '/manifest.json',
   '/icons/icon.svg'
 ];

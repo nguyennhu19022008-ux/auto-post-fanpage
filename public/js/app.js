@@ -130,6 +130,24 @@ function closeManualPostModal() {
   }
 }
 
+// Utility: Format schedule dates cleanly
+function formatScheduleDate(dateInput) {
+  if (!dateInput) return '---';
+  try {
+    const d = new Date(dateInput);
+    if (isNaN(d.getTime())) return String(dateInput);
+    return d.toLocaleString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  } catch (e) {
+    return String(dateInput);
+  }
+}
+
 // Autonomous Cockpit: Load real-time status and timeline
 async function loadCockpitStatus() {
   try {
@@ -1707,7 +1725,7 @@ let deferredPwaPrompt = null;
 // Register Service Worker for offline shell and lightning fast caching
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js?v=20261105_v13_cockpit')
+    navigator.serviceWorker.register('/sw.js?v=20261106_v14_cockpit')
       .then(reg => {
         reg.update(); // Immediately check for SW script updates
         console.log('✅ ServiceWorker registered and updated:', reg.scope);
