@@ -135,92 +135,9 @@
   <div id="presentationContainer">
 
     <!-- ========================================================
-         SLIDE 0: BẢN QUYỀN TRÍ TUỆ (DESIGN BY VUONGGIA)
-         100% PURE MONOCHROME OLED - COMPLIANT WITH USER DIRECTIVE
-         ======================================================== -->
-    <section class="slide-frame active bg-[#000000] text-white" id="slide-0">
-      <!-- 5-Row Marquee Wallpaper inclined -32deg -->
-      <div class="absolute inset-[-80%] flex flex-col justify-center items-center gap-16 -rotate-[32deg] pointer-events-none z-0 overflow-hidden">
-        <div class="slide0-marquee-row"><span>DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp;</span></div>
-        <div class="slide0-marquee-row"><span>DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp;</span></div>
-        <div class="slide0-marquee-row"><span>DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp;</span></div>
-        <div class="slide0-marquee-row"><span>DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp;</span></div>
-        <div class="slide0-marquee-row"><span>DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp; DESIGN BY VUONGGIA &nbsp;&nbsp;&nbsp;&nbsp;</span></div>
-      </div>
-
-      <!-- Central Certificate Card (Frosted Glass) -->
-      <div class="relative z-10 w-full h-full flex items-center justify-center p-6 sm:p-12" id="slide0CardWrapper">
-        <div class="w-full max-w-3xl bg-black/65 backdrop-blur-md border-2 border-white p-6 sm:p-10 shadow-[0_0_80px_rgba(0,0,0,0.95)] font-mono-code" id="slide0Card">
-          <div class="flex justify-between items-center border-b border-white/40 pb-3 mb-6">
-            <div class="text-xs tracking-wider text-neutral-300 font-bold flex items-center gap-2">
-              <span>🛡️</span>
-              <span>INTELLECTUAL PROPERTY CERTIFICATE /// 2026</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="bg-white text-black font-bold px-2 py-0.5 text-[10px] tracking-widest">ID: VG-KTPL-2026-IP</span>
-              <button onclick="toggleSlide0Card(false)" class="text-white hover:bg-white hover:text-black border border-white/60 px-2 py-0.5 text-xs font-bold transition">✕</button>
-            </div>
-          </div>
-
-          <div class="text-center my-6">
-            <div class="text-[11px] text-neutral-400 tracking-wider mb-2">CHỨNG NHẬN QUYỀN TÁC GIẢ & Ý TƯỞNG THỰC CHIẾN ĐỘC BẢN</div>
-            <h1 class="text-5xl sm:text-6xl font-black font-title uppercase tracking-tight text-white leading-none">
-              DESIGN BY <span class="bg-white text-black px-4 py-0.5 inline-block -skew-x-6">VUONGGIA</span>
-            </h1>
-            <div class="inline-block mt-3 bg-white text-black px-3.5 py-1 font-bold text-xs">
-              THUỘC QUYỀN SỞ HỮU CỦA VUONGGIA
-            </div>
-          </div>
-
-          <div class="bg-neutral-950/80 border border-white/80 p-4 text-center my-5 text-xs leading-relaxed">
-            <div class="font-bold text-amber-400 mb-1 flex items-center justify-center gap-1.5">
-              <span>⚠️</span>
-              <span>ĐIỀU KHOẢN NGHIÊM NGẶT: BẢN QUYỀN ĐỒ ÁN MÔN HỌC</span>
-            </div>
-            <p class="text-neutral-300 text-[11px]">
-              Dự án, quy trình công nghệ Autopost và số liệu kinh doanh được chuyển giao cho nhóm thuyết trình môn Giáo dục Kinh tế & Pháp luật với cam kết: 
-              <strong class="text-white">TUYỆT ĐỐI KHÔNG THƯƠNG MẠI, MUA BÁN, SANG NHƯỢNG DƯỚI MỌI HÌNH THỨC SAU KHI ĐÃ SỞ HỮU.</strong>
-            </p>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-5 text-xs">
-            <div class="bg-neutral-950/80 border border-white/60 p-3">
-              <div class="flex justify-between items-center text-neutral-400 text-[11px] mb-1">
-                <span>✉️ EMAIL:</span>
-                <button onclick="copySlide0Contact('nguyennhu19022008@gmail.com', this)" class="bg-white text-black text-[10px] font-bold px-2 py-0.5">SAO CHÉP</button>
-              </div>
-              <div class="font-bold text-white break-all text-[11px]">nguyennhu19022008@gmail.com</div>
-            </div>
-            <div class="bg-neutral-950/80 border border-white/60 p-3">
-              <div class="flex justify-between items-center text-neutral-400 text-[11px] mb-1">
-                <span>📞 HOTLINE / ZALO:</span>
-                <button onclick="copySlide0Contact('0876637806', this)" class="bg-white text-black text-[10px] font-bold px-2 py-0.5">SAO CHÉP</button>
-              </div>
-              <div class="font-bold text-white font-title text-xl tracking-wider">0876637806</div>
-            </div>
-          </div>
-
-          <div class="pt-5 border-t border-white/30 flex justify-between items-center">
-            <div class="text-[11px] text-neutral-400">
-              Nhấn phím <kbd class="border border-white/40 px-1 py-0.5 rounded text-[10px]">[→]</kbd> hoặc click nút:
-            </div>
-            <button onclick="nextSlide()" class="bg-white text-black border-2 border-white px-6 py-2.5 font-black text-xs hover:bg-neutral-200 transition shadow-[0_0_15px_rgba(255,255,255,0.4)] tracking-wide">
-              BẮT ĐẦU BÁO CÁO KINH DOANH (SLIDE 01) →
-            </button>
-          </div>
-        </div>
-
-        <div id="slide0FloatingBar" class="fixed bottom-8 left-1/2 -translate-x-1/2 hidden z-20 flex items-center gap-3">
-          <button onclick="toggleSlide0Card(true)" class="bg-black text-white border-2 border-white px-4 py-2 font-bold text-xs">ℹ️ MỞ BẢNG BẢN QUYỀN</button>
-          <button onclick="nextSlide()" class="bg-white text-black border-2 border-white px-5 py-2 font-black text-xs">VÀO SLIDE 01 →</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================================
          SLIDE 1: TỰA ĐỀ & GIỚI THIỆU DỰ ÁN
          ======================================================== -->
-    <section class="slide-frame p-8 sm:p-14 justify-between" id="slide-1">
+    <section class="slide-frame active p-8 sm:p-14 justify-between" id="slide-1">
       <!-- Top Bar -->
       <div class="flex justify-between items-center border-b-2 border-[#18181B] pb-4">
         <div class="flex items-center gap-3">
@@ -812,29 +729,30 @@
 
   </div>
 
-  <!-- Bottom Navigation Dock (Visible on Slide 1 - 9) -->
+  <!-- Bottom Navigation Dock (Always visible on all slides) -->
   <div class="slide-dock" id="slideDock">
     <button onclick="prevSlide()" class="dock-btn" title="Slide trước [←]">◀ Trước</button>
     <div class="text-xs font-mono-code font-black text-[#18181B]" id="slideCounter">
-      SLIDE <span id="currentSlideNum">0</span> / 9
+      SLIDE <span id="currentSlideNum">1</span> / 9
     </div>
     <button onclick="nextSlide()" class="dock-btn" title="Slide sau [→]">Tiếp ▶</button>
     <button onclick="toggleFullScreen()" class="dock-btn ml-2" title="Toàn màn hình [F]">⛶ Toàn màn hình</button>
   </div>
 
   <script>
-    let currentSlide = 0;
-    const totalSlides = 9; // 0 to 9 (10 slides total)
+    let currentSlide = 1;
+    const totalSlides = 9; // Slide 1 to 9
     const dock = document.getElementById('slideDock');
     const counter = document.getElementById('currentSlideNum');
 
-    function showSlide(index) {
-      if (index < 0) index = 0;
-      if (index > totalSlides) index = totalSlides;
-      currentSlide = index;
+    function showSlide(slideNum) {
+      if (slideNum < 1) slideNum = 1;
+      if (slideNum > totalSlides) slideNum = totalSlides;
+      currentSlide = slideNum;
 
-      document.querySelectorAll('.slide-frame').forEach((el, idx) => {
-        if (idx === currentSlide) {
+      const frames = document.querySelectorAll('.slide-frame');
+      frames.forEach((el, idx) => {
+        if (idx === currentSlide - 1) {
           el.classList.add('active');
         } else {
           el.classList.remove('active');
@@ -842,15 +760,6 @@
       });
 
       if (counter) counter.innerText = currentSlide;
-
-      // Rule: Hide dock and nav bars when on Page 0 / Slide 0
-      if (dock) {
-        if (currentSlide === 0) {
-          dock.style.display = 'none';
-        } else {
-          dock.style.display = 'flex';
-        }
-      }
     }
 
     function nextSlide() {
@@ -860,7 +769,7 @@
     }
 
     function prevSlide() {
-      if (currentSlide > 0) {
+      if (currentSlide > 1) {
         showSlide(currentSlide - 1);
       }
     }
@@ -875,27 +784,6 @@
       }
     }
 
-    // Slide 0 Card Toggling
-    function toggleSlide0Card(show) {
-      const card = document.getElementById('slide0Card');
-      const bar = document.getElementById('slide0FloatingBar');
-      if (card) card.style.display = show ? 'block' : 'none';
-      if (bar) bar.style.display = show ? 'none' : 'flex';
-    }
-
-    function copySlide0Contact(val, btn) {
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(val);
-      }
-      const orig = btn.innerText;
-      btn.innerText = 'ĐÃ CHÉP';
-      btn.classList.add('bg-emerald-400');
-      setTimeout(() => {
-        btn.innerText = orig;
-        btn.classList.remove('bg-emerald-400');
-      }, 2000);
-    }
-
     // Keyboard Shortcuts
     window.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ' || e.key === 'Enter') {
@@ -907,14 +795,14 @@
       } else if (e.key === 'f' || e.key === 'F') {
         toggleFullScreen();
       } else if (e.key === 'Home') {
-        showSlide(0);
+        showSlide(1);
       } else if (e.key === 'End') {
         showSlide(totalSlides);
       }
     });
 
     // Initial load
-    showSlide(0);
+    showSlide(1);
   </script>
 </body>
 </html>
