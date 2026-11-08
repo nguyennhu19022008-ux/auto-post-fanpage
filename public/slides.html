@@ -10,13 +10,14 @@
   <style>
     :root {
       --bone: #F8F7F3;
-      --bone-frame: #EFECE6;
+      --bone-mat: #EDEAE2;
+      --outer-stone: #E2DFD7;
       --ink: #0E1013;
       --vermilion: #C93B2B;
       --pine: #1E4D38;
       --rule: rgba(14, 16, 19, 0.14);
-      --rule-strong: rgba(14, 16, 19, 0.34);
-      --ink-muted: rgba(14, 16, 19, 0.60);
+      --rule-strong: rgba(14, 16, 19, 0.32);
+      --ink-muted: rgba(14, 16, 19, 0.58);
       --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-body: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
@@ -33,7 +34,7 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background-color: #0E1013;
+      background-color: var(--outer-stone);
       color: var(--ink);
       font-family: var(--font-body);
       -webkit-font-smoothing: antialiased;
@@ -41,26 +42,49 @@
       user-select: none;
     }
 
-    /* 16:9 True Container-Query Stage */
+    /* Warm Stone Viewport Wrapper — Never Flashes Black */
     .viewport-wrapper {
       width: 100vw;
       height: 100vh;
       display: grid;
       place-items: center;
-      background: #0E1013;
+      background: var(--outer-stone);
     }
 
+    /* 16:9 Persistent Stage — Background stays 100% solid during transitions */
     .canvas-16-9 {
       position: relative;
       width: min(100vw, 177.7778vh);
       height: min(56.25vw, 100vh);
-      background: var(--bone);
+      background-color: var(--bone);
       color: var(--ink);
       overflow: hidden;
       container-type: size;
+      border: 1px solid rgba(14, 16, 19, 0.18);
+      transition: background-color 520ms cubic-bezier(0.22, 1, 0.36, 1), color 520ms cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    /* Minimal Top-Right Index & 2px Progress Line */
+    .canvas-16-9[data-theme="vermilion"] {
+      background-color: var(--vermilion);
+      color: var(--bone);
+    }
+
+    /* Persistent Morphing Architectural Bar (True Shared Geometry Without Snapshot Flicker) */
+    .morph-bar {
+      position: absolute;
+      height: 2px;
+      background: var(--ink);
+      z-index: 35;
+      pointer-events: none;
+      transition:
+        top 560ms cubic-bezier(0.16, 1, 0.3, 1),
+        left 560ms cubic-bezier(0.16, 1, 0.3, 1),
+        width 560ms cubic-bezier(0.16, 1, 0.3, 1),
+        background-color 560ms cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 400ms ease;
+    }
+
+    /* Minimal Top-Right Index & 3px Bottom Progress Line */
     .hud-index {
       position: absolute;
       top: 4.5cqh;
@@ -73,7 +97,7 @@
       text-transform: uppercase;
       color: var(--ink);
       pointer-events: none;
-      transition: color 0.25s ease;
+      transition: color 400ms ease;
     }
 
     .canvas-16-9[data-theme="vermilion"] .hud-index {
@@ -94,35 +118,86 @@
       height: 100%;
       background: var(--vermilion);
       width: 9.09%;
-      transition: width 520ms cubic-bezier(0.22, 1, 0.36, 1), background-color 0.25s ease;
+      transition: width 520ms cubic-bezier(0.16, 1, 0.3, 1), background-color 400ms ease;
     }
 
     .canvas-16-9[data-theme="vermilion"] .progress-fill {
       background: var(--bone);
     }
 
-    /* Slide Base Architecture */
+    /*
+     * ZERO-FLASH CHOREOGRAPHED SLIDE ENGINE
+     * Slides share the persistent .canvas-16-9 background.
+     * Outgoing slide fades & glides out quickly (170ms) while incoming slide's
+     * 3 architectural zones (.z-1, .z-2, .z-3) glide in sequentially after 130ms.
+     */
     .slide {
       position: absolute;
       inset: 0;
       padding: 6.2cqh 5cqw 5.5cqh 5cqw;
-      display: none;
+      display: grid;
       grid-template-columns: repeat(12, minmax(0, 1fr));
       column-gap: 1.4cqw;
       align-content: stretch;
-      background: var(--bone);
-      color: var(--ink);
+      background: transparent;
       min-height: 0;
       min-width: 0;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      z-index: 1;
     }
 
     .slide.active {
-      display: grid;
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      z-index: 10;
     }
 
-    .slide.slide-vermilion {
-      background: var(--vermilion);
-      color: var(--bone);
+    .slide.exiting {
+      visibility: visible;
+      pointer-events: none;
+      z-index: 5;
+      transition: opacity 165ms cubic-bezier(0.4, 0, 1, 1), transform 165ms cubic-bezier(0.4, 0, 1, 1);
+      opacity: 0;
+      transform: translate3d(calc(var(--dir, 1) * -1.6cqw), 0, 0);
+    }
+
+    /* Staggered Entrance Zones inside Active Slide */
+    .slide .z-1,
+    .slide .z-2,
+    .slide .z-3 {
+      opacity: 0;
+      transform: translate3d(calc(var(--dir, 1) * 1.8cqw), 0, 0);
+    }
+
+    .slide.active .z-1,
+    .slide.active .z-2,
+    .slide.active .z-3 {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      transition:
+        opacity 420ms cubic-bezier(0.16, 1, 0.3, 1),
+        transform 460ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .slide.active .z-1 {
+      transition-delay: 120ms;
+    }
+    .slide.active .z-2 {
+      transition-delay: 175ms;
+    }
+    .slide.active .z-3 {
+      transition-delay: 230ms;
+    }
+
+    /* First load: no delay on initial slide */
+    .canvas-16-9.initial-load .slide.active .z-1,
+    .canvas-16-9.initial-load .slide.active .z-2,
+    .canvas-16-9.initial-load .slide.active .z-3 {
+      transition-delay: 0ms;
+      transition-duration: 0ms;
     }
 
     /* Typography Hierarchy — Balanced, Scannable, Zero Clutter */
@@ -200,16 +275,16 @@
       background: var(--ink);
     }
 
-    /* Uncropped Authentic Media Frame (100% Edges & Corners Preserved) */
+    /* Uncropped Archival Passepartout Media Frame (100% Corners & Edges Intact) */
     .media-frame {
       position: relative;
       width: 100%;
       height: 100%;
       min-height: 0;
       min-width: 0;
-      background: var(--bone-frame);
+      background: var(--bone-mat);
       border: 1px solid var(--rule-strong);
-      padding: 0.7cqh;
+      padding: 0.8cqh;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -220,7 +295,7 @@
 
     .media-frame:hover {
       border-color: var(--vermilion);
-      background: #E6E2DA;
+      background: #E4E0D6;
     }
 
     .media-frame img {
@@ -233,59 +308,12 @@
       display: block;
     }
 
-    /*
-     * NON-OVERLAPPING VIEW TRANSITIONS
-     * Outgoing text fades out completely (0-150ms) BEFORE incoming text enters (150-440ms).
-     * Only the structural 2px rule (`vt-rule`) morphs geometry across slides — zero text collision!
-     */
-    @keyframes slideOutClean {
-      0% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      100% {
-        opacity: 0;
-        transform: translateY(-0.8cqh);
-      }
-    }
-
-    @keyframes slideInClean {
-      0% {
-        opacity: 0;
-        transform: translateY(1.0cqh);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    ::view-transition-old(root) {
-      animation: slideOutClean 150ms cubic-bezier(0.4, 0, 1, 1) forwards;
-    }
-
-    ::view-transition-new(root) {
-      opacity: 0;
-      animation: slideInClean 300ms cubic-bezier(0.22, 1, 0.36, 1) 150ms forwards;
-    }
-
-    ::view-transition-group(vt-rule) {
-      animation-duration: 460ms;
-      animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    ::view-transition-old(vt-rule),
-    ::view-transition-new(vt-rule) {
-      animation: none;
-      mix-blend-mode: normal;
-    }
-
     /* Lightbox Modal for Uncropped Full-Screen Inspection */
     .lightbox {
       position: fixed;
       inset: 0;
       z-index: 200;
-      background: rgba(14, 16, 19, 0.95);
+      background: rgba(14, 16, 19, 0.94);
       display: none;
       place-items: center;
       padding: 3vh 4vw;
@@ -334,12 +362,17 @@
     .nav-zone-prev { left: 0; }
     .nav-zone-next { right: 0; }
 
+    /* Calm Mobile / Reduced Motion Compliance */
     @media (max-width: 1024px), (prefers-reduced-motion: reduce) {
-      ::view-transition-group(*),
-      ::view-transition-old(*),
-      ::view-transition-new(*) {
-        animation-duration: 0.01ms !important;
-        animation-delay: 0ms !important;
+      .canvas-16-9,
+      .morph-bar,
+      .slide.exiting,
+      .slide.active .z-1,
+      .slide.active .z-2,
+      .slide.active .z-3 {
+        transition: none !important;
+        transition-delay: 0ms !important;
+        transform: none !important;
       }
     }
   </style>
@@ -347,7 +380,10 @@
 <body>
 
   <main class="viewport-wrapper">
-    <div class="canvas-16-9" id="stage" data-theme="bone">
+    <div class="canvas-16-9 initial-load" id="stage" data-theme="bone">
+
+      <!-- Persistent Shared Morphing Architectural Rule -->
+      <div class="morph-bar" id="morphBar" style="top: 56cqh; left: 5cqw; width: 58cqw;"></div>
 
       <!-- Minimal Swiss Index -->
       <div class="hud-index" id="hudIndex">01 / 11</div>
@@ -359,13 +395,13 @@
       <!-- ==================================================================
            SLIDE 01: BÌA (7:5 ASYMMETRIC SPLIT — 42% NEGATIVE SPACE TOP)
            ================================================================== -->
-      <section class="slide active" data-slide="1" data-theme="bone">
-        <div style="grid-column: 1 / 9; align-self: start;">
+      <section class="slide active" data-slide="1" data-theme="bone"
+               data-bar-top="54" data-bar-left="5" data-bar-width="58" data-bar-color="ink">
+        <div class="z-1" style="grid-column: 1 / 9; align-self: start;">
           <div class="t-index c-vermilion">01 / DỰ ÁN KHỞI NGHIỆP KINH TẾ &amp; PHÁP LUẬT 11</div>
         </div>
 
-        <div style="grid-column: 1 / 9; align-self: end; padding-bottom: 3cqh;">
-          <div class="rule-h-strong" data-vt="rule" style="margin-bottom: 3cqh;"></div>
+        <div class="z-2" style="grid-column: 1 / 9; align-self: end; padding-bottom: 3cqh;">
           <h1 class="t-h1 c-ink" style="margin-bottom: 2.5cqh;">
             Laptop chuẩn Nhật<br/>cho học sinh THPT.
           </h1>
@@ -374,13 +410,13 @@
           </p>
         </div>
 
-        <div style="grid-column: 9 / 13; align-self: end; padding-bottom: 3cqh; border-left: 1px solid var(--rule); padding-left: 2.5cqw;">
+        <div class="z-3" style="grid-column: 9 / 13; align-self: end; padding-bottom: 3cqh; border-left: 1px solid var(--rule); padding-left: 2.5cqw;">
           <div class="t-hero c-vermilion" style="font-size: 18cqh;">0đ</div>
           <div class="t-index c-ink" style="margin-top: 1.4cqh;">VỐN TỒN KHO (JUST-IN-TIME)</div>
           <div class="t-body c-muted" style="margin-top: 0.6cqh;">Nhận cọc trước · Xuất kho sỉ trong 24h</div>
         </div>
 
-        <div style="grid-column: 1 / 13; align-self: end; border-top: 1px solid var(--rule); padding-top: 1.6cqh; display: flex; justify-content: space-between;">
+        <div class="z-3" style="grid-column: 1 / 13; align-self: end; border-top: 1px solid var(--rule); padding-top: 1.6cqh; display: flex; justify-content: space-between;">
           <span class="t-index c-ink">THƯƠNG HIỆU: LAPTOP VƯƠNG GIA</span>
           <span class="t-index c-muted">10 NHÂN SỰ CHUYÊN TRÁCH · PHÂN KHÚC 3,5 – 5,5 TRIỆU VNĐ</span>
         </div>
@@ -389,9 +425,9 @@
       <!-- ==================================================================
            SLIDE 02: KHẢO SÁT THỰC TẾ 8 CÂU HỎI (N = 120 PHIẾU — 7:5 SPLIT)
            ================================================================== -->
-      <section class="slide" data-slide="2" data-theme="bone">
-        <!-- Col 1-7: Primary Pain Point & Core Survey Finding -->
-        <div style="grid-column: 1 / 8; display: flex; flex-direction: column; justify-content: space-between; padding-right: 1.5cqw;">
+      <section class="slide" data-slide="2" data-theme="bone"
+               data-bar-top="78" data-bar-left="5" data-bar-width="50" data-bar-color="ink">
+        <div class="z-1" style="grid-column: 1 / 8; display: flex; flex-direction: column; justify-content: space-between; padding-right: 1.5cqw;">
           <div>
             <div class="t-index c-vermilion">02 / KHẢO SÁT 8 CÂU HỎI THỰC TẾ (N = 120 PHIẾU)</div>
             <h2 class="t-h2 c-ink" style="margin-top: 1.6cqh;">
@@ -399,11 +435,11 @@
             </h2>
           </div>
 
-          <div style="margin-left: -0.8cqw;">
+          <div class="z-2" style="margin-left: -0.8cqw;">
             <div class="t-hero c-vermilion" style="font-size: 27cqh;">90,0%</div>
           </div>
 
-          <div style="border-top: 2px solid var(--ink); padding-top: 1.8cqh;" data-vt="rule">
+          <div style="padding-top: 1.8cqh;">
             <div class="t-lead c-ink">108 / 120 người sợ mua nhầm máy sửa main, hỏng vặt &amp; lừa cọc</div>
             <div class="t-index c-muted" style="margin-top: 0.8cqh;">
               [ CÂU 6 ] 43,3% SỢ MÁY DỰNG · 29,2% SỢ KHÔNG BẢO HÀNH · 17,5% SỢ LỪA ĐẢO QUA MẠNG
@@ -411,8 +447,7 @@
           </div>
         </div>
 
-        <!-- Col 8-12: 4 Pillar Metrics from the 8-Question Form -->
-        <div style="grid-column: 8 / 13; border-left: 1px solid var(--rule); padding-left: 2.4cqw; display: grid; grid-template-rows: repeat(4, 1fr); align-items: center;">
+        <div class="z-3" style="grid-column: 8 / 13; border-left: 1px solid var(--rule); padding-left: 2.4cqw; display: grid; grid-template-rows: repeat(4, 1fr); align-items: center;">
           
           <div style="border-bottom: 1px solid var(--rule); padding: 1.2cqh 0;">
             <div style="display: flex; justify-content: space-between; align-items: baseline;">
@@ -452,8 +487,9 @@
       <!-- ==================================================================
            SLIDE 03: ĐỊNH VỊ & CHIẾN LƯỢC 4P (4:8 DIAGONAL STAIRCASE)
            ================================================================== -->
-      <section class="slide" data-slide="3" data-theme="bone">
-        <div style="grid-column: 1 / 5; display: flex; flex-direction: column; justify-content: space-between; border-right: 1px solid var(--rule); padding-right: 2.2cqw;">
+      <section class="slide" data-slide="3" data-theme="bone"
+               data-bar-top="11" data-bar-left="36.5" data-bar-width="42" data-bar-color="ink">
+        <div class="z-1" style="grid-column: 1 / 5; display: flex; flex-direction: column; justify-content: space-between; border-right: 1px solid var(--rule); padding-right: 2.2cqw;">
           <div>
             <div class="t-index c-vermilion">03 / ĐỊNH VỊ &amp; MA TRẬN 4P</div>
             <h2 class="t-h2 c-ink" style="margin-top: 1.6cqh;">
@@ -461,8 +497,7 @@
             </h2>
           </div>
 
-          <!-- 2-Axis Positioning Coordinate Map -->
-          <div style="position: relative; width: 100%; height: 48cqh; border-left: 2px solid var(--ink); border-bottom: 2px solid var(--ink);">
+          <div class="z-2" style="position: relative; width: 100%; height: 48cqh; border-left: 2px solid var(--ink); border-bottom: 2px solid var(--ink);">
             <span class="t-index c-muted" style="position: absolute; top: 1cqh; left: 1cqw;">UY TÍN CAO ↑</span>
             <span class="t-index c-muted" style="position: absolute; bottom: 1cqh; right: 0.5cqw;">GIÁ MỀM →</span>
 
@@ -489,10 +524,9 @@
           <div class="t-index c-muted">72,5% CẦN MÁY BỀN NHẸ &lt; 1,4KG (CÂU 4)</div>
         </div>
 
-        <!-- Col 5-12: Ultra-Clean 4P Staircase (No Long Paragraphs) -->
-        <div style="grid-column: 5 / 13; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); grid-template-rows: repeat(4, 1fr); padding-left: 1.5cqw;">
+        <div class="z-3" style="grid-column: 5 / 13; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); grid-template-rows: repeat(4, 1fr); padding-left: 1.5cqw;">
           
-          <div style="grid-column: 1 / 7; grid-row: 1; align-self: center; border-top: 2px solid var(--ink); padding-top: 1.4cqh;" data-vt="rule">
+          <div style="grid-column: 1 / 7; grid-row: 1; align-self: center; padding-top: 1.4cqh;">
             <div style="display: flex; justify-content: space-between;">
               <span class="t-index c-vermilion">01 / PRODUCT — SẢN PHẨM</span>
               <span class="t-index c-muted">MAIN ZIN 100%</span>
@@ -530,8 +564,9 @@
       <!-- ==================================================================
            SLIDE 04: TÀI CHÍNH & ĐIỂM HÒA VỐN (6:6 RIGHT-BLEED GIANT "0")
            ================================================================== -->
-      <section class="slide" data-slide="4" data-theme="bone">
-        <div style="grid-column: 1 / 7; display: flex; flex-direction: column; justify-content: space-between; z-index: 2;">
+      <section class="slide" data-slide="4" data-theme="bone"
+               data-bar-top="28" data-bar-left="5" data-bar-width="44" data-bar-color="ink">
+        <div class="z-1" style="grid-column: 1 / 7; display: flex; flex-direction: column; justify-content: space-between; z-index: 2;">
           <div>
             <div class="t-index c-vermilion">04 / BÀI TOÁN TÀI CHÍNH &amp; ĐIỂM HÒA VỐN</div>
             <h2 class="t-h2 c-ink" style="margin-top: 1.6cqh;">
@@ -539,7 +574,7 @@
             </h2>
           </div>
 
-          <div style="border-top: 2px solid var(--ink);" data-vt="rule">
+          <div class="z-2" style="padding-top: 0.5cqh;">
             <div style="display: flex; justify-content: space-between; padding: 1.3cqh 0; border-bottom: 1px solid var(--rule);">
               <span class="t-body-bold c-ink">Giá bán lẻ niêm yết (P)</span>
               <span class="t-body-bold c-ink" style="font-family: var(--font-mono);">4.600.000đ</span>
@@ -575,7 +610,7 @@
           </div>
         </div>
 
-        <div style="grid-column: 7 / 13; position: relative; display: flex; flex-direction: column; justify-content: flex-end; padding-left: 3cqw; border-left: 1px solid var(--rule);">
+        <div class="z-3" style="grid-column: 7 / 13; position: relative; display: flex; flex-direction: column; justify-content: flex-end; padding-left: 3cqw; border-left: 1px solid var(--rule);">
           <div style="position: absolute; top: -2cqh; right: -3cqw; pointer-events: none;">
             <div class="t-hero c-pine" style="font-size: 54cqh; line-height: 0.78;">0</div>
           </div>
@@ -595,17 +630,17 @@
       <!-- ==================================================================
            SLIDE 05: VẬN HÀNH JIT 24H & 15 BƯỚC QC (PROPORTIONAL TIME AXIS)
            ================================================================== -->
-      <section class="slide" data-slide="5" data-theme="bone">
-        <div style="grid-column: 1 / 13; align-self: start;">
+      <section class="slide" data-slide="5" data-theme="bone"
+               data-bar-top="35.5" data-bar-left="5" data-bar-width="90" data-bar-color="ink">
+        <div class="z-1" style="grid-column: 1 / 13; align-self: start;">
           <div class="t-index c-vermilion">05 / QUY TRÌNH JUST-IN-TIME 24 GIỜ &amp; KIỂM ĐỊNH 15 BƯỚC</div>
           <h2 class="t-h2 c-ink" style="margin-top: 1.5cqh;">
             Bán trước, lấy hàng sau — Vòng quay vốn 24 giờ.
           </h2>
         </div>
 
-        <!-- Proportional Time Axis -->
-        <div style="grid-column: 1 / 13; align-self: center; position: relative; padding: 3cqh 0;">
-          <div class="rule-h-strong" data-vt="rule" style="position: relative;">
+        <div class="z-2" style="grid-column: 1 / 13; align-self: center; position: relative; padding: 3cqh 0;">
+          <div style="position: relative; height: 2px;">
             <div style="position: absolute; left: 0%; top: -1.1cqh; width: 2.2cqh; height: 2.2cqh; background: var(--vermilion);"></div>
             <div style="position: absolute; left: 20%; top: -0.8cqh; width: 1.6cqh; height: 1.6cqh; background: var(--ink);"></div>
             <div style="position: absolute; left: 42%; top: -0.8cqh; width: 1.6cqh; height: 1.6cqh; background: var(--ink);"></div>
@@ -639,13 +674,12 @@
           </div>
         </div>
 
-        <!-- Bottom: Giant "15" + 3 Crisp QC Blocks -->
-        <div style="grid-column: 1 / 4; align-self: end; border-top: 1px solid var(--rule); padding-top: 2.2cqh;">
+        <div class="z-3" style="grid-column: 1 / 4; align-self: end; border-top: 1px solid var(--rule); padding-top: 2.2cqh;">
           <div class="t-hero c-ink" style="font-size: 20cqh;">15</div>
           <div class="t-index c-vermilion" style="margin-top: 0.8cqh;">CHỐT CHẶN PHẦN CỨNG</div>
         </div>
 
-        <div style="grid-column: 4 / 13; align-self: end; border-top: 1px solid var(--rule); padding-top: 2.5cqh; display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 2cqw;">
+        <div class="z-3" style="grid-column: 4 / 13; align-self: end; border-top: 1px solid var(--rule); padding-top: 2.5cqh; display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 2cqw;">
           <div style="border-left: 1px solid var(--rule); padding-left: 1.5cqw;">
             <div class="t-index c-vermilion">[ BƯỚC 01 – 06 ]</div>
             <div class="t-lead c-ink" style="margin-top: 0.8cqh;">Ngoại quan &amp; Màn hình</div>
@@ -669,8 +703,9 @@
       <!-- ==================================================================
            SLIDE 06: BẢNG PHÂN CHIA NHIỆM VỤ 10 NHÂN SỰ (3:9 SCANNABLE MATRIX)
            ================================================================== -->
-      <section class="slide" data-slide="6" data-theme="bone">
-        <div style="grid-column: 1 / 4; display: flex; flex-direction: column; justify-content: space-between; border-right: 1px solid var(--rule); padding-right: 2cqw;">
+      <section class="slide" data-slide="6" data-theme="bone"
+               data-bar-top="82" data-bar-left="5" data-bar-width="20" data-bar-color="ink">
+        <div class="z-1" style="grid-column: 1 / 4; display: flex; flex-direction: column; justify-content: space-between; border-right: 1px solid var(--rule); padding-right: 2cqw;">
           <div>
             <div class="t-index c-vermilion">06 / TỔ CHỨC THỰC HIỆN</div>
             <h2 class="t-h2 c-ink" style="margin-top: 1.6cqh;">
@@ -678,19 +713,18 @@
             </h2>
           </div>
 
-          <div>
+          <div class="z-2">
             <div class="t-hero c-vermilion" style="font-size: 22cqh;">10</div>
             <div class="t-index c-ink" style="margin-top: 1cqh;">THÀNH VIÊN CHUYÊN TRÁCH</div>
           </div>
 
-          <div style="border-top: 2px solid var(--ink); padding-top: 1.5cqh;" data-vt="rule">
+          <div style="padding-top: 1.5cqh;">
             <div class="t-index c-pine">VẬN HÀNH NGOÀI GIỜ HỌC</div>
             <div class="t-body-bold c-ink" style="margin-top: 0.4cqh;">Chuyên môn hóa 10 mắt xích độc lập</div>
           </div>
         </div>
 
-        <!-- Col 4-12: Crisp 2x5 Open Architectural Roster (Zero Paragraph Clutter) -->
-        <div style="grid-column: 4 / 13; padding-left: 1.8cqw; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(5, 1fr); column-gap: 3cqw;">
+        <div class="z-3" style="grid-column: 4 / 13; padding-left: 1.8cqw; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(5, 1fr); column-gap: 3cqw;">
           
           <div style="border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: center;">
             <div style="display: flex; justify-content: space-between;">
@@ -778,8 +812,9 @@
       <!-- ==================================================================
            SLIDE 07: CĂN CỨ PHÁP LÝ & KINH TẾ TUẦN HOÀN (3:9 UNEQUAL ROWS)
            ================================================================== -->
-      <section class="slide" data-slide="7" data-theme="bone">
-        <div style="grid-column: 1 / 4; display: flex; flex-direction: column; justify-content: space-between; border-right: 1px solid var(--rule); padding-right: 2cqw;">
+      <section class="slide" data-slide="7" data-theme="bone"
+               data-bar-top="35" data-bar-left="29" data-bar-width="66" data-bar-color="ink">
+        <div class="z-1" style="grid-column: 1 / 4; display: flex; flex-direction: column; justify-content: space-between; border-right: 1px solid var(--rule); padding-right: 2cqw;">
           <div>
             <div class="t-index c-vermilion">07 / HÀNH LANG PHÁP LÝ &amp; ESG</div>
             <h2 class="t-h2 c-ink" style="margin-top: 1.6cqh;">
@@ -787,7 +822,7 @@
             </h2>
           </div>
 
-          <div style="border-top: 2px solid var(--ink); padding-top: 1.6cqh;" data-vt="rule">
+          <div style="border-top: 2px solid var(--ink); padding-top: 1.6cqh;">
             <div class="t-index c-pine">CHUẨN MỰC KTPL 11</div>
             <div class="t-body-bold c-ink" style="margin-top: 0.5cqh;">Kinh doanh minh bạch · Kinh tế tuần hoàn</div>
           </div>
@@ -795,7 +830,7 @@
 
         <div style="grid-column: 4 / 13; padding-left: 2cqw; display: flex; flex-direction: column; justify-content: space-between;">
           
-          <div style="border-bottom: 2px solid var(--ink); padding-bottom: 2.5cqh;">
+          <div class="z-2" style="padding-bottom: 2.5cqh;">
             <div class="t-index c-vermilion">[ CĂN CỨ CỐT LÕI — QUY MÔ NHỎ LẺ KHÔNG PHẢI ĐĂNG KÝ HỘ KINH DOANH ]</div>
             <div class="t-hero c-ink" style="font-size: 9.2cqh; margin-top: 1cqh;">K2 Đ.79 NĐ 01/2021</div>
             <div class="t-lead c-ink" style="margin-top: 1cqh;">
@@ -803,7 +838,7 @@
             </div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 5fr 7fr; align-items: baseline; border-bottom: 1px solid var(--rule); padding: 1.8cqh 0;">
+          <div class="z-3" style="display: grid; grid-template-columns: 5fr 7fr; align-items: baseline; border-bottom: 1px solid var(--rule); padding: 1.8cqh 0;">
             <div>
               <div class="t-index c-muted">NĂNG LỰC HÀNH VI DÂN SỰ</div>
               <div class="t-h2 c-ink" style="margin-top: 0.3cqh;">Đ.21 BLDS 2015</div>
@@ -813,7 +848,7 @@
             </div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 5fr 7fr; align-items: baseline; border-bottom: 1px solid var(--rule); padding: 1.8cqh 0;">
+          <div class="z-3" style="display: grid; grid-template-columns: 5fr 7fr; align-items: baseline; border-bottom: 1px solid var(--rule); padding: 1.8cqh 0;">
             <div>
               <div class="t-index c-muted">NGHĨA VỤ THUẾ NHÀ NƯỚC</div>
               <div class="t-h2 c-pine" style="margin-top: 0.3cqh;">TT 40/2021/TT-BTC</div>
@@ -823,7 +858,7 @@
             </div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 5fr 7fr; align-items: baseline; padding-top: 1.8cqh;">
+          <div class="z-3" style="display: grid; grid-template-columns: 5fr 7fr; align-items: baseline; padding-top: 1.8cqh;">
             <div>
               <div class="t-index c-pine">KINH TẾ TUẦN HOÀN</div>
               <div class="t-h2 c-ink" style="margin-top: 0.3cqh;">BVNTD 2023 &amp; EPR</div>
@@ -839,17 +874,17 @@
       <!-- ==================================================================
            SLIDE 08: BỘ GIÁP PHẢN BIỆN 6 CÂU HỎI (4:8 STAGGERED OFFSET)
            ================================================================== -->
-      <section class="slide" data-slide="8" data-theme="bone">
-        <div style="grid-column: 1 / 5; display: flex; flex-direction: column; justify-content: flex-start; border-right: 1px solid var(--rule); padding-right: 2.2cqw;">
+      <section class="slide" data-slide="8" data-theme="bone"
+               data-bar-top="41" data-bar-left="5" data-bar-width="18" data-bar-color="ink">
+        <div class="z-1" style="grid-column: 1 / 5; display: flex; flex-direction: column; justify-content: flex-start; border-right: 1px solid var(--rule); padding-right: 2.2cqw;">
           <div class="t-index c-vermilion">08 / BỘ GIÁP PHẢN BIỆN HỘI ĐỒNG</div>
           <h2 class="t-h1 c-ink" style="margin-top: 2cqh; font-size: 7.2cqh;">
             6 câu hỏi<br/>thầy cô<br/>sẽ xoáy.
           </h2>
-          <div class="rule-h-strong" data-vt="rule" style="margin-top: 3cqh; width: 65%;"></div>
-          <div class="t-index c-muted" style="margin-top: 2cqh;">100% CHỐT CHẶN THỰC TẾ</div>
+          <div class="t-index c-muted" style="margin-top: 5.5cqh;">100% CHỐT CHẶN THỰC TẾ</div>
         </div>
 
-        <div style="grid-column: 5 / 13; padding-left: 2cqw; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); grid-template-rows: repeat(6, 1fr); align-items: center;">
+        <div class="z-3" style="grid-column: 5 / 13; padding-left: 2cqw; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); grid-template-rows: repeat(6, 1fr); align-items: center;">
           
           <div style="grid-column: 1 / 8; border-bottom: 1px solid var(--rule); padding-bottom: 1cqh;">
             <div class="t-lead c-ink">01 / Lấy gì đảm bảo máy cũ không bị “luộc” linh kiện?</div>
@@ -887,8 +922,9 @@
       <!-- ==================================================================
            SLIDE 09: MINH CHỨNG 8A — TIỀN THẬT BIDV (100% UNCROPPED CONTAIN)
            ================================================================== -->
-      <section class="slide" data-slide="9" data-theme="bone">
-        <div style="grid-column: 1 / 5; display: flex; flex-direction: column; justify-content: space-between; padding-right: 1.5cqw; z-index: 3;">
+      <section class="slide" data-slide="9" data-theme="bone"
+               data-bar-top="53" data-bar-left="5" data-bar-width="27" data-bar-color="ink">
+        <div class="z-1" style="grid-column: 1 / 5; display: flex; flex-direction: column; justify-content: space-between; padding-right: 1.5cqw; z-index: 3;">
           <div>
             <div class="t-index c-vermilion">09 / MINH CHỨNG THỰC CHIẾN (PHẦN A)</div>
             <h2 class="t-h2 c-ink" style="margin-top: 1.6cqh;">
@@ -896,10 +932,10 @@
             </h2>
           </div>
 
-          <div>
+          <div class="z-2">
             <div class="t-index c-muted">TỔNG CỌC &amp; CHUYỂN KHOẢN ĐỢT ĐẦU</div>
             <div class="t-hero c-vermilion" style="font-size: 9.8cqh; margin-top: 0.8cqh;">2.000.000đ</div>
-            <div class="rule-h-strong" data-vt="rule" style="margin: 2cqh 0;"></div>
+            <div style="height: 3.5cqh;"></div>
             <div class="t-index c-ink">NGÂN HÀNG BIDV · STK: 8883451443</div>
             <div class="t-lead c-pine" style="margin-top: 0.4cqh;">CHỦ TK: VUONG GIA</div>
           </div>
@@ -909,8 +945,7 @@
           </div>
         </div>
 
-        <!-- Col 5-12: 4 Uncropped Full-Frame BIDV Receipts -->
-        <div style="grid-column: 5 / 13; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 1.1cqw; height: 100%; min-height: 0;">
+        <div class="z-3" style="grid-column: 5 / 13; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 1.1cqw; height: 100%; min-height: 0;">
           
           <div style="display: grid; grid-template-rows: auto 1fr; row-gap: 1cqh; min-height: 0;">
             <div style="border-top: 2px solid var(--vermilion); padding-top: 0.8cqh;">
@@ -958,8 +993,9 @@
       <!-- ==================================================================
            SLIDE 10: MINH CHỨNG 8B — KHÁCH THẬT CHAT (100% UNCROPPED CONTAIN)
            ================================================================== -->
-      <section class="slide" data-slide="10" data-theme="bone">
-        <div style="grid-column: 1 / 5; display: flex; flex-direction: column; justify-content: space-between; padding-right: 1.8cqw;">
+      <section class="slide" data-slide="10" data-theme="bone"
+               data-bar-top="33" data-bar-left="5" data-bar-width="27" data-bar-color="ink">
+        <div class="z-1" style="grid-column: 1 / 5; display: flex; flex-direction: column; justify-content: space-between; padding-right: 1.8cqw;">
           <div>
             <div class="t-index c-vermilion">10 / MINH CHỨNG THỰC CHIẾN (PHẦN B)</div>
             <h2 class="t-h2 c-ink" style="margin-top: 1.6cqh;">
@@ -967,7 +1003,7 @@
             </h2>
           </div>
 
-          <div style="border-top: 2px solid var(--ink); padding-top: 1.8cqh; display: flex; flex-direction: column; gap: 1.5cqh;" data-vt="rule">
+          <div class="z-2" style="padding-top: 1.8cqh; display: flex; flex-direction: column; gap: 1.5cqh;">
             <div>
               <div class="t-index c-vermilion">01 / HỌC SINH THPT</div>
               <div class="t-lead c-ink" style="margin-top: 0.3cqh;">Nguyên Thừa · Phan Triều</div>
@@ -988,8 +1024,7 @@
           </div>
         </div>
 
-        <!-- Col 5-12: 6 Uncropped Full-Frame Chat Screenshots (object-fit: contain) -->
-        <div style="grid-column: 5 / 13; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); column-gap: 1.2cqw; row-gap: 1.4cqh; height: 100%; min-height: 0;">
+        <div class="z-3" style="grid-column: 5 / 13; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); column-gap: 1.2cqw; row-gap: 1.4cqh; height: 100%; min-height: 0;">
           
           <div style="display: grid; grid-template-rows: auto 1fr; row-gap: 0.5cqh; min-height: 0;">
             <div class="t-index c-vermilion">01 / HS NGUYÊN THỪA</div>
@@ -1039,20 +1074,20 @@
       <!-- ==================================================================
            SLIDE 11: TUYÊN NGÔN KẾT LUẬN (2:8 FULL-BLEED VERMILION CLIMAX)
            ================================================================== -->
-      <section class="slide slide-vermilion" data-slide="11" data-theme="vermilion">
-        <div style="grid-column: 1 / 3; align-self: start;">
+      <section class="slide slide-vermilion" data-slide="11" data-theme="vermilion"
+               data-bar-top="48" data-bar-left="20" data-bar-width="38" data-bar-color="bone">
+        <div class="z-1" style="grid-column: 1 / 3; align-self: start;">
           <div class="t-index c-bone" style="opacity: 0.85;">11 / TUYÊN NGÔN</div>
         </div>
 
         <div style="grid-column: 3 / 13; display: flex; flex-direction: column; justify-content: space-between;">
-          <div style="margin-top: 5cqh;">
+          <div class="z-2" style="margin-top: 5cqh;">
             <h1 class="t-h1 c-bone" style="font-size: 8.0cqh; line-height: 1.03; max-width: 96%;">
               “Khởi nghiệp không bắt đầu từ vốn lớn, mà từ thấu hiểu nỗi đau người dùng.”
             </h1>
-            <div style="width: 42%; height: 2px; background: var(--bone); margin-top: 4cqh;" data-vt="rule"></div>
           </div>
 
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 3cqw; border-top: 1px solid rgba(248, 247, 243, 0.28); padding-top: 2.5cqh;">
+          <div class="z-3" style="display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 3cqw; border-top: 1px solid rgba(248, 247, 243, 0.28); padding-top: 2.5cqh;">
             <div>
               <div class="t-index c-bone" style="opacity: 0.75;">ĐIỂM HÒA VỐN</div>
               <div class="t-h2 c-bone" style="margin-top: 0.5cqh;">0 MÁY (JIT 24H)</div>
@@ -1067,7 +1102,7 @@
             </div>
           </div>
 
-          <div style="border-top: 1px solid rgba(248, 247, 243, 0.28); padding-top: 2cqh;">
+          <div class="z-3" style="border-top: 1px solid rgba(248, 247, 243, 0.28); padding-top: 2cqh;">
             <div class="t-index c-bone" style="opacity: 0.8; margin-bottom: 0.8cqh;">ĐỘI NGŨ THỰC HIỆN DỰ ÁN LAPTOP VƯƠNG GIA (10 THÀNH VIÊN):</div>
             <div class="t-body-bold c-bone" style="line-height: 1.55;">
               01. Vương Gia &nbsp;·&nbsp; 02. Nguyễn Hoàng Yến &nbsp;·&nbsp; 03. Trần Thị Mai Linh &nbsp;·&nbsp; 04. Phan Quỳnh Anh &nbsp;·&nbsp; 05. Nguyễn Ngọc Anh Thư &nbsp;·&nbsp; 06. Nguyễn Phúc Minh Quân &nbsp;·&nbsp; 07. Châu Anh Thư &nbsp;·&nbsp; 08. Nguyễn Tiến Dũng &nbsp;·&nbsp; 09. Nguyễn Hồng Khánh Đoan &nbsp;·&nbsp; 10. Thái Hoàng Minh Anh
@@ -1097,6 +1132,7 @@
       const slides = Array.from(document.querySelectorAll('.slide'));
       const totalSlides = slides.length;
       const stage = document.getElementById('stage');
+      const morphBar = document.getElementById('morphBar');
       const hudIndex = document.getElementById('hudIndex');
       const progressFill = document.getElementById('progressFill');
       const lightbox = document.getElementById('lightbox');
@@ -1104,76 +1140,61 @@
       const lightboxCaption = document.getElementById('lightboxCaption');
 
       let currentIndex = 0;
-      let isTransitioning = false;
+      let exitTimer = null;
 
       function pad2(n) {
         return n < 10 ? '0' + n : String(n);
       }
 
-      function clearAllViewTransitionNames() {
-        document.querySelectorAll('[data-vt]').forEach((el) => {
-          el.style.viewTransitionName = 'none';
-        });
+      function updateMorphBar(slideEl) {
+        if (!slideEl || !morphBar) return;
+        const top = slideEl.getAttribute('data-bar-top') || '54';
+        const left = slideEl.getAttribute('data-bar-left') || '5';
+        const width = slideEl.getAttribute('data-bar-width') || '50';
+        const color = slideEl.getAttribute('data-bar-color') || 'ink';
+
+        morphBar.style.top = top + 'cqh';
+        morphBar.style.left = left + 'cqw';
+        morphBar.style.width = width + 'cqw';
+        morphBar.style.backgroundColor = color === 'bone' ? 'var(--bone)' : 'var(--ink)';
       }
 
-      function bindViewTransitionNames(slideEl) {
-        if (!slideEl) return;
-        slideEl.querySelectorAll('[data-vt]').forEach((el) => {
-          const key = el.getAttribute('data-vt');
-          if (key) {
-            el.style.viewTransitionName = 'vt-' + key;
-          }
-        });
-      }
+      function goToSlide(targetIndex) {
+        if (targetIndex < 0 || targetIndex >= totalSlides || targetIndex === currentIndex) return;
 
-      function applySlideState(targetIndex) {
-        slides.forEach((s, idx) => {
-          if (idx === targetIndex) {
-            s.classList.add('active');
-          } else {
-            s.classList.remove('active');
-          }
-        });
+        stage.classList.remove('initial-load');
 
-        const activeSlide = slides[targetIndex];
-        const theme = activeSlide.getAttribute('data-theme') || 'bone';
+        const dir = targetIndex > currentIndex ? 1 : -1;
+        stage.style.setProperty('--dir', String(dir));
+
+        const outgoingSlide = slides[currentIndex];
+        const incomingSlide = slides[targetIndex];
+
+        if (exitTimer) {
+          clearTimeout(exitTimer);
+          slides.forEach((s) => s.classList.remove('exiting'));
+        }
+
+        outgoingSlide.classList.remove('active');
+        outgoingSlide.classList.add('exiting');
+
+        incomingSlide.classList.remove('exiting');
+        incomingSlide.classList.add('active');
+
+        const theme = incomingSlide.getAttribute('data-theme') || 'bone';
         stage.setAttribute('data-theme', theme);
+
+        updateMorphBar(incomingSlide);
 
         hudIndex.textContent = pad2(targetIndex + 1) + ' / ' + pad2(totalSlides);
         const pct = ((targetIndex + 1) / totalSlides) * 100;
         progressFill.style.width = pct.toFixed(2) + '%';
+
         currentIndex = targetIndex;
-      }
 
-      function goToSlide(targetIndex) {
-        if (isTransitioning) return;
-        if (targetIndex < 0 || targetIndex >= totalSlides || targetIndex === currentIndex) return;
-
-        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const isSmallScreen = window.innerWidth <= 1024;
-
-        if (!document.startViewTransition || prefersReduced || isSmallScreen) {
-          clearAllViewTransitionNames();
-          applySlideState(targetIndex);
-          return;
-        }
-
-        isTransitioning = true;
-        const outgoingSlide = slides[currentIndex];
-        const incomingSlide = slides[targetIndex];
-
-        clearAllViewTransitionNames();
-        bindViewTransitionNames(outgoingSlide);
-
-        const transition = document.startViewTransition(() => {
-          clearAllViewTransitionNames();
-          applySlideState(targetIndex);
-          bindViewTransitionNames(incomingSlide);
-        });
-
-        transition.finished.finally(() => {
-          isTransitioning = false;
-        });
+        exitTimer = setTimeout(() => {
+          outgoingSlide.classList.remove('exiting');
+        }, 200);
       }
 
       function nextSlide() {
@@ -1239,7 +1260,7 @@
         }
       }, { passive: true });
 
-      applySlideState(0);
+      updateMorphBar(slides[0]);
     })();
   </script>
 </body>
