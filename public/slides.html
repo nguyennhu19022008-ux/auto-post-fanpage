@@ -10,12 +10,13 @@
   <style>
     :root {
       --bone: #F8F7F3;
+      --bone-frame: #EFECE6;
       --ink: #0E1013;
       --vermilion: #C93B2B;
       --pine: #1E4D38;
       --rule: rgba(14, 16, 19, 0.14);
-      --rule-strong: rgba(14, 16, 19, 0.32);
-      --ink-muted: rgba(14, 16, 19, 0.62);
+      --rule-strong: rgba(14, 16, 19, 0.34);
+      --ink-muted: rgba(14, 16, 19, 0.60);
       --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-body: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
@@ -59,20 +60,20 @@
       container-type: size;
     }
 
-    /* Minimal Top-Right Index & 2px Progress Line (No Masthead/Footer Clutter) */
+    /* Minimal Top-Right Index & 2px Progress Line */
     .hud-index {
       position: absolute;
-      top: 4.2cqh;
+      top: 4.5cqh;
       right: 5cqw;
       z-index: 40;
       font-family: var(--font-mono);
-      font-size: 1.67cqh;
+      font-size: 1.75cqh;
       font-weight: 600;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--ink);
       pointer-events: none;
-      transition: color 0.3s ease;
+      transition: color 0.25s ease;
     }
 
     .canvas-16-9[data-theme="vermilion"] .hud-index {
@@ -84,7 +85,7 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 2px;
+      height: 3px;
       background: rgba(14, 16, 19, 0.08);
       z-index: 50;
     }
@@ -93,7 +94,7 @@
       height: 100%;
       background: var(--vermilion);
       width: 9.09%;
-      transition: width 650ms cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s ease;
+      transition: width 520ms cubic-bezier(0.22, 1, 0.36, 1), background-color 0.25s ease;
     }
 
     .canvas-16-9[data-theme="vermilion"] .progress-fill {
@@ -104,13 +105,15 @@
     .slide {
       position: absolute;
       inset: 0;
-      padding: 6.67cqh 5cqw 5.9cqh 5cqw;
+      padding: 6.2cqh 5cqw 5.5cqh 5cqw;
       display: none;
       grid-template-columns: repeat(12, minmax(0, 1fr));
-      column-gap: 1.25cqw;
+      column-gap: 1.4cqw;
       align-content: stretch;
       background: var(--bone);
       color: var(--ink);
+      min-height: 0;
+      min-width: 0;
     }
 
     .slide.active {
@@ -122,58 +125,58 @@
       color: var(--bone);
     }
 
-    /* Typography Hierarchy (Strict >= 1.67cqh / 18px @1080p Floor) */
+    /* Typography Hierarchy — Balanced, Scannable, Zero Clutter */
     .t-index {
       font-family: var(--font-mono);
-      font-size: 1.67cqh;
+      font-size: 1.72cqh;
       font-weight: 600;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.11em;
       text-transform: uppercase;
-      line-height: 1.2;
+      line-height: 1.25;
     }
 
     .t-body {
       font-family: var(--font-body);
-      font-size: 2.15cqh;
+      font-size: 2.1cqh;
       font-weight: 400;
-      line-height: 1.42;
+      line-height: 1.4;
     }
 
     .t-body-bold {
       font-family: var(--font-body);
-      font-size: 2.15cqh;
+      font-size: 2.2cqh;
       font-weight: 600;
-      line-height: 1.38;
+      line-height: 1.35;
     }
 
     .t-lead {
       font-family: var(--font-body);
-      font-size: 2.96cqh;
-      font-weight: 400;
-      line-height: 1.35;
+      font-size: 2.85cqh;
+      font-weight: 600;
+      line-height: 1.3;
       letter-spacing: -0.01em;
     }
 
     .t-h2 {
       font-family: var(--font-display);
-      font-size: 5.7cqh;
+      font-size: 5.2cqh;
       font-weight: 800;
-      line-height: 1.04;
+      line-height: 1.06;
       letter-spacing: -0.03em;
     }
 
     .t-h1 {
       font-family: var(--font-display);
-      font-size: 8.6cqh;
+      font-size: 8.2cqh;
       font-weight: 800;
-      line-height: 0.96;
+      line-height: 0.98;
       letter-spacing: -0.035em;
     }
 
     .t-hero {
       font-family: var(--font-display);
       font-weight: 800;
-      line-height: 0.84;
+      line-height: 0.86;
       letter-spacing: -0.045em;
     }
 
@@ -197,62 +200,92 @@
       background: var(--ink);
     }
 
-    .rule-v {
-      width: 1px;
-      height: 100%;
-      background: var(--rule);
-    }
-
-    /* Image Shutter Reveal & Layering */
-    .shutter-img {
-      overflow: hidden;
+    /* Uncropped Authentic Media Frame (100% Edges & Corners Preserved) */
+    .media-frame {
       position: relative;
-      border: 1px solid var(--rule-strong);
-      background: #E7E5DF;
-      cursor: zoom-in;
-    }
-
-    .shutter-img img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      min-height: 0;
+      min-width: 0;
+      background: var(--bone-frame);
+      border: 1px solid var(--rule-strong);
+      padding: 0.7cqh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: zoom-in;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .media-frame:hover {
+      border-color: var(--vermilion);
+      background: #E6E2DA;
+    }
+
+    .media-frame img {
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      object-position: center;
       display: block;
-      clip-path: inset(0 0 0 0);
-      animation: shutterReveal 700ms cubic-bezier(0.65, 0, 0.35, 1) both;
     }
 
-    @keyframes shutterReveal {
-      from {
-        clip-path: inset(0 0 100% 0);
-        transform: scale(1.03);
+    /*
+     * NON-OVERLAPPING VIEW TRANSITIONS
+     * Outgoing text fades out completely (0-150ms) BEFORE incoming text enters (150-440ms).
+     * Only the structural 2px rule (`vt-rule`) morphs geometry across slides — zero text collision!
+     */
+    @keyframes slideOutClean {
+      0% {
+        opacity: 1;
+        transform: translateY(0);
       }
-      to {
-        clip-path: inset(0 0 0 0);
-        transform: scale(1);
+      100% {
+        opacity: 0;
+        transform: translateY(-0.8cqh);
       }
     }
 
-    /* View Transitions API — True PowerPoint Morph */
-    ::view-transition-old(root),
+    @keyframes slideInClean {
+      0% {
+        opacity: 0;
+        transform: translateY(1.0cqh);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    ::view-transition-old(root) {
+      animation: slideOutClean 150ms cubic-bezier(0.4, 0, 1, 1) forwards;
+    }
+
     ::view-transition-new(root) {
-      animation-duration: 420ms;
-      animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+      opacity: 0;
+      animation: slideInClean 300ms cubic-bezier(0.22, 1, 0.36, 1) 150ms forwards;
     }
 
-    ::view-transition-group(vt-index),
-    ::view-transition-group(vt-title),
-    ::view-transition-group(vt-hero),
     ::view-transition-group(vt-rule) {
-      animation-duration: 650ms;
+      animation-duration: 460ms;
       animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    /* Lightbox Modal for Uncropped Evidence Inspection */
+    ::view-transition-old(vt-rule),
+    ::view-transition-new(vt-rule) {
+      animation: none;
+      mix-blend-mode: normal;
+    }
+
+    /* Lightbox Modal for Uncropped Full-Screen Inspection */
     .lightbox {
       position: fixed;
       inset: 0;
       z-index: 200;
-      background: rgba(14, 16, 19, 0.94);
+      background: rgba(14, 16, 19, 0.95);
       display: none;
       place-items: center;
       padding: 3vh 4vw;
@@ -269,14 +302,14 @@
       align-items: center;
       max-width: 92vw;
       max-height: 92vh;
-      gap: 1.5vh;
+      gap: 1.4vh;
     }
 
     .lightbox-inner img {
       max-width: 90vw;
-      max-height: 82vh;
+      max-height: 83vh;
       object-fit: contain;
-      border: 1px solid rgba(248, 247, 243, 0.3);
+      border: 1px solid rgba(248, 247, 243, 0.35);
       background: #0E1013;
     }
 
@@ -288,7 +321,7 @@
       text-transform: uppercase;
     }
 
-    /* Invisible Edge Click Zones for Presenter Ergonomics */
+    /* Invisible Edge Click Zones */
     .nav-zone-prev,
     .nav-zone-next {
       position: absolute;
@@ -301,17 +334,12 @@
     .nav-zone-prev { left: 0; }
     .nav-zone-next { right: 0; }
 
-    /* Calm Mobile / Reduced Motion Compliance */
     @media (max-width: 1024px), (prefers-reduced-motion: reduce) {
-      .shutter-img img {
-        animation: none !important;
-        clip-path: none !important;
-        transform: none !important;
-      }
       ::view-transition-group(*),
       ::view-transition-old(*),
       ::view-transition-new(*) {
         animation-duration: 0.01ms !important;
+        animation-delay: 0ms !important;
       }
     }
   </style>
@@ -321,7 +349,7 @@
   <main class="viewport-wrapper">
     <div class="canvas-16-9" id="stage" data-theme="bone">
 
-      <!-- Minimal Swiss Index (Top Right Only) -->
+      <!-- Minimal Swiss Index -->
       <div class="hud-index" id="hudIndex">01 / 11</div>
 
       <!-- Invisible Edge Click Zones -->
@@ -332,87 +360,92 @@
            SLIDE 01: BÌA (7:5 ASYMMETRIC SPLIT — 42% NEGATIVE SPACE TOP)
            ================================================================== -->
       <section class="slide active" data-slide="1" data-theme="bone">
-        <!-- Top Row: Minimal Project Tag (y: 6.67% -> 46% is open Bone Negative Space) -->
         <div style="grid-column: 1 / 9; align-self: start;">
-          <div class="t-index c-vermilion" data-vt="index">01 / DỰ ÁN KHỞI NGHIỆP KINH TẾ &amp; PHÁP LUẬT 11</div>
+          <div class="t-index c-vermilion">01 / DỰ ÁN KHỞI NGHIỆP KINH TẾ &amp; PHÁP LUẬT 11</div>
         </div>
 
-        <!-- Lower Asymmetric Anchor (y: 48% -> 88%) -->
-        <div style="grid-column: 1 / 9; align-self: end; padding-bottom: 2.5cqh;">
-          <div class="rule-h-strong" data-vt="rule" style="margin-bottom: 3.2cqh;"></div>
-          <h1 class="t-h1 c-ink" data-vt="title" style="margin-bottom: 2.8cqh;">
+        <div style="grid-column: 1 / 9; align-self: end; padding-bottom: 3cqh;">
+          <div class="rule-h-strong" data-vt="rule" style="margin-bottom: 3cqh;"></div>
+          <h1 class="t-h1 c-ink" style="margin-bottom: 2.5cqh;">
             Laptop chuẩn Nhật<br/>cho học sinh THPT.
           </h1>
-          <p class="t-lead c-ink" style="max-width: 92%;">
-            Nhập theo đơn cọc. Kiểm định 15 bước thực chiến. Lãi ròng <span class="c-pine" style="font-weight: 700;">+500.000đ</span> mỗi máy.
+          <p class="t-lead c-muted">
+            Nhập theo đơn cọc · Kiểm định 15 bước · Lãi ròng <span class="c-pine">+500.000đ/máy</span>
           </p>
         </div>
 
-        <!-- Right Hero Metric Counter-Weight (Col 9-12) -->
-        <div style="grid-column: 9 / 13; align-self: end; padding-bottom: 2.5cqh; border-left: 1px solid var(--rule); padding-left: 2.5cqw;">
-          <div class="t-hero c-vermilion" data-vt="hero" style="font-size: 18.5cqh;">0đ</div>
-          <div class="t-index c-ink" style="margin-top: 1.5cqh;">VỐN TỒN KHO (JUST-IN-TIME)</div>
-          <p class="t-body c-muted" style="margin-top: 0.8cqh;">
-            Chỉ xuất kho sỉ khi đã nhận cọc. Triệt tiêu 100% rủi ro đọng vốn và trượt giá phần cứng.
-          </p>
+        <div style="grid-column: 9 / 13; align-self: end; padding-bottom: 3cqh; border-left: 1px solid var(--rule); padding-left: 2.5cqw;">
+          <div class="t-hero c-vermilion" style="font-size: 18cqh;">0đ</div>
+          <div class="t-index c-ink" style="margin-top: 1.4cqh;">VỐN TỒN KHO (JUST-IN-TIME)</div>
+          <div class="t-body c-muted" style="margin-top: 0.6cqh;">Nhận cọc trước · Xuất kho sỉ trong 24h</div>
         </div>
 
-        <!-- Bottom Architectural Baseline: 10 Real Team Members -->
-        <div style="grid-column: 1 / 13; align-self: end; border-top: 1px solid var(--rule); padding-top: 1.6cqh; display: flex; justify-content: space-between; align-items: baseline;">
+        <div style="grid-column: 1 / 13; align-self: end; border-top: 1px solid var(--rule); padding-top: 1.6cqh; display: flex; justify-content: space-between;">
           <span class="t-index c-ink">THƯƠNG HIỆU: LAPTOP VƯƠNG GIA</span>
-          <span class="t-index c-muted">ĐỘI NGŨ 10 NHÂN SỰ THỰC CHIẾN · PHÂN KHÚC 3,5 – 5,5 TRIỆU VNĐ</span>
+          <span class="t-index c-muted">10 NHÂN SỰ CHUYÊN TRÁCH · PHÂN KHÚC 3,5 – 5,5 TRIỆU VNĐ</span>
         </div>
       </section>
 
       <!-- ==================================================================
-           SLIDE 02: THỊ TRƯỜNG & KHẢO SÁT N=120 (8:4 BROKEN GRID)
+           SLIDE 02: KHẢO SÁT THỰC TẾ 8 CÂU HỎI (N = 120 PHIẾU — 7:5 SPLIT)
            ================================================================== -->
       <section class="slide" data-slide="2" data-theme="bone">
-        <!-- Col 1-8: Dominant Pain Point Hero -->
-        <div style="grid-column: 1 / 9; display: flex; flex-direction: column; justify-content: space-between;">
+        <!-- Col 1-7: Primary Pain Point & Core Survey Finding -->
+        <div style="grid-column: 1 / 8; display: flex; flex-direction: column; justify-content: space-between; padding-right: 1.5cqw;">
           <div>
-            <div class="t-index c-vermilion" data-vt="index">02 / KHẢO SÁT THỰC TẾ N = 120 HỌC SINH THPT</div>
-            <h2 class="t-h2 c-ink" data-vt="title" style="margin-top: 1.8cqh; max-width: 95%;">
-              Nỗi sợ “máy dựng, luộc linh kiện” chặn đứng nhu cầu học tập số.
+            <div class="t-index c-vermilion">02 / KHẢO SÁT 8 CÂU HỎI THỰC TẾ (N = 120 PHIẾU)</div>
+            <h2 class="t-h2 c-ink" style="margin-top: 1.6cqh;">
+              Nỗi sợ “máy dựng” &amp; rào cản giá chặn đứng nhu cầu.
             </h2>
           </div>
 
-          <div style="margin-left: -1.2cqw; my: auto;">
-            <div class="t-hero c-vermilion" data-vt="hero" style="font-size: 31cqh; letter-spacing: -0.055em;">81,7%</div>
+          <div style="margin-left: -0.8cqw;">
+            <div class="t-hero c-vermilion" style="font-size: 27cqh;">90,0%</div>
           </div>
 
-          <div style="border-top: 2px solid var(--ink); padding-top: 2cqh; max-width: 88%;" data-vt="rule">
-            <div class="t-lead c-ink" style="font-weight: 700;">98 / 120 học sinh &amp; phụ huynh bất an tuyệt đối</div>
-            <p class="t-body c-muted" style="margin-top: 0.8cqh;">
-              Lo sợ mua nhầm laptop tân trang trôi nổi trên mạng, bị tráo RAM/SSD kém chất lượng hoặc người bán chặn số sau 1 tuần sử dụng.
-            </p>
+          <div style="border-top: 2px solid var(--ink); padding-top: 1.8cqh;" data-vt="rule">
+            <div class="t-lead c-ink">108 / 120 người sợ mua nhầm máy sửa main, hỏng vặt &amp; lừa cọc</div>
+            <div class="t-index c-muted" style="margin-top: 0.8cqh;">
+              [ CÂU 6 ] 43,3% SỢ MÁY DỰNG · 29,2% SỢ KHÔNG BẢO HÀNH · 17,5% SỢ LỪA ĐẢO QUA MẠNG
+            </div>
           </div>
         </div>
 
-        <!-- Col 9: Intentional 1-Column Pure Negative Space Buffer -->
-        <div style="grid-column: 9 / 10;"></div>
-
-        <!-- Col 10-12: Asymmetric Vertical Stack of Secondary Survey Metrics -->
-        <div style="grid-column: 10 / 13; border-left: 1px solid var(--rule); padding-left: 2.2cqw; display: flex; flex-direction: column; justify-content: flex-end; gap: 5.5cqh;">
-          <div>
-            <div class="t-index c-muted">[ NHU CẦU CẤP THIẾT ]</div>
-            <div class="t-hero c-ink" style="font-size: 9.5cqh; margin-top: 1cqh;">72,5%</div>
-            <div class="t-body-bold c-ink" style="margin-top: 1cqh;">87 / 120 học sinh bắt buộc cần máy</div>
-            <p class="t-body c-muted" style="margin-top: 0.5cqh;">
-              Làm thuyết trình Canva, lập trình Python Tin học 11 và luyện đề trực tuyến mỗi tuần.
-            </p>
+        <!-- Col 8-12: 4 Pillar Metrics from the 8-Question Form -->
+        <div style="grid-column: 8 / 13; border-left: 1px solid var(--rule); padding-left: 2.4cqw; display: grid; grid-template-rows: repeat(4, 1fr); align-items: center;">
+          
+          <div style="border-bottom: 1px solid var(--rule); padding: 1.2cqh 0;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+              <span class="t-hero c-ink" style="font-size: 6.8cqh;">78,3%</span>
+              <span class="t-index c-vermilion">CÂU 2 · THIẾT BỊ</span>
+            </div>
+            <div class="t-body-bold c-ink" style="margin-top: 0.4cqh;">Chưa có máy riêng (42,5%) hoặc máy cũ lag (35,8%)</div>
           </div>
 
-          <div class="rule-h"></div>
-
-          <div>
-            <div class="t-index c-muted">[ ĐIỂM NGHẼN NGÂN SÁCH ]</div>
-            <div class="t-hero c-ink" style="font-size: 9.5cqh; margin-top: 1cqh;">65,8%</div>
-            <div class="t-body-bold c-ink" style="margin-top: 1cqh;">79 / 120 gia đình chi dưới 5 triệu</div>
-            <p class="t-body c-muted" style="margin-top: 0.5cqh;">
-              Không thể tiếp cận laptop mới tại chuỗi lớn (12–18 triệu VNĐ). Khoảng trống thị trường bỏ ngỏ.
-            </p>
+          <div style="border-bottom: 1px solid var(--rule); padding: 1.2cqh 0;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+              <span class="t-hero c-ink" style="font-size: 6.8cqh;">85,0%</span>
+              <span class="t-index c-vermilion">CÂU 5 · NGÂN SÁCH</span>
+            </div>
+            <div class="t-body-bold c-ink" style="margin-top: 0.4cqh;">Chi dưới 5,5 triệu (65,8% chọn 3,5–5,5 triệu VNĐ)</div>
           </div>
+
+          <div style="border-bottom: 1px solid var(--rule); padding: 1.2cqh 0;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+              <span class="t-hero c-pine" style="font-size: 6.8cqh;">87,5%</span>
+              <span class="t-index c-pine">CÂU 7 · KÊNH TIN CẬY</span>
+            </div>
+            <div class="t-body-bold c-ink" style="margin-top: 0.4cqh;">Tin bạn cùng trường (50,8%) &amp; Fanpage trường (36,7%)</div>
+          </div>
+
+          <div style="padding: 1.2cqh 0;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+              <span class="t-hero c-pine" style="font-size: 6.8cqh;">86,6%</span>
+              <span class="t-index c-pine">CÂU 8 · ĐẶT CỌC JIT</span>
+            </div>
+            <div class="t-body-bold c-ink" style="margin-top: 0.4cqh;">Sẵn sàng cọc 200k–500k khi cam kết hoàn tiền 100%</div>
+          </div>
+
         </div>
       </section>
 
@@ -420,162 +453,141 @@
            SLIDE 03: ĐỊNH VỊ & CHIẾN LƯỢC 4P (4:8 DIAGONAL STAIRCASE)
            ================================================================== -->
       <section class="slide" data-slide="3" data-theme="bone">
-        <!-- Col 1-4: 2-Axis Positioning Coordinate Map -->
-        <div style="grid-column: 1 / 5; display: flex; flex-direction: column; justify-content: space-between; border-right: 1px solid var(--rule); padding-right: 2.5cqw;">
+        <div style="grid-column: 1 / 5; display: flex; flex-direction: column; justify-content: space-between; border-right: 1px solid var(--rule); padding-right: 2.2cqw;">
           <div>
-            <div class="t-index c-vermilion" data-vt="index">03 / ĐỊNH VỊ &amp; MA TRẬN 4P</div>
-            <h2 class="t-h2 c-ink" data-vt="title" style="margin-top: 1.8cqh;">
-              Chiếm lĩnh vùng trống Giá mềm · Bảo chứng thật.
+            <div class="t-index c-vermilion">03 / ĐỊNH VỊ &amp; MA TRẬN 4P</div>
+            <h2 class="t-h2 c-ink" style="margin-top: 1.6cqh;">
+              Độc chiếm ngách Giá mềm · Bảo chứng thật.
             </h2>
           </div>
 
-          <!-- Architectural 2-Axis Coordinate Map -->
-          <div style="position: relative; width: 100%; height: 46cqh; border-left: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink);">
-            <span class="t-index c-muted" style="position: absolute; top: 1cqh; left: 1cqw;">ĐỘ TIN CẬY CAO ↑</span>
-            <span class="t-index c-muted" style="position: absolute; bottom: 1cqh; right: 0.5cqw;">GIÁ THẤP →</span>
+          <!-- 2-Axis Positioning Coordinate Map -->
+          <div style="position: relative; width: 100%; height: 48cqh; border-left: 2px solid var(--ink); border-bottom: 2px solid var(--ink);">
+            <span class="t-index c-muted" style="position: absolute; top: 1cqh; left: 1cqw;">UY TÍN CAO ↑</span>
+            <span class="t-index c-muted" style="position: absolute; bottom: 1cqh; right: 0.5cqw;">GIÁ MỀM →</span>
 
-            <!-- Competitor 1: Chuỗi lớn -->
-            <div style="position: absolute; top: 16%; left: 14%;">
-              <div style="width: 1.2cqh; height: 1.2cqh; background: var(--ink-muted); display: inline-block;"></div>
-              <div class="t-index c-muted" style="margin-top: 0.5cqh;">CHUỖI BÁN LẺ LỚN</div>
-              <div class="t-body c-muted">12 – 18 triệu VNĐ</div>
+            <div style="position: absolute; top: 18%; left: 10%;">
+              <div style="width: 1.3cqh; height: 1.3cqh; background: var(--ink-muted);"></div>
+              <div class="t-index c-muted" style="margin-top: 0.6cqh;">SIÊU THỊ LỚN</div>
+              <div class="t-body c-muted">12 – 18 triệu</div>
             </div>
 
-            <!-- Competitor 2: Chợ trời -->
-            <div style="position: absolute; bottom: 16%; right: 14%; text-align: right;">
-              <div style="width: 1.2cqh; height: 1.2cqh; background: var(--ink-muted); display: inline-block;"></div>
-              <div class="t-index c-muted" style="margin-top: 0.5cqh;">THỢ LẺ / CHỢ MẠNG</div>
-              <div class="t-body c-muted">Rủi ro luộc đồ</div>
+            <div style="position: absolute; bottom: 16%; right: 10%; text-align: right;">
+              <div style="width: 1.3cqh; height: 1.3cqh; background: var(--ink-muted); margin-left: auto;"></div>
+              <div class="t-index c-muted" style="margin-top: 0.6cqh;">CHỢ MẠNG</div>
+              <div class="t-body c-muted">Dễ bị luộc đồ</div>
             </div>
 
-            <!-- Target Anchor: Laptop Vương Gia -->
-            <div style="position: absolute; top: 14%; right: 6%; text-align: right;" data-vt="hero">
-              <div style="width: 2.2cqh; height: 2.2cqh; background: var(--vermilion); display: inline-block;"></div>
-              <div class="t-index c-vermilion" style="margin-top: 0.8cqh;">LAPTOP VƯƠNG GIA ↗</div>
-              <div class="t-body-bold c-ink">3,5 – 5,5 triệu VNĐ</div>
-              <div class="t-body c-pine" style="font-weight: 600;">Mở máy kiểm main tại chỗ</div>
+            <div style="position: absolute; top: 14%; right: 6%; text-align: right;">
+              <div style="width: 2.4cqh; height: 2.4cqh; background: var(--vermilion); margin-left: auto;"></div>
+              <div class="t-index c-vermilion" style="margin-top: 0.8cqh;">VƯƠNG GIA ↗</div>
+              <div class="t-lead c-ink">3,5 – 5,5 triệu</div>
+              <div class="t-index c-pine" style="margin-top: 0.3cqh;">KIỂM MAIN TẠI TRƯỜNG</div>
             </div>
           </div>
 
-          <div class="t-index c-muted">ĐỊNH VỊ ĐỘC TÔN TẠI TRƯỜNG THPT</div>
+          <div class="t-index c-muted">72,5% CẦN MÁY BỀN NHẸ &lt; 1,4KG (CÂU 4)</div>
         </div>
 
-        <!-- Col 5-12: 4P Diagonal Staircase (Upper-right remains open negative space) -->
+        <!-- Col 5-12: Ultra-Clean 4P Staircase (No Long Paragraphs) -->
         <div style="grid-column: 5 / 13; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); grid-template-rows: repeat(4, 1fr); padding-left: 1.5cqw;">
-          <!-- Step 1: PRODUCT (Cols 1-6, Row 1) -->
+          
           <div style="grid-column: 1 / 7; grid-row: 1; align-self: center; border-top: 2px solid var(--ink); padding-top: 1.4cqh;" data-vt="rule">
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div style="display: flex; justify-content: space-between;">
               <span class="t-index c-vermilion">01 / PRODUCT — SẢN PHẨM</span>
-              <span class="t-index c-muted">GRADE A BUSINESS</span>
+              <span class="t-index c-muted">MAIN ZIN 100%</span>
             </div>
-            <div class="t-lead c-ink" style="font-weight: 700; margin-top: 0.4cqh;">Dell Latitude · HP EliteBook · ThinkPad nguyên bản</div>
-            <p class="t-body c-muted">Cam kết 100% mainboard zin, có cổng HDMI trình chiếu trực tiếp trên lớp, tặng balo &amp; chuột.</p>
+            <div class="t-lead c-ink" style="margin-top: 0.6cqh;">Dell Latitude · HP EliteBook · ThinkPad chuẩn Nhật</div>
           </div>
 
-          <!-- Step 2: PRICE (Cols 2-7, Row 2) -->
           <div style="grid-column: 2 / 8; grid-row: 2; align-self: center; border-top: 1px solid var(--rule); padding-top: 1.4cqh;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div style="display: flex; justify-content: space-between;">
               <span class="t-index c-vermilion">02 / PRICE — GIÁ BÁN</span>
-              <span class="t-index c-muted">TIẾT KIỆM 15 – 20%</span>
+              <span class="t-index c-pine">RẺ HƠN 15–20%</span>
             </div>
-            <div class="t-lead c-ink" style="font-weight: 700; margin-top: 0.4cqh;">3.500.000đ – 5.500.000đ (Trọn gói không phí ẩn)</div>
-            <p class="t-body c-muted">Cắt bỏ hoàn toàn chi phí thuê mặt bằng và nhân sự cồng kềnh để giữ giá sát kho sỉ cho học sinh.</p>
+            <div class="t-lead c-ink" style="margin-top: 0.6cqh;">3.500.000đ – 5.500.000đ (Tặng kèm balo, chuột, túi chống sốc)</div>
           </div>
 
-          <!-- Step 3: PLACE (Cols 3-8, Row 3) -->
           <div style="grid-column: 3 / 9; grid-row: 3; align-self: center; border-top: 1px solid var(--rule); padding-top: 1.4cqh;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div style="display: flex; justify-content: space-between;">
               <span class="t-index c-vermilion">03 / PLACE — PHÂN PHỐI</span>
-              <span class="t-index c-muted">O2O TẠI TRƯỜNG</span>
+              <span class="t-index c-muted">O2O TRƯỜNG HỌC</span>
             </div>
-            <div class="t-lead c-ink" style="font-weight: 700; margin-top: 0.4cqh;">Xem máy trực tiếp giờ ra chơi · Giao tận nhà cùng phụ huynh</div>
-            <p class="t-body c-muted">Xóa bỏ rào cản mua hàng qua mạng: người bán là bạn đồng trang lứa có uy tín thật tại trường.</p>
+            <div class="t-lead c-ink" style="margin-top: 0.6cqh;">Trải nghiệm máy giờ ra chơi · Bàn giao tận nhà cùng phụ huynh</div>
           </div>
 
-          <!-- Step 4: PROMOTION (Cols 4-9, Row 4) -->
           <div style="grid-column: 4 / 9; grid-row: 4; align-self: center; border-top: 1px solid var(--rule); padding-top: 1.4cqh;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div style="display: flex; justify-content: space-between;">
               <span class="t-index c-vermilion">04 / PROMOTION — XÚC TIẾN</span>
-              <span class="t-index c-pine">CHI PHÍ QUẢNG CÁO 0Đ</span>
+              <span class="t-index c-pine">CAC = 0Đ</span>
             </div>
-            <div class="t-lead c-ink" style="font-weight: 700; margin-top: 0.4cqh;">Hệ thống Bot Auto-post Fanpage tự động hóa + Video test thực tế</div>
-            <p class="t-body c-muted">Tự phát triển công cụ đăng bài tự động lên các hội nhóm học sinh, giữ chi phí CAC = 0đ.</p>
+            <div class="t-lead c-ink" style="margin-top: 0.6cqh;">Bot Auto-post Fanpage tự động 4 khung giờ + Video test thực tế</div>
           </div>
+
         </div>
       </section>
 
       <!-- ==================================================================
-           SLIDE 04: TÀI CHÍNH & ĐIỂM HÒA VỐN (4:8 RIGHT-BLEED GIANT "0")
+           SLIDE 04: TÀI CHÍNH & ĐIỂM HÒA VỐN (6:6 RIGHT-BLEED GIANT "0")
            ================================================================== -->
       <section class="slide" data-slide="4" data-theme="bone">
-        <!-- Col 1-6: Unit Economics Waterfall Ledger -->
         <div style="grid-column: 1 / 7; display: flex; flex-direction: column; justify-content: space-between; z-index: 2;">
           <div>
-            <div class="t-index c-vermilion" data-vt="index">04 / HẠCH TOÁN TÀI CHÍNH &amp; ĐIỂM HÒA VỐN</div>
-            <h2 class="t-h2 c-ink" data-vt="title" style="margin-top: 1.8cqh;">
-              Cấu trúc 1 máy mẫu:<br/>HP EliteBook 830 G6.
+            <div class="t-index c-vermilion">04 / BÀI TOÁN TÀI CHÍNH &amp; ĐIỂM HÒA VỐN</div>
+            <h2 class="t-h2 c-ink" style="margin-top: 1.6cqh;">
+              Hạch toán 01 máy mẫu:<br/>HP EliteBook 830 G6.
             </h2>
           </div>
 
-          <!-- Open Hairline Waterfall Table -->
           <div style="border-top: 2px solid var(--ink);" data-vt="rule">
             <div style="display: flex; justify-content: space-between; padding: 1.3cqh 0; border-bottom: 1px solid var(--rule);">
               <span class="t-body-bold c-ink">Giá bán lẻ niêm yết (P)</span>
               <span class="t-body-bold c-ink" style="font-family: var(--font-mono);">4.600.000đ</span>
             </div>
             <div style="display: flex; justify-content: space-between; padding: 1.1cqh 0; border-bottom: 1px solid var(--rule);">
-              <span class="t-body c-muted">− Giá nhập sỉ nguyên bản (kèm sạc zin)</span>
+              <span class="t-body c-muted">− Giá nhập kho sỉ (kèm sạc zin)</span>
               <span class="t-body c-muted" style="font-family: var(--font-mono);">− 3.800.000đ</span>
             </div>
             <div style="display: flex; justify-content: space-between; padding: 1.1cqh 0; border-bottom: 1px solid var(--rule);">
-              <span class="t-body c-muted">− Combo quà tặng (Chuột, lót, túi chống sốc)</span>
-              <span class="t-body c-muted" style="font-family: var(--font-mono);">− 150.000đ</span>
+              <span class="t-body c-muted">− Combo phụ kiện &amp; Keo tản nhiệt Arctic MX-4</span>
+              <span class="t-body c-muted" style="font-family: var(--font-mono);">− 200.000đ</span>
             </div>
             <div style="display: flex; justify-content: space-between; padding: 1.1cqh 0; border-bottom: 1px solid var(--rule);">
-              <span class="t-body c-muted">− Vật tư bảo dưỡng &amp; Keo tản nhiệt Arctic MX-4</span>
-              <span class="t-body c-muted" style="font-family: var(--font-mono);">− 50.000đ</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; padding: 1.1cqh 0; border-bottom: 1px solid var(--rule);">
-              <span class="t-body c-muted">− Trích lập Quỹ dự phòng bảo hành rủi ro</span>
+              <span class="t-body c-muted">− Quỹ dự phòng bảo hành rủi ro</span>
               <span class="t-body c-muted" style="font-family: var(--font-mono);">− 100.000đ</span>
             </div>
             <div style="display: flex; justify-content: space-between; padding: 1.1cqh 0; border-bottom: 2px solid var(--ink);">
-              <span class="t-body c-pine" style="font-weight: 600;">− Chi phí mặt bằng &amp; Quảng cáo (Auto-post Bot)</span>
-              <span class="t-body c-pine" style="font-family: var(--font-mono); font-weight: 700;">0đ</span>
+              <span class="t-body-bold c-pine">− Định phí Mặt bằng &amp; Quảng cáo (FC)</span>
+              <span class="t-body-bold c-pine" style="font-family: var(--font-mono);">0đ</span>
             </div>
             <div style="display: flex; justify-content: space-between; padding: 1.6cqh 0; align-items: baseline;">
-              <span class="t-lead c-pine" style="font-weight: 700;">= LÃI RÒNG BỎ TÚI / 01 MÁY</span>
+              <span class="t-lead c-pine">= LÃI RÒNG BỎ TÚI / 01 MÁY</span>
               <span class="t-h2 c-pine" style="font-family: var(--font-mono);">+500.000đ</span>
             </div>
           </div>
 
-          <!-- Quarter Target Summary -->
-          <div style="border-top: 1px solid var(--rule); padding-top: 1.6cqh; display: flex; justify-content: space-between;">
+          <div style="border-top: 1px solid var(--rule); padding-top: 1.6cqh; display: flex; justify-content: space-between; align-items: baseline;">
             <div>
-              <div class="t-index c-muted">KẾ HOẠCH 01 HỌC KỲ (20 MÁY)</div>
-              <div class="t-lead c-ink" style="font-weight: 700; margin-top: 0.4cqh;">Doanh thu 92.000.000đ · Lãi ròng <span class="c-pine">+10.000.000đ</span></div>
+              <div class="t-index c-muted">MỤC TIÊU 01 HỌC KỲ (20 MÁY)</div>
+              <div class="t-lead c-ink" style="margin-top: 0.4cqh;">Doanh thu 92.000.000đ · Lãi ròng <span class="c-pine">+10.000.000đ</span></div>
             </div>
-            <div style="text-align: right;">
-              <div class="t-index c-muted">TỶ SUẤT ROS</div>
-              <div class="t-lead c-pine" style="font-weight: 700; font-family: var(--font-mono); margin-top: 0.4cqh;">10,87%</div>
-            </div>
+            <span class="t-index c-pine">ROS: 10,87%</span>
           </div>
         </div>
 
-        <!-- Col 7-12: Giant Right-Bleed Break-Even "0" -->
         <div style="grid-column: 7 / 13; position: relative; display: flex; flex-direction: column; justify-content: flex-end; padding-left: 3cqw; border-left: 1px solid var(--rule);">
-          <div style="position: absolute; top: -4cqh; right: -4cqw; pointer-events: none;" data-vt="hero">
-            <div class="t-hero c-pine" style="font-size: 56cqh; line-height: 0.78;">0</div>
+          <div style="position: absolute; top: -2cqh; right: -3cqw; pointer-events: none;">
+            <div class="t-hero c-pine" style="font-size: 54cqh; line-height: 0.78;">0</div>
           </div>
 
-          <div style="position: relative; z-index: 3; background: rgba(248, 247, 243, 0.92); padding-top: 2cqh; border-top: 2px solid var(--ink);">
+          <div style="position: relative; z-index: 3; background: rgba(248, 247, 243, 0.94); padding-top: 2cqh; border-top: 2px solid var(--ink);">
             <div class="t-index c-pine">ĐIỂM HÒA VỐN TUYỆT ĐỐI (BREAK-EVEN POINT)</div>
-            <div class="t-lead c-ink" style="font-family: var(--font-mono); font-weight: 700; margin-top: 1cqh;">
+            <div class="t-lead c-ink" style="font-family: var(--font-mono); margin-top: 0.8cqh;">
               Q<sub>BEP</sub> = FC / (P − VC) = 0 / 500.000 = 0 MÁY
             </div>
-            <p class="t-body c-muted" style="margin-top: 1cqh;">
-              Vì Định phí (FC) = 0đ, dự án <strong>không bao giờ lỗ vốn cố định</strong>. Có lãi ròng +500.000đ ngay từ chiếc máy đầu tiên bàn giao.
-            </p>
+            <div class="t-body c-muted" style="margin-top: 0.6cqh;">
+              Định phí = 0đ · Có lãi ròng +500.000đ ngay từ chiếc máy đầu tiên.
+            </div>
           </div>
         </div>
       </section>
@@ -584,223 +596,180 @@
            SLIDE 05: VẬN HÀNH JIT 24H & 15 BƯỚC QC (PROPORTIONAL TIME AXIS)
            ================================================================== -->
       <section class="slide" data-slide="5" data-theme="bone">
-        <!-- Top Header -->
         <div style="grid-column: 1 / 13; align-self: start;">
-          <div class="t-index c-vermilion" data-vt="index">05 / QUY TRÌNH JUST-IN-TIME 24 GIỜ &amp; KIỂM ĐỊNH 15 BƯỚC</div>
-          <h2 class="t-h2 c-ink" data-vt="title" style="margin-top: 1.5cqh;">
-            Bán trước, lấy hàng sau — Vòng quay vốn 24 giờ khép kín.
+          <div class="t-index c-vermilion">05 / QUY TRÌNH JUST-IN-TIME 24 GIỜ &amp; KIỂM ĐỊNH 15 BƯỚC</div>
+          <h2 class="t-h2 c-ink" style="margin-top: 1.5cqh;">
+            Bán trước, lấy hàng sau — Vòng quay vốn 24 giờ.
           </h2>
         </div>
 
-        <!-- Middle Proportional Time Axis (True Mathematical Spacing 00h -> 02h -> 08h ---------> 24h) -->
-        <div style="grid-column: 1 / 13; align-self: center; position: relative; padding: 4cqh 0;">
+        <!-- Proportional Time Axis -->
+        <div style="grid-column: 1 / 13; align-self: center; position: relative; padding: 3cqh 0;">
           <div class="rule-h-strong" data-vt="rule" style="position: relative;">
-            <!-- Node 00h (x: 0%) -->
             <div style="position: absolute; left: 0%; top: -1.1cqh; width: 2.2cqh; height: 2.2cqh; background: var(--vermilion);"></div>
-            <!-- Node 02h (x: 16%) -->
-            <div style="position: absolute; left: 18%; top: -0.8cqh; width: 1.6cqh; height: 1.6cqh; background: var(--ink);"></div>
-            <!-- Node 08h (x: 38%) -->
-            <div style="position: absolute; left: 38%; top: -0.8cqh; width: 1.6cqh; height: 1.6cqh; background: var(--ink);"></div>
-            <!-- Node 24h (x: 82%) -->
-            <div style="position: absolute; left: 80%; top: -1.1cqh; width: 2.2cqh; height: 2.2cqh; background: var(--pine);"></div>
+            <div style="position: absolute; left: 20%; top: -0.8cqh; width: 1.6cqh; height: 1.6cqh; background: var(--ink);"></div>
+            <div style="position: absolute; left: 42%; top: -0.8cqh; width: 1.6cqh; height: 1.6cqh; background: var(--ink);"></div>
+            <div style="position: absolute; left: 82%; top: -1.1cqh; width: 2.2cqh; height: 2.2cqh; background: var(--pine);"></div>
           </div>
 
-          <!-- Proportional Node Labels -->
-          <div style="position: relative; height: 16cqh; margin-top: 2.2cqh;">
-            <div style="position: absolute; left: 0%; width: 16%;">
+          <div style="position: relative; height: 12cqh; margin-top: 2.2cqh;">
+            <div style="position: absolute; left: 0%; width: 18%;">
               <div class="t-index c-vermilion">00H00 / THU CỌC</div>
-              <div class="t-body-bold c-ink" style="margin-top: 0.5cqh;">Nhận cọc 200k–500k</div>
-              <p class="t-body c-muted">Chốt cấu hình theo đúng nhu cầu học tập.</p>
+              <div class="t-lead c-ink" style="margin-top: 0.4cqh;">Cọc 200k – 500k</div>
             </div>
 
-            <div style="position: absolute; left: 18%; width: 18%;">
+            <div style="position: absolute; left: 20%; width: 20%;">
               <div class="t-index c-ink">02H00 / XUẤT KHO</div>
-              <div class="t-body-bold c-ink" style="margin-top: 0.5cqh;">Lấy máy tại kho sỉ</div>
-              <p class="t-body c-muted">Sàng lọc ngoại quan &amp; đối chiếu Serial BIOS.</p>
+              <div class="t-lead c-ink" style="margin-top: 0.4cqh;">Chọn máy tại kho sỉ</div>
             </div>
 
-            <div style="position: absolute; left: 38%; width: 24%;">
-              <div class="t-index c-ink">08H00 / CHẾ TÁC &amp; QC</div>
-              <div class="t-body-bold c-ink" style="margin-top: 0.5cqh;">Test 15 bước &amp; Tra keo MX-4</div>
-              <p class="t-body c-muted">Stress-test nhiệt độ, cài sẵn Office 365 &amp; Canva.</p>
+            <div style="position: absolute; left: 42%; width: 24%;">
+              <div class="t-index c-ink">08H00 / KIỂM ĐỊNH</div>
+              <div class="t-lead c-ink" style="margin-top: 0.4cqh;">Test 15 bước &amp; Tra keo MX-4</div>
             </div>
 
-            <!-- Intentional Wide Visual Span (38% -> 80%) illustrating Zero Inventory Holding -->
-            <div style="position: absolute; left: 63%; top: 1.5cqh; width: 15%; text-align: center;">
-              <div class="t-index c-pine">← 0Đ TỒN KHO →</div>
+            <div style="position: absolute; left: 66%; top: 0.8cqh; width: 14%; text-align: center;">
+              <div class="t-index c-pine">← 0Đ LƯU KHO →</div>
             </div>
 
-            <div style="position: absolute; left: 80%; width: 20%;">
+            <div style="position: absolute; left: 82%; width: 18%;">
               <div class="t-index c-pine">24H00 / BÀN GIAO</div>
-              <div class="t-body-bold c-ink" style="margin-top: 0.5cqh;">Mở máy nghiệm thu &amp; Thu tiền</div>
-              <p class="t-body c-muted">Dán tem niêm phong bảo hành 1 đổi 1 trong 30 ngày.</p>
+              <div class="t-lead c-ink" style="margin-top: 0.4cqh;">Mở máy &amp; Thu tiền</div>
             </div>
           </div>
         </div>
 
-        <!-- Bottom Section: Giant "15" + 3 Concise QC Tiers -->
-        <div style="grid-column: 1 / 4; align-self: end; border-top: 1px solid var(--rule); padding-top: 2cqh;">
-          <div class="t-hero c-ink" data-vt="hero" style="font-size: 21cqh;">15</div>
-          <div class="t-index c-vermilion" style="margin-top: 0.8cqh;">CHỐT CHẶN KIỂM ĐỊNH PHẦN CỨNG</div>
+        <!-- Bottom: Giant "15" + 3 Crisp QC Blocks -->
+        <div style="grid-column: 1 / 4; align-self: end; border-top: 1px solid var(--rule); padding-top: 2.2cqh;">
+          <div class="t-hero c-ink" style="font-size: 20cqh;">15</div>
+          <div class="t-index c-vermilion" style="margin-top: 0.8cqh;">CHỐT CHẶN PHẦN CỨNG</div>
         </div>
 
         <div style="grid-column: 4 / 13; align-self: end; border-top: 1px solid var(--rule); padding-top: 2.5cqh; display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 2cqw;">
           <div style="border-left: 1px solid var(--rule); padding-left: 1.5cqw;">
             <div class="t-index c-vermilion">[ BƯỚC 01 – 06 ]</div>
-            <div class="t-lead c-ink" style="font-weight: 700; margin-top: 0.8cqh;">Cơ khí &amp; Hiển thị</div>
-            <p class="t-body c-muted" style="margin-top: 0.6cqh;">
-              Vỏ &gt;95%, bản lề thép cứng cáp, màn hình IPS 0 điểm chết, bàn phím không liệt, đầy đủ HDMI/USB-C.
-            </p>
+            <div class="t-lead c-ink" style="margin-top: 0.8cqh;">Ngoại quan &amp; Màn hình</div>
+            <div class="t-body c-muted" style="margin-top: 0.5cqh;">Vỏ &gt;95% · Bản lề thép · IPS 0 điểm chết · Đủ cổng HDMI</div>
           </div>
 
           <div style="border-left: 1px solid var(--rule); padding-left: 1.5cqw;">
             <div class="t-index c-vermilion">[ BƯỚC 07 – 12 ]</div>
-            <div class="t-lead c-ink" style="font-weight: 700; margin-top: 0.8cqh;">Nội tạng &amp; Hiệu năng</div>
-            <p class="t-body c-muted" style="margin-top: 0.6cqh;">
-              Trùng khớp Service Tag BIOS, SSD NVMe Good 100%, Pin thực tế &gt;3 giờ, Stress-test CPU dưới 78°C.
-            </p>
+            <div class="t-lead c-ink" style="margin-top: 0.8cqh;">Bo mạch &amp; Nhiệt độ</div>
+            <div class="t-body c-muted" style="margin-top: 0.5cqh;">Trùng Serial BIOS · SSD 100% · Pin &gt;3h · FurMark &lt;78°C</div>
           </div>
 
           <div style="border-left: 1px solid var(--rule); padding-left: 1.5cqw;">
             <div class="t-index c-pine">[ BƯỚC 13 – 15 ]</div>
-            <div class="t-lead c-ink" style="font-weight: 700; margin-top: 0.8cqh;">Bảo dưỡng &amp; Niêm phong</div>
-            <p class="t-body c-muted" style="margin-top: 0.6cqh;">
-              Tra keo tản nhiệt Arctic MX-4 mới, cài sẵn bộ công cụ học tập THPT, dán tem vỡ bảo hành 30 ngày.
-            </p>
+            <div class="t-lead c-ink" style="margin-top: 0.8cqh;">Bảo dưỡng &amp; Niêm phong</div>
+            <div class="t-body c-muted" style="margin-top: 0.5cqh;">Keo Arctic MX-4 · Office 365 &amp; Python · Tem 1 đổi 1 (30 ngày)</div>
           </div>
         </div>
       </section>
 
       <!-- ==================================================================
-           SLIDE 06: CƠ CẤU TỔ CHỨC & BẢNG PHÂN CHIA NHIỆM VỤ 10 NHÂN SỰ
-           (3:9 ASYMMETRIC ARCHITECTURAL LEDGER — RUBRIC I.5 & II.7)
+           SLIDE 06: BẢNG PHÂN CHIA NHIỆM VỤ 10 NHÂN SỰ (3:9 SCANNABLE MATRIX)
            ================================================================== -->
       <section class="slide" data-slide="6" data-theme="bone">
-        <!-- Col 1-3: Left Architectural Anchor -->
         <div style="grid-column: 1 / 4; display: flex; flex-direction: column; justify-content: space-between; border-right: 1px solid var(--rule); padding-right: 2cqw;">
           <div>
-            <div class="t-index c-vermilion" data-vt="index">06 / TỔ CHỨC THỰC HIỆN &amp; NHÂN SỰ</div>
-            <h2 class="t-h2 c-ink" data-vt="title" style="margin-top: 1.6cqh;">
+            <div class="t-index c-vermilion">06 / TỔ CHỨC THỰC HIỆN</div>
+            <h2 class="t-h2 c-ink" style="margin-top: 1.6cqh;">
               Ma trận phân công 10 nhân sự.
             </h2>
           </div>
 
           <div>
-            <div class="t-hero c-vermilion" data-vt="hero" style="font-size: 22cqh;">10</div>
+            <div class="t-hero c-vermilion" style="font-size: 22cqh;">10</div>
             <div class="t-index c-ink" style="margin-top: 1cqh;">THÀNH VIÊN CHUYÊN TRÁCH</div>
-            <p class="t-body c-muted" style="margin-top: 0.8cqh;">
-              Mỗi thành viên phụ trách 1 mắt xích độc lập, vận hành ngoài giờ học chính khóa với KPI định lượng rõ ràng.
-            </p>
           </div>
 
-          <div style="border-top: 2px solid var(--ink); padding-top: 1.4cqh;" data-vt="rule">
-            <div class="t-index c-pine">CƠ CHẾ PHỐI HỢP</div>
-            <div class="t-body-bold c-ink" style="margin-top: 0.4cqh;">3 Khối liên thông 24h</div>
-            <p class="t-body c-muted">Điều hành &amp; Pháp lý · Kỹ thuật &amp; Hậu cần · Tiếp thị &amp; CSKH.</p>
+          <div style="border-top: 2px solid var(--ink); padding-top: 1.5cqh;" data-vt="rule">
+            <div class="t-index c-pine">VẬN HÀNH NGOÀI GIỜ HỌC</div>
+            <div class="t-body-bold c-ink" style="margin-top: 0.4cqh;">Chuyên môn hóa 10 mắt xích độc lập</div>
           </div>
         </div>
 
-        <!-- Col 4-12: Open Swiss Hairline Roster of 10 Team Members (2 Columns x 5 Rows) -->
-        <div style="grid-column: 4 / 13; padding-left: 1.5cqw; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(5, 1fr); column-gap: 2.5cqw;">
+        <!-- Col 4-12: Crisp 2x5 Open Architectural Roster (Zero Paragraph Clutter) -->
+        <div style="grid-column: 4 / 13; padding-left: 1.8cqw; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(5, 1fr); column-gap: 3cqw;">
           
-          <!-- 01. Vương Gia -->
-          <div style="border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: center; padding: 0.8cqh 0;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
-              <span class="t-index c-vermilion">01 / TRƯỞNG NHÓM · CEO</span>
-              <span class="t-index c-pine">KPI: 20 MÁY / KỲ</span>
+          <div style="border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: center;">
+            <div style="display: flex; justify-content: space-between;">
+              <span class="t-index c-vermilion">01 / CEO · ĐIỀU HÀNH &amp; NGUỒN SỈ</span>
+              <span class="t-index c-pine">KPI: 20 MÁY/KỲ</span>
             </div>
-            <div class="t-lead c-ink" style="font-weight: 700; margin-top: 0.2cqh;">Vương Gia</div>
-            <p class="t-body c-muted">Điều hành tổng thể, đàm phán nguồn cung tổng kho sỉ &amp; chịu trách nhiệm quỹ tài chính BIDV.</p>
+            <div class="t-h2 c-ink" style="font-size: 3.4cqh; margin-top: 0.4cqh;">Vương Gia</div>
           </div>
 
-          <!-- 02. Nguyễn Hoàng Yến -->
-          <div style="border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: center; padding: 0.8cqh 0;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
-              <span class="t-index c-vermilion">02 / GIÁM ĐỐC TÀI CHÍNH · CFO</span>
+          <div style="border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: center;">
+            <div style="display: flex; justify-content: space-between;">
+              <span class="t-index c-vermilion">02 / CFO · TÀI CHÍNH &amp; QUỸ CỌC</span>
               <span class="t-index c-ink">KPI: 0Đ SAI LỆCH</span>
             </div>
-            <div class="t-lead c-ink" style="font-weight: 700; margin-top: 0.2cqh;">Nguyễn Hoàng Yến</div>
-            <p class="t-body c-muted">Hạch toán dòng tiền Unit Economics, kiểm soát biên nhận cọc &amp; trích lập quỹ dự phòng 100k/máy.</p>
+            <div class="t-h2 c-ink" style="font-size: 3.4cqh; margin-top: 0.4cqh;">Nguyễn Hoàng Yến</div>
           </div>
 
-          <!-- 03. Trần Thị Mai Linh -->
-          <div style="border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: center; padding: 0.8cqh 0;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
-              <span class="t-index c-vermilion">03 / PHÁP CHẾ &amp; HỢP ĐỒNG</span>
+          <div style="border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: center;">
+            <div style="display: flex; justify-content: space-between;">
+              <span class="t-index c-vermilion">03 / PHÁP CHẾ &amp; HỢP ĐỒNG CỌC</span>
               <span class="t-index c-ink">KPI: 100% HỢP PHÁP</span>
             </div>
-            <div class="t-lead c-ink" style="font-weight: 700; margin-top: 0.2cqh;">Trần Thị Mai Linh</div>
-            <p class="t-body c-muted">Chuẩn hóa hồ sơ pháp lý NĐ 01/2021, BLDS 2015, soạn biên bản cọc &amp; phiếu bảo hành minh bạch.</p>
+            <div class="t-h2 c-ink" style="font-size: 3.4cqh; margin-top: 0.4cqh;">Trần Thị Mai Linh</div>
           </div>
 
-          <!-- 04. Phan Quỳnh Anh -->
-          <div style="border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: center; padding: 0.8cqh 0;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
-              <span class="t-index c-vermilion">04 / NGHIÊN CỨU THỊ TRƯỜNG · CMO</span>
+          <div style="border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: center;">
+            <div style="display: flex; justify-content: space-between;">
+              <span class="t-index c-vermilion">04 / CMO · KHẢO SÁT &amp; MARKETING</span>
               <span class="t-index c-ink">KPI: N = 120 MẪU</span>
             </div>
-            <div class="t-lead c-ink" style="font-weight: 700; margin-top: 0.2cqh;">Phan Quỳnh Anh</div>
-            <p class="t-body c-muted">Thiết kế bảng hỏi, thống kê dữ liệu khảo sát 120 học sinh THPT &amp; hoạch định chiến lược 4P.</p>
+            <div class="t-h2 c-ink" style="font-size: 3.4cqh; margin-top: 0.4cqh;">Phan Quỳnh Anh</div>
           </div>
 
-          <!-- 05. Nguyễn Ngọc Anh Thư -->
-          <div style="border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: center; padding: 0.8cqh 0;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
-              <span class="t-index c-vermilion">05 / TRUYỀN THÔNG &amp; NỘI DUNG</span>
-              <span class="t-index c-ink">KPI: 15 BÀI / TUẦN</span>
+          <div style="border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: center;">
+            <div style="display: flex; justify-content: space-between;">
+              <span class="t-index c-vermilion">05 / NỘI DUNG &amp; VIDEO THỰC TẾ</span>
+              <span class="t-index c-ink">KPI: 15 BÀI/TUẦN</span>
             </div>
-            <div class="t-lead c-ink" style="font-weight: 700; margin-top: 0.2cqh;">Nguyễn Ngọc Anh Thư</div>
-            <p class="t-body c-muted">Sản xuất hình ảnh thực tế, quay video test độ bền bản lề/màn hình &amp; biên tập bài đăng Fanpage.</p>
+            <div class="t-h2 c-ink" style="font-size: 3.4cqh; margin-top: 0.4cqh;">Nguyễn Ngọc Anh Thư</div>
           </div>
 
-          <!-- 06. Nguyễn Phúc Minh Quân -->
-          <div style="border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: center; padding: 0.8cqh 0;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
-              <span class="t-index c-pine">06 / TRƯỞNG KỸ THUẬT · QC LEAD</span>
-              <span class="t-index c-pine">KPI: 15/15 BƯỚC PASS</span>
+          <div style="border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: center;">
+            <div style="display: flex; justify-content: space-between;">
+              <span class="t-index c-pine">06 / QC LEAD · KIỂM ĐỊNH 15 BƯỚC</span>
+              <span class="t-index c-pine">KPI: 15/15 PASS</span>
             </div>
-            <div class="t-lead c-ink" style="font-weight: 700; margin-top: 0.2cqh;">Nguyễn Phúc Minh Quân</div>
-            <p class="t-body c-muted">Kiểm định phần cứng 15 bước, đối chiếu Service Tag BIOS, tra keo Arctic MX-4 &amp; stress-test nhiệt độ.</p>
+            <div class="t-h2 c-ink" style="font-size: 3.4cqh; margin-top: 0.4cqh;">Nguyễn Phúc Minh Quân</div>
           </div>
 
-          <!-- 07. Châu Anh Thư -->
-          <div style="border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: center; padding: 0.8cqh 0;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
-              <span class="t-index c-pine">07 / TƯ VẤN &amp; CHỐT ĐƠN · SALES</span>
-              <span class="t-index c-ink">KPI: PHẢN HỒI &lt; 5 PHÚT</span>
+          <div style="border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: center;">
+            <div style="display: flex; justify-content: space-between;">
+              <span class="t-index c-pine">07 / SALES · TƯ VẤN &amp; CHỐT ĐƠN</span>
+              <span class="t-index c-ink">KPI: PHẢN HỒI &lt;5P</span>
             </div>
-            <div class="t-lead c-ink" style="font-weight: 700; margin-top: 0.2cqh;">Châu Anh Thư</div>
-            <p class="t-body c-muted">Tư vấn cấu hình cho học sinh, giáo viên &amp; phụ huynh qua Messenger/Zalo, hướng dẫn thủ tục đặt cọc.</p>
+            <div class="t-h2 c-ink" style="font-size: 3.4cqh; margin-top: 0.4cqh;">Châu Anh Thư</div>
           </div>
 
-          <!-- 08. Nguyễn Tiến Dũng -->
-          <div style="border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: center; padding: 0.8cqh 0;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
-              <span class="t-index c-pine">08 / CÔNG NGHỆ &amp; AUTO-POST · CTO</span>
+          <div style="border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: center;">
+            <div style="display: flex; justify-content: space-between;">
+              <span class="t-index c-pine">08 / CTO · BOT AUTO-POST FANPAGE</span>
               <span class="t-index c-pine">KPI: CAC = 0Đ</span>
             </div>
-            <div class="t-lead c-ink" style="font-weight: 700; margin-top: 0.2cqh;">Nguyễn Tiến Dũng</div>
-            <p class="t-body c-muted">Vận hành hệ thống Bot Auto-post Fanpage tự động, cài đặt phần mềm học tập Office 365 &amp; Python.</p>
+            <div class="t-h2 c-ink" style="font-size: 3.4cqh; margin-top: 0.4cqh;">Nguyễn Tiến Dũng</div>
           </div>
 
-          <!-- 09. Nguyễn Hồng Khánh Đoan -->
-          <div style="display: flex; flex-direction: column; justify-content: center; padding: 0.8cqh 0;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
-              <span class="t-index c-ink">09 / ĐIỀU PHỐI LOGISTICS JIT 24H</span>
-              <span class="t-index c-ink">KPI: GIAO ĐÚNG HẸN 100%</span>
+          <div style="display: flex; flex-direction: column; justify-content: center;">
+            <div style="display: flex; justify-content: space-between;">
+              <span class="t-index c-ink">09 / LOGISTICS · ĐIỀU PHỐI JIT 24H</span>
+              <span class="t-index c-ink">KPI: ĐÚNG HẸN 100%</span>
             </div>
-            <div class="t-lead c-ink" style="font-weight: 700; margin-top: 0.2cqh;">Nguyễn Hồng Khánh Đoan</div>
-            <p class="t-body c-muted">Quản lý tiến độ giao nhận 24h, chuẩn bị combo quà tặng phụ kiện (balo, chuột, túi chống sốc).</p>
+            <div class="t-h2 c-ink" style="font-size: 3.4cqh; margin-top: 0.4cqh;">Nguyễn Hồng Khánh Đoan</div>
           </div>
 
-          <!-- 10. Thái Hoàng Minh Anh -->
-          <div style="display: flex; flex-direction: column; justify-content: center; padding: 0.8cqh 0;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
-              <span class="t-index c-ink">10 / HẬU MÃI &amp; BẢO HÀNH · CSKH</span>
+          <div style="display: flex; flex-direction: column; justify-content: center;">
+            <div style="display: flex; justify-content: space-between;">
+              <span class="t-index c-ink">10 / CSKH · BẢO HÀNH &amp; THU PIN EPR</span>
               <span class="t-index c-pine">KPI: HÀI LÒNG 100%</span>
             </div>
-            <div class="t-lead c-ink" style="font-weight: 700; margin-top: 0.2cqh;">Thái Hoàng Minh Anh</div>
-            <p class="t-body c-muted">Quản lý sổ tem niêm phong, chăm sóc khách hàng định kỳ 7–30 ngày &amp; điều phối thu hồi pin hỏng EPR.</p>
+            <div class="t-h2 c-ink" style="font-size: 3.4cqh; margin-top: 0.4cqh;">Thái Hoàng Minh Anh</div>
           </div>
 
         </div>
@@ -810,66 +779,58 @@
            SLIDE 07: CĂN CỨ PHÁP LÝ & KINH TẾ TUẦN HOÀN (3:9 UNEQUAL ROWS)
            ================================================================== -->
       <section class="slide" data-slide="7" data-theme="bone">
-        <!-- Col 1-3: Left Legal Spine -->
         <div style="grid-column: 1 / 4; display: flex; flex-direction: column; justify-content: space-between; border-right: 1px solid var(--rule); padding-right: 2cqw;">
           <div>
-            <div class="t-index c-vermilion" data-vt="index">07 / HÀNH LANG PHÁP LÝ &amp; ESG</div>
-            <h2 class="t-h2 c-ink" data-vt="title" style="margin-top: 1.8cqh;">
-              Thượng tôn pháp luật Việt Nam hiện hành.
+            <div class="t-index c-vermilion">07 / HÀNH LANG PHÁP LÝ &amp; ESG</div>
+            <h2 class="t-h2 c-ink" style="margin-top: 1.6cqh;">
+              Thượng tôn pháp luật hiện hành.
             </h2>
           </div>
 
           <div style="border-top: 2px solid var(--ink); padding-top: 1.6cqh;" data-vt="rule">
-            <div class="t-index c-pine">TRÁCH NHIỆM XÃ HỘI</div>
-            <p class="t-body c-muted" style="margin-top: 0.8cqh;">
-              Gắn kết chặt chẽ kiến thức môn Giáo dục Kinh tế &amp; Pháp luật 11 với thực tiễn thương mại bền vững.
-            </p>
+            <div class="t-index c-pine">CHUẨN MỰC KTPL 11</div>
+            <div class="t-body-bold c-ink" style="margin-top: 0.5cqh;">Kinh doanh minh bạch · Kinh tế tuần hoàn</div>
           </div>
         </div>
 
-        <!-- Col 4-12: Unequal Typographic Decree Rows (Primary Row 2x Height) -->
         <div style="grid-column: 4 / 13; padding-left: 2cqw; display: flex; flex-direction: column; justify-content: space-between;">
           
-          <!-- Primary Anchor Decree (2x Visual Weight) -->
-          <div style="border-bottom: 2px solid var(--ink); padding-bottom: 2.8cqh;">
+          <div style="border-bottom: 2px solid var(--ink); padding-bottom: 2.5cqh;">
             <div class="t-index c-vermilion">[ CĂN CỨ CỐT LÕI — QUY MÔ NHỎ LẺ KHÔNG PHẢI ĐĂNG KÝ HỘ KINH DOANH ]</div>
-            <div class="t-hero c-ink" data-vt="hero" style="font-size: 9.8cqh; margin-top: 1cqh;">K2 Đ.79 NĐ 01/2021</div>
-            <p class="t-lead c-ink" style="margin-top: 1.2cqh;">
-              Khoản 2 Điều 79 Nghị định 01/2021/NĐ-CP: Cá nhân kinh doanh thương mại nhỏ lẻ, lưu động có thu nhập thấp <strong>không phải đăng ký hộ kinh doanh</strong>.
-            </p>
+            <div class="t-hero c-ink" style="font-size: 9.2cqh; margin-top: 1cqh;">K2 Đ.79 NĐ 01/2021</div>
+            <div class="t-lead c-ink" style="margin-top: 1cqh;">
+              Cá nhân kinh doanh nhỏ lẻ, lưu động thu nhập thấp <strong>không bắt buộc đăng ký hộ kinh doanh</strong>.
+            </div>
           </div>
 
-          <!-- Secondary Row 1: BLDS 2015 -->
           <div style="display: grid; grid-template-columns: 5fr 7fr; align-items: baseline; border-bottom: 1px solid var(--rule); padding: 1.8cqh 0;">
             <div>
               <div class="t-index c-muted">NĂNG LỰC HÀNH VI DÂN SỰ</div>
-              <div class="t-h2 c-ink" style="margin-top: 0.4cqh;">Đ.21 BLDS 2015</div>
+              <div class="t-h2 c-ink" style="margin-top: 0.3cqh;">Đ.21 BLDS 2015</div>
             </div>
-            <p class="t-body c-ink">
-              Khoản 4 Điều 21 Bộ luật Dân sự 2015: Người từ đủ 15 đến chưa đủ 18 tuổi <strong>được tự mình xác lập, thực hiện giao dịch dân sự</strong> bằng tài sản riêng, có sự đồng thuận giám sát của phụ huynh.
-            </p>
+            <div class="t-lead c-ink">
+              Người từ đủ 15 đến dưới 18 tuổi được tự xác lập, thực hiện giao dịch dân sự bằng tài sản riêng.
+            </div>
           </div>
 
-          <!-- Secondary Row 2: TT 40/2021 -->
           <div style="display: grid; grid-template-columns: 5fr 7fr; align-items: baseline; border-bottom: 1px solid var(--rule); padding: 1.8cqh 0;">
             <div>
               <div class="t-index c-muted">NGHĨA VỤ THUẾ NHÀ NƯỚC</div>
-              <div class="t-h2 c-pine" style="margin-top: 0.4cqh;">TT 40/2021/TT-BTC</div>
+              <div class="t-h2 c-pine" style="margin-top: 0.3cqh;">TT 40/2021/TT-BTC</div>
             </div>
-            <p class="t-body c-ink">
-              Điều 4 Thông tư 40/2021/TT-BTC: Doanh thu kế hoạch 92.000.000đ/kỳ nằm dưới ngưỡng 100 triệu đồng/năm nên thuộc diện <strong>miễn 100% thuế GTGT và thuế TNCN</strong>.
-            </p>
+            <div class="t-lead c-ink">
+              Doanh thu 92 triệu/kỳ (&lt; 100 triệu/năm) thuộc diện <strong>miễn 100% thuế GTGT &amp; TNCN</strong>.
+            </div>
           </div>
 
-          <!-- Secondary Row 3: EPR & BVNTD 2023 -->
           <div style="display: grid; grid-template-columns: 5fr 7fr; align-items: baseline; padding-top: 1.8cqh;">
             <div>
               <div class="t-index c-pine">KINH TẾ TUẦN HOÀN</div>
-              <div class="t-h2 c-ink" style="margin-top: 0.4cqh;">BVNTD 2023 &amp; EPR</div>
+              <div class="t-h2 c-ink" style="margin-top: 0.3cqh;">BVNTD 2023 &amp; EPR</div>
             </div>
-            <p class="t-body c-ink">
-              Tuân thủ Điều 37 Luật Bảo vệ quyền lợi NTD 2023 &amp; Luật BVMT 2020: Kéo dài vòng đời laptop doanh nhân thêm 3–5 năm, thu hồi 100% pin hỏng chuyển điểm tái chế rác thải điện tử.
-            </p>
+            <div class="t-lead c-ink">
+              Kéo dài vòng đời máy 3–5 năm · Thu hồi 100% pin hỏng chuyển điểm tái chế rác thải điện tử.
+            </div>
           </div>
 
         </div>
@@ -879,135 +840,114 @@
            SLIDE 08: BỘ GIÁP PHẢN BIỆN 6 CÂU HỎI (4:8 STAGGERED OFFSET)
            ================================================================== -->
       <section class="slide" data-slide="8" data-theme="bone">
-        <!-- Col 1-4: Title + 55% Lower Open Negative Space -->
         <div style="grid-column: 1 / 5; display: flex; flex-direction: column; justify-content: flex-start; border-right: 1px solid var(--rule); padding-right: 2.2cqw;">
-          <div class="t-index c-vermilion" data-vt="index">08 / BỘ GIÁP PHẢN BIỆN HỘI ĐỒNG</div>
-          <h2 class="t-h1 c-ink" data-vt="title" style="margin-top: 2cqh; font-size: 7.4cqh;">
+          <div class="t-index c-vermilion">08 / BỘ GIÁP PHẢN BIỆN HỘI ĐỒNG</div>
+          <h2 class="t-h1 c-ink" style="margin-top: 2cqh; font-size: 7.2cqh;">
             6 câu hỏi<br/>thầy cô<br/>sẽ xoáy.
           </h2>
           <div class="rule-h-strong" data-vt="rule" style="margin-top: 3cqh; width: 65%;"></div>
-          <div class="t-index c-muted" style="margin-top: 2cqh;" data-vt="hero">100% CHỐT CHẶN THỰC TẾ</div>
-          <!-- Bottom 50% intentionally left as pure Bone Negative Space -->
+          <div class="t-index c-muted" style="margin-top: 2cqh;">100% CHỐT CHẶN THỰC TẾ</div>
         </div>
 
-        <!-- Col 5-12: 6 Staggered Offset Q&A Rows (Odd rows left-aligned, Even rows offset +1 col) -->
         <div style="grid-column: 5 / 13; padding-left: 2cqw; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); grid-template-rows: repeat(6, 1fr); align-items: center;">
           
-          <!-- Q1 (Cols 1-7) -->
           <div style="grid-column: 1 / 8; border-bottom: 1px solid var(--rule); padding-bottom: 1cqh;">
-            <div class="t-lead c-ink" style="font-weight: 700;">01 / Lấy gì đảm bảo máy cũ không bị “luộc” linh kiện?</div>
-            <div class="t-index c-vermilion" style="margin-top: 0.5cqh;">↗ ĐỐI CHIẾU SERIAL BIOS TRÙNG VỎ · MỞ NẮP ĐÁY KIỂM MAIN TẠI CHỖ</div>
+            <div class="t-lead c-ink">01 / Lấy gì đảm bảo máy cũ không bị “luộc” linh kiện?</div>
+            <div class="t-index c-vermilion" style="margin-top: 0.4cqh;">↗ ĐỐI CHIẾU SERIAL BIOS TRÙNG VỎ · MỞ NẮP ĐÁY KIỂM MAIN TẠI CHỖ</div>
           </div>
 
-          <!-- Q2 (Cols 2-9 Staggered Offset) -->
           <div style="grid-column: 2 / 9; border-bottom: 1px solid var(--rule); padding-bottom: 1cqh;">
-            <div class="t-lead c-ink" style="font-weight: 700;">02 / Khách đặt hàng rồi “bom” không nhận thì xử lý sao?</div>
-            <div class="t-index c-vermilion" style="margin-top: 0.5cqh;">↗ BẮT BUỘC CỌC 200K–500K BÙ PHÍ SHIP · CHUYỂN NGAY CHO KHÁCH CHỜ</div>
+            <div class="t-lead c-ink">02 / Khách đặt hàng rồi “bom” không nhận thì xử lý sao?</div>
+            <div class="t-index c-vermilion" style="margin-top: 0.4cqh;">↗ BẮT BUỘC CỌC 200K–500K BÙ PHÍ SHIP · CHUYỂN NGAY CHO KHÁCH CHỜ</div>
           </div>
 
-          <!-- Q3 (Cols 1-7) -->
           <div style="grid-column: 1 / 8; border-bottom: 1px solid var(--rule); padding-bottom: 1cqh;">
-            <div class="t-lead c-ink" style="font-weight: 700;">03 / Nhỡ 2 máy lỗi mainboard cùng lúc lấy tiền đâu đền?</div>
-            <div class="t-index c-pine" style="margin-top: 0.5cqh;">↗ ĐỔI 1-1 TẠI TỔNG KHO SỈ 30 NGÀY · QUỸ DỰ PHÒNG 2.000.000Đ (100K/MÁY)</div>
+            <div class="t-lead c-ink">03 / Nhỡ 2 máy lỗi mainboard cùng lúc lấy tiền đâu đền?</div>
+            <div class="t-index c-pine" style="margin-top: 0.4cqh;">↗ ĐỔI 1-1 TẠI TỔNG KHO SỈ 30 NGÀY · QUỸ DỰ PHÒNG 2.000.000Đ</div>
           </div>
 
-          <!-- Q4 (Cols 2-9 Staggered Offset) -->
           <div style="grid-column: 2 / 9; border-bottom: 1px solid var(--rule); padding-bottom: 1cqh;">
-            <div class="t-lead c-ink" style="font-weight: 700;">04 / Sao cạnh tranh nổi với Thế Giới Di Động, FPT Shop?</div>
-            <div class="t-index c-vermilion" style="margin-top: 0.5cqh;">↗ NGÁCH 3,5–5,5 TRIỆU HỌ BỎ TRỐNG · OPEX 0Đ · XEM MÁY TẠI TRƯỜNG</div>
+            <div class="t-lead c-ink">04 / Sao cạnh tranh nổi với Thế Giới Di Động, FPT Shop?</div>
+            <div class="t-index c-vermilion" style="margin-top: 0.4cqh;">↗ NGÁCH 3,5–5,5 TRIỆU HỌ BỎ TRỐNG (85% CẦU) · OPEX 0Đ</div>
           </div>
 
-          <!-- Q5 (Cols 1-7) -->
           <div style="grid-column: 1 / 8; border-bottom: 1px solid var(--rule); padding-bottom: 1cqh;">
-            <div class="t-lead c-ink" style="font-weight: 700;">05 / Học sinh 16–17 tuổi bán máy có vi phạm pháp luật?</div>
-            <div class="t-index c-pine" style="margin-top: 0.5cqh;">↗ HỢP PHÁP 100%: K2 Đ.79 NĐ 01/2021 · Đ.21 BLDS 2015 · MIỄN THUẾ TT40</div>
+            <div class="t-lead c-ink">05 / Học sinh 16–17 tuổi bán máy có vi phạm pháp luật?</div>
+            <div class="t-index c-pine" style="margin-top: 0.4cqh;">↗ HỢP PHÁP 100%: K2 Đ.79 NĐ 01/2021 · Đ.21 BLDS 2015 · MIỄN THUẾ</div>
           </div>
 
-          <!-- Q6 (Cols 2-9 Staggered Offset) -->
           <div style="grid-column: 2 / 9;">
-            <div class="t-lead c-ink" style="font-weight: 700;">06 / Làm sao vừa bán laptop vừa không sụt điểm học tập?</div>
-            <div class="t-index c-pine" style="margin-top: 0.5cqh;">↗ CHIA CA 10 NHÂN SỰ CHUYÊN BIỆT · BOT AUTO-POST CHẠY TỰ ĐỘNG 24/7</div>
+            <div class="t-lead c-ink">06 / Làm sao vừa bán laptop vừa không sụt điểm học tập?</div>
+            <div class="t-index c-pine" style="margin-top: 0.4cqh;">↗ CHIA CA 10 NHÂN SỰ CHUYÊN BIỆT · BOT AUTO-POST CHẠY TỰ ĐỘNG</div>
           </div>
 
         </div>
       </section>
 
       <!-- ==================================================================
-           SLIDE 09: MINH CHỨNG 8A — TIỀN THẬT BIDV (4:8 FULL-HEIGHT STRIPS)
+           SLIDE 09: MINH CHỨNG 8A — TIỀN THẬT BIDV (100% UNCROPPED CONTAIN)
            ================================================================== -->
       <section class="slide" data-slide="9" data-theme="bone">
-        <!-- Col 1-4: Financial Proof Anchor -->
         <div style="grid-column: 1 / 5; display: flex; flex-direction: column; justify-content: space-between; padding-right: 1.5cqw; z-index: 3;">
           <div>
-            <div class="t-index c-vermilion" data-vt="index">09 / MINH CHỨNG THỰC CHIẾN (PHẦN A)</div>
-            <h2 class="t-h2 c-ink" data-vt="title" style="margin-top: 1.6cqh;">
+            <div class="t-index c-vermilion">09 / MINH CHỨNG THỰC CHIẾN (PHẦN A)</div>
+            <h2 class="t-h2 c-ink" style="margin-top: 1.6cqh;">
               Tiền thật đã về tài khoản dự án.
             </h2>
           </div>
 
           <div>
             <div class="t-index c-muted">TỔNG CỌC &amp; CHUYỂN KHOẢN ĐỢT ĐẦU</div>
-            <div class="t-hero c-vermilion" data-vt="hero" style="font-size: 10.2cqh; margin-top: 0.8cqh;">2.000.000đ</div>
+            <div class="t-hero c-vermilion" style="font-size: 9.8cqh; margin-top: 0.8cqh;">2.000.000đ</div>
             <div class="rule-h-strong" data-vt="rule" style="margin: 2cqh 0;"></div>
-            <div class="t-index c-ink">NGÂN HÀNG TMCP ĐẦU TƯ &amp; PHÁT TRIỂN (BIDV)</div>
-            <div class="t-lead c-pine" style="font-family: var(--font-mono); font-weight: 700; margin-top: 0.5cqh;">STK: 8883451443</div>
-            <div class="t-body-bold c-ink" style="margin-top: 0.3cqh;">Chủ TK: VUONG GIA</div>
+            <div class="t-index c-ink">NGÂN HÀNG BIDV · STK: 8883451443</div>
+            <div class="t-lead c-pine" style="margin-top: 0.4cqh;">CHỦ TK: VUONG GIA</div>
           </div>
 
           <div style="border-top: 1px solid var(--rule); padding-top: 1.4cqh;">
-            <p class="t-body c-muted">
-              Chứng từ giao dịch thật 100% có mã tham chiếu ngân hàng. Nhấp vào từng biên lai để phóng to nguyên bản.
-            </p>
+            <div class="t-index c-muted">NHẤP VÀO BIÊN LAI ĐỂ PHÓNG TO TOÀN MÀN HÌNH</div>
           </div>
         </div>
 
-        <!-- Col 5-12: 4 Full-Height Vertical Receipt Strips (Z-Index Layered Callouts) -->
-        <div style="grid-column: 5 / 13; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 1cqw; align-items: stretch;">
+        <!-- Col 5-12: 4 Uncropped Full-Frame BIDV Receipts -->
+        <div style="grid-column: 5 / 13; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 1.1cqw; height: 100%; min-height: 0;">
           
-          <!-- Strip 1: +200k Thuy Nhung -->
-          <div style="display: flex; flex-direction: column; justify-content: space-between;">
-            <div style="border-top: 2px solid var(--vermilion); padding-top: 0.8cqh; margin-bottom: 1cqh; z-index: 3;">
-              <div class="t-index c-vermilion">GD 01 / ĐẶT CỌC</div>
-              <div class="t-lead c-ink" style="font-family: var(--font-mono); font-weight: 700;">+200.000đ</div>
-              <div class="t-body c-muted">KH: Thùy Nhung</div>
+          <div style="display: grid; grid-template-rows: auto 1fr; row-gap: 1cqh; min-height: 0;">
+            <div style="border-top: 2px solid var(--vermilion); padding-top: 0.8cqh;">
+              <div class="t-index c-vermilion">GD 01 · THÙY NHUNG</div>
+              <div class="t-lead c-ink" style="font-family: var(--font-mono);">+200.000đ</div>
             </div>
-            <div class="shutter-img" style="height: 68cqh;" onclick="openLightbox('evidence/coc_200k_thuy_nhung.jpg', 'GD 01: Biên lai nhận cọc +200.000đ — Khách hàng Thùy Nhung (BIDV 8883451443 VUONG GIA)')">
+            <div class="media-frame" onclick="openLightbox('evidence/coc_200k_thuy_nhung.jpg', 'GD 01: Biên lai nhận cọc +200.000đ — Khách hàng Thùy Nhung (BIDV 8883451443 VUONG GIA)')">
               <img src="evidence/coc_200k_thuy_nhung.jpg" alt="Biên lai cọc 200k Thùy Nhung" loading="eager" />
             </div>
           </div>
 
-          <!-- Strip 2: +500k Thanh Vu -->
-          <div style="display: flex; flex-direction: column; justify-content: space-between;">
-            <div style="border-top: 2px solid var(--vermilion); padding-top: 0.8cqh; margin-bottom: 1cqh; z-index: 3;">
-              <div class="t-index c-vermilion">GD 02 / ĐẶT CỌC</div>
-              <div class="t-lead c-ink" style="font-family: var(--font-mono); font-weight: 700;">+500.000đ</div>
-              <div class="t-body c-muted">KH: Thanh Vũ</div>
+          <div style="display: grid; grid-template-rows: auto 1fr; row-gap: 1cqh; min-height: 0;">
+            <div style="border-top: 2px solid var(--vermilion); padding-top: 0.8cqh;">
+              <div class="t-index c-vermilion">GD 02 · THANH VŨ</div>
+              <div class="t-lead c-ink" style="font-family: var(--font-mono);">+500.000đ</div>
             </div>
-            <div class="shutter-img" style="height: 68cqh;" onclick="openLightbox('evidence/coc_500k_thanhvu.jpg', 'GD 02: Biên lai nhận cọc +500.000đ — Khách hàng Thanh Vũ (BIDV 8883451443 VUONG GIA)')">
+            <div class="media-frame" onclick="openLightbox('evidence/coc_500k_thanhvu.jpg', 'GD 02: Biên lai nhận cọc +500.000đ — Khách hàng Thanh Vũ (BIDV 8883451443 VUONG GIA)')">
               <img src="evidence/coc_500k_thanhvu.jpg" alt="Biên lai cọc 500k Thanh Vũ" loading="eager" />
             </div>
           </div>
 
-          <!-- Strip 3: +1.000k Thanh Vu -->
-          <div style="display: flex; flex-direction: column; justify-content: space-between;">
-            <div style="border-top: 2px solid var(--pine); padding-top: 0.8cqh; margin-bottom: 1cqh; z-index: 3;">
-              <div class="t-index c-pine">GD 03 / THANH TOÁN</div>
-              <div class="t-lead c-pine" style="font-family: var(--font-mono); font-weight: 700;">+1.000.000đ</div>
-              <div class="t-body c-muted">KH: Thanh Vũ</div>
+          <div style="display: grid; grid-template-rows: auto 1fr; row-gap: 1cqh; min-height: 0;">
+            <div style="border-top: 2px solid var(--pine); padding-top: 0.8cqh;">
+              <div class="t-index c-pine">GD 03 · THANH VŨ</div>
+              <div class="t-lead c-pine" style="font-family: var(--font-mono);">+1.000.000đ</div>
             </div>
-            <div class="shutter-img" style="height: 68cqh;" onclick="openLightbox('evidence/chuyenkhoan_1tr_thanhvu.jpg', 'GD 03: Biên lai chuyển khoản +1.000.000đ — Khách hàng Thanh Vũ (BIDV 8883451443 VUONG GIA)')">
+            <div class="media-frame" onclick="openLightbox('evidence/chuyenkhoan_1tr_thanhvu.jpg', 'GD 03: Biên lai chuyển khoản +1.000.000đ — Khách hàng Thanh Vũ (BIDV 8883451443 VUONG GIA)')">
               <img src="evidence/chuyenkhoan_1tr_thanhvu.jpg" alt="Biên lai chuyển khoản 1 triệu Thanh Vũ" loading="eager" />
             </div>
           </div>
 
-          <!-- Strip 4: +300k Kim Hoa -->
-          <div style="display: flex; flex-direction: column; justify-content: space-between;">
-            <div style="border-top: 2px solid var(--pine); padding-top: 0.8cqh; margin-bottom: 1cqh; z-index: 3;">
-              <div class="t-index c-pine">GD 04 / CHUYỂN KHOẢN</div>
-              <div class="t-lead c-pine" style="font-family: var(--font-mono); font-weight: 700;">+300.000đ</div>
-              <div class="t-body c-muted">KH: Kim Hoa</div>
+          <div style="display: grid; grid-template-rows: auto 1fr; row-gap: 1cqh; min-height: 0;">
+            <div style="border-top: 2px solid var(--pine); padding-top: 0.8cqh;">
+              <div class="t-index c-pine">GD 04 · KIM HOA</div>
+              <div class="t-lead c-pine" style="font-family: var(--font-mono);">+300.000đ</div>
             </div>
-            <div class="shutter-img" style="height: 68cqh;" onclick="openLightbox('evidence/chuyenkhoan_300k_kimhoa.jpg', 'GD 04: Biên lai chuyển khoản +300.000đ — Khách hàng Kim Hoa (BIDV 8883451443 VUONG GIA)')">
+            <div class="media-frame" onclick="openLightbox('evidence/chuyenkhoan_300k_kimhoa.jpg', 'GD 04: Biên lai chuyển khoản +300.000đ — Khách hàng Kim Hoa (BIDV 8883451443 VUONG GIA)')">
               <img src="evidence/chuyenkhoan_300k_kimhoa.jpg" alt="Biên lai chuyển khoản 300k Kim Hoa" loading="eager" />
             </div>
           </div>
@@ -1016,92 +956,79 @@
       </section>
 
       <!-- ==================================================================
-           SLIDE 10: MINH CHỨNG 8B — KHÁCH THẬT CHAT (4:8 CASCADING COLLAGE)
+           SLIDE 10: MINH CHỨNG 8B — KHÁCH THẬT CHAT (100% UNCROPPED CONTAIN)
            ================================================================== -->
       <section class="slide" data-slide="10" data-theme="bone">
-        <!-- Col 1-4: Verbatim Customer Quote & Segment Breakdown -->
         <div style="grid-column: 1 / 5; display: flex; flex-direction: column; justify-content: space-between; padding-right: 1.8cqw;">
           <div>
-            <div class="t-index c-vermilion" data-vt="index">10 / MINH CHỨNG THỰC CHIẾN (PHẦN B)</div>
-            <h2 class="t-h2 c-ink" data-vt="title" style="margin-top: 1.6cqh;">
+            <div class="t-index c-vermilion">10 / MINH CHỨNG THỰC CHIẾN (PHẦN B)</div>
+            <h2 class="t-h2 c-ink" style="margin-top: 1.6cqh;">
               “Ê có máy 3đ ko?”
             </h2>
-            <p class="t-body c-muted" style="margin-top: 1cqh;">
-              Tin nhắn nguyên văn từ học sinh, thầy giáo và phụ huynh hỏi mua laptop thực tế qua Zalo &amp; Messenger.
-            </p>
           </div>
 
-          <div style="border-top: 2px solid var(--ink); padding-top: 1.8cqh;" data-vt="rule">
-            <div class="t-index c-pine">3 TỆP KHÁCH HÀNG ĐÃ CHỐT THẬT</div>
-            <div style="margin-top: 1.2cqh; display: flex; flex-direction: column; gap: 1.2cqh;">
-              <div>
-                <div class="t-body-bold c-ink">01 / Học sinh THPT (Nguyên Thừa, Phan Triều)</div>
-                <div class="t-body c-muted">Tìm máy 3–4 triệu học tập, thiết kế nhẹ.</div>
-              </div>
-              <div>
-                <div class="t-body-bold c-ink">02 / Giáo viên (Thầy Quang Toán)</div>
-                <div class="t-body c-muted">Cần máy bền bỉ soạn giáo án &amp; trình chiếu HDMI.</div>
-              </div>
-              <div>
-                <div class="t-body-bold c-ink">03 / Phụ huynh (Cô Lê Ghi, Anh Khánh)</div>
-                <div class="t-body c-muted">Kiểm tra kỹ hình thật trước khi chuyển cọc cho con.</div>
-              </div>
+          <div style="border-top: 2px solid var(--ink); padding-top: 1.8cqh; display: flex; flex-direction: column; gap: 1.5cqh;" data-vt="rule">
+            <div>
+              <div class="t-index c-vermilion">01 / HỌC SINH THPT</div>
+              <div class="t-lead c-ink" style="margin-top: 0.3cqh;">Nguyên Thừa · Phan Triều</div>
+            </div>
+            <div>
+              <div class="t-index c-pine">02 / GIÁO VIÊN BỘ MÔN</div>
+              <div class="t-lead c-ink" style="margin-top: 0.3cqh;">Thầy Quang Toán</div>
+            </div>
+            <div>
+              <div class="t-index c-pine">03 / PHỤ HUYNH HỌC SINH</div>
+              <div class="t-lead c-ink" style="margin-top: 0.3cqh;">Cô Lê Ghi · Anh Quốc Khánh</div>
             </div>
           </div>
 
-          <div data-vt="hero">
+          <div>
             <div class="t-index c-muted">HOTLINE / ZALO TRỰC CHIẾN</div>
             <div class="t-h2 c-vermilion" style="font-family: var(--font-mono); margin-top: 0.4cqh;">0876.637.806</div>
           </div>
         </div>
 
-        <!-- Col 5-12: 6 Large Uncropped Chat Screenshots in Staggered Architectural Grid -->
-        <div style="grid-column: 5 / 13; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(2, 1fr); column-gap: 1.2cqw; row-gap: 1.6cqh;">
+        <!-- Col 5-12: 6 Uncropped Full-Frame Chat Screenshots (object-fit: contain) -->
+        <div style="grid-column: 5 / 13; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); column-gap: 1.2cqw; row-gap: 1.4cqh; height: 100%; min-height: 0;">
           
-          <!-- Chat 1: Học sinh Nguyên Thừa -->
-          <div style="display: flex; flex-direction: column;">
-            <div class="t-index c-vermilion" style="margin-bottom: 0.5cqh;">01 / HS NGUYÊN THỪA</div>
-            <div class="shutter-img" style="flex: 1;" onclick="openLightbox('evidence/chat_hocsinh_nguyen_thua.jpg', '01 / Học sinh Nguyên Thừa hỏi mua máy tầm 3 triệu (3đ)')">
+          <div style="display: grid; grid-template-rows: auto 1fr; row-gap: 0.5cqh; min-height: 0;">
+            <div class="t-index c-vermilion">01 / HS NGUYÊN THỪA</div>
+            <div class="media-frame" onclick="openLightbox('evidence/chat_hocsinh_nguyen_thua.jpg', '01 / Học sinh Nguyên Thừa hỏi mua máy tầm 3 triệu (3đ)')">
               <img src="evidence/chat_hocsinh_nguyen_thua.jpg" alt="Chat học sinh Nguyên Thừa" loading="eager" />
             </div>
           </div>
 
-          <!-- Chat 2: Thầy Quang Toán GV -->
-          <div style="display: flex; flex-direction: column;">
-            <div class="t-index c-pine" style="margin-bottom: 0.5cqh;">02 / THẦY QUANG TOÁN (GV)</div>
-            <div class="shutter-img" style="flex: 1;" onclick="openLightbox('evidence/chat_thay_quang_toan_gv.jpg', '02 / Thầy Quang Toán (Giáo viên) đặt mua laptop phục vụ giảng dạy')">
+          <div style="display: grid; grid-template-rows: auto 1fr; row-gap: 0.5cqh; min-height: 0;">
+            <div class="t-index c-pine">02 / THẦY QUANG TOÁN (GV)</div>
+            <div class="media-frame" onclick="openLightbox('evidence/chat_thay_quang_toan_gv.jpg', '02 / Thầy Quang Toán (Giáo viên) đặt mua laptop phục vụ giảng dạy')">
               <img src="evidence/chat_thay_quang_toan_gv.jpg" alt="Chat thầy Quang Toán" loading="eager" />
             </div>
           </div>
 
-          <!-- Chat 3: Phụ huynh Cô Lê Ghi -->
-          <div style="display: flex; flex-direction: column;">
-            <div class="t-index c-pine" style="margin-bottom: 0.5cqh;">03 / PHỤ HUYNH CÔ LÊ GHI</div>
-            <div class="shutter-img" style="flex: 1;" onclick="openLightbox('evidence/chat_phuhuynh_co_le_ghi.jpg', '03 / Phụ huynh Cô Lê Ghi nhắn tin chốt máy cho con đi học')">
+          <div style="display: grid; grid-template-rows: auto 1fr; row-gap: 0.5cqh; min-height: 0;">
+            <div class="t-index c-pine">03 / PHỤ HUYNH CÔ LÊ GHI</div>
+            <div class="media-frame" onclick="openLightbox('evidence/chat_phuhuynh_co_le_ghi.jpg', '03 / Phụ huynh Cô Lê Ghi nhắn tin chốt máy cho con đi học')">
               <img src="evidence/chat_phuhuynh_co_le_ghi.jpg" alt="Chat phụ huynh Cô Lê Ghi" loading="eager" />
             </div>
           </div>
 
-          <!-- Chat 4: Trần Quốc Khánh FB -->
-          <div style="display: flex; flex-direction: column;">
-            <div class="t-index c-ink" style="margin-bottom: 0.5cqh;">04 / KHÁCH TRẦN QUỐC KHÁNH</div>
-            <div class="shutter-img" style="flex: 1;" onclick="openLightbox('evidence/chat_tran_quoc_khanh_fb.jpg', '04 / Khách hàng Trần Quốc Khánh tư vấn chốt đơn qua Facebook')">
+          <div style="display: grid; grid-template-rows: auto 1fr; row-gap: 0.5cqh; min-height: 0;">
+            <div class="t-index c-ink">04 / KHÁCH TRẦN QUỐC KHÁNH</div>
+            <div class="media-frame" onclick="openLightbox('evidence/chat_tran_quoc_khanh_fb.jpg', '04 / Khách hàng Trần Quốc Khánh tư vấn chốt đơn qua Facebook')">
               <img src="evidence/chat_tran_quoc_khanh_fb.jpg" alt="Chat Trần Quốc Khánh" loading="eager" />
             </div>
           </div>
 
-          <!-- Chat 5: Khách A Mẫu Hình Thật -->
-          <div style="display: flex; flex-direction: column;">
-            <div class="t-index c-ink" style="margin-bottom: 0.5cqh;">05 / GỬI ẢNH MÁY THỰC TẾ</div>
-            <div class="shutter-img" style="flex: 1;" onclick="openLightbox('evidence/chat_khach_a_mau_hinh_that.jpg', '05 / Gửi video và hình chụp thực tế từng góc máy trước khi nhận cọc')">
+          <div style="display: grid; grid-template-rows: auto 1fr; row-gap: 0.5cqh; min-height: 0;">
+            <div class="t-index c-ink">05 / GỬI ẢNH MÁY THỰC TẾ</div>
+            <div class="media-frame" onclick="openLightbox('evidence/chat_khach_a_mau_hinh_that.jpg', '05 / Gửi video và hình chụp thực tế từng góc máy trước khi nhận cọc')">
               <img src="evidence/chat_khach_a_mau_hinh_that.jpg" alt="Chat gửi hình thật" loading="eager" />
             </div>
           </div>
 
-          <!-- Chat 6: Phan Triều Messenger -->
-          <div style="display: flex; flex-direction: column;">
-            <div class="t-index c-ink" style="margin-bottom: 0.5cqh;">06 / KHÁCH PHAN TRIỀU</div>
-            <div class="shutter-img" style="flex: 1;" onclick="openLightbox('evidence/chat_phan_trieu_messenger.jpg', '06 / Khách hàng Phan Triều phản hồi và giao dịch qua Messenger')">
+          <div style="display: grid; grid-template-rows: auto 1fr; row-gap: 0.5cqh; min-height: 0;">
+            <div class="t-index c-ink">06 / KHÁCH PHAN TRIỀU</div>
+            <div class="media-frame" onclick="openLightbox('evidence/chat_phan_trieu_messenger.jpg', '06 / Khách hàng Phan Triều phản hồi và giao dịch qua Messenger')">
               <img src="evidence/chat_phan_trieu_messenger.jpg" alt="Chat Phan Triều" loading="eager" />
             </div>
           </div>
@@ -1113,22 +1040,19 @@
            SLIDE 11: TUYÊN NGÔN KẾT LUẬN (2:8 FULL-BLEED VERMILION CLIMAX)
            ================================================================== -->
       <section class="slide slide-vermilion" data-slide="11" data-theme="vermilion">
-        <!-- Col 1-2: Pure Negative Space Margin on Left -->
         <div style="grid-column: 1 / 3; align-self: start;">
-          <div class="t-index c-bone" data-vt="index" style="opacity: 0.85;">11 / TUYÊN NGÔN</div>
+          <div class="t-index c-bone" style="opacity: 0.85;">11 / TUYÊN NGÔN</div>
         </div>
 
-        <!-- Col 3-12: Manifesto Centerpiece -->
         <div style="grid-column: 3 / 13; display: flex; flex-direction: column; justify-content: space-between;">
-          <div style="margin-top: 6cqh;">
-            <h1 class="t-h1 c-bone" data-vt="title" style="font-size: 8.2cqh; line-height: 1.02; max-width: 96%;">
+          <div style="margin-top: 5cqh;">
+            <h1 class="t-h1 c-bone" style="font-size: 8.0cqh; line-height: 1.03; max-width: 96%;">
               “Khởi nghiệp không bắt đầu từ vốn lớn, mà từ thấu hiểu nỗi đau người dùng.”
             </h1>
-            <div style="width: 42%; height: 2px; background: var(--bone); margin-top: 4.5cqh;" data-vt="rule"></div>
+            <div style="width: 42%; height: 2px; background: var(--bone); margin-top: 4cqh;" data-vt="rule"></div>
           </div>
 
-          <!-- Key Closing Proof Metrics -->
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 3cqw; border-top: 1px solid rgba(248, 247, 243, 0.28); padding-top: 2.5cqh;" data-vt="hero">
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 3cqw; border-top: 1px solid rgba(248, 247, 243, 0.28); padding-top: 2.5cqh;">
             <div>
               <div class="t-index c-bone" style="opacity: 0.75;">ĐIỂM HÒA VỐN</div>
               <div class="t-h2 c-bone" style="margin-top: 0.5cqh;">0 MÁY (JIT 24H)</div>
@@ -1143,7 +1067,6 @@
             </div>
           </div>
 
-          <!-- Complete 10-Member Roster Signature -->
           <div style="border-top: 1px solid rgba(248, 247, 243, 0.28); padding-top: 2cqh;">
             <div class="t-index c-bone" style="opacity: 0.8; margin-bottom: 0.8cqh;">ĐỘI NGŨ THỰC HIỆN DỰ ÁN LAPTOP VƯƠNG GIA (10 THÀNH VIÊN):</div>
             <div class="t-body-bold c-bone" style="line-height: 1.55;">
@@ -1153,7 +1076,7 @@
         </div>
       </section>
 
-      <!-- 2px Minimal Bottom Progress Bar -->
+      <!-- 3px Bottom Progress Line -->
       <div class="progress-track">
         <div class="progress-fill" id="progressFill"></div>
       </div>
@@ -1168,17 +1091,6 @@
       <div class="lightbox-caption" id="lightboxCaption"></div>
     </div>
   </div>
-
-  <!--
-    ====================================================================
-    KỊCH BẢN THUYẾT TRÌNH 8 PHÚT (DÀNH CHO NGƯỜI THUYẾT TRÌNH - ĐÃ TÁCH KHỎI SLIDE)
-    - Phút 0:00 - 1:30 (Slide 1 & 2): Nêu nỗi đau từ khảo sát 120 học sinh THPT (81,7% sợ máy dựng).
-    - Phút 1:30 - 3:00 (Slide 3 & 4): Định vị 4P & Hạch toán 1 máy HP EliteBook 830 G6 lãi ròng +500k, Hòa vốn = 0 máy.
-    - Phút 3:00 - 4:30 (Slide 5 & 6): Quy trình JIT 24h, 15 bước QC & Bảng phân công 10 nhân sự chuyên trách.
-    - Phút 4:30 - 6:00 (Slide 7 & 8): Căn cứ pháp lý (K2 Đ.79 NĐ 01/2021, Đ.21 BLDS 2015, TT 40/2021) & 6 câu phản biện.
-    - Phút 6:00 - 8:00 (Slide 9, 10 & 11): Show 4 biên lai BIDV (2.000.000đ) + 6 đoạn chat khách thật & Tuyên ngôn kết luận.
-    ====================================================================
-  -->
 
   <script>
     (function () {
@@ -1198,14 +1110,12 @@
         return n < 10 ? '0' + n : String(n);
       }
 
-      // Clear all view-transition-name attributes across all slides to prevent duplicate name abort
       function clearAllViewTransitionNames() {
         document.querySelectorAll('[data-vt]').forEach((el) => {
           el.style.viewTransitionName = 'none';
         });
       }
 
-      // Bind view-transition-name ONLY to the specified slide's anchor elements
       function bindViewTransitionNames(slideEl) {
         if (!slideEl) return;
         slideEl.querySelectorAll('[data-vt]').forEach((el) => {
@@ -1252,12 +1162,10 @@
         const outgoingSlide = slides[currentIndex];
         const incomingSlide = slides[targetIndex];
 
-        // Step 1: Set view-transition-name ONLY on outgoing slide before snapshot
         clearAllViewTransitionNames();
         bindViewTransitionNames(outgoingSlide);
 
         const transition = document.startViewTransition(() => {
-          // Step 2: Move view-transition-name to incoming slide for shared-element morph
           clearAllViewTransitionNames();
           applySlideState(targetIndex);
           bindViewTransitionNames(incomingSlide);
@@ -1280,7 +1188,6 @@
         }
       }
 
-      // Lightbox handlers
       window.openLightbox = function (src, caption) {
         lightboxImg.src = src;
         lightboxCaption.textContent = caption || '';
@@ -1292,7 +1199,6 @@
         lightboxImg.src = '';
       };
 
-      // Keyboard navigation
       window.addEventListener('keydown', (e) => {
         if (lightbox.classList.contains('open')) {
           if (e.key === 'Escape' || e.key === ' ' || e.key === 'Enter') {
@@ -1317,11 +1223,9 @@
         }
       });
 
-      // Edge click zones
       document.getElementById('prevZone').addEventListener('click', prevSlide);
       document.getElementById('nextZone').addEventListener('click', nextSlide);
 
-      // Touch swipe support
       let touchStartX = 0;
       stage.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
@@ -1335,7 +1239,6 @@
         }
       }, { passive: true });
 
-      // Initialize state
       applySlideState(0);
     })();
   </script>
