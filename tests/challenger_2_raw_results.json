@@ -1,0 +1,384 @@
+{
+  "total": 50,
+  "passed": 50,
+  "failed": 0,
+  "tests": [
+    {
+      "name": "Image count verification (at least 10 evidence images present)",
+      "passed": true,
+      "details": "Found 10 images: evidence/coc_200k_thuy_nhung.jpg, evidence/coc_500k_thanhvu.jpg, evidence/chuyenkhoan_1tr_thanhvu.jpg, evidence/chuyenkhoan_300k_kimhoa.jpg, evidence/chat_hocsinh_nguyen_thua.jpg, evidence/chat_thay_quang_toan_gv.jpg, evidence/chat_phuhuynh_co_le_ghi.jpg, evidence/chat_tran_quoc_khanh_fb.jpg, evidence/chat_khach_a_mau_hinh_that.jpg, evidence/chat_phan_trieu_messenger.jpg",
+      "metadata": {
+        "foundImgSources": [
+          "evidence/coc_200k_thuy_nhung.jpg",
+          "evidence/coc_500k_thanhvu.jpg",
+          "evidence/chuyenkhoan_1tr_thanhvu.jpg",
+          "evidence/chuyenkhoan_300k_kimhoa.jpg",
+          "evidence/chat_hocsinh_nguyen_thua.jpg",
+          "evidence/chat_thay_quang_toan_gv.jpg",
+          "evidence/chat_phuhuynh_co_le_ghi.jpg",
+          "evidence/chat_tran_quoc_khanh_fb.jpg",
+          "evidence/chat_khach_a_mau_hinh_that.jpg",
+          "evidence/chat_phan_trieu_messenger.jpg"
+        ]
+      }
+    },
+    {
+      "name": "Evidence file exists & non-zero: coc_200k_thuy_nhung.jpg",
+      "passed": true,
+      "details": "Exists: true, Size: 173642 bytes",
+      "metadata": {
+        "fileName": "coc_200k_thuy_nhung.jpg",
+        "exists": true,
+        "size": 173642
+      }
+    },
+    {
+      "name": "Evidence file referenced in slides.html: coc_200k_thuy_nhung.jpg",
+      "passed": true,
+      "details": "Referenced: true",
+      "metadata": {}
+    },
+    {
+      "name": "Evidence file exists & non-zero: coc_500k_thanhvu.jpg",
+      "passed": true,
+      "details": "Exists: true, Size: 103162 bytes",
+      "metadata": {
+        "fileName": "coc_500k_thanhvu.jpg",
+        "exists": true,
+        "size": 103162
+      }
+    },
+    {
+      "name": "Evidence file referenced in slides.html: coc_500k_thanhvu.jpg",
+      "passed": true,
+      "details": "Referenced: true",
+      "metadata": {}
+    },
+    {
+      "name": "Evidence file exists & non-zero: chuyenkhoan_1tr_thanhvu.jpg",
+      "passed": true,
+      "details": "Exists: true, Size: 103549 bytes",
+      "metadata": {
+        "fileName": "chuyenkhoan_1tr_thanhvu.jpg",
+        "exists": true,
+        "size": 103549
+      }
+    },
+    {
+      "name": "Evidence file referenced in slides.html: chuyenkhoan_1tr_thanhvu.jpg",
+      "passed": true,
+      "details": "Referenced: true",
+      "metadata": {}
+    },
+    {
+      "name": "Evidence file exists & non-zero: chuyenkhoan_300k_kimhoa.jpg",
+      "passed": true,
+      "details": "Exists: true, Size: 325090 bytes",
+      "metadata": {
+        "fileName": "chuyenkhoan_300k_kimhoa.jpg",
+        "exists": true,
+        "size": 325090
+      }
+    },
+    {
+      "name": "Evidence file referenced in slides.html: chuyenkhoan_300k_kimhoa.jpg",
+      "passed": true,
+      "details": "Referenced: true",
+      "metadata": {}
+    },
+    {
+      "name": "Evidence file exists & non-zero: chat_hocsinh_nguyen_thua.jpg",
+      "passed": true,
+      "details": "Exists: true, Size: 174704 bytes",
+      "metadata": {
+        "fileName": "chat_hocsinh_nguyen_thua.jpg",
+        "exists": true,
+        "size": 174704
+      }
+    },
+    {
+      "name": "Evidence file referenced in slides.html: chat_hocsinh_nguyen_thua.jpg",
+      "passed": true,
+      "details": "Referenced: true",
+      "metadata": {}
+    },
+    {
+      "name": "Evidence file exists & non-zero: chat_thay_quang_toan_gv.jpg",
+      "passed": true,
+      "details": "Exists: true, Size: 81208 bytes",
+      "metadata": {
+        "fileName": "chat_thay_quang_toan_gv.jpg",
+        "exists": true,
+        "size": 81208
+      }
+    },
+    {
+      "name": "Evidence file referenced in slides.html: chat_thay_quang_toan_gv.jpg",
+      "passed": true,
+      "details": "Referenced: true",
+      "metadata": {}
+    },
+    {
+      "name": "Evidence file exists & non-zero: chat_phuhuynh_co_le_ghi.jpg",
+      "passed": true,
+      "details": "Exists: true, Size: 137773 bytes",
+      "metadata": {
+        "fileName": "chat_phuhuynh_co_le_ghi.jpg",
+        "exists": true,
+        "size": 137773
+      }
+    },
+    {
+      "name": "Evidence file referenced in slides.html: chat_phuhuynh_co_le_ghi.jpg",
+      "passed": true,
+      "details": "Referenced: true",
+      "metadata": {}
+    },
+    {
+      "name": "Evidence file exists & non-zero: chat_tran_quoc_khanh_fb.jpg",
+      "passed": true,
+      "details": "Exists: true, Size: 203722 bytes",
+      "metadata": {
+        "fileName": "chat_tran_quoc_khanh_fb.jpg",
+        "exists": true,
+        "size": 203722
+      }
+    },
+    {
+      "name": "Evidence file referenced in slides.html: chat_tran_quoc_khanh_fb.jpg",
+      "passed": true,
+      "details": "Referenced: true",
+      "metadata": {}
+    },
+    {
+      "name": "Evidence file exists & non-zero: chat_khach_a_mau_hinh_that.jpg",
+      "passed": true,
+      "details": "Exists: true, Size: 110986 bytes",
+      "metadata": {
+        "fileName": "chat_khach_a_mau_hinh_that.jpg",
+        "exists": true,
+        "size": 110986
+      }
+    },
+    {
+      "name": "Evidence file referenced in slides.html: chat_khach_a_mau_hinh_that.jpg",
+      "passed": true,
+      "details": "Referenced: true",
+      "metadata": {}
+    },
+    {
+      "name": "Evidence file exists & non-zero: chat_phan_trieu_messenger.jpg",
+      "passed": true,
+      "details": "Exists: true, Size: 196889 bytes",
+      "metadata": {
+        "fileName": "chat_phan_trieu_messenger.jpg",
+        "exists": true,
+        "size": 196889
+      }
+    },
+    {
+      "name": "Evidence file referenced in slides.html: chat_phan_trieu_messenger.jpg",
+      "passed": true,
+      "details": "Referenced: true",
+      "metadata": {}
+    },
+    {
+      "name": "Slide 8 section exists in slides.html",
+      "passed": true,
+      "details": "Slide 8 extracted successfully",
+      "metadata": {}
+    },
+    {
+      "name": "Slide 8 contains all 10 evidence images",
+      "passed": true,
+      "details": "Found 10 images inside Slide 8 (expected 10)",
+      "metadata": {}
+    },
+    {
+      "name": "BIDV receipt uncropped framing: coc_200k_thuy_nhung.jpg",
+      "passed": true,
+      "details": "Tag: <img src=\"evidence/coc_200k_thuy_nhung.jpg\" alt=\"Cọc 200k Võ Thị Thùy Nhung\" class=\"h-full w-full object-contain p-1 group-hover:scale-105 transition duration-300\" />",
+      "metadata": {}
+    },
+    {
+      "name": "BIDV receipt uncropped framing: coc_500k_thanhvu.jpg",
+      "passed": true,
+      "details": "Tag: <img src=\"evidence/coc_500k_thanhvu.jpg\" alt=\"Cọc 500k Thanh Vu Store\" class=\"h-full w-full object-contain p-1 group-hover:scale-105 transition duration-300\" />",
+      "metadata": {}
+    },
+    {
+      "name": "BIDV receipt uncropped framing: chuyenkhoan_1tr_thanhvu.jpg",
+      "passed": true,
+      "details": "Tag: <img src=\"evidence/chuyenkhoan_1tr_thanhvu.jpg\" alt=\"CK 1tr Thanh Vu Store\" class=\"h-full w-full object-contain p-1 group-hover:scale-105 transition duration-300\" />",
+      "metadata": {}
+    },
+    {
+      "name": "BIDV receipt uncropped framing: chuyenkhoan_300k_kimhoa.jpg",
+      "passed": true,
+      "details": "Tag: <img src=\"evidence/chuyenkhoan_300k_kimhoa.jpg\" alt=\"Cọc 300k Nguyễn Thị Kim Hoa\" class=\"h-full w-full object-contain p-1 group-hover:scale-105 transition duration-300\" />",
+      "metadata": {}
+    },
+    {
+      "name": "Chat evidence present in Slide 8: chat_hocsinh_nguyen_thua.jpg",
+      "passed": true,
+      "details": "Tag: <img src=\"evidence/chat_hocsinh_nguyen_thua.jpg\" alt=\"Chat Học sinh\" class=\"h-full w-full object-contain p-0.5 group-hover:scale-105 transition duration-300\" />",
+      "metadata": {}
+    },
+    {
+      "name": "Chat evidence present in Slide 8: chat_thay_quang_toan_gv.jpg",
+      "passed": true,
+      "details": "Tag: <img src=\"evidence/chat_thay_quang_toan_gv.jpg\" alt=\"Chat Giáo viên\" class=\"h-full w-full object-contain p-0.5 group-hover:scale-105 transition duration-300\" />",
+      "metadata": {}
+    },
+    {
+      "name": "Chat evidence present in Slide 8: chat_phuhuynh_co_le_ghi.jpg",
+      "passed": true,
+      "details": "Tag: <img src=\"evidence/chat_phuhuynh_co_le_ghi.jpg\" alt=\"Chat Phụ huynh\" class=\"h-full w-full object-contain p-0.5 group-hover:scale-105 transition duration-300\" />",
+      "metadata": {}
+    },
+    {
+      "name": "Chat evidence present in Slide 8: chat_tran_quoc_khanh_fb.jpg",
+      "passed": true,
+      "details": "Tag: <img src=\"evidence/chat_tran_quoc_khanh_fb.jpg\" alt=\"Chat Fanpage\" class=\"h-full w-full object-contain p-0.5 group-hover:scale-105 transition duration-300\" />",
+      "metadata": {}
+    },
+    {
+      "name": "Chat evidence present in Slide 8: chat_khach_a_mau_hinh_that.jpg",
+      "passed": true,
+      "details": "Tag: <img src=\"evidence/chat_khach_a_mau_hinh_that.jpg\" alt=\"Chat A Mậu\" class=\"h-full w-full object-contain p-0.5 group-hover:scale-105 transition duration-300\" />",
+      "metadata": {}
+    },
+    {
+      "name": "Chat evidence present in Slide 8: chat_phan_trieu_messenger.jpg",
+      "passed": true,
+      "details": "Tag: <img src=\"evidence/chat_phan_trieu_messenger.jpg\" alt=\"Chat Phan Triệu\" class=\"h-full w-full object-contain p-0.5 group-hover:scale-105 transition duration-300\" />",
+      "metadata": {}
+    },
+    {
+      "name": "Interactive zoom / Lightbox inspection exists for evidence",
+      "passed": true,
+      "details": "Lightbox support detected: true",
+      "metadata": {}
+    },
+    {
+      "name": "Inline script blocks detected",
+      "passed": true,
+      "details": "Found 2 inline script blocks",
+      "metadata": {}
+    },
+    {
+      "name": "Inline script block #1 (1179 bytes) syntax check (new Function)",
+      "passed": true,
+      "details": "Valid JavaScript syntax",
+      "metadata": {}
+    },
+    {
+      "name": "Inline script block #1 vm.Script compilation",
+      "passed": true,
+      "details": "Compiled successfully",
+      "metadata": {}
+    },
+    {
+      "name": "Inline script block #2 (11214 bytes) syntax check (new Function)",
+      "passed": true,
+      "details": "Valid JavaScript syntax",
+      "metadata": {}
+    },
+    {
+      "name": "Inline script block #2 vm.Script compilation",
+      "passed": true,
+      "details": "Compiled successfully",
+      "metadata": {}
+    },
+    {
+      "name": "Anti-AI-Slop check: zero occurrences of purple color utilities",
+      "passed": true,
+      "details": "0 matches",
+      "metadata": {
+        "pattern": "purple color utilities",
+        "count": 0,
+        "samples": []
+      }
+    },
+    {
+      "name": "Anti-AI-Slop check: zero occurrences of violet color utilities",
+      "passed": true,
+      "details": "0 matches",
+      "metadata": {
+        "pattern": "violet color utilities",
+        "count": 0,
+        "samples": []
+      }
+    },
+    {
+      "name": "Anti-AI-Slop check: zero occurrences of fuchsia color utilities",
+      "passed": true,
+      "details": "0 matches",
+      "metadata": {
+        "pattern": "fuchsia color utilities",
+        "count": 0,
+        "samples": []
+      }
+    },
+    {
+      "name": "Anti-AI-Slop check: zero occurrences of bg-gradient-to utility",
+      "passed": true,
+      "details": "0 matches",
+      "metadata": {
+        "pattern": "bg-gradient-to utility",
+        "count": 0,
+        "samples": []
+      }
+    },
+    {
+      "name": "Anti-AI-Slop check: zero occurrences of bg-clip-text gradient text utility",
+      "passed": true,
+      "details": "0 matches",
+      "metadata": {
+        "pattern": "bg-clip-text gradient text utility",
+        "count": 0,
+        "samples": []
+      }
+    },
+    {
+      "name": "Anti-AI-Slop check: zero occurrences of text-transparent gradient utility",
+      "passed": true,
+      "details": "0 matches",
+      "metadata": {
+        "pattern": "text-transparent gradient utility",
+        "count": 0,
+        "samples": []
+      }
+    },
+    {
+      "name": "Solid ink typography applied across slides",
+      "passed": true,
+      "details": "Found 82 solid ink token occurrences",
+      "metadata": {}
+    },
+    {
+      "name": "16:9 aspect ratio or presentation viewport framing defined",
+      "passed": true,
+      "details": "16:9 ratio tokens: true, Full-bleed tokens: true",
+      "metadata": {}
+    },
+    {
+      "name": "Mobile media queries present for responsive viewport (<768px)",
+      "passed": true,
+      "details": "Media query defined: true",
+      "metadata": {}
+    },
+    {
+      "name": "Mobile rules calm or disable heavy animations per User Directive 6",
+      "passed": true,
+      "details": "Disables animation on mobile: true",
+      "metadata": {}
+    },
+    {
+      "name": "Natural vertical flow / scrolling supported on viewports",
+      "passed": true,
+      "details": "Overflow / height utilities present: true",
+      "metadata": {}
+    }
+  ]
+}

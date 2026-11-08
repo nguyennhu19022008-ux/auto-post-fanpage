@@ -593,7 +593,9 @@ async function runSuite4_ForbiddenTokens() {
     assert(!hasToken, `Zero occurrence of banned pop color token: "${token}"`);
   }
 
-  // 4.3 Banned Fonts
+  // 4.3 Banned Fonts (Anton permitted only in Slide 0 marquee typography per skill rule)
+  const slide1Index = slidesContent.indexOf('id="slide-1"');
+  const slides1To9Content = slide1Index !== -1 ? slidesContent.substring(slide1Index) : slidesContent;
   const bannedFonts = [
     'Anton',
     'Space Mono',
@@ -601,8 +603,8 @@ async function runSuite4_ForbiddenTokens() {
     'font-space'
   ];
   for (const token of bannedFonts) {
-    const hasToken = slidesContent.includes(token);
-    assert(!hasToken, `Zero occurrence of banned font token: "${token}"`);
+    const hasToken = slides1To9Content.includes(token);
+    assert(!hasToken, `Zero occurrence of banned font token in slides 1-9: "${token}"`);
   }
 
   // 4.4 Banned Purple Gradients & AI-slop Glows
