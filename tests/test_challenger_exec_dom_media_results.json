@@ -1,0 +1,629 @@
+{
+  "timestamp": "2026-11-08T02:16:58.051Z",
+  "target": "C:\\Users\\Admin\\.gemini\\antigravity\\scratch\\fb-laptop-autopost\\public\\slides.html",
+  "total": 124,
+  "passed": 124,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "public/slides.html exists on disk",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "HTML DOM tree has balanced open/close tags",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Content Slide #1 (#slide-1) exists in DOM",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Content Slide #2 (#slide-2) exists in DOM",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Content Slide #3 (#slide-3) exists in DOM",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Content Slide #4 (#slide-4) exists in DOM",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Content Slide #5 (#slide-5) exists in DOM",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Content Slide #6 (#slide-6) exists in DOM",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Content Slide #7 (#slide-7) exists in DOM",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Content Slide #8 (#slide-8) exists in DOM",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Content Slide #9 (#slide-9) exists in DOM",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Slide 1 (#slide-1) has the \"active\" class on initial load",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Slide #2 (#slide-2) does NOT have \"active\" class on initial load",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Slide #3 (#slide-3) does NOT have \"active\" class on initial load",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Slide #4 (#slide-4) does NOT have \"active\" class on initial load",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Slide #5 (#slide-5) does NOT have \"active\" class on initial load",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Slide #6 (#slide-6) does NOT have \"active\" class on initial load",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Slide #7 (#slide-7) does NOT have \"active\" class on initial load",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Slide #8 (#slide-8) does NOT have \"active\" class on initial load",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Slide #9 (#slide-9) does NOT have \"active\" class on initial load",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "No <section id=\"slide-0\"> exists as a slide-page",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "#slide0Overlay is present but hidden by default with class \"hidden\"",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Absence of legacy #slideDock",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Absence of #dockBar",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Absence of #bottomDock",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Absence of floating bottom button navigation dock",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Absence of key hint tooltips or instructions (\"bấm phím\", \"phím tắt\")",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exists on disk: coc_200k_thuy_nhung.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file size positive: coc_200k_thuy_nhung.jpg (173642 bytes)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exceeds expected byte threshold: coc_200k_thuy_nhung.jpg (173642 >= 100000)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Valid JPEG header & SOF marker: coc_200k_thuy_nhung.jpg (708x1280)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Positive dimensions: coc_200k_thuy_nhung.jpg (708x1280)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Image is referenced in slides.html: coc_200k_thuy_nhung.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exists on disk: coc_500k_thanhvu.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file size positive: coc_500k_thanhvu.jpg (103162 bytes)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exceeds expected byte threshold: coc_500k_thanhvu.jpg (103162 >= 100000)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Valid JPEG header & SOF marker: coc_500k_thanhvu.jpg (419x1280)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Positive dimensions: coc_500k_thanhvu.jpg (419x1280)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Image is referenced in slides.html: coc_500k_thanhvu.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exists on disk: chuyenkhoan_1tr_thanhvu.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file size positive: chuyenkhoan_1tr_thanhvu.jpg (103549 bytes)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exceeds expected byte threshold: chuyenkhoan_1tr_thanhvu.jpg (103549 >= 100000)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Valid JPEG header & SOF marker: chuyenkhoan_1tr_thanhvu.jpg (419x1280)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Positive dimensions: chuyenkhoan_1tr_thanhvu.jpg (419x1280)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Image is referenced in slides.html: chuyenkhoan_1tr_thanhvu.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exists on disk: chuyenkhoan_300k_kimhoa.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file size positive: chuyenkhoan_300k_kimhoa.jpg (325090 bytes)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exceeds expected byte threshold: chuyenkhoan_300k_kimhoa.jpg (325090 >= 300000)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Valid JPEG header & SOF marker: chuyenkhoan_300k_kimhoa.jpg (847x1931)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Positive dimensions: chuyenkhoan_300k_kimhoa.jpg (847x1931)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Image is referenced in slides.html: chuyenkhoan_300k_kimhoa.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exists on disk: chat_hocsinh_nguyen_thua.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file size positive: chat_hocsinh_nguyen_thua.jpg (174704 bytes)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exceeds expected byte threshold: chat_hocsinh_nguyen_thua.jpg (174704 >= 150000)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Valid JPEG header & SOF marker: chat_hocsinh_nguyen_thua.jpg (858x1908)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Positive dimensions: chat_hocsinh_nguyen_thua.jpg (858x1908)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Image is referenced in slides.html: chat_hocsinh_nguyen_thua.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exists on disk: chat_thay_quang_toan_gv.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file size positive: chat_thay_quang_toan_gv.jpg (81208 bytes)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exceeds expected byte threshold: chat_thay_quang_toan_gv.jpg (81208 >= 70000)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Valid JPEG header & SOF marker: chat_thay_quang_toan_gv.jpg (1160x887)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Positive dimensions: chat_thay_quang_toan_gv.jpg (1160x887)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Image is referenced in slides.html: chat_thay_quang_toan_gv.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exists on disk: chat_phuhuynh_co_le_ghi.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file size positive: chat_phuhuynh_co_le_ghi.jpg (137773 bytes)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exceeds expected byte threshold: chat_phuhuynh_co_le_ghi.jpg (137773 >= 100000)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Valid JPEG header & SOF marker: chat_phuhuynh_co_le_ghi.jpg (1173x1055)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Positive dimensions: chat_phuhuynh_co_le_ghi.jpg (1173x1055)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Image is referenced in slides.html: chat_phuhuynh_co_le_ghi.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exists on disk: chat_tran_quoc_khanh_fb.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file size positive: chat_tran_quoc_khanh_fb.jpg (203722 bytes)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exceeds expected byte threshold: chat_tran_quoc_khanh_fb.jpg (203722 >= 150000)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Valid JPEG header & SOF marker: chat_tran_quoc_khanh_fb.jpg (858x1908)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Positive dimensions: chat_tran_quoc_khanh_fb.jpg (858x1908)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Image is referenced in slides.html: chat_tran_quoc_khanh_fb.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exists on disk: chat_khach_a_mau_hinh_that.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file size positive: chat_khach_a_mau_hinh_that.jpg (110986 bytes)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exceeds expected byte threshold: chat_khach_a_mau_hinh_that.jpg (110986 >= 100000)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Valid JPEG header & SOF marker: chat_khach_a_mau_hinh_that.jpg (1154x1075)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Positive dimensions: chat_khach_a_mau_hinh_that.jpg (1154x1075)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Image is referenced in slides.html: chat_khach_a_mau_hinh_that.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exists on disk: chat_phan_trieu_messenger.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file size positive: chat_phan_trieu_messenger.jpg (196889 bytes)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Evidence file exceeds expected byte threshold: chat_phan_trieu_messenger.jpg (196889 >= 150000)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Valid JPEG header & SOF marker: chat_phan_trieu_messenger.jpg (858x1908)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Positive dimensions: chat_phan_trieu_messenger.jpg (858x1908)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Image is referenced in slides.html: chat_phan_trieu_messenger.jpg",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "All 10 evidence filenames are present in slides.html",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Application interactive navigation script found",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Initial currentSlide is 1",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Mock DOM #slide-1 has active class",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Initial counter displays 01: 01 / 09",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "nextSlide() advances to slide 2",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "slide-2 now active",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "slide-1 no longer active",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Counter updated to 02",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Key ArrowRight advances to slide 3",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Key Space advances to slide 4",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Key Enter advances to slide 5",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "prevSlide() moves back to slide 4",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Key ArrowLeft moves back to slide 3",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Key End jumps to slide 9 (last slide)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "slide-9 is active",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "nextSlide() at slide 9 clamped to 9 (no overflow)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Key Home jumps to slide 1 (first slide)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "slide-1 is active",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "prevSlide() at slide 1 clamped to 1 (no underflow)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "showSlide(0) rejected; currentSlide remains 1",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "showSlide(10) rejected; currentSlide remains 1",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "showSlide(\"invalid\") rejected; currentSlide remains 1",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Jumped to slide 5 for click test",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Canvas click at 60% advances to slide 6",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Canvas click at 20% reverses to slide 5",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Canvas click on <button> is ignored (does not navigate)",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "openLightbox() activates #imageLightbox",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "openLightbox() sets image source",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "openLightbox() sets caption text",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Escape key closes active lightbox modal",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Escape key did not alter currentSlide",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "closeLightbox() deactivates #imageLightbox",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Script block #1 compiles with 0 syntax errors",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Script block #2 compiles with 0 syntax errors",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Script block #3 compiles with 0 syntax errors",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "All 14 inline event handlers compiled with 0 syntax errors",
+      "passed": true,
+      "details": ""
+    }
+  ]
+}
