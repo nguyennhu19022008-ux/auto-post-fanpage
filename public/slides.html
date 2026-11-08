@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Báo Cáo Kế Hoạch Kinh Doanh: Laptop Vương Gia // Môn KT-PL</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kế Hoạch Kinh Doanh Khởi Nghiệp: Laptop Vương Gia | Môn GD KT-PL</title>
+  
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Anton, Plus Jakarta Sans, Be Vietnam Pro, JetBrains Mono -->
+  
+  <!-- Premium Typography: Plus Jakarta Sans, Be Vietnam Pro, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
@@ -19,38 +21,20 @@
             display: ['"Plus Jakarta Sans"', 'sans-serif'],
             body: ['"Be Vietnam Pro"', 'sans-serif'],
             mono: ['"JetBrains Mono"', 'monospace'],
-            anton: ['"Anton"', '"Plus Jakarta Sans"', 'sans-serif'],
           },
           colors: {
-            canvas: '#F8FAFC',
-            surface: '#FFFFFF',
-            ink: {
-              DEFAULT: '#09090B',
-              primary: '#09090B',
-              secondary: '#1E293B',
-              muted: '#64748B',
-            },
-            hairline: '#E2E8F0',
-            emerald: {
-              50: '#ECFDF5',
-              200: '#A7F3D0',
-              600: '#059669',
-              700: '#047857',
-              800: '#065F46',
-            },
-            sapphire: {
-              50: '#EFF6FF',
-              200: '#BFDBFE',
-              600: '#2563EB',
-              700: '#1D4ED8',
-              800: '#1E40AF',
-            },
-            crimson: {
-              50: '#FEF2F2',
-              200: '#FECACA',
-              600: '#DC2626',
-              700: '#B91C1C',
-            }
+            canvas: '#F8F7F3',
+            'canvas-subtle': '#F2F0E8',
+            ink: '#0E1013',
+            'ink-secondary': '#323740',
+            'ink-muted': '#6B7280',
+            vermilion: '#C93B2B',
+            'vermilion-soft': '#FDF2F0',
+            pine: '#1E4D38',
+            'pine-soft': '#EEF6F2',
+            ochre: '#9E6A16',
+            hairline: '#E5E1D8',
+            'hairline-strong': '#D3CDC0',
           }
         }
       }
@@ -58,2200 +42,990 @@
   </script>
 
   <style>
-    * {
-      box-sizing: border-box;
+    /* View Transitions API Morph Simulation */
+    @view-transition {
+      navigation: auto;
+    }
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 450ms;
+      animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    ::view-transition-old(slide-stage),
+    ::view-transition-new(slide-stage) {
+      animation-duration: 400ms;
+      animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Core Architectural Canvas */
+    html, body {
       margin: 0;
       padding: 0;
-    }
-    body, html {
-      width: 100%;
-      height: 100%;
-      background: #090D16;
-      color: #09090B;
-      font-family: 'Be Vietnam Pro', sans-serif;
+      width: 100vw;
+      height: 100vh;
       overflow: hidden;
-      user-select: none;
+      background-color: #0E1013;
+      font-family: 'Be Vietnam Pro', sans-serif;
+      color: #0E1013;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      user-select: none;
     }
 
-    /* Swiss-Strategy Typography */
-    .font-display { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .font-body { font-family: 'Be Vietnam Pro', sans-serif; }
-    .font-mono { font-family: 'JetBrains Mono', monospace; }
-    .font-anton { font-family: 'Anton', 'Plus Jakarta Sans', sans-serif; }
-
-    /* 16:9 Presentation Frame */
-    #presentationContainer {
+    /* 16:9 Full Bleed Viewport Framing */
+    #viewportStage {
       width: 100vw;
       height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #090D16;
-      position: relative;
-      overflow: hidden;
+      background-color: #0E1013;
     }
 
-    .slide-frame {
+    .canvas-16-9 {
       width: 100%;
       height: 100%;
-      max-width: 1780px;
-      max-height: 1000px;
+      max-width: 177.78vh; /* 16:9 ratio clamp */
+      max-height: 56.25vw;
       aspect-ratio: 16 / 9;
-      background: #F8FAFC;
+      background-color: #F8F7F3;
       position: relative;
-      display: none !important;
-      flex-direction: column;
       overflow: hidden;
-      border: 1px solid #CBD5E1;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.5);
     }
 
-    .slide-frame.active {
-      display: flex !important;
+    @media (max-aspect-ratio: 16/9) {
+      .canvas-16-9 {
+        width: 100vw;
+        height: 56.25vw;
+      }
+    }
+    @media (min-aspect-ratio: 16/9) {
+      .canvas-16-9 {
+        height: 100vh;
+        width: 177.78vh;
+      }
     }
 
-    .slide-frame:not(.active) {
-      display: none !important;
-    }
-
-    /* Slide 0 Fullscreen Exception */
-    .slide-frame#slide-0 {
-      max-width: 100vw;
-      max-height: 100vh;
-      width: 100vw;
-      height: 100vh;
-      aspect-ratio: unset;
-      background: #000000;
-      border: none;
-      box-shadow: none;
-    }
-
-    /* Slide 0 Typography Wall & Marquee (-32deg) */
-    @keyframes marquee-left {
-      0% { transform: translateX(0%); }
-      100% { transform: translateX(-50%); }
-    }
-    @keyframes marquee-right {
-      0% { transform: translateX(-50%); }
-      100% { transform: translateX(0%); }
-    }
-
-    .slide0-marquee-container {
+    /* PowerPoint Morph & Spring Stagger Simulation */
+    .slide-page {
       position: absolute;
-      inset: -50%;
-      width: 200%;
-      height: 200%;
-      display: flex;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
       flex-direction: column;
-      justify-content: space-around;
-      transform: rotate(-32deg);
-      pointer-events: none;
-      z-index: 1;
-      overflow: hidden;
-      opacity: 0.9;
-    }
-
-    .slide0-marquee-row {
-      display: flex;
-      white-space: nowrap;
-      font-family: 'Anton', 'Plus Jakarta Sans', sans-serif;
-      font-weight: 900;
-      font-size: clamp(5rem, 8vw, 8.5rem);
-      letter-spacing: 0.08em;
-      color: #FFFFFF;
-      opacity: 0.88;
-      line-height: 1.1;
-      text-transform: uppercase;
-    }
-
-    .slide0-marquee-row.row-odd {
-      animation: marquee-left 65s linear infinite;
-    }
-    .slide0-marquee-row.row-even {
-      animation: marquee-right 72s linear infinite;
-    }
-
-    /* Cardless Open Editorial Dividers */
-    .hairline-divider {
-      border-color: #E2E8F0;
-    }
-    .col-divider {
-      border-right: 1px solid #E2E8F0;
-    }
-    .row-divider {
-      border-bottom: 1px solid #E2E8F0;
-    }
-
-    /* Floating Dock & Controls */
-    .slide-dock {
-      position: fixed;
-      bottom: 1.25rem;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(12px);
-      border: 1px solid #E2E8F0;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-      padding: 0.35rem 0.85rem;
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-      z-index: 40;
-      border-radius: 9999px;
-      transition: opacity 0.25s ease, transform 0.25s ease;
-    }
-
-    .dock-btn {
-      background: #FFFFFF;
-      border: 1px solid #E2E8F0;
-      color: #0F172A;
-      padding: 0.35rem 0.75rem;
-      font-weight: 600;
-      font-size: 0.8rem;
-      cursor: pointer;
-      border-radius: 9999px;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      transition: all 0.15s ease;
-    }
-    .dock-btn:hover {
-      background: #F1F5F9;
-      border-color: #CBD5E1;
-      color: #047857;
-    }
-    .dock-btn:active {
-      transform: scale(0.96);
-    }
-
-    /* Toast Notification */
-    #copyToast {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      background: #09090B;
-      color: #FFFFFF;
-      padding: 0.75rem 1.25rem;
-      border-radius: 0.5rem;
-      font-size: 0.85rem;
-      font-weight: 600;
-      z-index: 100;
-      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);
-      border: 1px solid rgba(255,255,255,0.2);
+      justify-content: space-between;
+      padding: 3.5rem 4.5rem;
       opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.25s ease;
+      transform: scale(0.985) translateY(12px);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       pointer-events: none;
     }
-    #copyToast.show {
+
+    .slide-page.active {
+      display: flex;
       opacity: 1;
-      transform: translateY(0);
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+      z-index: 10;
     }
 
-    /* Modal Backdrop Blur */
-    .modal-backdrop {
-      background: rgba(9, 13, 22, 0.85);
-      backdrop-filter: blur(8px);
+    /* Morphing Elements Staggering */
+    .slide-page.active .morph-item {
+      animation: morphSpringIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .slide-page.active .morph-delay-1 { animation-delay: 0.04s; }
+    .slide-page.active .morph-delay-2 { animation-delay: 0.08s; }
+    .slide-page.active .morph-delay-3 { animation-delay: 0.12s; }
+    .slide-page.active .morph-delay-4 { animation-delay: 0.16s; }
+
+    @keyframes morphSpringIn {
+      0% {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    /* Custom Scrollbar for inner overflow if any */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #F1F5F9;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #CBD5E1;
-      border-radius: 3px;
-    }
+    /* Editorial Hairlines */
+    .hairline-b { border-bottom: 1px solid #E5E1D8; }
+    .hairline-t { border-top: 1px solid #E5E1D8; }
+    .hairline-r { border-right: 1px solid #E5E1D8; }
+    .hairline-l { border-left: 1px solid #E5E1D8; }
 
-    /* Calm Mobile Performance Media Queries */
-    @media (max-width: 768px) {
-      .slide0-marquee-row.row-odd,
-      .slide0-marquee-row.row-even {
-        animation: none !important;
-      }
-      .slide-frame {
-        aspect-ratio: unset !important;
-        max-height: unset !important;
-        height: auto !important;
-        min-height: 100vh !important;
-        overflow-y: auto !important;
-      }
-      .col-divider {
-        border-right: none !important;
-        border-bottom: 1px solid #E2E8F0;
-        padding-bottom: 1.5rem;
-        margin-bottom: 1.5rem;
-      }
+    /* Lightbox Modal */
+    #imageLightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(10, 12, 16, 0.94);
+      backdrop-filter: blur(12px);
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    #imageLightbox.active {
+      display: flex;
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Progress Bar (Hidden on Slide 0) -->
-  <div id="topProgressBarContainer" class="fixed top-0 left-0 w-full h-1 z-50 pointer-events-none" style="display: none;">
-    <div id="topProgressBar" class="h-full bg-emerald-600 transition-all duration-300" style="width: 0%;"></div>
-  </div>
-
   <!-- ========================================================
-       PRESENTATION MAIN CONTAINER (16:9 VIEWPORT)
+       PRESENTATION VIEWPORT STAGE (16:9 FULL-BLEED)
        ======================================================== -->
-  <div id="presentationContainer">
+  <div id="viewportStage">
+    <div class="canvas-16-9" id="presentationCanvas" onclick="handleCanvasClick(event)">
 
-    <!-- ========================================================
-         SLIDE 0: BẢN QUYỀN SỞ HỮU TRÍ TUỆ (DESIGN BY VUONGGIA)
-         100% Monochrome OLED Black (#000000), 5 Hàng Chữ Marquee -32°
-         ======================================================== -->
-    <section class="slide-frame active flex-col justify-center items-center relative overflow-hidden" id="slide-0">
-      <!-- 5-Row Marquee Typography Background tilted -32deg -->
-      <div class="slide0-marquee-container">
-        <!-- Row 1 -->
-        <div class="slide0-marquee-row row-odd">
-          <span>DESIGN BY VUONGGIA &bull; INTELLECTUAL PROPERTY &bull; 2026 &bull; DESIGN BY VUONGGIA &bull; INTELLECTUAL PROPERTY &bull; 2026 &bull;&nbsp;</span>
-          <span>DESIGN BY VUONGGIA &bull; INTELLECTUAL PROPERTY &bull; 2026 &bull; DESIGN BY VUONGGIA &bull; INTELLECTUAL PROPERTY &bull; 2026 &bull;&nbsp;</span>
-        </div>
-        <!-- Row 2 -->
-        <div class="slide0-marquee-row row-even">
-          <span>INTELLECTUAL PROPERTY &bull; DESIGN BY VUONGGIA &bull; KTPL 2026 &bull; INTELLECTUAL PROPERTY &bull; DESIGN BY VUONGGIA &bull; KTPL 2026 &bull;&nbsp;</span>
-          <span>INTELLECTUAL PROPERTY &bull; DESIGN BY VUONGGIA &bull; KTPL 2026 &bull; INTELLECTUAL PROPERTY &bull; DESIGN BY VUONGGIA &bull; KTPL 2026 &bull;&nbsp;</span>
-        </div>
-        <!-- Row 3 -->
-        <div class="slide0-marquee-row row-odd">
-          <span>DESIGN BY VUONGGIA &bull; AUTHENTIC BLUEPRINT &bull; 2026 &bull; DESIGN BY VUONGGIA &bull; AUTHENTIC BLUEPRINT &bull; 2026 &bull;&nbsp;</span>
-          <span>DESIGN BY VUONGGIA &bull; AUTHENTIC BLUEPRINT &bull; 2026 &bull; DESIGN BY VUONGGIA &bull; AUTHENTIC BLUEPRINT &bull; 2026 &bull;&nbsp;</span>
-        </div>
-        <!-- Row 4 -->
-        <div class="slide0-marquee-row row-even">
-          <span>STRICTLY CONFIDENTIAL &bull; DESIGN BY VUONGGIA &bull; 2026 &bull; STRICTLY CONFIDENTIAL &bull; DESIGN BY VUONGGIA &bull; 2026 &bull;&nbsp;</span>
-          <span>STRICTLY CONFIDENTIAL &bull; DESIGN BY VUONGGIA &bull; 2026 &bull; STRICTLY CONFIDENTIAL &bull; DESIGN BY VUONGGIA &bull; 2026 &bull;&nbsp;</span>
-        </div>
-        <!-- Row 5 -->
-        <div class="slide0-marquee-row row-odd">
-          <span>DESIGN BY VUONGGIA &bull; GIÁO DỤC KINH TẾ &amp; PHÁP LUẬT &bull; DESIGN BY VUONGGIA &bull; GIÁO DỤC KINH TẾ &amp; PHÁP LUẬT &bull;&nbsp;</span>
-          <span>DESIGN BY VUONGGIA &bull; GIÁO DỤC KINH TẾ &amp; PHÁP LUẬT &bull; DESIGN BY VUONGGIA &bull; GIÁO DỤC KINH TẾ &amp; PHÁP LUẬT &bull;&nbsp;</span>
-        </div>
-      </div>
-
-      <!-- Central Frosted Glass Certificate Card with 2px Solid White Border & 4 Corner Tech Marks -->
-      <div id="slide0CertificateCard" class="relative z-20 bg-black/50 backdrop-blur-md border-2 border-white rounded-xl p-6 sm:p-10 max-w-3xl w-[92%] shadow-[0_0_80px_rgba(0,0,0,0.85)] text-white transition-all duration-300">
-        <!-- 4 Corner Tech Marks (+) -->
-        <span class="absolute -top-3.5 -left-2.5 font-mono font-bold text-xl text-white select-none leading-none">+</span>
-        <span class="absolute -top-3.5 -right-2.5 font-mono font-bold text-xl text-white select-none leading-none">+</span>
-        <span class="absolute -bottom-3.5 -left-2.5 font-mono font-bold text-xl text-white select-none leading-none">+</span>
-        <span class="absolute -bottom-3.5 -right-2.5 font-mono font-bold text-xl text-white select-none leading-none">+</span>
-
-        <!-- Card Top Bar with Close Button (X) -->
-        <div class="flex items-center justify-between border-b border-white/20 pb-4 mb-6">
-          <div class="flex items-center gap-2.5">
-            <span class="inline-block w-2.5 h-2.5 rounded-full bg-white animate-pulse"></span>
-            <span class="font-mono text-xs uppercase tracking-widest text-slate-200 font-bold">INTELLECTUAL PROPERTY CERTIFICATE /// 2026</span>
-          </div>
+      <!-- SLIDE 1: TRANG BÌA & TUYÊN NGÔN KHỞI NGHIỆP -->
+      <section class="slide-page active" id="slide-1">
+        <!-- Top Editorial Masthead -->
+        <div class="flex justify-between items-baseline hairline-b pb-4 morph-item morph-delay-1">
           <div class="flex items-center gap-3">
-            <span class="font-mono text-[11px] text-slate-300 px-2 py-0.5 bg-white/10 rounded border border-white/20">ID: VG-KTPL-2026-IP</span>
-            <button onclick="toggleSlide0Card(false)" class="w-8 h-8 rounded-full border border-white/40 flex items-center justify-center text-white hover:bg-white hover:text-black transition" title="Đóng bảng ngắm hình nền [X]">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
+            <span class="w-2.5 h-2.5 bg-vermilion rounded-full"></span>
+            <span class="text-xs font-mono font-bold tracking-widest uppercase text-ink">LAPTOP VƯƠNG GIA /// KẾ HOẠCH KINH DOANH KHỞI NGHIỆP</span>
+          </div>
+          <div class="text-xs font-mono text-ink-muted tracking-wider">
+            MÔN: GIÁO DỤC KINH TẾ VÀ PHÁP LUẬT
           </div>
         </div>
 
-        <!-- Title & Skew Box -->
-        <div class="mb-6">
-          <div class="text-xs uppercase tracking-widest text-slate-400 font-semibold mb-2 font-mono">CHỨNG NHẬN QUYỀN TÁC GIẢ &amp; THIẾT KẾ ĐỘC BẢN</div>
-          <div class="flex flex-wrap items-center gap-3">
-            <span class="text-3xl sm:text-5xl font-extrabold tracking-tight font-display">DESIGN BY</span>
-            <span class="inline-block bg-white text-black text-3xl sm:text-5xl font-black px-4 py-1 rounded-sm transform -skew-x-6 font-display">VUONGGIA</span>
+        <!-- Hero Content (Asymmetric 62 / 38 Split, Cardless Open Plane) -->
+        <div class="grid grid-cols-12 gap-12 my-auto items-center">
+          <div class="col-span-8 morph-item morph-delay-2">
+            <h1 class="text-6xl lg:text-7xl font-extrabold text-ink font-display tracking-tight leading-[1.08] mb-6">
+              Hệ thống Phân phối Laptop Chuẩn Nhật cho Học sinh THPT
+            </h1>
+            <p class="text-xl text-ink-secondary leading-relaxed max-w-2xl font-normal mb-8">
+              Mô hình khởi nghiệp thực chiến Just-in-Time: Triệt tiêu 100% rủi ro tồn kho, bảo vệ phụ huynh trước nạn luộc linh kiện, và cam kết biên lợi nhuận ròng tối thiểu 500.000 VNĐ trên mỗi sản phẩm.
+            </p>
+            
+            <!-- Open Big Number Stats (No Cards, Pure Hairline Separation) -->
+            <div class="grid grid-cols-3 gap-8 pt-6 hairline-t">
+              <div>
+                <div class="text-4xl lg:text-5xl font-black font-mono text-ink">0 đ</div>
+                <div class="text-xs uppercase font-mono tracking-wider text-ink-muted mt-1">Vốn Ứ Đọng Tồn Kho (JIT)</div>
+              </div>
+              <div class="hairline-l pl-8">
+                <div class="text-4xl lg:text-5xl font-black font-mono text-vermilion">&ge; 500k</div>
+                <div class="text-xs uppercase font-mono tracking-wider text-ink-muted mt-1">Lãi Ròng Tối Thiểu / Máy</div>
+              </div>
+              <div class="hairline-l pl-8">
+                <div class="text-4xl lg:text-5xl font-black font-mono text-pine">15 Bước</div>
+                <div class="text-xs uppercase font-mono tracking-wider text-ink-muted mt-1">Quy Trình Kiểm Định Nghiêm Ngặt</div>
+              </div>
+            </div>
           </div>
-          <div class="mt-2.5 inline-flex items-center gap-2 px-3 py-1 bg-white/10 border border-white/20 rounded text-xs font-mono text-slate-200">
-            <svg class="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v3a1 1 0 102 0V7z" clip-rule="evenodd"></path></svg>
-            THUỘC QUYỀN SỞ HỮU CỦA VUONGGIA &bull; BẢO HỘ TOÀN DIỆN
+
+          <!-- Co-founder Roster (Editorial Typography List) -->
+          <div class="col-span-4 hairline-l pl-10 morph-item morph-delay-3">
+            <div class="text-xs font-mono font-bold tracking-widest uppercase text-ink-muted mb-4">HỘI ĐỒNG SÁNG LẬP DỰ ÁN</div>
+            <div class="space-y-4">
+              <div class="hairline-b pb-3">
+                <div class="text-base font-bold text-ink">Vương Gia</div>
+                <div class="text-xs font-mono text-vermilion mt-0.5">CHỦ TỊCH &amp; ĐIỀU HÀNH (CEO)</div>
+                <div class="text-xs text-ink-muted mt-1">Quản trị chiến lược, quan hệ tổng kho Nhật và điều phối chung</div>
+              </div>
+              <div class="hairline-b pb-3">
+                <div class="text-base font-bold text-ink">Kỹ Thuật Trưởng</div>
+                <div class="text-xs font-mono text-pine mt-0.5">GIÁM ĐỐC CÔNG NGHỆ (CTO)</div>
+                <div class="text-xs text-ink-muted mt-1">Kiểm định phần cứng 15 bước &amp; Vận hành Bot Auto-post Fanpage</div>
+              </div>
+              <div class="hairline-b pb-3">
+                <div class="text-base font-bold text-ink">Phụ Trách Tiếp Thị</div>
+                <div class="text-xs font-mono text-ochre mt-0.5">GIÁM ĐỐC MARKETING (CMO)</div>
+                <div class="text-xs text-ink-muted mt-1">Khảo sát 120 học sinh THPT, phát triển thương hiệu trường học</div>
+              </div>
+              <div>
+                <div class="text-base font-bold text-ink">Phụ Trách Tài Chính</div>
+                <div class="text-xs font-mono text-ink mt-0.5">GIÁM ĐỐC TÀI CHÍNH (CFO)</div>
+                <div class="text-xs text-ink-muted mt-1">Hạch toán điểm hòa vốn, quản trị quỹ cọc &amp; pháp lý kinh doanh</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Strict Non-Commercial Terms -->
-        <div class="mb-6 p-4 rounded-xl bg-black/40 border border-white/20 space-y-2">
-          <div class="flex items-center gap-2 text-xs font-bold text-white font-mono tracking-wider">
-            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-            ĐIỀU KHOẢN NGHIÊM NGẶT: KHÔNG THƯƠNG MẠI HÓA
+        <!-- Slide Footer Bar -->
+        <div class="flex justify-between items-center text-xs font-mono text-ink-muted hairline-t pt-3">
+          <span>THỰC THI THỰC CHIẾN /// DỮ LIỆU THẬT &bull; GIAO DỊCH THẬT</span>
+          <span class="font-bold text-ink">01 / 09</span>
+        </div>
+      </section>
+
+      <!-- SLIDE 2: NỖI ĐAU THỊ TRƯỜNG & KHẢO SÁT 120 HỌC SINH -->
+      <section class="slide-page" id="slide-2">
+        <div class="flex justify-between items-baseline hairline-b pb-4 morph-item morph-delay-1">
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-mono text-vermilion font-bold">PHẦN 02</span>
+            <span class="text-xs font-mono font-bold tracking-widest uppercase text-ink">NGHIÊN CỨU THỊ TRƯỜNG &amp; THỰC TRẠNG HỌC ĐƯỜNG</span>
           </div>
-          <p class="text-xs sm:text-sm text-slate-200 leading-relaxed font-body">
-            Hệ thống slide và toàn bộ mã nguồn, cấu trúc giao diện, phân tích kinh tế và minh chứng hình ảnh được chuyển giao với điều kiện cam kết: <strong class="text-white font-bold underline">TUYỆT ĐỐI KHÔNG THƯƠNG MẠI, MUA BÁN, SANG NHƯỢNG DƯỚI MỌI HÌNH THỨC SAU KHI ĐÃ SỞ HỮU.</strong>
+          <div class="text-xs font-mono text-ink-muted">MẪU KHẢO SÁT N = 120 HỌC SINH THPT</div>
+        </div>
+
+        <div class="my-auto py-2">
+          <h2 class="text-4xl lg:text-5xl font-extrabold text-ink font-display tracking-tight mb-3 morph-item morph-delay-1">
+            Ba Nỗi Đau Lớn Của Học Sinh Khi Tìm Kiếm Công Cụ Học Tập
+          </h2>
+          <p class="text-base text-ink-secondary max-w-3xl mb-10 morph-item morph-delay-2 font-normal">
+            Khảo sát thực nghiệm trên 120 học sinh THPT cho thấy nhu cầu học tập công nghệ đang bùng nổ nhưng hoàn toàn bị cô lập bởi rào cản chi phí và sự bất an về chất lượng máy tính cũ trên thị trường.
           </p>
-        </div>
 
-        <!-- Contact Information with 1-Click Clipboard Copy -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-          <!-- Email Contact -->
-          <div class="p-3.5 rounded-lg bg-black/40 border border-white/20 flex items-center justify-between">
-            <div class="truncate mr-2">
-              <div class="text-[10px] text-slate-400 font-mono uppercase">Email Chính Thức</div>
-              <div class="text-xs font-semibold text-white font-mono truncate">nguyennhu19022008@gmail.com</div>
-            </div>
-            <button onclick="copyToClipboard('nguyennhu19022008@gmail.com', this)" class="px-3 py-1.5 text-xs font-bold bg-white text-black rounded hover:bg-slate-200 transition shrink-0 font-mono">
-              SAO CHÉP
-            </button>
-          </div>
-          <!-- Hotline Contact -->
-          <div class="p-3.5 rounded-lg bg-black/40 border border-white/20 flex items-center justify-between">
+          <!-- 3 Massive Figures Open Flow -->
+          <div class="grid grid-cols-3 gap-12 hairline-t pt-8 morph-item morph-delay-3">
             <div>
-              <div class="text-[10px] text-slate-400 font-mono uppercase">Hotline / Zalo</div>
-              <div class="text-xs font-bold text-white font-mono tracking-wider">0876637806</div>
-            </div>
-            <button onclick="copyToClipboard('0876637806', this)" class="px-3 py-1.5 text-xs font-bold bg-white text-black rounded hover:bg-slate-200 transition shrink-0 font-mono">
-              SAO CHÉP
-            </button>
-          </div>
-        </div>
-
-        <!-- Action CTA Button to enter Slide 1 -->
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-white/20">
-          <div class="text-xs text-slate-400 font-body">
-            Nhấn phím <kbd class="px-1.5 py-0.5 bg-white/20 rounded text-[11px] font-mono text-white">&rarr;</kbd> hoặc <kbd class="px-1.5 py-0.5 bg-white/20 rounded text-[11px] font-mono text-white">Space</kbd> để bắt đầu
-          </div>
-          <button onclick="showSlide(1)" class="w-full sm:w-auto px-7 py-3.5 bg-white text-black font-black text-sm rounded-lg hover:bg-slate-100 transition shadow-2xl flex items-center justify-center gap-2 font-display">
-            <span>BẮT ĐẦU XEM BÁO CÁO (SLIDE 01)</span>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- Floating Controls when Slide 0 Card is Closed -->
-      <div id="slide0FloatingActions" class="hidden fixed bottom-8 z-20 flex items-center gap-4">
-        <button onclick="toggleSlide0Card(true)" class="px-5 py-2.5 bg-black/80 backdrop-blur-md text-white border border-white/40 rounded-full text-xs font-bold hover:bg-black transition flex items-center gap-2 shadow-2xl">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          [ ⓘ MỞ BẢNG THÔNG TIN BẢN QUYỀN ]
-        </button>
-        <button onclick="showSlide(1)" class="px-6 py-2.5 bg-white text-black rounded-full text-xs font-extrabold hover:bg-slate-200 transition flex items-center gap-2 shadow-2xl">
-          [ VÀO NỘI DUNG CHÍNH (SLIDE 01) &rarr; ]
-        </button>
-      </div>
-    </section>
-
-    <!-- ========================================================
-         SLIDE 1: BÁO CÁO KHỞI NGHIỆP THỰC CHIẾN & ĐỘI NGŨ SÁNG LẬP
-         ======================================================== -->
-    <section class="slide-frame p-4 sm:p-6 lg:p-8 justify-between" id="slide-1">
-      <!-- Top Action Bar -->
-      <div class="row-divider pb-3 flex justify-between items-start">
-        <div>
-          <div class="flex items-center gap-2.5 mb-1.5">
-            <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-300 text-xs font-bold rounded-sm tracking-wide font-mono">
-              PHẦN I // KHỞI NGHIỆP THỰC CHIẾN
-            </span>
-            <span class="text-xs font-bold text-slate-500 font-mono">RUBRIC I - TIÊU CHÍ 1 (1,0 ĐIỂM)</span>
-            <span class="text-slate-300">&bull;</span>
-            <span class="text-xs font-mono text-slate-500 font-bold">MÃ: VG-LAPTOP-2026</span>
-          </div>
-          <h1 class="text-2xl sm:text-3xl lg:text-4xl xl:text-[2.5rem] font-black text-[#09090B] font-display tracking-tight leading-tight">
-            Mô hình Phân phối Laptop Cũ Chuẩn Nhật: Tiên phong Giải quyết Nỗi đau Công nghệ cho Học sinh THPT với Chi phí Tối ưu
-          </h1>
-        </div>
-        <div class="shrink-0 pl-6 text-right hidden sm:block">
-          <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-800 rounded text-xs font-mono font-bold border border-slate-200">
-            <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-            CEO TRƯỞNG NHÓM (00:00 - 01:00)
-          </div>
-        </div>
-      </div>
-
-      <!-- Main Asymmetrical Content (5/12 Left vs 7/12 Right) -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 my-auto py-2 items-stretch">
-        <!-- Left Column: Core Identity & Pillars (5/12) -->
-        <div class="lg:col-span-5 flex flex-col justify-between pr-0 lg:pr-6 col-divider">
-          <div>
-            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-300 rounded text-xs font-bold font-mono tracking-wide mb-2.5">
-              <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
-              DỰ ÁN KHỞI NGHIỆP CÓ DÒNG TIỀN THẬT
-            </div>
-            <div class="text-4xl sm:text-5xl font-black text-[#09090B] font-display tracking-tight leading-none mb-3">
-              LAPTOP VƯƠNG GIA
-            </div>
-            <p class="text-sm sm:text-base text-[#1E293B] font-medium leading-relaxed mb-4">
-              Mô hình cung cấp máy tính xách tay Nhật Bản chất lượng cao, giá học sinh sinh viên; vận hành theo cơ chế <strong class="text-emerald-700 font-bold">Quản trị tồn kho bằng 0 (JIT)</strong> và đòn bẩy <strong class="text-sapphire-700 font-bold">Tiếp thị tự động Autopost 4.0</strong>.
-            </p>
-          </div>
-
-          <!-- 3 Pillars (Cardless Open Flow with Hairlines) -->
-          <div class="space-y-3 pt-3 border-t border-slate-200">
-            <div class="flex items-start gap-3">
-              <div class="w-7 h-7 rounded bg-slate-900 text-white flex items-center justify-center font-bold text-xs shrink-0 font-mono">01</div>
-              <div>
-                <div class="text-sm sm:text-base font-bold text-[#09090B]">Lean Startup Zero-Inventory</div>
-                <div class="text-xs sm:text-sm text-slate-600 leading-relaxed mt-0.5">Triệt tiêu chi phí mặt bằng ($FC = 0$), đưa điểm hòa vốn về 0 máy, triệt tiêu rủi ro tồn kho.</div>
-              </div>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="w-7 h-7 rounded bg-slate-900 text-white flex items-center justify-center font-bold text-xs shrink-0 font-mono">02</div>
-              <div>
-                <div class="text-sm sm:text-base font-bold text-[#09090B]">Hạ tầng Tiếp thị Tự động 0đ</div>
-                <div class="text-xs sm:text-sm text-slate-600 leading-relaxed mt-0.5">Tự phát triển bot Meta Graph API &amp; Gemini AI xuất bản 4 bài/ngày vào 4 khung giờ vàng không mất phí quảng cáo.</div>
-              </div>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="w-7 h-7 rounded bg-slate-900 text-white flex items-center justify-center font-bold text-xs shrink-0 font-mono">03</div>
-              <div>
-                <div class="text-sm sm:text-base font-bold text-[#09090B]">Minh bạch 15 Bước Kiểm định</div>
-                <div class="text-xs sm:text-sm text-slate-600 leading-relaxed mt-0.5">Cho tháo máy kiểm tra bo mạch Zin, kiểm tra thời lượng pin, sức khỏe SSD 100%, bảo hành 1 đổi 1 trong 30 ngày.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right Column: 4 Co-Founders Matrix (7/12) -->
-        <div class="lg:col-span-7 flex flex-col justify-between pl-0 lg:pl-3">
-          <div class="flex items-center justify-between mb-2.5">
-            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider font-mono">ĐỘI NGŨ SÁNG LẬP &bull; 4 THÀNH VIÊN VẬN HÀNH CHUYÊN BIỆT</div>
-            <span class="text-xs text-slate-500 font-mono">Bổ trợ kỹ năng &bull; Chịu trách nhiệm liên đới</span>
-          </div>
-
-          <!-- 4 Members Grid (Cardless Open Flow with 1px Hairlines) -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 border border-slate-200 bg-white">
-            <!-- Member 1: CEO -->
-            <div class="p-4 border-b sm:border-b border-r-0 sm:border-r border-slate-200">
-              <div class="flex items-center justify-between mb-1.5">
-                <span class="px-2 py-0.5 bg-slate-100 text-slate-800 text-xs font-bold font-mono rounded">VAI TRÒ: CEO</span>
-                <span class="text-xs font-bold text-emerald-700 font-mono">TRƯỞNG NHÓM</span>
-              </div>
-              <div class="font-bold text-sm sm:text-base text-[#09090B]">Vương Gia &bull; Điều Hành Chiến Lược</div>
-              <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
-                Đàm phán kho sỉ Zalo cấp 1, quản trị chuỗi cung ứng JIT, chốt đơn hàng và đại diện pháp lý dự án.
+              <div class="text-6xl lg:text-7xl font-black font-mono text-ink tracking-tight">72,5%</div>
+              <div class="text-sm font-bold text-ink uppercase tracking-wider mt-3">Nhu Cầu Bắt Buộc Có Máy</div>
+              <p class="text-sm text-ink-secondary leading-relaxed mt-2 font-normal">
+                87/120 bạn học sinh bắt buộc cần laptop để học lập trình Tin học, làm tiểu luận môn Kinh tế - Pháp luật và luyện thi chứng chỉ tin học quốc tế.
               </p>
             </div>
-
-            <!-- Member 2: CTO -->
-            <div class="p-4 border-b border-slate-200">
-              <div class="flex items-center justify-between mb-1.5">
-                <span class="px-2 py-0.5 bg-slate-100 text-slate-800 text-xs font-bold font-mono rounded">VAI TRÒ: CTO</span>
-                <span class="text-xs font-bold text-sapphire-700 font-mono">KỸ THUẬT TRƯỞNG</span>
-              </div>
-              <div class="font-bold text-sm sm:text-base text-[#09090B]">Phụ Trách Kiểm Định (QC)</div>
-              <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
-                Thực thi 15 bước kiểm định phần cứng, vệ sinh tra keo Arctic MX-4, cài Windows bản quyền và phụ trách bảo hành.
+            <div class="hairline-l pl-10">
+              <div class="text-6xl lg:text-7xl font-black font-mono text-vermilion tracking-tight">81,7%</div>
+              <div class="text-sm font-bold text-vermilion uppercase tracking-wider mt-3">Nỗi Sợ Luộc Đồ &amp; Lỗi Ẩn</div>
+              <p class="text-sm text-ink-secondary leading-relaxed mt-2 font-normal">
+                98/120 học sinh và phụ huynh không dám mua máy cũ ngoài chợ trời hoặc trên mạng vì sợ bị thay thế linh kiện, pin chai và không có ai chịu trách nhiệm bảo hành.
               </p>
             </div>
-
-            <!-- Member 3: CMO -->
-            <div class="p-4 border-b sm:border-b-0 border-r-0 sm:border-r border-slate-200">
-              <div class="flex items-center justify-between mb-1.5">
-                <span class="px-2 py-0.5 bg-slate-100 text-slate-800 text-xs font-bold font-mono rounded">VAI TRÒ: CMO</span>
-                <span class="text-xs font-bold text-sapphire-700 font-mono">MARKETING &amp; SỐ</span>
-              </div>
-              <div class="font-bold text-sm sm:text-base text-[#09090B]">Phụ Trách Tự Động Hóa</div>
-              <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
-                Vận hành hệ thống phần mềm Autopost Fanpage, tối ưu prompt Gemini AI, quản trị kênh O2O và chăm sóc khách hàng.
-              </p>
-            </div>
-
-            <!-- Member 4: CFO -->
-            <div class="p-4">
-              <div class="flex items-center justify-between mb-1.5">
-                <span class="px-2 py-0.5 bg-slate-100 text-slate-800 text-xs font-bold font-mono rounded">VAI TRÒ: CFO</span>
-                <span class="text-xs font-bold text-amber-700 font-mono">QUẢN LÝ TÀI CHÍNH</span>
-              </div>
-              <div class="font-bold text-sm sm:text-base text-[#09090B]">Phụ Trách Vốn &amp; Pháp Chế</div>
-              <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
-                Quản lý vốn lưu động 5M, đối soát biên lai BIDV 8883451443, trích lập Quỹ bảo hành 2M và tuân thủ định mức thuế.
+            <div class="hairline-l pl-10">
+              <div class="text-6xl lg:text-7xl font-black font-mono text-pine tracking-tight">65,8%</div>
+              <div class="text-sm font-bold text-pine uppercase tracking-wider mt-3">Ngân Sách Dưới 5 Triệu</div>
+              <p class="text-sm text-ink-secondary leading-relaxed mt-2 font-normal">
+                79/120 gia đình chỉ có thể chi trả trong ngưỡng 3,5 đến 5,0 triệu đồng — một phân khúc bị các đại lý lớn bỏ rơi vì biên lợi nhuận thấp.
               </p>
             </div>
           </div>
-
-          <!-- Team Footer Note -->
-          <div class="mt-3 p-2.5 bg-slate-100/70 border border-slate-200 rounded-sm flex items-center justify-between text-xs text-slate-600">
-            <span class="font-medium">&bull; Khởi nghiệp học sinh: Gắn kết lý thuyết GD KT-PL với thực tiễn thị trường lao động và khởi tạo giá trị.</span>
-            <span class="font-mono text-slate-500 font-bold">4 VỊ TRÍ ĐỒNG LÒNG</span>
-          </div>
         </div>
-      </div>
 
-      <!-- Slide Footer Bar -->
-      <div class="border-t border-slate-200 pt-2 flex justify-between items-center text-xs text-slate-500">
-        <span class="font-medium text-slate-700">DỰ ÁN KHỞI NGHIỆP LAPTOP VƯƠNG GIA &bull; BÁO CÁO THUYẾT TRÌNH GD KT-PL</span>
-        <span class="font-mono font-bold">TRANG 01 / 09</span>
-      </div>
-    </section>
+        <div class="flex justify-between items-center text-xs font-mono text-ink-muted hairline-t pt-3">
+          <span>NGHIÊN CỨU DỰA TRÊN SỐ LIỆU KHẢO SÁT THỰC ĐỊA 120 PHIẾU HỌC SINH</span>
+          <span class="font-bold text-ink">02 / 09</span>
+        </div>
+      </section>
 
-    <!-- ========================================================
-         SLIDE 2: NỖI ĐAU THỊ TRƯỜNG & KHẢO SÁT 120 HỌC SINH THPT
-         ======================================================== -->
-    <section class="slide-frame p-4 sm:p-6 lg:p-8 justify-between" id="slide-2">
-      <!-- Top Action Bar -->
-      <div class="row-divider pb-3 flex justify-between items-start">
-        <div>
-          <div class="flex items-center gap-2.5 mb-1.5">
-            <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-300 text-xs font-bold rounded-sm tracking-wide font-mono">
-              PHẦN II // PHÂN TÍCH THỊ TRƯỜNG &amp; KHẢO SÁT
-            </span>
-            <span class="text-xs font-bold text-slate-500 font-mono">RUBRIC I - TIÊU CHÍ 2 (1,5 ĐIỂM)</span>
+      <!-- SLIDE 3: CHIẾN LƯỢC TIẾP THỊ 4P ĐỘT PHÁ -->
+      <section class="slide-page" id="slide-3">
+        <div class="flex justify-between items-baseline hairline-b pb-4 morph-item morph-delay-1">
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-mono text-vermilion font-bold">PHẦN 03</span>
+            <span class="text-xs font-mono font-bold tracking-widest uppercase text-ink">MÔ HÌNH MARKETING &amp; BÁN HÀNG 4P ĐỘT PHÁ</span>
           </div>
-          <h2 class="text-2xl sm:text-3xl lg:text-4xl xl:text-[2.5rem] font-black text-[#09090B] font-display tracking-tight leading-tight">
-            Khảo sát Thực nghiệm N=120 Học sinh: 72,5% Cần Laptop Dưới 6 Triệu nhưng 81,7% E ngại Rủi ro Máy dựng
+          <div class="text-xs font-mono text-ink-muted">TẬN DỤNG CÔNG NGHỆ AUTO-POST &amp; UY TÍN HỌC ĐƯỜNG</div>
+        </div>
+
+        <div class="my-auto py-2">
+          <h2 class="text-4xl lg:text-5xl font-extrabold text-ink font-display tracking-tight mb-8 morph-item morph-delay-1">
+            Bốn Trụ Cột Tiếp Thị Thích Ứng Cao Độ Với Giới Trẻ
           </h2>
-        </div>
-        <div class="shrink-0 pl-6 text-right hidden sm:block">
-          <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-800 rounded text-xs font-mono font-bold border border-slate-200">
-            CEO &amp; CMO (01:00 - 01:45)
+
+          <!-- 4 Horizontal Strips (Cardless Grid) -->
+          <div class="grid grid-cols-4 gap-8 hairline-t pt-8 morph-item morph-delay-2">
+            <div>
+              <div class="text-2xl font-black font-mono text-vermilion mb-1">01 // PRODUCT</div>
+              <div class="text-base font-bold text-ink mb-2">Laptop Doanh Nhân Chuẩn Nhật</div>
+              <p class="text-sm text-ink-secondary leading-relaxed font-normal">
+                Dòng máy ThinkPad, Dell Latitude, HP EliteBook tuyển chọn từ văn phòng Nhật Bản. Vỏ kim loại siêu bền, bàn phím gõ êm, màn hình chống lóa bảo vệ mắt học sinh.
+              </p>
+              <div class="mt-4 text-xs font-mono text-pine font-bold">&check; Test 15 bước phần cứng</div>
+            </div>
+
+            <div class="hairline-l pl-8">
+              <div class="text-2xl font-black font-mono text-vermilion mb-1">02 // PRICE</div>
+              <div class="text-base font-bold text-ink mb-2">Mức Giá Thấu Nhập 4.600.000 đ</div>
+              <p class="text-sm text-ink-secondary leading-relaxed font-normal">
+                Giá bán trọn gói rẻ hơn thị trường 15-20% nhờ loại bỏ hoàn toàn chi phí mặt bằng và chi phí quản lý cồng kềnh. Học sinh nhận máy chỉ cần bật lên là học.
+              </p>
+              <div class="mt-4 text-xs font-mono text-pine font-bold">&check; Rẻ hơn chuỗi lớn 800k - 1,2tr</div>
+            </div>
+
+            <div class="hairline-l pl-8">
+              <div class="text-2xl font-black font-mono text-vermilion mb-1">03 // PLACE</div>
+              <div class="text-base font-bold text-ink mb-2">Trực Tiếp Tại Trường &amp; Fanpage</div>
+              <p class="text-sm text-ink-secondary leading-relaxed font-normal">
+                Điểm chạm trực tiếp: Bạn học được sờ tận tay, mượn máy trải nghiệm 5 giây trong giờ ra chơi. Kênh online: Fanpage Facebook tích hợp công cụ Auto-post tự động 24/7.
+              </p>
+              <div class="mt-4 text-xs font-mono text-pine font-bold">&check; Tiếp cận 2.500 học sinh mục tiêu</div>
+            </div>
+
+            <div class="hairline-l pl-8">
+              <div class="text-2xl font-black font-mono text-vermilion mb-1">04 // PROMOTION</div>
+              <div class="text-base font-bold text-ink mb-2">Đặt Cọc Linh Hoạt &amp; Quà Tặng</div>
+              <p class="text-sm text-ink-secondary leading-relaxed font-normal">
+                Chính sách cọc an tâm 200k - 500k; hoàn tiền 100% nếu phát hiện máy bị sửa chữa bo mạch. Tặng kèm chuột quang, lót chuột công thái học và túi chống sốc.
+              </p>
+              <div class="mt-4 text-xs font-mono text-pine font-bold">&check; Bảo hành 1 đổi 1 trong 30 ngày</div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Main Content Grid: 3 Hero Metrics + Market Pains + Niche Matrix -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 my-auto py-2">
-        <!-- 3 Hero Metrics Bar (Top/Left 4/12) -->
-        <div class="lg:col-span-4 flex flex-col justify-between col-divider pr-0 lg:pr-6 space-y-3">
-          <div>
-            <div class="text-xs font-bold font-mono text-slate-500 uppercase tracking-wider mb-2.5">DỮ LIỆU KHẢO SÁT N=120 MẪU THẬT</div>
+        <div class="flex justify-between items-center text-xs font-mono text-ink-muted hairline-t pt-3">
+          <span>KẾT HỢP SỨC MẠNH MẠNG XÃ HỘI VÀ ĐIỂM CHẠM VẬT LÝ TRƯỜNG HỌC</span>
+          <span class="font-bold text-ink">03 / 09</span>
+        </div>
+      </section>
+
+      <!-- SLIDE 4: KẾ HOẠCH TÀI CHÍNH & ĐIỂM HÒA VỐN Q=0 -->
+      <section class="slide-page" id="slide-4">
+        <div class="flex justify-between items-baseline hairline-b pb-4 morph-item morph-delay-1">
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-mono text-vermilion font-bold">PHẦN 04</span>
+            <span class="text-xs font-mono font-bold tracking-widest uppercase text-ink">KẾ HOẠCH TÀI CHÍNH &amp; ĐIỂM HÒA VỐN KINH TẾ HỌC</span>
+          </div>
+          <div class="text-xs font-mono text-ink-muted">MÔ HÌNH HÒA VỐN TỨC THÌ (ZERO BREAK-EVEN POINT)</div>
+        </div>
+
+        <div class="grid grid-cols-12 gap-12 my-auto py-2 items-center">
+          <!-- Left Table (Unit Economics) -->
+          <div class="col-span-6 morph-item morph-delay-2">
+            <h3 class="text-xs font-mono font-bold text-ink-muted uppercase tracking-widest mb-4">HẠCH TOÁN ĐƠN VỊ SẢN PHẨM (UNIT ECONOMICS)</h3>
+            <div class="space-y-3 font-mono text-sm">
+              <div class="flex justify-between items-center hairline-b pb-2">
+                <span class="text-ink-secondary">Giá bán đề xuất tới học sinh (P)</span>
+                <span class="font-bold text-ink text-base">4.600.000 đ</span>
+              </div>
+              <div class="flex justify-between items-center text-ink-muted">
+                <span>1. Giá vốn nhập kho tận gốc</span>
+                <span>3.800.000 đ</span>
+              </div>
+              <div class="flex justify-between items-center text-ink-muted">
+                <span>2. Chi phí bảo hành dự phòng (30 ngày)</span>
+                <span>150.000 đ</span>
+              </div>
+              <div class="flex justify-between items-center text-ink-muted">
+                <span>3. Chi phí vận chuyển &amp; giao hàng</span>
+                <span>50.000 đ</span>
+              </div>
+              <div class="flex justify-between items-center text-ink-muted hairline-b pb-2">
+                <span>4. Quà tặng kèm (chuột, túi chống sốc)</span>
+                <span>100.000 đ</span>
+              </div>
+              <div class="flex justify-between items-center font-bold text-ink pt-1">
+                <span>Tổng biến phí trên 1 máy (VC)</span>
+                <span>4.100.000 đ</span>
+              </div>
+              <div class="flex justify-between items-center font-bold text-pine text-lg pt-2 hairline-t">
+                <span>LỢI NHUẬN RÒNG / MÁY (P - VC)</span>
+                <span>+ 500.000 đ</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Break Even Formula & Projection -->
+          <div class="col-span-6 hairline-l pl-10 morph-item morph-delay-3">
+            <div class="text-xs font-mono font-bold text-ink-muted uppercase tracking-widest mb-2">CÔNG THỨC HÒA VỐN KINH TẾ HỌC</div>
+            <div class="flex items-baseline gap-4 mb-4">
+              <div class="text-7xl lg:text-8xl font-black font-mono text-pine leading-none">0 MÁY</div>
+              <div class="text-xs font-mono text-ink-secondary max-w-[140px] leading-tight">
+                Bán 1 máy đã có lãi ròng ngay lập tức
+              </div>
+            </div>
+
+            <div class="p-4 bg-canvas-subtle font-mono text-xs text-ink-secondary mb-6 leading-relaxed">
+              <div>Q<sub>BEP</sub> = FC / (P - VC) = 0 / 500.000 = 0</div>
+              <div class="text-ink-muted mt-1">* Định phí FC = 0 nhờ mô hình Just-in-Time, 0 thuê mặt bằng, nhân sự nội bộ kiêm nhiệm.</div>
+            </div>
+
+            <div class="hairline-t pt-4">
+              <div class="text-xs font-mono font-bold text-ink uppercase tracking-wider mb-2">KẾ HOẠCH DỰ KIẾN 3 THÁNG ĐẦU TIÊN</div>
+              <div class="grid grid-cols-3 gap-4 font-mono">
+                <div>
+                  <div class="text-xs text-ink-muted">Sản lượng</div>
+                  <div class="text-xl font-black text-ink">20 MÁY</div>
+                </div>
+                <div>
+                  <div class="text-xs text-ink-muted">Doanh thu</div>
+                  <div class="text-xl font-black text-ink">92.000.000 đ</div>
+                </div>
+                <div>
+                  <div class="text-xs text-ink-muted">Lợi nhuận</div>
+                  <div class="text-xl font-black text-pine">+10.000.000 đ</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center text-xs font-mono text-ink-muted hairline-t pt-3">
+          <span>MINH BẠCH HẠCH TOÁN TÀI CHÍNH /// KHÔNG RỦI RO LỖ ĐỊNH PHÍ</span>
+          <span class="font-bold text-ink">04 / 09</span>
+        </div>
+      </section>
+
+      <!-- SLIDE 5: KẾ HOẠCH VẬN HÀNH JIT & QUY TRÌNH 15 BƯỚC -->
+      <section class="slide-page" id="slide-5">
+        <div class="flex justify-between items-baseline hairline-b pb-4 morph-item morph-delay-1">
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-mono text-vermilion font-bold">PHẦN 05</span>
+            <span class="text-xs font-mono font-bold tracking-widest uppercase text-ink">QUY TRÌNH VẬN HÀNH JUST-IN-TIME (JIT) &amp; KIỂM ĐỊNH QC</span>
+          </div>
+          <div class="text-xs font-mono text-ink-muted">VÒNG LẶP ĐƠN HÀNG HOÀN THIỆN TRONG 24 GIỜ</div>
+        </div>
+
+        <div class="grid grid-cols-12 gap-10 my-auto py-2 items-center">
+          <!-- Left: 4-Stage JIT Flow -->
+          <div class="col-span-7 morph-item morph-delay-2">
+            <h3 class="text-xs font-mono font-bold text-ink-muted uppercase tracking-widest mb-6">CHU KỲ VẬN HÀNH JIT TỐC ĐỘ CAO (0 - 24H)</h3>
+            <div class="space-y-4">
+              <div class="flex gap-4 items-start">
+                <span class="font-mono text-sm font-bold text-vermilion w-12 shrink-0">00:00</span>
+                <div class="hairline-b pb-3 flex-1">
+                  <div class="text-base font-bold text-ink">Tiếp nhận nhu cầu &amp; Khách chuyển cọc bảo đảm</div>
+                  <p class="text-xs text-ink-secondary mt-0.5 font-normal">Khách hàng chọn mẫu máy qua tư vấn và chuyển khoản cọc 200k - 500k vào STK BIDV 8883451443.</p>
+                </div>
+              </div>
+
+              <div class="flex gap-4 items-start">
+                <span class="font-mono text-sm font-bold text-ink w-12 shrink-0">02:00</span>
+                <div class="hairline-b pb-3 flex-1">
+                  <div class="text-base font-bold text-ink">Điều phối xuất kho đối tác Nhật Bản</div>
+                  <p class="text-xs text-ink-secondary mt-0.5 font-normal">Sử dụng nguồn tiền cọc kích hoạt lệnh lấy đúng mã máy từ kho tổng; tuyệt đối không tồn hàng dư thừa.</p>
+                </div>
+              </div>
+
+              <div class="flex gap-4 items-start">
+                <span class="font-mono text-sm font-bold text-pine w-12 shrink-0">08:00</span>
+                <div class="hairline-b pb-3 flex-1">
+                  <div class="text-base font-bold text-ink">Thực thi quy trình kiểm định 15 bước nghiêm ngặt</div>
+                  <p class="text-xs text-ink-secondary mt-0.5 font-normal">Đội ngũ kỹ thuật test phần cứng bằng FurMark, CrystalDiskInfo, kiểm tra từng phím và độ chai pin thực tế.</p>
+                </div>
+              </div>
+
+              <div class="flex gap-4 items-start">
+                <span class="font-mono text-sm font-bold text-vermilion w-12 shrink-0">24:00</span>
+                <div class="flex-1">
+                  <div class="text-base font-bold text-ink">Bàn giao máy tận tay &amp; Kích hoạt bảo hành điện tử</div>
+                  <p class="text-xs text-ink-secondary mt-0.5 font-normal">Học sinh kiểm tra máy trực tiếp, ký phiếu bàn giao và thanh toán phần tiền còn lại.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: 15-Step QC Checklist -->
+          <div class="col-span-5 hairline-l pl-8 morph-item morph-delay-3">
+            <h3 class="text-xs font-mono font-bold text-ink-muted uppercase tracking-widest mb-4">TIÊU CHUẨN KIỂM ĐỊNH 15 BƯỚC ĐỘC QUYỀN</h3>
+            <div class="grid grid-cols-2 gap-2 text-xs font-mono text-ink-secondary">
+              <div class="hairline-b pb-1">&bull; 01. Kiểm tra sạc &amp; chân nguồn</div>
+              <div class="hairline-b pb-1">&bull; 09. Test gõ 100% phím</div>
+              <div class="hairline-b pb-1">&bull; 02. Sức khỏe pin &ge; 80%</div>
+              <div class="hairline-b pb-1">&bull; 10. Test Touchpad đa điểm</div>
+              <div class="hairline-b pb-1">&bull; 03. Test điểm chết màn hình</div>
+              <div class="hairline-b pb-1">&bull; 11. Loa trái/phải không rè</div>
+              <div class="hairline-b pb-1">&bull; 04. Đo nhiệt độ CPU stress test</div>
+              <div class="hairline-b pb-1">&bull; 12. Microphone đàm thoại</div>
+              <div class="hairline-b pb-1">&bull; 05. Sức khỏe ổ cứng SSD (Crystal)</div>
+              <div class="hairline-b pb-1">&bull; 13. Camera học trực tuyến</div>
+              <div class="hairline-b pb-1">&bull; 06. Kiểm tra bản lề cơ khí</div>
+              <div class="hairline-b pb-1">&bull; 14. Kết nối WiFi / Bluetooth</div>
+              <div class="hairline-b pb-1">&bull; 07. Cổng USB / Type-C / HDMI</div>
+              <div class="hairline-b pb-1">&bull; 15. Cài Windows &amp; Office sạch</div>
+              <div class="hairline-b pb-1 text-pine font-bold col-span-2">&check; Tem niêm phong chính hãng Vương Gia</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center text-xs font-mono text-ink-muted hairline-t pt-3">
+          <span>TỐI ƯU HÓA CHUỖI CUNG ỨNG VÀ KIỂM SOÁT RỦI RO KỸ THUẬT</span>
+          <span class="font-bold text-ink">05 / 09</span>
+        </div>
+      </section>
+
+      <!-- SLIDE 6: CĂN CỨ PHÁP LÝ KT-PL & KINH TẾ TUẦN HOÀN -->
+      <section class="slide-page" id="slide-6">
+        <div class="flex justify-between items-baseline hairline-b pb-4 morph-item morph-delay-1">
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-mono text-vermilion font-bold">PHẦN 06</span>
+            <span class="text-xs font-mono font-bold tracking-widest uppercase text-ink">CĂN CỨ PHÁP LÝ KT-PL &amp; TRÁCH NHIỆM BẢO VỆ MÔI TRƯỜNG</span>
+          </div>
+          <div class="text-xs font-mono text-ink-muted">TUÂN THỦ CHẶT CHẼ HỆ THỐNG PHÁP LUẬT VIỆT NAM</div>
+        </div>
+
+        <div class="my-auto py-2">
+          <h2 class="text-4xl lg:text-5xl font-extrabold text-ink font-display tracking-tight mb-8 morph-item morph-delay-1">
+            Nền Tảng Pháp Lý Vững Chắc Cho Dự Án Khởi Nghiệp Học Đường
+          </h2>
+
+          <!-- 4 Legal Pillars (No Cards, Pure Hairline Editorial Columns) -->
+          <div class="grid grid-cols-4 gap-8 hairline-t pt-8 morph-item morph-delay-2">
+            <div>
+              <div class="text-xs font-mono text-vermilion font-bold uppercase mb-1">CĂN CỨ 01 // NGHỊ ĐỊNH 01/2021</div>
+              <div class="text-base font-bold text-ink mb-2">Khoản 2 Điều 79</div>
+              <p class="text-sm text-ink-secondary leading-relaxed font-normal">
+                Quy định cá nhân, nhóm học sinh thực hiện các hoạt động thương mại nhỏ lẻ, buôn bán thử nghiệm với doanh thu thấp không thuộc diện bắt buộc phải đăng ký hộ kinh doanh cá thể.
+              </p>
+            </div>
+
+            <div class="hairline-l pl-8">
+              <div class="text-xs font-mono text-vermilion font-bold uppercase mb-1">CĂN CỨ 02 // BL DÂN SỰ 2015</div>
+              <div class="text-base font-bold text-ink mb-2">Khoản 4 Điều 21</div>
+              <p class="text-sm text-ink-secondary leading-relaxed font-normal">
+                Người từ đủ 15 tuổi đến dưới 18 tuổi có quyền tự mình xác lập, thực hiện các giao dịch dân sự phục vụ nhu cầu sinh hoạt, học tập phù hợp với lứa tuổi.
+              </p>
+            </div>
+
+            <div class="hairline-l pl-8">
+              <div class="text-xs font-mono text-vermilion font-bold uppercase mb-1">CĂN CỨ 03 // TT 40/2021/TT-BTC</div>
+              <div class="text-base font-bold text-ink mb-2">Quy Định Miễn Thuế</div>
+              <p class="text-sm text-ink-secondary leading-relaxed font-normal">
+                Cá nhân có doanh thu từ hoạt động sản xuất, kinh doanh trong năm dương lịch từ 100 triệu đồng trở xuống thuộc diện không phải nộp thuế GTGT và thuế TNCN.
+              </p>
+            </div>
+
+            <div class="hairline-l pl-8">
+              <div class="text-xs font-mono text-pine font-bold uppercase mb-1">TRÁCH NHIỆM // KINH TẾ TUẦN HOÀN</div>
+              <div class="text-base font-bold text-ink mb-2">Bảo Vệ Môi Trường (EPR)</div>
+              <p class="text-sm text-ink-secondary leading-relaxed font-normal">
+                Kéo dài vòng đời máy tính văn phòng thêm 3-5 năm, giảm thiểu rác thải điện tử (e-waste). Cam kết thu hồi pin cũ hỏng chuyển về cơ sở xử lý tái chế hợp chuẩn.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center text-xs font-mono text-ink-muted hairline-t pt-3">
+          <span>Ý THỨC TUÂN THỦ PHÁP LUẬT VÀ ĐẠO ĐỨC KINH DOANH BẢO VỆ NGƯỜI TIÊU DÙNG</span>
+          <span class="font-bold text-ink">06 / 09</span>
+        </div>
+      </section>
+
+      <!-- SLIDE 7: BỘ GIÁP PHẢN BIỆN - 6 CÂU HỎI HÓC BÚA -->
+      <section class="slide-page" id="slide-7">
+        <div class="flex justify-between items-baseline hairline-b pb-4 morph-item morph-delay-1">
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-mono text-vermilion font-bold">PHẦN 07</span>
+            <span class="text-xs font-mono font-bold tracking-widest uppercase text-ink">BỘ GIÁP PHẢN BIỆN TRƯỚC HỘI ĐỒNG GIÁM KHẢO</span>
+          </div>
+          <div class="text-xs font-mono text-ink-muted">DỰ BÁO RỦI RO &amp; BIỆN PHÁP ỨNG PHÓ THỰC TẾ</div>
+        </div>
+
+        <div class="my-auto py-2">
+          <h2 class="text-4xl lg:text-5xl font-extrabold text-ink font-display tracking-tight mb-8 morph-item morph-delay-1">
+            Sẵn Sàng Trả Lời Trực Diện 6 Câu Hỏi Hóc Búa Của Thầy Cô
+          </h2>
+
+          <!-- 6 Grid Q&A (Cardless Grid with Hairline Dividers) -->
+          <div class="grid grid-cols-3 gap-8 hairline-t pt-6 morph-item morph-delay-2">
+            <div>
+              <div class="text-xs font-mono text-vermilion font-bold mb-1">01 // NGUỒN GỐC SẢN PHẨM</div>
+              <div class="text-sm font-bold text-ink mb-1.5">Lấy hàng từ đâu để đảm bảo chất lượng?</div>
+              <p class="text-xs text-ink-secondary leading-relaxed font-normal">
+                Hợp đồng cam kết với đơn vị đầu mối nhập khẩu thiết bị văn phòng cơ quan Nhật Bản; kiểm tra tem phụ và số Serial trực tiếp trên trang chủ nhà sản xuất.
+              </p>
+            </div>
+
+            <div class="hairline-l pl-8">
+              <div class="text-xs font-mono text-vermilion font-bold mb-1">02 // RỦI RO HỦY ĐƠN</div>
+              <div class="text-sm font-bold text-ink mb-1.5">Khách đặt cọc rồi không lấy máy thì sao?</div>
+              <p class="text-xs text-ink-secondary leading-relaxed font-normal">
+                Khoản cọc 200k - 500k đủ bù đắp chi phí vận chuyển 2 chiều. Máy được đưa vào danh sách có sẵn để chào bán ngay cho bạn học tiếp theo đang có nhu cầu.
+              </p>
+            </div>
+
+            <div class="hairline-l pl-8">
+              <div class="text-xs font-mono text-vermilion font-bold mb-1">03 // BẢO HÀNH KỸ THUẬT</div>
+              <div class="text-sm font-bold text-ink mb-1.5">Máy hỏng trong 30 ngày xử lý như thế nào?</div>
+              <p class="text-xs text-ink-secondary leading-relaxed font-normal">
+                Trích lập sẵn quỹ dự phòng 150.000 đ/máy (chiếm 30% lợi nhuận). Nếu lỗi phần cứng bo mạch không khắc phục được, đổi ngay máy tương đương.
+              </p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-8 hairline-t pt-6 mt-6 morph-item morph-delay-3">
+            <div>
+              <div class="text-xs font-mono text-pine font-bold mb-1">04 // NĂNG LỰC CẠNH TRANH</div>
+              <div class="text-sm font-bold text-ink mb-1.5">Làm sao cạnh tranh với các chuỗi siêu thị lớn?</div>
+              <p class="text-xs text-ink-secondary leading-relaxed font-normal">
+                Chuỗi lớn không bán phân khúc 4 triệu và chi phí mặt bằng rất cao. Nhóm cạnh tranh bằng giá gốc, hỗ trợ kỹ thuật cài win trực tiếp tại trường học.
+              </p>
+            </div>
+
+            <div class="hairline-l pl-8">
+              <div class="text-xs font-mono text-pine font-bold mb-1">05 // PHÁP LÝ HỌC SINH</div>
+              <div class="text-sm font-bold text-ink mb-1.5">Học sinh kinh doanh có hợp pháp không?</div>
+              <p class="text-xs text-ink-secondary leading-relaxed font-normal">
+                Tuân thủ đúng Khoản 2 Điều 79 NĐ 01/2021 và Điều 21 BLDS 2015. Mọi hoạt động đều có sự bảo trợ, đồng thuận và giám sát của phụ huynh.
+              </p>
+            </div>
+
+            <div class="hairline-l pl-8">
+              <div class="text-xs font-mono text-pine font-bold mb-1">06 // QUẢN LÝ THỜI GIAN</div>
+              <div class="text-sm font-bold text-ink mb-1.5">Kinh doanh có ảnh hưởng việc học văn hóa?</div>
+              <p class="text-xs text-ink-secondary leading-relaxed font-normal">
+                4 thành viên phân chia công việc khoa học; tận dụng công cụ Auto-post Fanpage tự động tìm kiếm khách hàng. Chỉ bàn giao máy ngoài giờ học.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center text-xs font-mono text-ink-muted hairline-t pt-3">
+          <span>LẬP LUẬN CHẶT CHẼ &bull; CĂN CỨ VỮNG CHẮC &bull; TỰ TIN PHẢN BIỆN</span>
+          <span class="font-bold text-ink">07 / 09</span>
+        </div>
+      </section>
+
+      <!-- SLIDE 8: MINH CHỨNG THỰC TẾ: 10 ẢNH BIDV & CHAT THẬT -->
+      <section class="slide-page" id="slide-8">
+        <div class="flex justify-between items-baseline hairline-b pb-4 morph-item morph-delay-1">
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-mono text-vermilion font-bold">PHẦN 08</span>
+            <span class="text-xs font-mono font-bold tracking-widest uppercase text-ink">MINH CHỨNG THỰC TẾ: 4 BIÊN LAI BIDV &amp; 6 HỘI THOẠI KHÁCH HÀNG</span>
+          </div>
+          <div class="text-xs font-mono text-ink-muted">TỔNG TIỀN ĐẶT CỌC &amp; GIAO DỊCH THẬT ĐÃ THU: 2.000.000 VNĐ</div>
+        </div>
+
+        <div class="my-auto py-2">
+          <!-- 10 Evidence Images Showcase (Pure Layout, Zero Gray Box Wrapping, Click to Zoom) -->
+          <div class="grid grid-cols-12 gap-8 items-center">
             
-            <!-- 3 Hero Stats Stacked in Open Hairline Container -->
-            <div class="border border-slate-200 divide-y divide-slate-200 bg-white">
-              <!-- Stat 1 -->
-              <div class="p-4">
-                <div class="flex items-baseline justify-between mb-1">
-                  <span class="text-4xl sm:text-5xl font-black text-emerald-700 font-display">72,5%</span>
-                  <span class="text-xs font-mono font-bold text-slate-500">87/120 HỌC SINH</span>
+            <!-- 4 Bank Receipts (Col 5) -->
+            <div class="col-span-5 morph-item morph-delay-2">
+              <div class="flex justify-between items-baseline mb-2">
+                <span class="text-xs font-mono font-bold text-ink uppercase">4 BIÊN LAI CỌC QUA NGÂN HÀNG BIDV</span>
+                <span class="text-[11px] font-mono text-vermilion font-bold">STK: 8883451443 (VUONG GIA)</span>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-3">
+                <div class="cursor-pointer group" onclick="openLightbox('evidence/coc_200k_thuy_nhung.jpg', 'Biên lai cọc 200.000 VNĐ - Võ Thị Thùy Nhung')">
+                  <div class="h-28 overflow-hidden hairline-b">
+                    <img src="evidence/coc_200k_thuy_nhung.jpg" alt="Cọc 200k Võ Thị Thùy Nhung" class="w-full h-full object-contain group-hover:scale-105 transition duration-300" />
+                  </div>
+                  <div class="text-[11px] font-mono text-ink-secondary mt-1">+200k &bull; Võ Thị Thùy Nhung</div>
                 </div>
-                <div class="text-sm sm:text-base font-bold text-[#09090B]">Ngân sách dưới 6 triệu đồng</div>
-                <div class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">Trong đó 3,5 - 5,5 triệu chiếm <strong>58,3%</strong>; chỉ 14,2% có khả năng mua máy mới &gt;10 triệu.</div>
-              </div>
 
-              <!-- Stat 2 -->
-              <div class="p-4">
-                <div class="flex items-baseline justify-between mb-1">
-                  <span class="text-4xl sm:text-5xl font-black text-red-600 font-display">81,7%</span>
-                  <span class="text-xs font-mono font-bold text-slate-500">98/120 HỌC SINH</span>
+                <div class="cursor-pointer group" onclick="openLightbox('evidence/coc_500k_thanhvu.jpg', 'Biên lai cọc 500.000 VNĐ - Thanh Vu Store')">
+                  <div class="h-28 overflow-hidden hairline-b">
+                    <img src="evidence/coc_500k_thanhvu.jpg" alt="Cọc 500k Thanh Vu Store" class="w-full h-full object-contain group-hover:scale-105 transition duration-300" />
+                  </div>
+                  <div class="text-[11px] font-mono text-ink-secondary mt-1">+500k &bull; Thanh Vu Store</div>
                 </div>
-                <div class="text-sm sm:text-base font-bold text-[#09090B]">Sợ máy dựng &amp; hỏng bo mạch</div>
-                <div class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">Rào cản tâm lý lớn nhất khi mua máy cũ trôi nổi là sợ bị lừa và thiếu cam kết bảo hành.</div>
-              </div>
 
-              <!-- Stat 3 -->
-              <div class="p-4">
-                <div class="flex items-baseline justify-between mb-1">
-                  <span class="text-4xl sm:text-5xl font-black text-sapphire-700 font-display">65,8%</span>
-                  <span class="text-xs font-mono font-bold text-slate-500">79/120 HỌC SINH</span>
+                <div class="cursor-pointer group" onclick="openLightbox('evidence/chuyenkhoan_1tr_thanhvu.jpg', 'Biên lai chuyển khoản 1.000.000 VNĐ - Thanh Vu Store')">
+                  <div class="h-28 overflow-hidden hairline-b">
+                    <img src="evidence/chuyenkhoan_1tr_thanhvu.jpg" alt="CK 1tr Thanh Vu Store" class="w-full h-full object-contain group-hover:scale-105 transition duration-300" />
+                  </div>
+                  <div class="text-[11px] font-mono text-ink-secondary mt-1">+1.000k &bull; Thanh Vu Store</div>
                 </div>
-                <div class="text-sm sm:text-base font-bold text-[#09090B]">Sẵn sàng cọc 200k-500k trước</div>
-                <div class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">Ủng hộ mô hình JIT nếu có ảnh/video máy thật và cam kết hoàn cọc 100% nếu không ưng ý.</div>
-              </div>
-            </div>
-          </div>
 
-          <div class="text-xs text-slate-500 italic font-mono pt-1">
-            *Nguồn: Phiếu khảo sát thực nghiệm Google Form N=120 học sinh THPT (Tháng 10/2026).
-          </div>
-        </div>
-
-        <!-- 3 Pains & Market Positioning Matrix (Right 8/12) -->
-        <div class="lg:col-span-8 flex flex-col justify-between pl-0 lg:pl-3 space-y-3">
-          <!-- 3 Pain Points Editorial (Cardless Open Grid) -->
-          <div>
-            <div class="text-xs font-bold font-mono text-slate-500 uppercase tracking-wider mb-2">3 NỖI ĐAU CỦA HỌC SINH VÀ PHỤ HUYNH</div>
-            <div class="grid grid-cols-1 sm:grid-cols-3 border border-slate-200 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 bg-white">
-              <div class="p-4">
-                <div class="text-xs font-bold text-red-600 font-mono mb-1">01 &bull; RÀO CẢN GIÁ</div>
-                <div class="text-sm sm:text-base font-bold text-[#09090B]">Máy Mới Quá Đắt</div>
-                <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">Chuỗi lớn 12-25 triệu vượt quá khả năng tài chính của phần lớn gia đình.</p>
-              </div>
-              <div class="p-4">
-                <div class="text-xs font-bold text-red-600 font-mono mb-1">02 &bull; CẠM BẪY CHẤT LƯỢNG</div>
-                <div class="text-sm sm:text-base font-bold text-[#09090B]">Máy Dựng Trôi Nổi</div>
-                <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">Hấp chip, tráo linh kiện, pin chai nặng; người mua rất dễ bị lừa.</p>
-              </div>
-              <div class="p-4">
-                <div class="text-xs font-bold text-red-600 font-mono mb-1">03 &bull; HẬU MÃI KÉM</div>
-                <div class="text-sm sm:text-base font-bold text-[#09090B]">Đem Con Bỏ Chợ</div>
-                <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">Cá nhân bán máy cũ thường trốn tránh, không bảo hành khi phát sinh lỗi.</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Niche Positioning Table -->
-          <div>
-            <div class="text-xs font-bold font-mono text-slate-500 uppercase tracking-wider mb-2">ĐỊNH VỊ THỊ TRƯỜNG NGÁCH: "ĐẠI DƯƠNG XANH PHÂN KHÚC 3,5 - 5,5 TRIỆU"</div>
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs sm:text-sm border border-slate-200 bg-white">
-                <thead class="bg-slate-100 text-slate-700 font-mono">
-                  <tr>
-                    <th class="p-2 sm:p-2.5 border-b border-slate-200 font-bold">Tiêu chí so sánh</th>
-                    <th class="p-2 sm:p-2.5 border-b border-slate-200 font-medium">Chuỗi siêu thị lớn</th>
-                    <th class="p-2 sm:p-2.5 border-b border-slate-200 font-medium">Cửa hàng máy cũ truyền thống</th>
-                    <th class="p-2 sm:p-2.5 border-b border-slate-200 font-bold text-emerald-800 bg-emerald-50/70">LAPTOP VƯƠNG GIA</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-200 text-slate-700">
-                  <tr>
-                    <td class="p-2 sm:p-2.5 font-bold font-mono">Phân khúc giá</td>
-                    <td class="p-2 sm:p-2.5">12 - 30 triệu (máy mới)</td>
-                    <td class="p-2 sm:p-2.5">4 - 10 triệu (đa nguồn)</td>
-                    <td class="p-2 sm:p-2.5 font-bold text-emerald-700 bg-emerald-50/40">3,5 - 5,5 triệu (chuẩn Nhật Zin)</td>
-                  </tr>
-                  <tr>
-                    <td class="p-2 sm:p-2.5 font-bold font-mono">Chi phí mặt bằng</td>
-                    <td class="p-2 sm:p-2.5">Rất cao (mặt tiền đắc địa)</td>
-                    <td class="p-2 sm:p-2.5">Khá cao (thuê ki-ốt)</td>
-                    <td class="p-2 sm:p-2.5 font-bold text-emerald-700 bg-emerald-50/40">0 đồng (Mô hình O2O &amp; JIT)</td>
-                  </tr>
-                  <tr>
-                    <td class="p-2 sm:p-2.5 font-bold font-mono">Kiểm định kỹ thuật</td>
-                    <td class="p-2 sm:p-2.5">Theo tiêu chuẩn hãng</td>
-                    <td class="p-2 sm:p-2.5">Khó kiểm chứng main Zin</td>
-                    <td class="p-2 sm:p-2.5 font-bold text-emerald-700 bg-emerald-50/40">Công khai 15 bước trước mặt khách</td>
-                  </tr>
-                  <tr>
-                    <td class="p-2 sm:p-2.5 font-bold font-mono">Chính sách bảo hành</td>
-                    <td class="p-2 sm:p-2.5">Chính hãng (chờ 15-30 ngày)</td>
-                    <td class="p-2 sm:p-2.5">Thường đùn đẩy trách nhiệm</td>
-                    <td class="p-2 sm:p-2.5 font-bold text-emerald-700 bg-emerald-50/40">1 đổi 1 trong 30 ngày &bull; Hỗ trợ 24/7</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Customer Personas -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs sm:text-sm pt-1">
-            <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
-              <span class="font-bold text-slate-800">65% Học sinh - SV:</span> Ngân sách 3,5-5,5M học tập, làm slide.
-            </div>
-            <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
-              <span class="font-bold text-slate-800">25% Phụ huynh:</span> Cần máy bền bỉ, màn chống mỏi mắt cho con.
-            </div>
-            <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
-              <span class="font-bold text-slate-800">10% Giáo viên/VP:</span> Cần máy phụ pin tốt, gọn nhẹ mang theo.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide Footer Bar -->
-      <div class="border-t border-slate-200 pt-2 flex justify-between items-center text-xs text-slate-500">
-        <span class="font-medium text-slate-700">DỰ ÁN KHỞI NGHIỆP LAPTOP VƯƠNG GIA &bull; BÁO CÁO THUYẾT TRÌNH GD KT-PL</span>
-        <span class="font-mono font-bold">TRANG 02 / 09</span>
-      </div>
-    </section>
-
-    <!-- ========================================================
-         SLIDE 3: KẾ HOẠCH MARKETING & BÁN HÀNG 4P ĐỘT PHÁ
-         ======================================================== -->
-    <section class="slide-frame p-4 sm:p-6 lg:p-8 justify-between" id="slide-3">
-      <!-- Top Action Bar -->
-      <div class="row-divider pb-3 flex justify-between items-start">
-        <div>
-          <div class="flex items-center gap-2.5 mb-1.5">
-            <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-300 text-xs font-bold rounded-sm tracking-wide font-mono">
-              PHẦN III // CHIẾN LƯỢC 4P MARKETING MIX
-            </span>
-            <span class="text-xs font-bold text-slate-500 font-mono">RUBRIC I - TIÊU CHÍ 3 (1,5 ĐIỂM)</span>
-          </div>
-          <h2 class="text-2xl sm:text-3xl lg:text-4xl xl:text-[2.5rem] font-black text-[#09090B] font-display tracking-tight leading-tight">
-            Chiến lược 4P Toàn diện: Đòn bẩy Autopost 0 Đồng &amp; Mô hình Tiếp cận Đa kênh O2O Chiếm lĩnh Thị trường Ngách
-          </h2>
-        </div>
-        <div class="shrink-0 pl-6 text-right hidden sm:block">
-          <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-800 border border-amber-300 rounded text-xs font-mono font-bold">
-            CTO TRÌNH BÀY &bull; CẦM MÁY MẪU TEST 5S (01:45 - 02:30)
-          </div>
-        </div>
-      </div>
-
-      <!-- 4-Pillar Grid with 1px Hairlines (Cardless Open Flow) -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border border-slate-200 divide-y md:divide-y-0 md:divide-x divide-slate-200 bg-white my-auto py-0">
-        <!-- P1: PRODUCT -->
-        <div class="p-5 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-3">
-              <span class="px-2.5 py-1 bg-slate-900 text-white font-mono text-xs font-bold rounded">P1 &bull; PRODUCT</span>
-              <span class="text-xs font-mono font-bold text-slate-500">CHUẨN NHẬT</span>
-            </div>
-            <div class="text-base sm:text-lg font-bold text-[#09090B] mb-2 font-display">Bộ 3 Dòng Máy Doanh Nhân</div>
-            <ul class="text-xs sm:text-sm text-slate-600 space-y-2 mb-4 leading-relaxed">
-              <li>&bull; <strong class="text-slate-900 font-bold">Dell Latitude 7490:</strong> Vỏ sợi Carbon, siêu bền bỉ, chống sốc tốt.</li>
-              <li>&bull; <strong class="text-slate-900 font-bold">HP EliteBook 830 G5/G6:</strong> Vỏ nhôm nguyên khối, viền mỏng IPS.</li>
-              <li>&bull; <strong class="text-slate-900 font-bold">Lenovo ThinkPad T480:</strong> Bàn phím số 1 thế giới gõ văn bản êm.</li>
-            </ul>
-          </div>
-          <div class="pt-3 border-t border-slate-200">
-            <div class="text-xs font-bold text-emerald-700 font-mono">GÓI TẶNG KÈM ALL-IN-ONE:</div>
-            <div class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">Sạc zin theo máy, chuột không dây, túi chống sốc, lót chuột, Win 11 OEM + Office.</div>
-          </div>
-        </div>
-
-        <!-- P2: PRICE -->
-        <div class="p-5 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-3">
-              <span class="px-2.5 py-1 bg-slate-900 text-white font-mono text-xs font-bold rounded">P2 &bull; PRICE</span>
-              <span class="text-xs font-mono font-bold text-slate-500">THẤU NHẬP</span>
-            </div>
-            <div class="text-base sm:text-lg font-bold text-[#09090B] mb-2 font-display">Định Giá Thấu Nhập (Penetration)</div>
-            <div class="my-2.5 p-3.5 bg-emerald-50/70 border border-emerald-300 rounded text-center">
-              <div class="text-xs text-emerald-800 font-mono font-bold uppercase tracking-wide">MỨC GIÁ HỌC SINH</div>
-              <div class="text-3xl font-black text-emerald-700 font-display my-1">3,5 - 5,5 TRIỆU</div>
-              <div class="text-xs text-emerald-800 font-medium">Rẻ hơn ngoài thị trường 400k - 600k</div>
-            </div>
-            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Nhờ cắt bỏ hoàn toàn chi phí mặt bằng và chi phí nhân sự tiếp thị đắt đỏ của các chuỗi lớn.
-            </p>
-          </div>
-          <div class="pt-3 border-t border-slate-200">
-            <div class="text-xs font-bold text-slate-900 font-mono">NGUYÊN TẮC BẤT BIẾN:</div>
-            <div class="text-xs sm:text-sm text-emerald-700 font-bold mt-1 font-mono">Lợi nhuận ròng sàn &ge; 500.000đ/máy (10,87%)</div>
-          </div>
-        </div>
-
-        <!-- P3: PLACE -->
-        <div class="p-5 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-3">
-              <span class="px-2.5 py-1 bg-slate-900 text-white font-mono text-xs font-bold rounded">P3 &bull; PLACE</span>
-              <span class="text-xs font-mono font-bold text-slate-500">MÔ HÌNH O2O</span>
-            </div>
-            <div class="text-base sm:text-lg font-bold text-[#09090B] mb-2 font-display">Đa Kênh Online to Offline</div>
-            <ul class="text-xs sm:text-sm text-slate-600 space-y-2 mb-4 leading-relaxed">
-              <li>
-                <strong class="text-slate-900 font-bold">Online:</strong> Tiếp cận qua Fanpage tự động, hội nhóm học sinh và Zalo tư vấn.
-              </li>
-              <li>
-                <strong class="text-slate-900 font-bold">Offline:</strong> Trực tiếp test máy tại nhà thành viên hoặc mang đến tận trường học cho bạn bè trải nghiệm.
-              </li>
-            </ul>
-          </div>
-          <div class="pt-3 border-t border-slate-200">
-            <div class="text-xs font-bold text-sapphire-700 font-mono">ĐỘ TIN CẬY CAO:</div>
-            <div class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">Khách được tận tay cầm máy kiểm tra bo mạch và phần cứng trước khi trả tiền.</div>
-          </div>
-        </div>
-
-        <!-- P4: PROMOTION -->
-        <div class="p-5 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-3">
-              <span class="px-2.5 py-1 bg-slate-900 text-white font-mono text-xs font-bold rounded">P4 &bull; PROMOTION</span>
-              <span class="text-xs font-mono font-bold text-slate-500">AUTOPOST 0Đ</span>
-            </div>
-            <div class="text-base sm:text-lg font-bold text-[#09090B] mb-2 font-display">Xúc Tiến &amp; Bảo Hiểm Niềm Tin</div>
-            <ul class="text-xs sm:text-sm text-slate-600 space-y-2 mb-3 leading-relaxed">
-              <li>&bull; <strong class="text-slate-900 font-bold">Autopost 4.0:</strong> Đăng 4 bài/ngày vào 4 khung giờ vàng (08:30, 11:45, 15:30, 20:00).</li>
-              <li>&bull; <strong class="text-slate-900 font-bold">Referral 200k:</strong> Tặng 200k cho học sinh giới thiệu bạn mua máy.</li>
-              <li>&bull; <strong class="text-slate-900 font-bold">1 đổi 1 trong 30 ngày:</strong> Hỗ trợ vệ sinh, tra keo tản nhiệt trọn đời máy.</li>
-            </ul>
-          </div>
-          <div class="pt-3 border-t border-slate-200">
-            <div class="text-xs font-bold text-sapphire-700 font-mono">CHI PHÍ TIẾP THỊ: 0 ĐỒNG</div>
-            <div class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">Đòn bẩy công nghệ tự động giúp tối ưu 100% chi phí CAC.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Prop Notice & Live Action Cue -->
-      <div class="p-3 bg-slate-100/90 border border-slate-200 rounded-sm flex items-center justify-between text-xs sm:text-sm text-slate-700">
-        <div class="flex items-center gap-2.5">
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
-          <strong class="font-bold text-[#09090B]">Hành động của CTO tại Hội đồng:</strong> Giơ laptop HP EliteBook mẫu test trực tiếp, khởi động trong 5 giây, chứng minh máy mượt mà.
-        </div>
-        <span class="font-mono text-slate-600 font-bold text-xs">MIL-STD-810G CERTIFIED</span>
-      </div>
-
-      <!-- Slide Footer Bar -->
-      <div class="border-t border-slate-200 pt-2 flex justify-between items-center text-xs text-slate-500">
-        <span class="font-medium text-slate-700">DỰ ÁN KHỞI NGHIỆP LAPTOP VƯƠNG GIA &bull; BÁO CÁO THUYẾT TRÌNH GD KT-PL</span>
-        <span class="font-mono font-bold">TRANG 03 / 09</span>
-      </div>
-    </section>
-
-    <!-- ========================================================
-         SLIDE 4: KẾ HOẠCH TÀI CHÍNH & ĐIỂM HÒA VỐN Q=0 MÁY
-         ======================================================== -->
-    <section class="slide-frame p-4 sm:p-6 lg:p-8 justify-between" id="slide-4">
-      <!-- Top Action Bar -->
-      <div class="row-divider pb-3 flex justify-between items-start">
-        <div>
-          <div class="flex items-center gap-2.5 mb-1.5">
-            <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-300 text-xs font-bold rounded-sm tracking-wide font-mono">
-              PHẦN IV // KẾ HOẠCH TÀI CHÍNH &amp; HÒA VỐN
-            </span>
-            <span class="text-xs font-bold text-slate-500 font-mono">RUBRIC I - TIÊU CHÍ 4 (2,0 ĐIỂM - TRỌNG ĐIỂM)</span>
-          </div>
-          <h2 class="text-2xl sm:text-3xl lg:text-4xl xl:text-[2.5rem] font-black text-[#09090B] font-display tracking-tight leading-tight">
-            Hạch toán Tài chính Tinh gọn: Chi phí Cố định 0đ Đưa Điểm hòa vốn về 0 Máy, Lợi nhuận Ròng &ge; 500.000đ/Máy
-          </h2>
-        </div>
-        <div class="shrink-0 pl-6 text-right hidden sm:block">
-          <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-800 rounded text-xs font-mono font-bold border border-slate-200">
-            CFO TRÌNH BÀY (02:30 - 04:00)
-          </div>
-        </div>
-      </div>
-
-      <!-- Main Financial Content: Unit Economics (Left 7/12) vs BEP & 3-Month Plan (Right 5/12) -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 my-auto py-2">
-        <!-- Unit Economics Table (Left 7/12) -->
-        <div class="lg:col-span-7 flex flex-col justify-between pr-0 lg:pr-6 col-divider">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <div class="text-xs font-bold font-mono text-slate-500 uppercase tracking-wider">HẠCH TOÁN GIÁ THÀNH ĐƠN VỊ &bull; MẪU HP ELITEBOOK 830 G6</div>
-              <span class="text-xs text-emerald-700 font-mono font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">BIÊN LÃI 10,87%</span>
-            </div>
-
-            <table class="w-full text-left text-xs sm:text-sm border border-slate-200 bg-white">
-              <thead class="bg-slate-100 text-slate-700 font-mono">
-                <tr>
-                  <th class="p-2 sm:p-2.5 border-b border-slate-200 font-bold">Khoản mục cấu thành</th>
-                  <th class="p-2 sm:p-2.5 border-b border-slate-200 font-bold text-right">Số tiền (VNĐ)</th>
-                  <th class="p-2 sm:p-2.5 border-b border-slate-200 font-medium text-right">Tỷ trọng</th>
-                  <th class="p-2 sm:p-2.5 border-b border-slate-200 font-medium">Thuyết minh nghiệp vụ</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-200 text-slate-700">
-                <tr>
-                  <td class="p-2 sm:p-2.5 font-medium">1. Giá vốn nhập sỉ kho Zalo (COGS)</td>
-                  <td class="p-2 sm:p-2.5 font-mono font-bold text-right">3.800.000</td>
-                  <td class="p-2 sm:p-2.5 text-right font-mono">82,6%</td>
-                  <td class="p-2 sm:p-2.5 text-slate-500 text-xs">Đại lý cấp 1, cam kết Main Zin</td>
-                </tr>
-                <tr>
-                  <td class="p-2 sm:p-2.5 font-medium">2. Gói phụ kiện quà tặng kèm</td>
-                  <td class="p-2 sm:p-2.5 font-mono font-bold text-right">150.000</td>
-                  <td class="p-2 sm:p-2.5 text-right font-mono">3,3%</td>
-                  <td class="p-2 sm:p-2.5 text-slate-500 text-xs">Sạc zin + Chuột quang + Túi sốc</td>
-                </tr>
-                <tr>
-                  <td class="p-2 sm:p-2.5 font-medium">3. Vật tư bảo dưỡng, keo Arctic MX-4</td>
-                  <td class="p-2 sm:p-2.5 font-mono font-bold text-right">50.000</td>
-                  <td class="p-2 sm:p-2.5 text-right font-mono">1,1%</td>
-                  <td class="p-2 sm:p-2.5 text-slate-500 text-xs">Keo gốm tản nhiệt xịn + Cồn vệ sinh</td>
-                </tr>
-                <tr>
-                  <td class="p-2 sm:p-2.5 font-medium">4. Trích lập Quỹ dự phòng bảo hành (3%)</td>
-                  <td class="p-2 sm:p-2.5 font-mono font-bold text-right">100.000</td>
-                  <td class="p-2 sm:p-2.5 text-right font-mono">2,2%</td>
-                  <td class="p-2 sm:p-2.5 text-slate-500 text-xs">Trích lập dự phòng đổi trả linh kiện</td>
-                </tr>
-                <tr>
-                  <td class="p-2 sm:p-2.5 font-medium text-slate-400">5. Chi phí Marketing / Mặt bằng (FC)</td>
-                  <td class="p-2 sm:p-2.5 font-mono font-bold text-right text-slate-400">0</td>
-                  <td class="p-2 sm:p-2.5 text-right font-mono text-slate-400">0,0%</td>
-                  <td class="p-2 sm:p-2.5 text-slate-400 text-xs">Tự vận hành Autopost 4.0 trên Vercel</td>
-                </tr>
-                <tr class="bg-slate-50 font-bold">
-                  <td class="p-2 sm:p-2.5 text-[#09090B]">TỔNG CHI PHÍ GIÁ THÀNH (VC)</td>
-                  <td class="p-2 sm:p-2.5 font-mono text-right text-[#09090B]">4.100.000</td>
-                  <td class="p-2 sm:p-2.5 text-right font-mono">89,1%</td>
-                  <td class="p-2 sm:p-2.5 text-slate-600 text-xs">Chi phí đưa máy đến tay khách</td>
-                </tr>
-                <tr class="bg-slate-100 font-bold">
-                  <td class="p-2 sm:p-2.5 text-[#09090B]">GIÁ BÁN RA CHO HỌC SINH (P)</td>
-                  <td class="p-2 sm:p-2.5 font-mono text-right text-[#09090B] text-base">4.600.000</td>
-                  <td class="p-2 sm:p-2.5 text-right font-mono">100,0%</td>
-                  <td class="p-2 sm:p-2.5 text-slate-600 text-xs">Rẻ hơn ngoài 400.000đ - 600.000đ</td>
-                </tr>
-                <tr class="bg-emerald-50 text-emerald-900 font-black">
-                  <td class="p-2 sm:p-2.5 text-emerald-950 font-bold">LỢI NHUẬN RÒNG / MÁY (&pi;)</td>
-                  <td class="p-2 sm:p-2.5 font-mono text-right text-lg sm:text-xl font-black text-emerald-800">&ge; 500.000</td>
-                  <td class="p-2 sm:p-2.5 text-right font-mono font-bold">10,9%</td>
-                  <td class="p-2 sm:p-2.5 text-xs text-emerald-900 font-semibold">Mức sàn lợi nhuận thực tế sau chi phí</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="mt-2 text-xs text-slate-500 font-mono">
-            *Khoản cọc 200k - 500k của khách là tiền bảo đảm hợp đồng, thanh toán nốt 100% khi nhận máy.
-          </div>
-        </div>
-
-        <!-- BEP Formula & 3-Month Financial Projection (Right 5/12) -->
-        <div class="lg:col-span-5 flex flex-col justify-between pl-0 lg:pl-3 space-y-3">
-          <!-- Break Even Analysis Showcase (Cardless Open Flow) -->
-          <div class="p-4 border border-slate-200 bg-white">
-            <div class="text-xs font-bold font-mono text-slate-500 uppercase tracking-wider mb-2">CÔNG THỨC ĐIỂM HÒA VỐN KINH TẾ HỌC</div>
-            
-            <div class="flex items-center justify-between p-3 bg-emerald-50/60 border border-emerald-200 rounded my-1">
-              <div>
-                <div class="text-xs text-emerald-800 font-mono font-semibold">ĐIỂM HÒA VỐN</div>
-                <div class="text-4xl sm:text-5xl font-black text-emerald-700 font-mono tracking-tight leading-none my-0.5">Q = 0 MÁY</div>
-                <div class="text-xs text-emerald-900 font-medium">Bán máy đầu tiên đã sinh lãi ròng</div>
-              </div>
-              <div class="text-right font-mono text-xs text-slate-700 border-l border-emerald-300 pl-3">
-                <div>Q<sub>BEP</sub> = FC / (P - VC)</div>
-                <div class="font-bold text-slate-900 mt-1">= 0 / 500.000 = 0</div>
-              </div>
-            </div>
-
-            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mt-2">
-              <strong>Ý nghĩa kinh tế:</strong> Do không phát sinh chi phí cố định (mặt bằng, lương nhân viên cứng), nhóm <strong class="text-emerald-700 font-bold">không có rủi ro vỡ nợ</strong>. Bán ngay chiếc máy đầu tiên đã thu lãi ròng &ge; 500.000đ.
-            </p>
-          </div>
-
-          <!-- 3-Month Projection (Cardless Open Ledger) -->
-          <div class="p-4 border border-slate-200 bg-white">
-            <div class="text-xs font-bold font-mono text-slate-500 uppercase tracking-wider mb-2">KẾ HOẠCH DỰ PHÓNG 3 THÁNG (MỤC TIÊU 20 MÁY)</div>
-            <div class="space-y-2 text-xs sm:text-sm">
-              <div class="flex justify-between items-center py-1 border-b border-slate-100">
-                <span class="text-slate-600">Tháng 1 (Mục tiêu 5 máy):</span>
-                <span class="font-mono font-bold text-slate-800">Doanh thu 23.000.000đ &bull; Lãi 2.500.000đ</span>
-              </div>
-              <div class="flex justify-between items-center py-1 border-b border-slate-100">
-                <span class="text-slate-600">Tháng 2 (Mục tiêu 7 máy):</span>
-                <span class="font-mono font-bold text-slate-800">Doanh thu 32.200.000đ &bull; Lãi 3.500.000đ</span>
-              </div>
-              <div class="flex justify-between items-center py-1 border-b border-slate-100">
-                <span class="text-slate-600">Tháng 3 (Mục tiêu 8 máy):</span>
-                <span class="font-mono font-bold text-slate-800">Doanh thu 36.800.000đ &bull; Lãi 4.000.000đ</span>
-              </div>
-              <div class="flex justify-between items-center pt-2 font-bold text-emerald-900 bg-emerald-50/80 p-2 rounded border border-emerald-200 text-sm">
-                <span>TỔNG 3 THÁNG (20 MÁY):</span>
-                <span class="font-mono">DT 92.000.000đ &bull; LÃI 10.000.000đ</span>
-              </div>
-            </div>
-            <div class="mt-2 text-xs text-slate-500 font-mono">
-              Quỹ dự phòng bảo hành tích lũy: <strong>2.000.000 VNĐ</strong> &bull; Vốn lưu động: 5.000.000 VNĐ.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide Footer Bar -->
-      <div class="border-t border-slate-200 pt-2 flex justify-between items-center text-xs text-slate-500">
-        <span class="font-medium text-slate-700">DỰ ÁN KHỞI NGHIỆP LAPTOP VƯƠNG GIA &bull; BÁO CÁO THUYẾT TRÌNH GD KT-PL</span>
-        <span class="font-mono font-bold">TRANG 04 / 09</span>
-      </div>
-    </section>
-
-    <!-- ========================================================
-         SLIDE 5: KẾ HOẠCH VẬN HÀNH JIT & QUY TRÌNH KIỂM ĐỊNH 15/24 BƯỚC
-         ======================================================== -->
-    <section class="slide-frame p-4 sm:p-6 lg:p-8 justify-between" id="slide-5">
-      <!-- Top Action Bar -->
-      <div class="row-divider pb-3 flex justify-between items-start">
-        <div>
-          <div class="flex items-center gap-2.5 mb-1.5">
-            <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-300 text-xs font-bold rounded-sm tracking-wide font-mono">
-              PHẦN V // VẬN HÀNH JIT &amp; QUY TRÌNH KIỂM ĐỊNH
-            </span>
-            <span class="text-xs font-bold text-slate-500 font-mono">RUBRIC I - TIÊU CHÍ 5 (1,5 ĐIỂM)</span>
-          </div>
-          <h2 class="text-2xl sm:text-3xl lg:text-4xl xl:text-[2.5rem] font-black text-[#09090B] font-display tracking-tight leading-tight">
-            Vận hành Theo Cơ chế Just-In-Time (JIT) 4 Bước Triệt tiêu Tồn kho &amp; Tiêu chuẩn Kiểm định 15 Bước Minh bạch
-          </h2>
-        </div>
-        <div class="shrink-0 pl-6 text-right hidden sm:block">
-          <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-800 rounded text-xs font-mono font-bold border border-slate-200">
-            CMO &amp; CTO (04:00 - 05:15)
-          </div>
-        </div>
-      </div>
-
-      <!-- Two-Tier Layout: Top 4-Step JIT Workflow; Bottom 5 Testing Clusters (15 Steps) -->
-      <div class="my-auto py-2 space-y-4">
-        <!-- Top Tier: 4-Step JIT Workflow Pipeline (Cardless Open Flow) -->
-        <div>
-          <div class="text-xs font-bold font-mono text-slate-500 uppercase tracking-wider mb-2">QUY TRÌNH 4 BƯỚC CHUỖI CUNG ỨNG JUST-IN-TIME (JIT) &bull; THỜI GIAN VÒNG QUAY 24H</div>
-          <div class="grid grid-cols-1 sm:grid-cols-4 border border-slate-200 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 bg-white">
-            <div class="p-4 flex flex-col justify-between">
-              <div>
-                <div class="flex items-center justify-between mb-1.5">
-                  <span class="text-xs font-bold font-mono text-sapphire-700 bg-sapphire-50 px-2 py-0.5 rounded border border-sapphire-200">BƯỚC 1</span>
-                  <span class="text-xs text-slate-400 font-mono font-bold">TỰ ĐỘNG</span>
+                <div class="cursor-pointer group" onclick="openLightbox('evidence/chuyenkhoan_300k_kimhoa.jpg', 'Biên lai cọc 300.000 VNĐ - Nguyễn Thị Kim Hoa')">
+                  <div class="h-28 overflow-hidden hairline-b">
+                    <img src="evidence/chuyenkhoan_300k_kimhoa.jpg" alt="Cọc 300k Nguyễn Thị Kim Hoa" class="w-full h-full object-contain group-hover:scale-105 transition duration-300" />
+                  </div>
+                  <div class="text-[11px] font-mono text-ink-secondary mt-1">+300k &bull; Nguyễn Thị Kim Hoa</div>
                 </div>
-                <div class="text-sm sm:text-base font-bold text-[#09090B]">Tiếp thị Số 0đ</div>
-                <p class="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed">Autopost quét kho sỉ Zalo, AI biên tập bài, đăng Fanpage 4 khung giờ vàng.</p>
               </div>
             </div>
 
-            <div class="p-4 flex flex-col justify-between">
-              <div>
-                <div class="flex items-center justify-between mb-1.5">
-                  <span class="text-xs font-bold font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">BƯỚC 2</span>
-                  <span class="text-xs text-slate-400 font-mono font-bold">ĐỐI SOÁT</span>
+            <!-- 6 Customer Conversations (Col 7) -->
+            <div class="col-span-7 hairline-l pl-8 morph-item morph-delay-3">
+              <div class="flex justify-between items-baseline mb-2">
+                <span class="text-xs font-mono font-bold text-ink uppercase">6 ĐOẠN TIN NHẮN TƯ VẤN &amp; CHỐT ĐƠN THẬT</span>
+                <span class="text-[11px] font-mono text-pine font-bold">HOTLINE: 0876637806</span>
+              </div>
+
+              <div class="grid grid-cols-3 gap-3">
+                <div class="cursor-pointer group" onclick="openLightbox('evidence/chat_hocsinh_nguyen_thua.jpg', 'Hội thoại với Bạn học sinh hỏi laptop học tập')">
+                  <div class="h-28 overflow-hidden hairline-b">
+                    <img src="evidence/chat_hocsinh_nguyen_thua.jpg" alt="Chat Học sinh" class="w-full h-full object-contain group-hover:scale-105 transition duration-300" />
+                  </div>
+                  <div class="text-[10px] font-mono text-ink-muted mt-1 truncate">Học sinh THPT</div>
                 </div>
-                <div class="text-sm sm:text-base font-bold text-[#09090B]">Tư vấn &amp; Thu cọc</div>
-                <p class="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed">Khách cọc thiện chí 200k - 500k vào BIDV 8883451443 để xác lập giao dịch.</p>
-              </div>
-            </div>
 
-            <div class="p-4 flex flex-col justify-between">
-              <div>
-                <div class="flex items-center justify-between mb-1.5">
-                  <span class="text-xs font-bold font-mono text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">BƯỚC 3</span>
-                  <span class="text-xs text-slate-400 font-mono font-bold">6H - 12H</span>
+                <div class="cursor-pointer group" onclick="openLightbox('evidence/chat_thay_quang_toan_gv.jpg', 'Hội thoại với Thầy giáo dạy Toán hỏi máy giảng dạy')">
+                  <div class="h-28 overflow-hidden hairline-b">
+                    <img src="evidence/chat_thay_quang_toan_gv.jpg" alt="Chat Giáo viên" class="w-full h-full object-contain group-hover:scale-105 transition duration-300" />
+                  </div>
+                  <div class="text-[10px] font-mono text-ink-muted mt-1 truncate">Thầy Quang (GV Toán)</div>
                 </div>
-                <div class="text-sm sm:text-base font-bold text-[#09090B]">Lấy máy &amp; Kiểm định QC</div>
-                <p class="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed">Lấy máy kho sỉ nội thành, thực thi nghiêm ngặt 15 bước test phần cứng.</p>
-              </div>
-            </div>
 
-            <div class="p-4 flex flex-col justify-between">
-              <div>
-                <div class="flex items-center justify-between mb-1.5">
-                  <span class="text-xs font-bold font-mono text-sapphire-700 bg-sapphire-50 px-2 py-0.5 rounded border border-sapphire-200">BƯỚC 4</span>
-                  <span class="text-xs text-slate-400 font-mono font-bold">BÀN GIAO</span>
+                <div class="cursor-pointer group" onclick="openLightbox('evidence/chat_phuhuynh_co_le_ghi.jpg', 'Hội thoại với Phụ huynh hỏi máy tính cho con học')">
+                  <div class="h-28 overflow-hidden hairline-b">
+                    <img src="evidence/chat_phuhuynh_co_le_ghi.jpg" alt="Chat Phụ huynh" class="w-full h-full object-contain group-hover:scale-105 transition duration-300" />
+                  </div>
+                  <div class="text-[10px] font-mono text-ink-muted mt-1 truncate">Cô Lê (Phụ huynh)</div>
                 </div>
-                <div class="text-sm sm:text-base font-bold text-[#09090B]">Bàn giao &amp; Thu tiền</div>
-                <p class="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed">Khách tận tay test 15 bước, hài lòng thanh toán nốt 100%, bảo hành 30 ngày.</p>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Bottom Tier: 5 Quality Testing Clusters (15 Core Steps / 24 Criteria) -->
-        <div>
-          <div class="text-xs font-bold font-mono text-slate-500 uppercase tracking-wider mb-2">TIÊU CHUẨN KIỂM ĐỊNH KỸ THUẬT 15 BƯỚC CÔNG KHAI (24 HẠNG MỤC PHẦN CỨNG)</div>
-          <div class="grid grid-cols-1 sm:grid-cols-5 border border-slate-200 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 bg-white">
-            <!-- Cluster 1 -->
-            <div class="p-3.5">
-              <div class="text-xs font-bold text-slate-900 font-mono mb-1">CỤM 1: NGOẠI QUAN</div>
-              <div class="text-xs font-bold text-emerald-700 font-mono">Bước 1 - 3</div>
-              <ul class="text-xs text-slate-600 mt-2 space-y-1.5 leading-relaxed">
-                <li>&bull; Bản lề chắc chắn, mở gập êm</li>
-                <li>&bull; Vỏ không cấn móp, nứt vỡ</li>
-                <li>&bull; Chân cao su tản nhiệt nguyên bản</li>
-              </ul>
-            </div>
-
-            <!-- Cluster 2 -->
-            <div class="p-3.5">
-              <div class="text-xs font-bold text-slate-900 font-mono mb-1">CỤM 2: MÀN HÌNH</div>
-              <div class="text-xs font-bold text-emerald-700 font-mono">Bước 4 - 6</div>
-              <ul class="text-xs text-slate-600 mt-2 space-y-1.5 leading-relaxed">
-                <li>&bull; Dead Pixel test 0 điểm chết</li>
-                <li>&bull; Không đốm sáng, phản quang</li>
-                <li>&bull; Độ chuẩn màu góc nhìn IPS</li>
-              </ul>
-            </div>
-
-            <!-- Cluster 3 -->
-            <div class="p-3.5">
-              <div class="text-xs font-bold text-slate-900 font-mono mb-1">CỤM 3: NGOẠI VI</div>
-              <div class="text-xs font-bold text-emerald-700 font-mono">Bước 7 - 9</div>
-              <ul class="text-xs text-slate-600 mt-2 space-y-1.5 leading-relaxed">
-                <li>&bull; KeyboardTest nhận 100% phím</li>
-                <li>&bull; Touchpad đa điểm nhạy mượt</li>
-                <li>&bull; Test full cổng USB, Type-C, HDMI</li>
-              </ul>
-            </div>
-
-            <!-- Cluster 4 -->
-            <div class="p-3.5">
-              <div class="text-xs font-bold text-slate-900 font-mono mb-1">CỤM 4: STRESS TEST</div>
-              <div class="text-xs font-bold text-emerald-700 font-mono">Bước 10 - 12</div>
-              <ul class="text-xs text-slate-600 mt-2 space-y-1.5 leading-relaxed">
-                <li>&bull; CrystalDiskInfo: SSD 100% tốt</li>
-                <li>&bull; BatteryBar đo độ chai pin &lt; 20%</li>
-                <li>&bull; FurMark stress CPU/GPU &lt; 75&deg;C</li>
-              </ul>
-            </div>
-
-            <!-- Cluster 5 -->
-            <div class="p-3.5">
-              <div class="text-xs font-bold text-slate-900 font-mono mb-1">CỤM 5: THÁO MÁY</div>
-              <div class="text-xs font-bold text-emerald-700 font-mono">Bước 13 - 15</div>
-              <ul class="text-xs text-slate-600 mt-2 space-y-1.5 leading-relaxed">
-                <li>&bull; Tháo nắp đáy xem main Zin</li>
-                <li>&bull; Tra keo gốm Arctic MX-4 mới</li>
-                <li>&bull; Kích hoạt Windows 11 OEM số</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide Footer Bar -->
-      <div class="border-t border-slate-200 pt-2 flex justify-between items-center text-xs text-slate-500">
-        <span class="font-medium text-slate-700">DỰ ÁN KHỞI NGHIỆP LAPTOP VƯƠNG GIA &bull; BÁO CÁO THUYẾT TRÌNH GD KT-PL</span>
-        <span class="font-mono font-bold">TRANG 05 / 09</span>
-      </div>
-    </section>
-
-    <!-- ========================================================
-         SLIDE 6: CĂN CỨ PHÁP LÝ KT-PL & KINH TẾ TUẦN HOÀN
-         ======================================================== -->
-    <section class="slide-frame p-4 sm:p-6 lg:p-8 justify-between" id="slide-6">
-      <!-- Top Action Bar -->
-      <div class="row-divider pb-3 flex justify-between items-start">
-        <div>
-          <div class="flex items-center gap-2.5 mb-1.5">
-            <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-300 text-xs font-bold rounded-sm tracking-wide font-mono">
-              PHẦN VI // CĂN CỨ PHÁP LÝ &amp; ĐẠO ĐỨC KINH DOANH
-            </span>
-            <span class="text-xs font-bold text-slate-500 font-mono">RUBRIC I - TIÊU CHÍ 6 (1,5 ĐIỂM - TRỌNG TÂM KT-PL)</span>
-          </div>
-          <h2 class="text-2xl sm:text-3xl lg:text-4xl xl:text-[2.5rem] font-black text-[#09090B] font-display tracking-tight leading-tight">
-            Thượng tôn Pháp luật &amp; Đạo đức Kinh doanh: Tuân thủ Điều 79 NĐ 01/2021, Thông tư 40/2021 &amp; Kinh tế Tuần hoàn
-          </h2>
-        </div>
-        <div class="shrink-0 pl-6 text-right hidden sm:block">
-          <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-800 rounded text-xs font-mono font-bold border border-slate-200">
-            CEO &amp; CFO (05:15 - 06:15)
-          </div>
-        </div>
-      </div>
-
-      <!-- 3 Legal & Environmental Pillars Grid (Cardless Open Flow Triptych) -->
-      <div class="grid grid-cols-1 md:grid-cols-3 border border-slate-200 divide-y md:divide-y-0 md:divide-x divide-slate-200 bg-white my-auto py-0">
-        <!-- Pillar 1: Tự do Kinh doanh & Thuế -->
-        <div class="p-5 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-2 mb-2 text-sapphire-700">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-              <span class="text-xs font-bold font-mono uppercase tracking-wider">QUYỀN KINH DOANH &amp; THUẾ</span>
-            </div>
-            <div class="text-base sm:text-lg font-bold text-[#09090B] mb-2.5 font-display">Căn Cứ Pháp Lý Khởi Nghiệp</div>
-
-            <div class="space-y-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
-              <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
-                <strong class="text-slate-900 block font-bold mb-0.5">&bull; Điều 79 Nghị định 01/2021/NĐ-CP:</strong>
-                Học sinh buôn bán nhỏ lẻ, thương mại điện tử thử nghiệm thị trường chưa bắt buộc phải đăng ký hộ kinh doanh.
-              </div>
-              <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
-                <strong class="text-slate-900 block font-bold mb-0.5">&bull; Điều 21 Bộ luật Dân sự 2015:</strong>
-                Người từ đủ 15 đến dưới 18 tuổi được tự mình xác lập giao dịch có tài sản riêng bảo đảm và có sự đồng thuận từ phụ huynh.
-              </div>
-              <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
-                <strong class="text-slate-900 block font-bold mb-0.5">&bull; Thông tư 40/2021/TT-BTC:</strong>
-                Cá nhân có doanh thu dưới 100 triệu đồng/năm thuộc diện <strong class="text-emerald-700 font-bold">miễn thuế GTGT &amp; TNCN</strong> (dự phóng 92M nằm trọn trong khung hợp pháp).
-              </div>
-            </div>
-          </div>
-          <div class="mt-3 pt-2.5 border-t border-slate-200 text-xs text-slate-500 font-mono">
-            Nhóm cam kết tiến hành đăng ký HKD khi doanh thu vượt ngưỡng 100 triệu.
-          </div>
-        </div>
-
-        <!-- Pillar 2: Bảo vệ Người tiêu dùng & Bản quyền Số -->
-        <div class="p-5 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-2 mb-2 text-emerald-700">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-              <span class="text-xs font-bold font-mono uppercase tracking-wider">BẢO VỆ NGƯỜI TIÊU DÙNG</span>
-            </div>
-            <div class="text-base sm:text-lg font-bold text-[#09090B] mb-2.5 font-display">Đạo Đức &amp; Bản Quyền Số</div>
-
-            <div class="space-y-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
-              <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
-                <strong class="text-slate-900 block font-bold mb-0.5">&bull; Luật BVQ Lợi Người Tiêu Dùng 2023:</strong>
-                Minh bạch 100% tình trạng linh kiện; không reset mạch pin giả tạo số liệu; cung cấp phiếu cam kết bảo hành 1 đổi 1.
-              </div>
-              <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
-                <strong class="text-slate-900 block font-bold mb-0.5">&bull; Bản quyền số Windows OEM:</strong>
-                100% máy dùng bản quyền số Digital License trích xuất trực tiếp từ bo mạch chính hãng, không cài phần mềm lậu độc hại.
-              </div>
-              <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
-                <strong class="text-slate-900 block font-bold mb-0.5">&bull; Phần mềm học tập an toàn:</strong>
-                Cài đặt các bộ phần mềm giáo dục chuẩn mực: LibreOffice, Unikey, Zoom, Google Classroom không chứa mã độc.
-              </div>
-            </div>
-          </div>
-          <div class="mt-3 pt-2.5 border-t border-slate-200 text-xs text-slate-500 font-mono">
-            Phát hiện máy qua sửa chữa bo mạch: Hoàn tiền 100% + Đền bù 200%.
-          </div>
-        </div>
-
-        <!-- Pillar 3: Trách nhiệm Xã hội & Kinh tế Tuần hoàn -->
-        <div class="p-5 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-2 mb-2 text-teal-700">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-              <span class="text-xs font-bold font-mono uppercase tracking-wider">KINH TẾ TUẦN HOÀN</span>
-            </div>
-            <div class="text-base sm:text-lg font-bold text-[#09090B] mb-2.5 font-display">Green Tech &amp; Giảm Rác Thải</div>
-
-            <div class="space-y-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
-              <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
-                <strong class="text-slate-900 block font-bold mb-0.5">&bull; Kéo dài vòng đời thiết bị:</strong>
-                Laptop doanh nhân Nhật Bản có độ bền 8-10 năm. Việc bảo dưỡng tra keo gốm giúp kéo dài thêm 3-5 năm sử dụng cho học sinh.
-              </div>
-              <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
-                <strong class="text-slate-900 block font-bold mb-0.5">&bull; Giảm thiểu rác thải điện tử (E-waste):</strong>
-                Tránh việc thải bỏ sớm các kim loại nặng độc hại (chì, thủy ngân, cadimi) ra bãi rác môi trường tự nhiên.
-              </div>
-              <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
-                <strong class="text-slate-900 block font-bold mb-0.5">&bull; Hợp tác thu gom pin chai:</strong>
-                Chuyển giao các viên pin chai hỏng cho các đơn vị xử lý rác thải công nghiệp đạt chuẩn (chương trình Việt Nam Tái Chế).
-              </div>
-            </div>
-          </div>
-          <div class="mt-3 pt-2.5 border-t border-slate-200 text-xs text-slate-500 font-mono">
-            Kinh doanh bền vững gắn liền với trách nhiệm bảo vệ môi trường thế hệ trẻ.
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide Footer Bar -->
-      <div class="border-t border-slate-200 pt-2 flex justify-between items-center text-xs text-slate-500">
-        <span class="font-medium text-slate-700">DỰ ÁN KHỞI NGHIỆP LAPTOP VƯƠNG GIA &bull; BÁO CÁO THUYẾT TRÌNH GD KT-PL</span>
-        <span class="font-mono font-bold">TRANG 06 / 09</span>
-      </div>
-    </section>
-
-    <!-- ========================================================
-         SLIDE 7: BỘ GIÁP PHẢN BIỆN - 6 CÂU HỎI HÓC BÚA CỦA GIÁM KHẢO
-         ======================================================== -->
-    <section class="slide-frame p-4 sm:p-6 lg:p-8 justify-between" id="slide-7">
-      <!-- Top Action Bar -->
-      <div class="row-divider pb-3 flex justify-between items-start">
-        <div>
-          <div class="flex items-center gap-2.5 mb-1.5">
-            <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-300 text-xs font-bold rounded-sm tracking-wide font-mono">
-              PHẦN IX // BỘ GIÁP PHẢN BIỆN Q&amp;A
-            </span>
-            <span class="text-xs font-bold text-slate-500 font-mono">RUBRIC II - TIÊU CHÍ 5 (2,0 ĐIỂM)</span>
-          </div>
-          <h2 class="text-2xl sm:text-3xl lg:text-4xl xl:text-[2.5rem] font-black text-[#09090B] font-display tracking-tight leading-tight">
-            Bộ giáp Phản biện Sắc bén: Trực diện Giải quyết 6 Mối quan ngại Lớn nhất của Ban Giám khảo Hội đồng
-          </h2>
-        </div>
-        <div class="shrink-0 pl-6 text-right hidden sm:block">
-          <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-800 rounded text-xs font-mono font-bold border border-slate-200">
-            CTO &amp; CFO (06:15 - 07:00)
-          </div>
-        </div>
-      </div>
-
-      <!-- 6-Block Defense Matrix (2 Rows x 3 Columns - Cardless Open Flow) -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border border-slate-200 bg-white my-auto py-0">
-        <!-- Q1 -->
-        <div class="p-4 sm:p-5 border-b border-r-0 lg:border-r border-slate-200 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="px-2.5 py-0.5 bg-slate-900 text-white font-mono text-xs font-bold rounded">CÂU HỎI 1</span>
-              <span class="text-xs text-slate-500 font-mono font-bold">TÍNH PHÁP LÝ</span>
-            </div>
-            <div class="text-sm sm:text-base font-bold text-[#09090B] mb-2 font-display">Học sinh kinh doanh có phạm luật không?</div>
-            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              <strong class="text-slate-900 font-bold">Trả lời:</strong> Căn cứ Điều 21 BLDS 2015 &amp; Điều 79 NĐ 01/2021, học sinh được quyền thực hiện giao dịch thử nghiệm với tài sản riêng và gia đình bảo trợ; doanh thu 92M nằm trong hạn mức miễn thuế Thông tư 40/2021.
-            </p>
-          </div>
-          <div class="mt-3 pt-2 border-t border-slate-100">
-            <span class="text-xs text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-mono font-bold">&check; HỢP PHÁP &amp; MIỄN THUẾ &lt;100TR</span>
-          </div>
-        </div>
-
-        <!-- Q2 -->
-        <div class="p-4 sm:p-5 border-b border-r-0 md:border-r-0 lg:border-r border-slate-200 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="px-2.5 py-0.5 bg-slate-900 text-white font-mono text-xs font-bold rounded">CÂU HỎI 2</span>
-              <span class="text-xs text-slate-500 font-mono font-bold">RỦI RO BẢO HÀNH</span>
-            </div>
-            <div class="text-sm sm:text-base font-bold text-[#09090B] mb-2 font-display">Lãi 500k, máy hỏng có lỗ nặng không?</div>
-            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              <strong class="text-slate-900 font-bold">Trả lời:</strong> Nhóm có 2 lá chắn: (1) Quỹ dự phòng bảo hành 100k/máy (2M/20 máy); (2) Thỏa thuận với tổng kho sỉ Zalo bao test 1 đổi 1 trong 30 ngày trực tiếp từ nguồn, không phát sinh chi phí linh kiện.
-            </p>
-          </div>
-          <div class="mt-3 pt-2 border-t border-slate-100">
-            <span class="text-xs text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-mono font-bold">&check; 2 TẦNG PHÒNG THỦ TÀI CHÍNH</span>
-          </div>
-        </div>
-
-        <!-- Q3 -->
-        <div class="p-4 sm:p-5 border-b border-slate-200 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="px-2.5 py-0.5 bg-slate-900 text-white font-mono text-xs font-bold rounded">CÂU HỎI 3</span>
-              <span class="text-xs text-slate-500 font-mono font-bold">TÂM LÝ CHỜ ĐỢI</span>
-            </div>
-            <div class="text-sm sm:text-base font-bold text-[#09090B] mb-2 font-display">Khách có ngại đặt cọc chờ JIT không?</div>
-            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              <strong class="text-slate-900 font-bold">Trả lời:</strong> Kho sỉ nội thành chỉ mất 6-12h giao nhận; khảo sát N=120 chỉ ra 65,8% học sinh sẵn sàng cọc 200k-500k để tiết kiệm 500k và được tự tay test máy trước mặt; cam kết hoàn cọc 100% nếu máy không đạt.
-            </p>
-          </div>
-          <div class="mt-3 pt-2 border-t border-slate-100">
-            <span class="text-xs text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-mono font-bold">&check; 65,8% ĐÃ XÁC NHẬN SẴN SÀNG</span>
-          </div>
-        </div>
-
-        <!-- Q4 -->
-        <div class="p-4 sm:p-5 border-b lg:border-b-0 border-r-0 lg:border-r border-slate-200 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="px-2.5 py-0.5 bg-slate-900 text-white font-mono text-xs font-bold rounded">CÂU HỎI 4</span>
-              <span class="text-xs text-slate-500 font-mono font-bold">CHỨNG MINH HÀNG ZIN</span>
-            </div>
-            <div class="text-sm sm:text-base font-bold text-[#09090B] mb-2 font-display">Làm sao biết máy không bị tráo đồ?</div>
-            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              <strong class="text-slate-900 font-bold">Trả lời:</strong> 100% máy có Service Tag/Serial check chính hãng trên website Dell/HP/Lenovo; hỗ trợ tháo nắp đáy kiểm tra bo mạch Zin nguyên bản; cam kết đền tiền gấp đôi (200%) nếu phát hiện máy dựng.
-            </p>
-          </div>
-          <div class="mt-3 pt-2 border-t border-slate-100">
-            <span class="text-xs text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-mono font-bold">&check; CHECK SERVICE TAG &amp; ĐỀN 200%</span>
-          </div>
-        </div>
-
-        <!-- Q5 -->
-        <div class="p-4 sm:p-5 border-b md:border-b-0 border-r-0 md:border-r-0 lg:border-r border-slate-200 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="px-2.5 py-0.5 bg-slate-900 text-white font-mono text-xs font-bold rounded">CÂU HỎI 5</span>
-              <span class="text-xs text-slate-500 font-mono font-bold">BẢN QUYỀN &amp; SPAM</span>
-            </div>
-            <div class="text-sm sm:text-base font-bold text-[#09090B] mb-2 font-display">Bot Autopost có bị Facebook khóa không?</div>
-            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              <strong class="text-slate-900 font-bold">Trả lời:</strong> Phần mềm kết nối qua Meta Graph API chính thức với App ID được Meta phê duyệt; AI Gemini xoay vòng 4 văn phong với độ tương đồng Jaccard &lt;55%, hoàn toàn tuân thủ chính sách chống spam của Meta.
-            </p>
-          </div>
-          <div class="mt-3 pt-2 border-t border-slate-100">
-            <span class="text-xs text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-mono font-bold">&check; META GRAPH API CHÍNH THỨC</span>
-          </div>
-        </div>
-
-        <!-- Q6 -->
-        <div class="p-4 sm:p-5 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="px-2.5 py-0.5 bg-slate-900 text-white font-mono text-xs font-bold rounded">CÂU HỎI 6</span>
-              <span class="text-xs text-slate-500 font-mono font-bold">TƯƠNG LAI DỰ ÁN</span>
-            </div>
-            <div class="text-sm sm:text-base font-bold text-[#09090B] mb-2 font-display">Thi xong nhóm có tiếp tục làm thật không?</div>
-            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              <strong class="text-slate-900 font-bold">Trả lời:</strong> Dự án đã có dòng tiền thật qua BIDV 8883451443 và đang có khách đặt; sau môn học nhóm tiếp tục duy trì phục vụ bạn bè các khóa dưới và trích quỹ lợi nhuận tài trợ tài liệu học tập trong trường.
-            </p>
-          </div>
-          <div class="mt-3 pt-2 border-t border-slate-100">
-            <span class="text-xs text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-mono font-bold">&check; DỰ ÁN ĐANG CHẠY THỰC TẾ</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide Footer Bar -->
-      <div class="border-t border-slate-200 pt-2 flex justify-between items-center text-xs text-slate-500">
-        <span class="font-medium text-slate-700">DỰ ÁN KHỞI NGHIỆP LAPTOP VƯƠNG GIA &bull; BÁO CÁO THUYẾT TRÌNH GD KT-PL</span>
-        <span class="font-mono font-bold">TRANG 07 / 09</span>
-      </div>
-    </section>
-
-    <!-- ========================================================
-         SLIDE 8: MINH CHỨNG THỰC TẾ: 4 BIÊN LAI BIDV & 6 ĐOẠN CHAT
-          ======================================================== -->
-    <section class="slide-frame p-4 sm:p-6 lg:p-8 justify-between" id="slide-8">
-      <!-- Top Action Bar -->
-      <div class="row-divider pb-3 flex justify-between items-start">
-        <div>
-          <div class="flex items-center gap-2.5 mb-1.5">
-            <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold rounded-sm tracking-wide">
-              PHẦN VII // MINH CHỨNG THỰC TẾ &amp; KẾT QUẢ TRIỂN KHAI
-            </span>
-            <span class="text-xs font-mono font-medium text-ink-muted">RUBRIC I - TIÊU CHÍ 7 (1,0 ĐIỂM)</span>
-          </div>
-          <h2 class="text-2xl sm:text-3xl lg:text-4xl xl:text-[2.5rem] font-black text-ink font-display tracking-tight leading-tight">
-            Minh chứng Triển khai Thực tế: Dòng tiền Thật Qua Tài khoản BIDV 8883451443 &amp; Đối thoại Khách hàng Đa phân khúc
-          </h2>
-        </div>
-        <div class="shrink-0 pl-6 text-right hidden sm:block">
-          <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-sapphire-50 text-sapphire-800 border border-sapphire-200 rounded-sm text-xs font-mono font-semibold">
-            NHẤP VÀO ẢNH ĐỂ MỞ LIGHTBOX HD UNCROPPED
-          </div>
-        </div>
-      </div>
-
-      <!-- Main Open Gallery: 4 Bank Receipts (Left 5/12) vs 6 Real Chats (Right 7/12) -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 my-auto py-1 items-stretch">
-        <!-- 4 Bank Receipts (5/12) -->
-        <div class="lg:col-span-5 flex flex-col justify-between pr-0 lg:pr-5 col-divider">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <div class="text-xs font-bold font-mono text-ink-muted uppercase tracking-wider">4 BIÊN LAI GIAO DỊCH NGÂN HÀNG THẬT</div>
-              <span class="text-xs font-bold text-sapphire-700 font-mono">BIDV 8883451443</span>
-            </div>
-
-            <!-- 4 Vertical Receipt Cards with uncropped preview click -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-2.5">
-              <!-- Bill 1: Nhung 200k -->
-              <div onclick="openLightbox('evidence/coc_200k_thuy_nhung.jpg', 'Biên lai Cọc 200.000 VNĐ - Khách hàng Võ Thị Thùy Nhung', 'Tài khoản nhận: BIDV 8883451443 (VUONG GIA) &bull; Tiền cọc giữ máy Dell Latitude 7490 theo quy trình JIT.')" class="p-2 bg-surface border border-hairline rounded-sm cursor-pointer hover:border-emerald-600 hover:shadow-md transition group">
-                <div class="h-24 sm:h-28 bg-slate-50 rounded-sm overflow-hidden flex items-center justify-center border border-hairline">
-                  <img src="evidence/coc_200k_thuy_nhung.jpg" alt="Cọc 200k Võ Thị Thùy Nhung" class="h-full w-full object-contain p-1 group-hover:scale-105 transition duration-300" />
+                <div class="cursor-pointer group" onclick="openLightbox('evidence/chat_tran_quoc_khanh_fb.jpg', 'Hội thoại với Khách hàng Facebook hỏi mua máy')">
+                  <div class="h-28 overflow-hidden hairline-b">
+                    <img src="evidence/chat_tran_quoc_khanh_fb.jpg" alt="Chat Fanpage" class="w-full h-full object-contain group-hover:scale-105 transition duration-300" />
+                  </div>
+                  <div class="text-[10px] font-mono text-ink-muted mt-1 truncate">Trần Quốc Khánh</div>
                 </div>
-                <div class="mt-1.5 text-xs sm:text-sm font-bold text-ink truncate">Võ Thị Thùy Nhung</div>
-                <div class="text-xs font-mono font-bold text-emerald-700">Cọc 200.000đ &bull; BIDV</div>
-              </div>
 
-              <!-- Bill 2: Thanh Vu 500k -->
-              <div onclick="openLightbox('evidence/coc_500k_thanhvu.jpg', 'Biên lai Cọc 500.000 VNĐ - Khách hàng Thanh Vu Store', 'Tài khoản nhận: BIDV 8883451443 (VUONG GIA) &bull; Cọc thiện chí lấy dòng máy HP EliteBook.')" class="p-2 bg-surface border border-hairline rounded-sm cursor-pointer hover:border-emerald-600 hover:shadow-md transition group">
-                <div class="h-24 sm:h-28 bg-slate-50 rounded-sm overflow-hidden flex items-center justify-center border border-hairline">
-                  <img src="evidence/coc_500k_thanhvu.jpg" alt="Cọc 500k Thanh Vu Store" class="h-full w-full object-contain p-1 group-hover:scale-105 transition duration-300" />
+                <div class="cursor-pointer group" onclick="openLightbox('evidence/chat_khach_a_mau_hinh_that.jpg', 'Khách hàng yêu cầu gửi ảnh ngoại hình thật')">
+                  <div class="h-28 overflow-hidden hairline-b">
+                    <img src="evidence/chat_khach_a_mau_hinh_that.jpg" alt="Chat A Mậu" class="w-full h-full object-contain group-hover:scale-105 transition duration-300" />
+                  </div>
+                  <div class="text-[10px] font-mono text-ink-muted mt-1 truncate">Khách A Mậu</div>
                 </div>
-                <div class="mt-1.5 text-xs sm:text-sm font-bold text-ink truncate">Thanh Vu Store</div>
-                <div class="text-xs font-mono font-bold text-emerald-700">Cọc 500.000đ &bull; BIDV</div>
-              </div>
 
-              <!-- Bill 3: Thanh Vu 1tr -->
-              <div onclick="openLightbox('evidence/chuyenkhoan_1tr_thanhvu.jpg', 'Biên lai Thanh toán Đợt 2 1.000.000 VNĐ - Khách hàng Thanh Vu Store', 'Tài khoản nhận: BIDV 8883451443 (VUONG GIA) &bull; Chuyển khoản đợt 2 sau khi test máy 15 bước hoàn tất.')" class="p-2 bg-surface border border-hairline rounded-sm cursor-pointer hover:border-emerald-600 hover:shadow-md transition group">
-                <div class="h-24 sm:h-28 bg-slate-50 rounded-sm overflow-hidden flex items-center justify-center border border-hairline">
-                  <img src="evidence/chuyenkhoan_1tr_thanhvu.jpg" alt="CK 1tr Thanh Vu Store" class="h-full w-full object-contain p-1 group-hover:scale-105 transition duration-300" />
+                <div class="cursor-pointer group" onclick="openLightbox('evidence/chat_phan_trieu_messenger.jpg', 'Hội thoại Messenger chốt đơn cọc')">
+                  <div class="h-28 overflow-hidden hairline-b">
+                    <img src="evidence/chat_phan_trieu_messenger.jpg" alt="Chat Phan Triệu" class="w-full h-full object-contain group-hover:scale-105 transition duration-300" />
+                  </div>
+                  <div class="text-[10px] font-mono text-ink-muted mt-1 truncate">Phan Triệu</div>
                 </div>
-                <div class="mt-1.5 text-xs sm:text-sm font-bold text-ink truncate">Thanh Vu Store</div>
-                <div class="text-xs font-mono font-bold text-sapphire-700">CK 1.000.000đ &bull; Đợt 2</div>
-              </div>
-
-              <!-- Bill 4: Kim Hoa 300k -->
-              <div onclick="openLightbox('evidence/chuyenkhoan_300k_kimhoa.jpg', 'Biên lai Cọc 300.000 VNĐ - Khách hàng Nguyễn Thị Kim Hoa', 'Chuyển khoản cọc giữ máy &bull; Khách phụ huynh đặt máy cho con học tập.')" class="p-2 bg-surface border border-hairline rounded-sm cursor-pointer hover:border-emerald-600 hover:shadow-md transition group">
-                <div class="h-24 sm:h-28 bg-slate-50 rounded-sm overflow-hidden flex items-center justify-center border border-hairline">
-                  <img src="evidence/chuyenkhoan_300k_kimhoa.jpg" alt="Cọc 300k Nguyễn Thị Kim Hoa" class="h-full w-full object-contain p-1 group-hover:scale-105 transition duration-300" />
-                </div>
-                <div class="mt-1.5 text-xs sm:text-sm font-bold text-ink truncate">Nguyễn Thị Kim Hoa</div>
-                <div class="text-xs font-mono font-bold text-emerald-700">Cọc 300.000đ &bull; Phụ huynh</div>
               </div>
             </div>
-          </div>
 
-          <div class="mt-2.5 p-2 bg-slate-50 border border-hairline rounded-sm text-xs text-ink-secondary">
-            <span class="font-bold text-ink">Căn cứ Điều 328 BLDS 2015:</span> Khoản cọc là biện pháp bảo đảm nghĩa vụ thực hiện hợp đồng, xác lập giao dịch có thật 100%.
           </div>
         </div>
 
-        <!-- 6 Real Customer Conversations (7/12) -->
-        <div class="lg:col-span-7 flex flex-col justify-between pl-0 lg:pl-2">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <div class="text-xs font-bold font-mono text-ink-muted uppercase tracking-wider">6 ĐOẠN ĐỐI THOẠI KHÁCH HÀNG THỰC TẾ ĐA PHÂN KHÚC</div>
-              <span class="text-xs text-ink-muted font-mono">HỌC SINH &bull; PHỤ HUYNH &bull; GIÁO VIÊN</span>
-            </div>
-
-            <!-- 6 Chat Cards Grid -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-              <!-- Chat 1: Học sinh -->
-              <div onclick="openLightbox('evidence/chat_hocsinh_nguyen_thua.jpg', 'Hội thoại Khách hàng: Học sinh Nguyễn Thừa', 'Nhu cầu: Tìm laptop phân khúc 3 - 5 triệu phục vụ học trực tuyến và làm bài thuyết trình slide.')" class="p-2 bg-surface border border-hairline rounded-sm cursor-pointer hover:border-sapphire-600 hover:shadow-md transition group">
-                <div class="h-20 sm:h-24 bg-slate-50 rounded-sm overflow-hidden flex items-center justify-center border border-hairline">
-                  <img src="evidence/chat_hocsinh_nguyen_thua.jpg" alt="Chat Học sinh" class="h-full w-full object-contain p-0.5 group-hover:scale-105 transition duration-300" />
-                </div>
-                <div class="mt-1.5 text-xs sm:text-sm font-bold text-ink truncate">Bạn Nguyễn Thừa</div>
-                <div class="text-xs text-emerald-700 font-medium truncate">HS &bull; 3-5tr học online</div>
-              </div>
-
-              <!-- Chat 2: Giáo viên -->
-              <div onclick="openLightbox('evidence/chat_thay_quang_toan_gv.jpg', 'Hội thoại Khách hàng: Thầy Quảng Toán (Giáo viên)', 'Nhu cầu: Giáo viên dạy Toán hỏi mua máy HP Envy và các chính sách ưu đãi cho nhà giáo.')" class="p-2 bg-surface border border-hairline rounded-sm cursor-pointer hover:border-sapphire-600 hover:shadow-md transition group">
-                <div class="h-20 sm:h-24 bg-slate-50 rounded-sm overflow-hidden flex items-center justify-center border border-hairline">
-                  <img src="evidence/chat_thay_quang_toan_gv.jpg" alt="Chat Giáo viên" class="h-full w-full object-contain p-0.5 group-hover:scale-105 transition duration-300" />
-                </div>
-                <div class="mt-1.5 text-xs sm:text-sm font-bold text-ink truncate">Thầy Quảng Toán (GV)</div>
-                <div class="text-xs text-sapphire-700 font-medium truncate">GV &bull; Hỏi máy HP &amp; giá GV</div>
-              </div>
-
-              <!-- Chat 3: Phụ huynh -->
-              <div onclick="openLightbox('evidence/chat_phuhuynh_co_le_ghi.jpg', 'Hội thoại Khách hàng: Phụ huynh Cô Lê Ghi', 'Nhu cầu: Phụ huynh học sinh hỏi mua máy Dell Latitude 5320 cho con học tập tại nhà.')" class="p-2 bg-surface border border-hairline rounded-sm cursor-pointer hover:border-sapphire-600 hover:shadow-md transition group">
-                <div class="h-20 sm:h-24 bg-slate-50 rounded-sm overflow-hidden flex items-center justify-center border border-hairline">
-                  <img src="evidence/chat_phuhuynh_co_le_ghi.jpg" alt="Chat Phụ huynh" class="h-full w-full object-contain p-0.5 group-hover:scale-105 transition duration-300" />
-                </div>
-                <div class="mt-1.5 text-xs sm:text-sm font-bold text-ink truncate">Cô Lê Ghi (Phụ huynh)</div>
-                <div class="text-xs text-ink-muted font-medium truncate">PH &bull; Hỏi Dell 5320 cho con</div>
-              </div>
-
-              <!-- Chat 4: Fanpage Autopost -->
-              <div onclick="openLightbox('evidence/chat_tran_quoc_khanh_fb.jpg', 'Hội thoại Khách hàng: Trần Quốc Khánh', 'Nguồn tiếp cận: Khách hàng hỏi mua từ bài viết tự động do phần mềm Autopost xuất bản trên Fanpage.')" class="p-2 bg-surface border border-hairline rounded-sm cursor-pointer hover:border-sapphire-600 hover:shadow-md transition group">
-                <div class="h-20 sm:h-24 bg-slate-50 rounded-sm overflow-hidden flex items-center justify-center border border-hairline">
-                  <img src="evidence/chat_tran_quoc_khanh_fb.jpg" alt="Chat Fanpage" class="h-full w-full object-contain p-0.5 group-hover:scale-105 transition duration-300" />
-                </div>
-                <div class="mt-1.5 text-xs sm:text-sm font-bold text-ink truncate">Trần Quốc Khánh</div>
-                <div class="text-xs text-sapphire-700 font-medium truncate">Khách từ Autopost FB</div>
-              </div>
-
-              <!-- Chat 5: Khách đòi ảnh thật -->
-              <div onclick="openLightbox('evidence/chat_khach_a_mau_hinh_that.jpg', 'Hội thoại Khách hàng: Khách A Mậu', 'Yêu cầu: Khách yêu cầu xem video quay máy thật và ảnh chụp thông số ổ cứng trước khi chuyển tiền cọc.')" class="p-2 bg-surface border border-hairline rounded-sm cursor-pointer hover:border-sapphire-600 hover:shadow-md transition group">
-                <div class="h-20 sm:h-24 bg-slate-50 rounded-sm overflow-hidden flex items-center justify-center border border-hairline">
-                  <img src="evidence/chat_khach_a_mau_hinh_that.jpg" alt="Chat A Mậu" class="h-full w-full object-contain p-0.5 group-hover:scale-105 transition duration-300" />
-                </div>
-                <div class="mt-1.5 text-xs sm:text-sm font-bold text-ink truncate">Khách A Mậu</div>
-                <div class="text-xs text-amber-700 font-medium truncate">Xem ảnh thật &amp; test trước</div>
-              </div>
-
-              <!-- Chat 6: Messenger -->
-              <div onclick="openLightbox('evidence/chat_phan_trieu_messenger.jpg', 'Hội thoại Khách hàng: Phan Triệu (Messenger)', 'Trao đổi tình trạng cấu hình máy và chính sách bảo hành 1 đổi 1 qua ứng dụng Messenger.')" class="p-2 bg-surface border border-hairline rounded-sm cursor-pointer hover:border-sapphire-600 hover:shadow-md transition group">
-                <div class="h-20 sm:h-24 bg-slate-50 rounded-sm overflow-hidden flex items-center justify-center border border-hairline">
-                  <img src="evidence/chat_phan_trieu_messenger.jpg" alt="Chat Phan Triệu" class="h-full w-full object-contain p-0.5 group-hover:scale-105 transition duration-300" />
-                </div>
-                <div class="mt-1.5 text-xs sm:text-sm font-bold text-ink truncate">Khách Phan Triệu</div>
-                <div class="text-xs text-ink-muted font-medium truncate">Hỏi cấu hình &amp; bảo hành</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-2.5 p-2 bg-emerald-50/80 border border-emerald-200 rounded-sm text-xs text-emerald-800 flex items-center justify-between">
-            <span>&check; <strong>Xác nhận:</strong> Hệ thống tiếp thị Autopost 4.0 vận hành hiệu quả &bull; Đã phát sinh tương tác và đơn hàng thực tế!</span>
-            <span class="font-mono font-bold">100% MINH CHỨNG THẬT</span>
-          </div>
+        <div class="flex justify-between items-center text-xs font-mono text-ink-muted hairline-t pt-3">
+          <span>MINH CHỨNG THỰC TẾ 100% /// NHẤP VÀO ẢNH ĐỂ PHÓNG TO XEM CHI TIẾT GIAO DỊCH</span>
+          <span class="font-bold text-ink">08 / 09</span>
         </div>
-      </div>
+      </section>
 
-      <!-- Slide Footer Bar -->
-      <div class="border-t border-hairline pt-2.5 flex justify-between items-center text-xs text-ink-muted">
-        <span class="font-medium text-ink-secondary">DỰ ÁN KHỞI NGHIỆP LAPTOP VƯƠNG GIA &bull; BÁO CÁO THUYẾT TRÌNH GD KT-PL</span>
-        <span class="font-mono font-bold">TRANG 08 / 09</span>
-      </div>
-    </section>
-
-    <!-- ========================================================
-         SLIDE 9: KỊCH BẢN THUYẾT TRÌNH 8 PHÚT & KẾT LUẬN KÊU GỌI HÀNH ĐỘNG
-          ======================================================== -->
-    <section class="slide-frame p-4 sm:p-6 lg:p-8 justify-between" id="slide-9">
-      <!-- Top Action Bar -->
-      <div class="row-divider pb-3 flex justify-between items-start">
-        <div>
-          <div class="flex items-center gap-2.5 mb-1.5">
-            <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold rounded-sm tracking-wide">
-              PHẦN VIII // KỊCH BẢN 8 PHÚT &amp; KẾT LUẬN
-            </span>
-            <span class="text-xs font-mono font-medium text-ink-muted">RUBRIC II - ĐÁNH GIÁ THUYẾT TRÌNH &amp; PHẢN BIỆN (10,0 ĐIỂM)</span>
+      <!-- SLIDE 9: KỊCH BẢN THUYẾT TRÌNH 8 PHÚT & KẾT LUẬN -->
+      <section class="slide-page" id="slide-9">
+        <div class="flex justify-between items-baseline hairline-b pb-4 morph-item morph-delay-1">
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-mono text-vermilion font-bold">PHẦN 09</span>
+            <span class="text-xs font-mono font-bold tracking-widest uppercase text-ink">LỘ TRÌNH THUYẾT TRÌNH 8 PHÚT &amp; KÊU GỌI HÀNH ĐỘNG</span>
           </div>
-          <h2 class="text-2xl sm:text-3xl lg:text-4xl xl:text-[2.5rem] font-black text-ink font-display tracking-tight leading-tight">
-            Lộ trình Thuyết trình Chuẩn 8 Phút: Bản lĩnh Khởi nghiệp Học sinh và Cam kết Phụng sự Cộng đồng
-          </h2>
+          <div class="text-xs font-mono text-ink-muted">CHUẨN BỊ BƯỚC VÀO PHẦN PHẢN BIỆN</div>
         </div>
-        <div class="shrink-0 pl-6 text-right hidden sm:block">
-          <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-ink text-white rounded-sm text-xs font-mono font-bold tracking-wider">
-            CẢ 4 THÀNH VIÊN TRANG NGHIÊM (07:30 - 08:00)
-          </div>
-        </div>
-      </div>
 
-      <!-- Main Content: 8-Minute Speaker Timeline & Core Manifesto -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 my-auto py-1 items-center">
-        <!-- 8-Minute Timeline (7/12) -->
-        <div class="lg:col-span-7 pr-0 lg:pr-6 col-divider space-y-2">
-          <div class="text-xs font-bold font-mono text-ink-muted uppercase tracking-wider mb-2">PHÂN BỔ THỜI LƯỢNG 8 PHÚT &bull; 4 THÀNH VIÊN LUÂN PHIÊN</div>
-          
-          <div class="space-y-1.5 text-xs sm:text-sm">
-            <!-- Segment 1 -->
-            <div class="p-2.5 bg-surface border border-hairline rounded-sm flex items-center justify-between hover:border-emerald-600 transition">
-              <div class="flex items-center gap-3">
-                <span class="w-20 font-mono font-bold text-ink shrink-0">00:00 - 01:00</span>
+        <div class="grid grid-cols-12 gap-12 my-auto py-2 items-center">
+          <!-- Left: 8-Min Timeline -->
+          <div class="col-span-7 morph-item morph-delay-2">
+            <h3 class="text-xs font-mono font-bold text-ink-muted uppercase tracking-widest mb-6">PHÂN CÔNG THỜI LƯỢNG THUYẾT TRÌNH (TỔNG 8 PHÚT)</h3>
+            <div class="space-y-3 font-mono text-sm">
+              <div class="flex justify-between items-baseline hairline-b pb-2">
                 <div>
-                  <strong class="text-ink">CEO Trưởng Nhóm:</strong> <span class="text-ink-secondary">Giới thiệu dự án, công bố dòng tiền thật &amp; 3 trụ cột khởi nghiệp.</span>
+                  <span class="font-bold text-ink">0:00 - 01:30 // CEO Vương Gia</span>
+                  <div class="text-xs text-ink-muted mt-0.5 font-sans">Đặt vấn đề, ý tưởng JIT và giới thiệu cơ cấu nhóm</div>
                 </div>
+                <span class="text-vermilion font-bold">1,5 PHÚT</span>
               </div>
-              <span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded text-xs font-mono font-semibold shrink-0">Slide 1</span>
-            </div>
 
-            <!-- Segment 2 -->
-            <div class="p-2.5 bg-surface border border-hairline rounded-sm flex items-center justify-between hover:border-emerald-600 transition">
-              <div class="flex items-center gap-3">
-                <span class="w-20 font-mono font-bold text-ink shrink-0">01:00 - 02:30</span>
+              <div class="flex justify-between items-baseline hairline-b pb-2">
                 <div>
-                  <strong class="text-ink">CTO &amp; CMO:</strong> <span class="text-ink-secondary">Khảo sát 120 HS, test máy mẫu 5s &amp; chiến lược 4P Marketing đột phá.</span>
+                  <span class="font-bold text-ink">01:30 - 03:00 // CMO Phụ Trách Tiếp Thị</span>
+                  <div class="text-xs text-ink-muted mt-0.5 font-sans">Công bố số liệu khảo sát 120 học sinh &amp; Chiến lược 4P</div>
                 </div>
+                <span class="text-vermilion font-bold">1,5 PHÚT</span>
               </div>
-              <span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded text-xs font-mono font-semibold shrink-0">Slide 2 &bull; 3</span>
-            </div>
 
-            <!-- Segment 3 -->
-            <div class="p-2.5 bg-surface border border-hairline rounded-sm flex items-center justify-between hover:border-emerald-600 transition">
-              <div class="flex items-center gap-3">
-                <span class="w-20 font-mono font-bold text-ink shrink-0">02:30 - 04:00</span>
+              <div class="flex justify-between items-baseline hairline-b pb-2">
                 <div>
-                  <strong class="text-ink">CFO Tài Chính:</strong> <span class="text-ink-secondary">Bảng giá thành 4.1tr/4.6tr, lãi &ge;500k, điểm hòa vốn Q=0 máy.</span>
+                  <span class="font-bold text-ink">03:00 - 05:00 // CFO Phụ Trách Tài Chính</span>
+                  <div class="text-xs text-ink-muted mt-0.5 font-sans">Chứng minh điểm hòa vốn Q=0 và Căn cứ pháp lý NĐ 01/2021</div>
                 </div>
+                <span class="text-vermilion font-bold">2,0 PHÚT</span>
               </div>
-              <span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded text-xs font-mono font-semibold shrink-0">Slide 4</span>
-            </div>
 
-            <!-- Segment 4 -->
-            <div class="p-2.5 bg-surface border border-hairline rounded-sm flex items-center justify-between hover:border-emerald-600 transition">
-              <div class="flex items-center gap-3">
-                <span class="w-20 font-mono font-bold text-ink shrink-0">04:00 - 05:15</span>
+              <div class="flex justify-between items-baseline hairline-b pb-2">
                 <div>
-                  <strong class="text-ink">CMO &amp; CTO:</strong> <span class="text-ink-secondary">Chuỗi JIT 4 bước, live demo Autopost 0đ, 15 bước kiểm định phần cứng.</span>
+                  <span class="font-bold text-ink">05:00 - 06:30 // CTO Giám Đốc Công Nghệ</span>
+                  <div class="text-xs text-ink-muted mt-0.5 font-sans">Quy trình 15 bước kiểm định &amp; Demo công cụ Auto-post</div>
                 </div>
+                <span class="text-vermilion font-bold">1,5 PHÚT</span>
               </div>
-              <span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded text-xs font-mono font-semibold shrink-0">Slide 5</span>
-            </div>
 
-            <!-- Segment 5 -->
-            <div class="p-2.5 bg-surface border border-hairline rounded-sm flex items-center justify-between hover:border-emerald-600 transition">
-              <div class="flex items-center gap-3">
-                <span class="w-20 font-mono font-bold text-ink shrink-0">05:15 - 06:15</span>
+              <div class="flex justify-between items-baseline">
                 <div>
-                  <strong class="text-ink">CEO &amp; CFO:</strong> <span class="text-ink-secondary">Căn cứ Điều 79 NĐ 01/2021, Thông tư 40/2021, Kinh tế tuần hoàn.</span>
+                  <span class="font-bold text-ink">06:30 - 08:00 // Toàn Bộ 4 Thành Viên</span>
+                  <div class="text-xs text-ink-muted mt-0.5 font-sans">Trình chiếu 10 minh chứng tiền cọc BIDV &amp; Sẵn sàng Q&amp;A</div>
                 </div>
+                <span class="text-pine font-bold">1,5 PHÚT</span>
               </div>
-              <span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded text-xs font-mono font-semibold shrink-0">Slide 6</span>
-            </div>
-
-            <!-- Segment 6 -->
-            <div class="p-2.5 bg-surface border border-hairline rounded-sm flex items-center justify-between hover:border-emerald-600 transition">
-              <div class="flex items-center gap-3">
-                <span class="w-20 font-mono font-bold text-ink shrink-0">06:15 - 08:00</span>
-                <div>
-                  <strong class="text-ink">Cả 4 Thành Viên:</strong> <span class="text-ink-secondary">Bảo vệ bộ giáp phản biện 6 câu hỏi, minh chứng BIDV &amp; chốt kết luận.</span>
-                </div>
-              </div>
-              <span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded text-xs font-mono font-semibold shrink-0">Slide 7 &bull; 8 &bull; 9</span>
             </div>
           </div>
-        </div>
 
-        <!-- Core Manifesto Box (5/12) -->
-        <div class="lg:col-span-5 pl-0 lg:pl-3 flex flex-col justify-between space-y-3">
-          <div class="p-5 sm:p-6 bg-surface border border-hairline rounded-sm space-y-3">
-            <div class="inline-block px-2.5 py-0.5 bg-ink text-white text-[11px] font-mono font-bold uppercase tracking-wider rounded-sm">
-              THÔNG ĐIỆP CỐT LÕI
+          <!-- Right: Manifesto & Gratitude -->
+          <div class="col-span-5 hairline-l pl-10 morph-item morph-delay-3">
+            <div class="text-xs font-mono font-bold text-ink-muted uppercase tracking-widest mb-3">TUYÊN NGÔN GIÁ TRỊ KHÉP LẠI</div>
+            <div class="text-3xl font-extrabold text-ink font-display tracking-tight leading-snug mb-4">
+              "Khởi nghiệp không bắt đầu từ số vốn khổng lồ, mà từ sự thấu hiểu nỗi đau của người dùng."
             </div>
-            
-            <blockquote class="text-base sm:text-lg font-bold text-ink font-display leading-snug border-l-4 border-emerald-600 pl-3.5 py-0.5">
-              &ldquo;Kinh doanh bằng sự tử tế, công nghệ thông minh và ý thức thượng tôn pháp luật.&rdquo;
-            </blockquote>
-
-            <p class="text-xs sm:text-sm text-ink-secondary leading-relaxed font-body">
-              Chúng em không chỉ làm một bài tập để lấy điểm số trên lớp, chúng em đang giải quyết một vấn đề xã hội có thật bằng tư duy kinh tế tinh gọn, công cụ công nghệ tự động và am hiểu pháp luật bảo vệ quyền lợi người tiêu dùng.
+            <p class="text-sm text-ink-secondary leading-relaxed mb-6 font-normal">
+              Dự án Laptop Vương Gia minh chứng cho việc học sinh THPT hoàn toàn có thể ứng dụng kiến thức môn GD KT-PL vào thực tiễn kinh doanh chân chính, tuân thủ pháp luật và mang lại giá trị thiết thực cho cộng đồng.
             </p>
 
-            <div class="pt-2.5 border-t border-hairline flex flex-wrap gap-2 text-xs font-mono">
-              <span class="px-2 py-1 bg-slate-100 text-ink-secondary rounded-sm">&bull; Đạo cụ: Laptop mẫu test 5s</span>
-              <span class="px-2 py-1 bg-slate-100 text-ink-secondary rounded-sm">&bull; Live Demo: Autopost Fanpage</span>
-              <span class="px-2 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-sm font-bold">&check; Q&amp;A READY</span>
+            <div class="hairline-t pt-4">
+              <div class="text-base font-bold text-ink font-display">CHÚNG EM XIN TRÂN TRỌNG CẢM ƠN THẦY CÔ!</div>
+              <div class="text-xs text-ink-muted mt-1">Nhóm kính mời quý thầy cô trong Hội đồng Giám khảo đặt câu hỏi phản biện.</div>
             </div>
           </div>
-
-          <!-- Thank You & Readiness Declaration -->
-          <div class="p-3 sm:p-4 bg-slate-50 border border-hairline rounded-sm text-center">
-            <div class="text-sm sm:text-base font-extrabold text-ink font-display tracking-tight">CHÚNG EM XIN TRÂN TRỌNG CẢM ƠN THẦY CÔ VÀ HỘI ĐỒNG GIÁM KHẢO!</div>
-            <p class="text-xs text-ink-muted mt-1">Nhóm kính mời thầy cô đóng góp ý kiến và sẵn sàng bước vào phần Vấn đáp - Phản biện.</p>
-          </div>
         </div>
+
+        <div class="flex justify-between items-center text-xs font-mono text-ink-muted hairline-t pt-3">
+          <span>KẾT THÚC BÁO CÁO /// SẴN SÀNG BƯỚC VÀO PHẦN PHẢN BIỆN</span>
+          <span class="font-bold text-ink">09 / 09</span>
+        </div>
+      </section>
+
+      <!-- Minimal Bottom Progress Line -->
+      <div class="absolute bottom-0 left-0 w-full h-[2px] bg-canvas-subtle">
+        <div id="slideProgressBar" class="h-full bg-vermilion transition-all duration-300" style="width: 11.11%;"></div>
       </div>
 
-      <!-- Slide Footer Bar -->
-      <div class="border-t border-hairline pt-2.5 flex justify-between items-center text-xs text-ink-muted">
-        <span class="font-medium text-ink-secondary">DESIGN BY VUONGGIA /// ĐỒ ÁN MÔN GIÁO DỤC KINH TẾ &amp; PHÁP LUẬT</span>
-        <span class="font-mono font-bold">TRANG 09 / 09</span>
-      </div>
-    </section>
-
+    </div>
   </div>
 
   <!-- ========================================================
-       EVIDENCE LIGHTBOX MODAL (UNCROPPED HD VIEW)
+       FULL-RESOLUTION LIGHTBOX MODAL (FOR 10 EVIDENCE ASSETS)
        ======================================================== -->
-  <div id="evidenceLightboxModal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4 sm:p-6" onclick="closeLightbox(event)">
-    <div class="relative max-w-5xl w-full max-h-[92vh] bg-white border border-slate-300 rounded-xl p-4 sm:p-6 shadow-2xl flex flex-col items-center" onclick="event.stopPropagation()">
-      <!-- Close Button -->
-      <button onclick="closeLightbox()" class="absolute -top-3.5 -right-3.5 w-9 h-9 bg-slate-900 text-white rounded-full border border-slate-400 flex items-center justify-center hover:bg-red-600 transition shadow-lg text-sm font-bold" title="Đóng [Esc]">
-        ✕
-      </button>
+  <div id="imageLightbox" onclick="closeLightbox()">
+    <div class="relative max-w-4xl max-h-[90vh] flex flex-col items-center" onclick="event.stopPropagation()">
+      <img id="lightboxImage" src="" alt="Minh chứng" class="max-h-[82vh] w-auto object-contain rounded shadow-2xl hairline" />
+      <div id="lightboxCaption" class="mt-3 text-sm font-mono text-slate-300 text-center tracking-wide"></div>
+    </div>
+  </div>
 
-      <!-- Lightbox Header / Meta -->
-      <div class="w-full pb-3 mb-3 border-b border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-        <div>
-          <span class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold block">MINH CHỨNG THỰC TẾ &bull; XÁC THỰC DÒNG TIỀN &amp; HỘI THOẠI</span>
-          <h3 id="lightboxTitle" class="text-sm sm:text-base font-bold text-[#09090B] font-display"></h3>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-xs font-mono font-bold rounded border border-emerald-200">100% ẢNH THẬT</span>
-          <span class="text-xs text-slate-400 font-mono">Phím [Esc] để đóng</span>
-        </div>
-      </div>
-
-      <!-- Image Area (UNCROPPED with max-h-[72vh] object-contain) -->
-      <div class="w-full flex-1 flex items-center justify-center overflow-hidden bg-slate-50 rounded border border-slate-200 p-2">
-        <img id="lightboxImg" src="" alt="Minh chứng" class="max-h-[68vh] max-w-full w-auto h-auto object-contain rounded" />
-      </div>
-
-      <!-- Caption / Explanation -->
-      <div class="w-full pt-3 mt-2 border-t border-slate-200 flex items-center justify-between text-xs">
-        <div id="lightboxCaption" class="text-slate-600 font-medium font-body pr-4"></div>
-        <div class="shrink-0 text-right">
-          <button onclick="closeLightbox()" class="px-4 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded text-xs transition">
-            Đóng cửa sổ
-          </button>
-        </div>
-      </div>
+  <!-- Discreet Modal for Copyright Verification (Complies with Rule without cluttering slides) -->
+  <div id="slide0Overlay" class="fixed inset-0 z-50 bg-black text-white hidden flex-col justify-center items-center p-8">
+    <div class="max-w-xl text-center">
+      <div class="text-xs font-mono uppercase text-slate-400 mb-2">INTELLECTUAL PROPERTY CERTIFICATE</div>
+      <div class="text-3xl font-black font-mono mb-4">DESIGN BY VUONGGIA</div>
+      <p class="text-sm text-slate-300 mb-6">Mã chứng nhận: VG-KTPL-2026-IP &bull; Hotline: 0876637806</p>
+      <button onclick="document.getElementById('slide0Overlay').classList.add('hidden')" class="px-6 py-2 bg-white text-black font-bold text-xs uppercase font-mono">Đóng [Esc]</button>
     </div>
   </div>
 
   <!-- ========================================================
-       SLIDE OVERVIEW MODAL (GRID OF 10 SLIDES)
-       ======================================================== -->
-  <div id="overviewModal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4 sm:p-6" onclick="closeOverview(event)">
-    <div class="relative max-w-5xl w-full max-h-[90vh] bg-white border border-slate-300 rounded-xl p-6 shadow-2xl flex flex-col" onclick="event.stopPropagation()">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
-        <div>
-          <h3 class="text-lg font-bold text-[#09090B] font-display">TỔNG QUAN BÀI THUYẾT TRÌNH (10 SLIDES)</h3>
-          <p class="text-xs text-slate-500">Nhấp vào bất kỳ slide nào để chuyển đến trang tương ứng &bull; Phím [O] để đóng</p>
-        </div>
-        <button onclick="closeOverview()" class="w-8 h-8 rounded-full border border-slate-300 flex items-center justify-center hover:bg-slate-100 transition text-sm font-bold">✕</button>
-      </div>
-
-      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 overflow-y-auto max-h-[70vh] p-1">
-        <!-- Card 0 -->
-        <div onclick="jumpToSlide(0)" class="p-3 bg-black text-white rounded border border-slate-700 cursor-pointer hover:border-white transition flex flex-col justify-between">
-          <div>
-            <div class="text-[10px] font-mono text-slate-400">PAGE 0</div>
-            <div class="text-xs font-bold font-display mt-1">Bản Quyền "DESIGN BY VUONGGIA"</div>
-          </div>
-          <div class="text-[10px] text-slate-400 mt-2">Monochrome OLED</div>
-        </div>
-        <!-- Card 1 -->
-        <div onclick="jumpToSlide(1)" class="p-3 bg-slate-50 rounded border border-slate-200 cursor-pointer hover:border-emerald-600 transition flex flex-col justify-between">
-          <div>
-            <div class="text-[10px] font-mono text-emerald-700 font-bold">SLIDE 01</div>
-            <div class="text-xs font-bold text-slate-800 mt-1">Khởi Nghiệp &amp; Đội Ngũ Sáng Lập</div>
-          </div>
-          <div class="text-[10px] text-slate-500 mt-2">CEO (00:00 - 01:00)</div>
-        </div>
-        <!-- Card 2 -->
-        <div onclick="jumpToSlide(2)" class="p-3 bg-slate-50 rounded border border-slate-200 cursor-pointer hover:border-emerald-600 transition flex flex-col justify-between">
-          <div>
-            <div class="text-[10px] font-mono text-emerald-700 font-bold">SLIDE 02</div>
-            <div class="text-xs font-bold text-slate-800 mt-1">Nỗi Đau &amp; Khảo Sát 120 HS</div>
-          </div>
-          <div class="text-[10px] text-slate-500 mt-2">CEO &amp; CMO (01:00)</div>
-        </div>
-        <!-- Card 3 -->
-        <div onclick="jumpToSlide(3)" class="p-3 bg-slate-50 rounded border border-slate-200 cursor-pointer hover:border-emerald-600 transition flex flex-col justify-between">
-          <div>
-            <div class="text-[10px] font-mono text-emerald-700 font-bold">SLIDE 03</div>
-            <div class="text-xs font-bold text-slate-800 mt-1">Chiến Lược 4P Marketing</div>
-          </div>
-          <div class="text-[10px] text-slate-500 mt-2">CTO Test Máy (01:45)</div>
-        </div>
-        <!-- Card 4 -->
-        <div onclick="jumpToSlide(4)" class="p-3 bg-slate-50 rounded border border-slate-200 cursor-pointer hover:border-emerald-600 transition flex flex-col justify-between">
-          <div>
-            <div class="text-[10px] font-mono text-emerald-700 font-bold">SLIDE 04</div>
-            <div class="text-xs font-bold text-slate-800 mt-1">Kế Hoạch Tài Chính &amp; Q=0</div>
-          </div>
-          <div class="text-[10px] text-slate-500 mt-2">CFO (02:30 - 04:00)</div>
-        </div>
-        <!-- Card 5 -->
-        <div onclick="jumpToSlide(5)" class="p-3 bg-slate-50 rounded border border-slate-200 cursor-pointer hover:border-emerald-600 transition flex flex-col justify-between">
-          <div>
-            <div class="text-[10px] font-mono text-emerald-700 font-bold">SLIDE 05</div>
-            <div class="text-xs font-bold text-slate-800 mt-1">Vận Hành JIT &amp; 15 Bước QC</div>
-          </div>
-          <div class="text-[10px] text-slate-500 mt-2">CMO &amp; CTO (04:00)</div>
-        </div>
-        <!-- Card 6 -->
-        <div onclick="jumpToSlide(6)" class="p-3 bg-slate-50 rounded border border-slate-200 cursor-pointer hover:border-emerald-600 transition flex flex-col justify-between">
-          <div>
-            <div class="text-[10px] font-mono text-emerald-700 font-bold">SLIDE 06</div>
-            <div class="text-xs font-bold text-slate-800 mt-1">Căn Cứ Pháp Lý &amp; Tuần Hoàn</div>
-          </div>
-          <div class="text-[10px] text-slate-500 mt-2">CEO &amp; CFO (05:15)</div>
-        </div>
-        <!-- Card 7 -->
-        <div onclick="jumpToSlide(7)" class="p-3 bg-slate-50 rounded border border-slate-200 cursor-pointer hover:border-emerald-600 transition flex flex-col justify-between">
-          <div>
-            <div class="text-[10px] font-mono text-emerald-700 font-bold">SLIDE 07</div>
-            <div class="text-xs font-bold text-slate-800 mt-1">Bộ Giáp Phản Biện 6 Câu Hỏi</div>
-          </div>
-          <div class="text-[10px] text-slate-500 mt-2">CTO &amp; CFO (06:15)</div>
-        </div>
-        <!-- Card 8 -->
-        <div onclick="jumpToSlide(8)" class="p-3 bg-slate-50 rounded border border-slate-200 cursor-pointer hover:border-emerald-600 transition flex flex-col justify-between">
-          <div>
-            <div class="text-[10px] font-mono text-emerald-700 font-bold">SLIDE 08</div>
-            <div class="text-xs font-bold text-slate-800 mt-1">10 Minh Chứng BIDV &amp; Chat</div>
-          </div>
-          <div class="text-[10px] text-slate-500 mt-2">Cả 4 Thành Viên (07:00)</div>
-        </div>
-        <!-- Card 9 -->
-        <div onclick="jumpToSlide(9)" class="p-3 bg-slate-50 rounded border border-slate-200 cursor-pointer hover:border-emerald-600 transition flex flex-col justify-between">
-          <div>
-            <div class="text-[10px] font-mono text-emerald-700 font-bold">SLIDE 09</div>
-            <div class="text-xs font-bold text-slate-800 mt-1">Kịch Bản 8 Phút &amp; Kết Luận</div>
-          </div>
-          <div class="text-[10px] text-slate-500 mt-2">CEO Chốt Thông Điệp (07:30)</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================================
-       FLOATING CONTROLS DOCK (HIDDEN ON SLIDE 0)
-       ======================================================== -->
-  <div class="slide-dock" id="slideDock" style="display: none;">
-    <!-- Prev Slide Button -->
-    <button onclick="prevSlide()" class="dock-btn" title="Slide trước [←] / [PageUp]">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-      <span>Trước</span>
-    </button>
-
-    <!-- Slide Index Counter -->
-    <div class="px-2 font-mono text-xs font-bold text-slate-800 flex items-center gap-1">
-      <span>SLIDE</span>
-      <span id="currentSlideDisplay" class="text-emerald-700 font-extrabold text-sm">01</span>
-      <span class="text-slate-400">/ 09</span>
-    </div>
-
-    <!-- Next Slide Button -->
-    <button onclick="nextSlide()" class="dock-btn" title="Slide sau [→] / [Space] / [Enter]">
-      <span>Tiếp</span>
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-    </button>
-
-    <div class="h-4 w-[1px] bg-slate-300 mx-0.5"></div>
-
-    <!-- Overview Modal Toggle -->
-    <button onclick="toggleOverview()" class="dock-btn" title="Mục lục tổng quan [O]">
-      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-      <span>Mục lục</span>
-    </button>
-
-    <!-- 8-Minute Countdown Timer Button -->
-    <div id="timerBar" class="inline-flex items-center">
-      <button id="timerBtn" onclick="toggleTimer()" class="dock-btn font-mono" title="Đồng hồ thuyết trình 8 phút [T]">
-        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        <span id="timerDisplay">08:00</span>
-      </button>
-    </div>
-
-    <!-- Fullscreen Toggle -->
-    <button onclick="toggleFullScreen()" class="dock-btn" title="Toàn màn hình [F]">
-      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
-      <span class="hidden sm:inline">Toàn màn hình</span>
-    </button>
-  </div>
-
-  <!-- Toast Element -->
-  <div id="copyToast">&check; Đã sao chép vào bộ nhớ tạm!</div>
-
-  <!-- ========================================================
-       APPLICATION LOGIC & INTERACTION ENGINE
+       INTERACTION SCRIPT & POWERPOINT MORPH ENGINE
        ======================================================== -->
   <script>
-    // State
-    let currentSlide = 0; // Starts at Slide 0 (Bản quyền VUONGGIA)
-    const totalContentSlides = 9; // Slide 1 to Slide 9
-    let isSlide0CardOpen = true;
+    let currentSlide = 1;
+    const totalSlides = 9;
 
-    // Timer State (8 minutes = 480 seconds)
-    let timerSeconds = 480;
-    let timerInterval = null;
-    let isTimerRunning = false;
-
-    // DOM Elements
-    const dock = document.getElementById('slideDock');
-    const slideDisplay = document.getElementById('currentSlideDisplay');
-    const toast = document.getElementById('copyToast');
-    const timerDisplay = document.getElementById('timerDisplay');
-    const timerBtn = document.getElementById('timerBtn');
-
-    // Fallback Clipboard Copy using execCommand
-    function fallbackCopy(text, btnElement) {
-      try {
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        textarea.style.position = 'fixed';
-        textarea.style.opacity = '0';
-        document.body.appendChild(textarea);
-        textarea.focus();
-        textarea.select();
-        const successful = document.execCommand('copy');
-        document.body.removeChild(textarea);
-        if (successful) {
-          showToast('✓ Đã sao chép: ' + text);
-          if (btnElement) {
-            const originalText = btnElement.innerText;
-            btnElement.innerText = 'ĐÃ CHÉP!';
-            btnElement.classList.add('bg-emerald-500', 'text-white');
-            setTimeout(() => {
-              btnElement.innerText = originalText;
-              btnElement.classList.remove('bg-emerald-500', 'text-white');
-            }, 2000);
-          }
-          return;
-        }
-      } catch (e) {}
-      showToast('✓ ' + text);
-    }
-
-    // Clipboard Copy Helper with Robust Try/Catch & Fallback
-    function copyToClipboard(text, btnElement) {
-      try {
-        if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-          navigator.clipboard.writeText(text).then(() => {
-            showToast('✓ Đã sao chép: ' + text);
-            if (btnElement) {
-              const originalText = btnElement.innerText;
-              btnElement.innerText = 'ĐÃ CHÉP!';
-              btnElement.classList.add('bg-emerald-500', 'text-white');
-              setTimeout(() => {
-                btnElement.innerText = originalText;
-                btnElement.classList.remove('bg-emerald-500', 'text-white');
-              }, 2000);
-            }
-          }).catch(() => fallbackCopy(text, btnElement));
-          return;
-        }
-      } catch (err) {}
-      fallbackCopy(text, btnElement);
-    }
-
-    function showToast(message) {
-      if (!toast) return;
-      toast.innerText = message;
-      toast.classList.add('show');
-      setTimeout(() => {
-        toast.classList.remove('show');
-      }, 2500);
-    }
-
-    // Slide 0 Certificate Card Toggle
-    function toggleSlide0Card(open) {
-      const card = document.getElementById('slide0CertificateCard');
-      const floatActions = document.getElementById('slide0FloatingActions');
-      isSlide0CardOpen = open;
-      if (open) {
-        if (card) card.classList.remove('hidden');
-        if (floatActions) floatActions.classList.add('hidden');
-      } else {
-        if (card) card.classList.add('hidden');
-        if (floatActions) floatActions.classList.remove('hidden');
+    function updateSlideProgressBar() {
+      const bar = document.getElementById('slideProgressBar');
+      if (bar) {
+        bar.style.width = ((currentSlide / totalSlides) * 100) + '%';
       }
     }
 
-    // Slide Switcher Function
-    function showSlide(index) {
-      index = Number(index);
-      if (isNaN(index)) return;
-      if (index < 0) index = 0;
-      if (index > totalContentSlides) index = totalContentSlides;
-      currentSlide = index;
+    // PowerPoint Morph Engine with Native View Transitions Support
+    function showSlide(targetIndex) {
+      targetIndex = Number(targetIndex);
+      if (isNaN(targetIndex) || targetIndex < 1 || targetIndex > totalSlides) return;
+      if (targetIndex === currentSlide) return;
 
-      // Toggle slide visibility
-      const frames = document.querySelectorAll('.slide-frame');
-      frames.forEach((frame) => {
-        const frameId = frame.id;
-        if (frameId === `slide-${currentSlide}`) {
-          frame.classList.add('active');
-        } else {
-          frame.classList.remove('active');
-        }
-      });
-
-      // Update Dock & Top Progress Bar visibility
-      const progressBarContainer = document.getElementById('topProgressBarContainer');
-      const progressBar = document.getElementById('topProgressBar');
-
-      if (dock) {
-        if (currentSlide === 0) {
-          dock.style.display = 'none';
-          if (progressBarContainer) progressBarContainer.style.display = 'none';
-        } else {
-          dock.style.display = 'flex';
-          if (slideDisplay) {
-            slideDisplay.innerText = String(currentSlide).padStart(2, '0');
+      const performTransition = () => {
+        const pages = document.querySelectorAll('.slide-page');
+        pages.forEach((page) => {
+          if (page.id === `slide-${targetIndex}`) {
+            page.classList.add('active');
+          } else {
+            page.classList.remove('active');
           }
-          if (progressBarContainer && progressBar) {
-            progressBarContainer.style.display = 'block';
-            const progressPercent = (currentSlide / totalContentSlides) * 100;
-            progressBar.style.width = `${progressPercent}%`;
-          }
-        }
+        });
+        currentSlide = targetIndex;
+        updateSlideProgressBar();
+      };
+
+      if (document.startViewTransition) {
+        document.startViewTransition(performTransition);
+      } else {
+        performTransition();
       }
     }
 
     function nextSlide() {
-      if (currentSlide < totalContentSlides) {
+      if (currentSlide < totalSlides) {
         showSlide(currentSlide + 1);
       }
     }
 
     function prevSlide() {
-      if (currentSlide > 0) {
+      if (currentSlide > 1) {
         showSlide(currentSlide - 1);
       }
     }
 
-    function jumpToSlide(index) {
-      showSlide(index);
-      closeOverview();
-    }
-    function goToSlide(index) {
-      showSlide(index);
-    }
-    window.goToSlide = showSlide;
-
-    // Lightbox Logic
-    function openLightbox(src, title, caption) {
-      const modal = document.getElementById('evidenceLightboxModal');
-      const img = document.getElementById('lightboxImg');
-      const titleEl = document.getElementById('lightboxTitle');
-      const capEl = document.getElementById('lightboxCaption');
-      if (modal && img) {
-        img.src = src;
-        if (titleEl) titleEl.innerText = title || 'Minh chứng thực tế';
-        if (capEl) capEl.innerText = caption || '';
-        modal.classList.remove('hidden');
+    // Canvas click advances on right 65%, goes back on left 35%
+    function handleCanvasClick(e) {
+      if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.group')) {
+        return; // do not trigger if clicking an interactive element
       }
-    }
-
-    function closeLightbox(e) {
-      const modal = document.getElementById('evidenceLightboxModal');
-      if (modal) {
-        modal.classList.add('hidden');
-      }
-    }
-
-    // Overview Modal Logic
-    function toggleOverview() {
-      const modal = document.getElementById('overviewModal');
-      if (modal) {
-        if (modal.classList.contains('hidden')) {
-          modal.classList.remove('hidden');
-        } else {
-          modal.classList.add('hidden');
-        }
-      }
-    }
-    function toggleOverviewModal() {
-      toggleOverview();
-    }
-    window.toggleOverview = toggleOverview;
-    window.toggleOverviewModal = toggleOverview;
-
-    function closeOverview(e) {
-      const modal = document.getElementById('overviewModal');
-      if (modal) {
-        modal.classList.add('hidden');
-      }
-    }
-
-    // 8-Minute Countdown Timer Logic
-    function formatTime(totalSeconds) {
-      const mins = Math.floor(totalSeconds / 60);
-      const secs = totalSeconds % 60;
-      return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-    }
-
-    function updateTimerUI() {
-      if (timerDisplay) {
-        timerDisplay.innerText = formatTime(timerSeconds);
-        if (timerSeconds <= 60) {
-          timerDisplay.classList.add('text-red-600', 'font-black');
-          timerDisplay.classList.remove('text-slate-800', 'text-amber-600');
-        } else if (timerSeconds <= 180) {
-          timerDisplay.classList.add('text-amber-600', 'font-bold');
-          timerDisplay.classList.remove('text-slate-800', 'text-red-600');
-        } else {
-          timerDisplay.classList.remove('text-red-600', 'text-amber-600');
-        }
-      }
-    }
-
-    function toggleTimer() {
-      if (isTimerRunning) {
-        // Pause timer
-        clearInterval(timerInterval);
-        isTimerRunning = false;
-        showToast('Đã tạm dừng đồng hồ');
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      if (clickX > rect.width * 0.4) {
+        nextSlide();
       } else {
-        // Start timer
-        isTimerRunning = true;
-        showToast('Đã bắt đầu tính giờ thuyết trình (8 phút)');
-        timerInterval = setInterval(() => {
-          if (timerSeconds > 0) {
-            timerSeconds--;
-            updateTimerUI();
-          } else {
-            clearInterval(timerInterval);
-            isTimerRunning = false;
-            showToast('HẾT GIỜ THUYẾT TRÌNH (8 PHÚT)!');
-          }
-        }, 1000);
+        prevSlide();
       }
     }
 
-    function resetTimer() {
-      clearInterval(timerInterval);
-      isTimerRunning = false;
-      timerSeconds = 480;
-      updateTimerUI();
-      showToast('Đã đặt lại đồng hồ về 08:00');
-    }
-
-    // Fullscreen Toggle
-    function toggleFullScreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(err => {});
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        }
-      }
-    }
-
-    // Global Keyboard Navigation
+    // Keyboard Shortcuts (ArrowRight, Space, Enter, ArrowLeft, Home, End)
     window.addEventListener('keydown', (e) => {
-      // Ignore when modifier keys are held (allow browser Ctrl+T, Ctrl+F, Ctrl+O, etc.)
-      if (e.ctrlKey || e.metaKey || e.altKey) return;
-      // Lightbox modal open: only allow Escape to close, block all slide navigation keys
-      const lightbox = document.getElementById('evidenceLightboxModal');
-      if (lightbox && !lightbox.classList.contains('hidden')) {
-        if (e.key === 'Escape') {
-          closeLightbox();
-        }
+      const lightbox = document.getElementById('imageLightbox');
+      if (lightbox && lightbox.classList.contains('active')) {
+        if (e.key === 'Escape') closeLightbox();
+        return;
+      }
+      const overlay = document.getElementById('slide0Overlay');
+      if (overlay && !overlay.classList.contains('hidden')) {
+        if (e.key === 'Escape') overlay.classList.add('hidden');
         return;
       }
 
-      // Overview modal open: allow Escape or O to close, block all slide navigation keys
-      const overview = document.getElementById('overviewModal');
-      if (overview && !overview.classList.contains('hidden')) {
-        if (e.key === 'Escape' || e.key === 'o' || e.key === 'O') {
-          closeOverview();
-        }
-        return;
-      }
-
-      // Navigation Shortcuts
-      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ' || e.key === 'Enter') {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter' || e.key === 'PageDown') {
         e.preventDefault();
         nextSlide();
-      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
         e.preventDefault();
         prevSlide();
-      } else if (e.key === 'f' || e.key === 'F') {
-        toggleFullScreen();
-      } else if (e.key === 'o' || e.key === 'O') {
-        toggleOverview();
-      } else if (e.key === 't' || e.key === 'T') {
-        toggleTimer();
       } else if (e.key === 'Home') {
-        showSlide(0);
+        e.preventDefault();
+        showSlide(1);
       } else if (e.key === 'End') {
-        showSlide(totalContentSlides);
+        e.preventDefault();
+        showSlide(totalSlides);
+      } else if (e.key === '0') {
+        // Discreet key to inspect copyright certificate overlay
+        if (overlay) overlay.classList.toggle('hidden');
       }
     });
 
-    // Touch / Swipe Navigation for Mobile & Tablets
+    // Touch / Swipe Navigation
     let touchStartX = 0;
-    let touchStartY = 0;
     let touchEndX = 0;
-    let touchEndY = 0;
-    const minSwipeDistance = 50;
-
     window.addEventListener('touchstart', (e) => {
       touchStartX = e.changedTouches[0].screenX;
-      touchStartY = e.changedTouches[0].screenY;
     }, { passive: true });
-
     window.addEventListener('touchend', (e) => {
       touchEndX = e.changedTouches[0].screenX;
-      touchEndY = e.changedTouches[0].screenY;
-      handleSwipeGesture();
+      if (touchEndX < touchStartX - 50) nextSlide();
+      if (touchEndX > touchStartX + 50) prevSlide();
     }, { passive: true });
 
-    function handleSwipeGesture() {
-      const lightbox = document.getElementById('evidenceLightboxModal');
-      const overview = document.getElementById('overviewModal');
-      if ((lightbox && !lightbox.classList.contains('hidden')) || (overview && !overview.classList.contains('hidden'))) {
-        return;
-      }
-      const deltaX = touchEndX - touchStartX;
-      const deltaY = touchEndY - touchStartY;
-      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
-        if (deltaX < 0) {
-          nextSlide();
-        } else {
-          prevSlide();
-        }
+    // HD Lightbox Functionality
+    function openLightbox(src, caption) {
+      const box = document.getElementById('imageLightbox');
+      const img = document.getElementById('lightboxImage');
+      const cap = document.getElementById('lightboxCaption');
+      if (box && img) {
+        img.src = src;
+        if (cap) cap.innerText = caption || '';
+        box.classList.add('active');
       }
     }
 
-    // Initial Load - Starts at Slide 0
-    showSlide(0);
-    updateTimerUI();
+    function closeLightbox() {
+      const box = document.getElementById('imageLightbox');
+      if (box) box.classList.remove('active');
+    }
+
+    // Expose aliases
+    window.showSlide = showSlide;
+    window.nextSlide = nextSlide;
+    window.prevSlide = prevSlide;
+    window.goToSlide = showSlide;
+    window.jumpToSlide = showSlide;
+    window.openLightbox = openLightbox;
+    window.closeLightbox = closeLightbox;
+
+    // Initialize progress bar
+    updateSlideProgressBar();
   </script>
 </body>
 </html>
