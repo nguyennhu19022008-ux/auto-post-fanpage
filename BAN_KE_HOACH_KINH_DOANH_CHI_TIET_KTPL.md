@@ -210,29 +210,20 @@ $$\text{Sản lượng hòa vốn (Q)} = \frac{\text{Chi phí cố định (Fixe
    - Nhóm bàn giao máy tận tay khách hàng; hướng dẫn khách hàng tự kiểm tra lại các phần mềm đo thông số kỹ thuật.
    - Khách hài lòng 100% mới thanh toán nốt số tiền còn lại và ký giấy cam kết bảo hành.
 
-### 5.2. Phân công bộ máy nhân sự & Trách nhiệm (Cơ cấu 4 thành viên)
+### 5.2. Phân công bộ máy nhân sự & Trách nhiệm (Cơ cấu 10 nhân sự chuyên trách)
 
-```
-                       ┌─────────────────────────┐
-                       │   TRƯỞNG NHÓM (CEO)     │
-                       │ Điều hành tổng thể      │
-                       │ Đàm phán nguồn sỉ Zalo  │
-                       └────────────┬────────────┘
-                                    │
-         ┌──────────────────────────┼──────────────────────────┐
-         │                          │                          │
-┌────────┴────────┐        ┌────────┴────────┐        ┌────────┴────────┐
-│ KỸ THUẬT (CTO)  │        │ MARKETING (CMO) │        │ TÀI CHÍNH (CFO) │
-│ Kiểm định 15 b  │        │ Quản trị Fanpage│        │ Sổ sách dòng ti │
-│ Vệ sinh tra keo │        │ Vận hành Autopos│        │ Quỹ bảo hành    │
-│ Cài phần mềm    │        │ Tư vấn & CSKH   │        │ Thu chi tiền cọc│
-└─────────────────┘        └─────────────────┘        └─────────────────┘
-```
-
-- **Thành viên 1 - Trưởng nhóm (CEO & Quản lý chuỗi cung ứng)**: Giám sát toàn bộ tiến độ, liên hệ làm việc với các đầu kho sỉ Nhật Bản tại Zalo, đàm phán giá nhập ưu đãi, giải quyết các phát sinh lớn.
-- **Thành viên 2 - Kỹ thuật trưởng (CTO & Trưởng ban Kiểm định)**: Trực tiếp nhận máy, thực hiện quy trình test 15 bước, vệ sinh máy, cài đặt Windows và ứng dụng, giải quyết các vấn đề bảo hành phần cứng.
-- **Thành viên 3 - Giám đốc Tiếp thị (CMO & Chăm sóc khách hàng)**: Quản trị Fanpage Facebook, theo dõi hệ thống Autopost, trả lời tin nhắn của khách hàng, chốt đơn và viết bài phản hồi thực tế.
-- **Thành viên 4 - Quản lý Tài chính (CFO & Pháp chế)**: Quản lý quỹ tiền mặt 5.000.000đ, thu nhận tiền cọc, thanh toán giá sỉ cho kho, trích lập và quản lý Quỹ dự phòng bảo hành 2.000.000đ, giám sát việc tuân thủ các quy định pháp luật.
+| STT | Họ và tên | Chức danh / Vai trò | Nhiệm vụ trọng tâm | Chỉ số đo lường (KPI) |
+| :---: | :--- | :--- | :--- | :--- |
+| **01** | **Vương Gia** | Trưởng nhóm · Điều hành (CEO) | Điều hành tổng thể dự án, đàm phán nguồn cung tổng kho sỉ & quản lý tài khoản BIDV `8883451443` | Đạt mục tiêu 20 máy/học kỳ (+10 triệu lãi ròng) |
+| **02** | **Nguyễn Hoàng Yến** | Giám đốc Tài chính (CFO) | Hạch toán dòng tiền Unit Economics, kiểm soát biên nhận cọc & trích lập Quỹ dự phòng bảo hành 100.000đ/máy | Sổ sách minh bạch 100%, 0đ sai lệch quỹ |
+| **03** | **Trần Thị Mai Linh** | Pháp chế & Hợp đồng | Chuẩn hóa hồ sơ pháp lý (NĐ 01/2021, BLDS 2015, TT 40/2021), soạn biên bản cọc & phiếu bảo hành 30 ngày | 100% giao dịch có chứng từ hợp pháp |
+| **04** | **Phan Quỳnh Anh** | Trưởng mảng Nghiên cứu thị trường (CMO) | Thiết kế bảng hỏi, thống kê dữ liệu khảo sát thực tế $N = 120$ học sinh THPT & hoạch định chiến lược 4P | Báo cáo dữ liệu khảo sát chính xác 100% |
+| **05** | **Nguyễn Ngọc Anh Thư** | Truyền thông & Sáng tạo nội dung | Chụp ảnh thực tế từng góc máy, quay video test bản lề/màn hình & biên tập bài đăng Fanpage | Tối thiểu 15 nội dung thực tế/tuần |
+| **06** | **Nguyễn Phúc Minh Quân** | Trưởng ban Kỹ thuật & Kiểm định (QC Lead) | Trực tiếp kiểm định phần cứng 15 bước, đối chiếu Service Tag BIOS, vệ sinh & tra keo tản nhiệt Arctic MX-4 | 100% máy xuất xưởng đạt 15/15 bước QC |
+| **07** | **Châu Anh Thư** | Tư vấn khách hàng & Chốt đơn (Sales) | Tư vấn cấu hình cho học sinh, giáo viên, phụ huynh qua Zalo/Messenger & hướng dẫn thủ tục đặt cọc | Phản hồi tin nhắn dưới 5 phút |
+| **08** | **Nguyễn Tiến Dũng** | Công nghệ & Vận hành Auto-post (CTO) | Vận hành hệ thống Bot Auto-post Fanpage tự động hóa, cài đặt sẵn Windows, Office 365 & Python cho máy bán ra | Duy trì chi phí quảng cáo CAC = 0đ |
+| **09** | **Nguyễn Hồng Khánh Đoan** | Điều phối Giao nhận Just-in-Time 24h | Quản lý tiến độ lấy hàng – bàn giao trong 24h, chuẩn bị combo quà tặng (balo, chuột, lót chuột, túi chống sốc) | 100% đơn hàng bàn giao đúng hẹn 24h |
+| **10** | **Thái Hoàng Minh Anh** | Chăm sóc Sau bán & Bảo hành (CSKH) | Quản lý sổ tem niêm phong, hỏi thăm khách định kỳ 7–30 ngày & thu hồi pin hỏng theo chuẩn Kinh tế tuần hoàn (EPR) | Tỷ lệ hài lòng sau bán đạt 100% |
 
 ### 5.3. Ma trận Quản trị rủi ro & Phương án ứng phó thực tế
 
