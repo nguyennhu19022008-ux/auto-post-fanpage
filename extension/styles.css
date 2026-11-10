@@ -4,11 +4,14 @@
    ======================================================== */
 
 .vg-zalo-btn-wrapper {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 6px;
-  margin: 4px 0;
+  margin: 8px 0 4px 0;
   vertical-align: middle;
+  position: relative;
+  z-index: 50;
+  clear: both;
 }
 
 .vg-zalo-autopost-btn {

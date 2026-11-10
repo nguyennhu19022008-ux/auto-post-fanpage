@@ -37,13 +37,52 @@ async function callGeminiWithFallback(contents, apiKey, timeout = 35000) {
  */
 function sanitizeRawText(text) {
   if (!text) return '';
-  // Remove CTV salary/commission, wholesale references
   return text
+    // Remove CTV salaries, commissions, discounts
     .replace(/(?:lương|luong|hoa hồng|hoa hong|chiết khấu|chiet khau)\s*[:=]?\s*\d+[kKmMtrTrVNĐvnđ]*/gi, '')
-    .replace(/giá\s+(?:nhập|sỉ|ctv|buôn)\s*[:=]?\s*\d+[kKmMtrTrVNĐvnđ]*/gi, '')
+    // Remove wholesale prices, import prices, "giá sỉ ae ib", "giá ib", "sỉ ib riêng", "win ae tự cài"
+    .replace(/giá\s+(?:nhập|sỉ|ctv|buôn)\s*[:=]?\s*[\d.,]*[kKmMtrTrVNĐvnđ]*/gi, '')
+    .replace(/(?:giá\s+sỉ|sỉ|giá)\s*(?:ae|anh em)?\s*(?:ib|inbox)(?:\s*riêng)?/gi, '')
+    .replace(/win\s+(?:ae|anh em)?\s*tự\s+cài[^\n.]*/gi, '')
+    .replace(/\b(?:ib|inbox)\s+(?:lấy\s+)?giá\b/gi, '')
+    // Remove community admin banners & guideline texts
     .replace(/chỉ\s+(?:trưởng\/phó|admin)\s+cộng\s+đồng[^\n]*/gi, '')
     .replace(/hướng\s+dẫn\s+dán\s+phím\s+cho\s+ctv[^\n]*/gi, '')
+    .replace(/thông\s+tin\s+chính\s+sách\s+nhóm[^\n]*/gi, '')
+    .replace(/khách\s+sỉ\s*\([^)]*\)[^\n]*/gi, '')
+    .replace(/trợ\s+giá\s+sỉ[^\n]*/gi, '')
+    .replace(/đối\s+với\s+cộng\s+tác\s+viên[^\n]*/gi, '')
+    // Remove "Chốt" comments
+    .replace(/^(?:chốt|chot)(?:\s+máy|\s+đơn)?$/gim, '')
+    // Remove wholesaler phone numbers (e.g. 0982.732.678)
+    .replace(/(?:sđt|sdt|hotline|zalo|lh|liên hệ)?\s*[:=]?\s*(?:0\d{1,3}[.\s-]?\d{3}[.\s-]?\d{3,4})/gi, '')
     .trim();
+}
+
+/**
+ * Extract exact machine code from raw text (handles "Mã 129", "Lô 09", "Mã 056B", "Mã 117 A", "Lô 08"...)
+ */
+function extractExplicitMachineCode(text) {
+  if (!text) return 'VIP';
+  // 1. Matches "Mã 129", "Mã: 056B", "Mã 117 A", "Mã #118B"
+  const maMatch = text.match(/(?:mã|ma|ms|code|#)\s*[:=.-]?\s*([A-Za-z0-9]+(?:\s*[A-Za-z])?)/i);
+  if (maMatch) {
+    return maMatch[1].replace(/\s+/g, '').toUpperCase();
+  }
+
+  // 2. Matches "Lô 09", "Lô: 08", "Lô 08."
+  const loMatch = text.match(/(?:lô|lo)\s*[:=.-]?\s*([A-Za-z0-9]+)/i);
+  if (loMatch) {
+    return loMatch[1].toUpperCase();
+  }
+
+  // 3. First standalone token e.g. "129:" or "#129"
+  const startMatch = text.match(/^(?:#)?([A-Za-z0-9]{2,8})\b[:.-]/);
+  if (startMatch) {
+    return startMatch[1].toUpperCase();
+  }
+
+  return 'VIP';
 }
 
 /**
@@ -51,11 +90,7 @@ function sanitizeRawText(text) {
  */
 function fallbackGeneratePost(rawText, userSettings, customPrice) {
   const sanitized = sanitizeRawText(rawText);
-  
-  // Extract Machine Code & Name
-  const codeMatch = sanitized.match(/(?:mã|ma)\s*[:=]?\s*([A-Za-z0-9_-]+)/i) || 
-                    sanitized.match(/^([A-Za-z0-9_-]{2,10})\b/);
-  const machineCode = codeMatch ? codeMatch[1].toUpperCase() : 'VIP';
+  const machineCode = extractExplicitMachineCode(rawText);
 
   // Extract CPU (Dell, HP, ThinkPad, Dynabook, etc.)
   const cpuMatch = sanitized.match(/(?:Intel\s+Core\s+i[3579][\w-]*|Core\s+Ultra\s+\d+\s*\w*|Ultra\s+\d+|Ryzen\s+[3579][\w-]*|i[3579][\s-]+\d{1,5}(?:[A-Za-z0-9]+|ThGen)?|i[3579]\s+\d+th)/i);
@@ -87,11 +122,20 @@ function fallbackGeneratePost(rawText, userSettings, customPrice) {
   let retailPrice = customPrice;
   if (!retailPrice) {
     const priceMatch = rawText.match(/(?:giá|gia)\s*[:=]?\s*([\d.,]+)\s*(?:tr|triệu|k|K|đ|vnđ)/i);
-    retailPrice = priceMatch ? `${priceMatch[1]} triệu` : 'Liên hệ báo giá tốt nhất';
+    if (priceMatch) {
+      retailPrice = `${priceMatch[1]} triệu`;
+    } else if (/giá\s*[\d.,xX]+\s*(?:tr|triệu)/i.test(rawText)) {
+      const matchX = rawText.match(/giá\s*([\d.,xX]+\s*(?:tr|triệu))/i);
+      retailPrice = matchX ? `${matchX[1]} (Ưu đãi học sinh - sinh viên)` : 'Inbox nhận giá tốt nhất';
+    } else {
+      retailPrice = 'Inbox Fanpage hoặc Zalo: 0876637806 để nhận giá ưu đãi tốt nhất';
+    }
   }
 
   // Extract Title line or fallback (e.g. DELL LATITUDE 3410, HP Envy x360...)
-  let firstLine = sanitized.split('\n')[0].replace(/^(?:mã|ma)\s*[A-Za-z0-9_-]+\s*[:–-]?\s*/i, '').trim();
+  let firstLine = sanitized.split('\n')[0].replace(/^(?:mã|ma|lô|lo)\s*[A-Za-z0-9_.-]+\s*[:–-]?\s*/i, '').trim();
+  // Clean up "4 máy", "4 em", "8 máy" from lot titles
+  firstLine = firstLine.replace(/^\d+\s*(?:máy|em|chiếc)\s+/i, '').trim();
   // If there's a tagline after a dash (– or -), keep only the laptop name for punchy title
   if (firstLine.includes('–')) {
     firstLine = firstLine.split('–')[0].trim();
@@ -140,11 +184,13 @@ ${depositLine}
  */
 async function generatePostWithGemini(rawText, userSettings, customPrice, imageBase64 = null) {
   const apiKey = userSettings.geminiApiKey || process.env.GEMINI_API_KEY;
+  const detectedCode = extractExplicitMachineCode(rawText);
 
   // If no API key, gracefully fallback to intelligent parser
   if (!apiKey || apiKey.trim() === '') {
     return {
       content: fallbackGeneratePost(rawText, userSettings, customPrice),
+      machineCode: detectedCode,
       isAIGenerated: false,
       message: 'Đã tạo bài viết bằng bộ lọc mẫu thông minh (Chưa cấu hình Gemini API Key).'
     };
@@ -167,13 +213,22 @@ Thông tin cửa hàng của anh Gia Vương:
 - Giá bán lẻ mong muốn: ${customPrice ? customPrice : 'Hãy lấy giá trong bài thô và định dạng thành giá bán lẻ hấp dẫn'}
 
 YÊU CẦU NGHIÊM NGẶT VỀ CẤU TRÚC VÀ NỘI DUNG:
-1. TUYỆT ĐỐI KHÔNG ĐƯỢC để lộ các từ nhạy cảm như "lương 500k", "lương CTV", "hoa hồng", "giá sỉ", "hướng dẫn dán phím cho CTV", "trưởng/phó cộng đồng". Phải xóa sạch 100%!
-2. Bóc tách rõ ràng: Mã máy, Tên hãng/Model (Dell, HP, ThinkPad, Dynabook, Sony Vaio, Surface...), Cấu hình chi tiết (CPU, RAM, SSD, Màn hình, Card đồ họa).
-3. Tuân thủ CHÍNH XÁC cấu trúc khung bài bán lẻ sau:
-🔥 [SIÊU PHẨM GIÁ TỐT] - MÃ [MÃ MÁY]: [TÊN MÁY]
+1. TUYỆT ĐỐI KHÔNG ĐƯỢC để lộ các từ nhạy cảm như "lương 500k", "lương CTV", "hoa hồng", "giá sỉ", "sỉ ib riêng", "win ae tự cài", "hướng dẫn dán phím cho CTV", "trưởng/phó cộng đồng", "chốt". Phải xóa sạch 100%!
+2. BẢO TOÀN SỐ ĐIỆN THOẠI DUY NHẤT: Bắt buộc 100% mọi thông tin liên hệ, hotline, Zalo phải là Hotline / Zalo: 0876637806 (Gia Vương). Tuyệt đối không để lọt số điện thoại của bên sỉ hay số nào khác (như 0982.732.678...).
+3. XỬ LÝ TIN ĐĂNG THEO LÔ: Nếu tin gốc từ Zalo đăng dạng bán sỉ/bán lô (như "Lô 08. 4 em ThinkPad...", "Lô 09: 4 máy HP...", "sỉ ib riêng, win ae tự cài"), hãy viết lại bài dưới góc độ BÁN LẺ TỪNG CHIẾC cho khách hàng học sinh, sinh viên, dân văn phòng. Nhấn mạnh: Máy đã được tuyển chọn kỹ, cài sẵn Windows và ứng dụng văn phòng đầy đủ, bảo hành chu đáo.
+4. XỬ LÝ GIÁ BÁN: Nếu bài thô ghi "giá ib" hoặc "giá sỉ ae ib" hoặc "giá 7.x tr", hãy viết là: "💰 GIÁ ƯU ĐÃI HÔM NAY: [Giá nếu có, ví dụ 7.x triệu / Chỉ từ vài triệu] - Inbox Fanpage hoặc gọi ngay Hotline/Zalo 0876637806 để chốt giá tốt nhất!".
+5. ĐỊNH DANH MÃ MÁY CHUẨN XÁC:
+- MÃ MÁY CỦA SẢN PHẨM NÀY LÀ: "${detectedCode}" (Ví dụ: 09, 129, 056B, 093, 08, 137...).
+- BẮT BUỘC dùng đúng mã máy "${detectedCode}" ở tiêu đề: "🔥 [SIÊU PHẨM GIÁ TỐT] - MÃ #${detectedCode}: [TÊN MÁY VIẾT HOA]".
+- BẮT BUỘC ghi ở dòng cấu hình: "🔹 Mã máy: #${detectedCode}".
+- BẮT BUỘC có hashtag ở cuối: "#${detectedCode}".
+- TUYỆT ĐỐI KHÔNG ĐƯỢC tự ý gộp tên model thành mã máy (như "#HP430G8", "#DELL5560")!
+6. Bóc tách rõ ràng: Cấu hình chi tiết (CPU, RAM, SSD, Màn hình, Card đồ họa).
+7. Tuân thủ CHÍNH XÁC cấu trúc khung bài bán lẻ sau:
+🔥 [SIÊU PHẨM GIÁ TỐT] - MÃ #${detectedCode}: [TÊN MÁY VIẾT HOA]
 ────────────────────────────
 ⚡ ĐẶC ĐIỂM & CẤU HÌNH VƯỢT TRỘI:
-🔹 Mã máy: #[MÃ MÁY]
+🔹 Mã máy: #${detectedCode}
 🔹 Vi xử lý: [CPU chi tiết] (xử lý đa nhiệm mượt mà Office, lướt web, Photoshop 2D)
 🔹 Bộ nhớ RAM: [RAM] (mở hàng chục tab Chrome làm việc không lo giật lag)
 🔹 Ổ cứng: [SSD] (khởi động Windows và mở ứng dụng chỉ trong 3 giây)
@@ -193,12 +248,12 @@ YÊU CẦU NGHIÊM NGẶT VỀ CẤU TRÚC VÀ NỘI DUNG:
 ✅ Cọc 300k cho đơn đầu tiên, hỗ trợ call video check legit trực tiếp!
 
 📲 LIÊN HỆ ĐẶT HÀNG NGAY HÔM NAY:
-☎️ Hotline / Zalo: ${userSettings.hotline || '0876637806'}
+☎️ Hotline / Zalo: 0876637806
 💬 Inbox trực tiếp Fanpage để nhận video test máy chi tiết!
 🚚 ${userSettings.storeAddress || 'Giao hàng toàn quốc - Đồng kiểm kiểm tra máy trước khi thanh toán.'}
-#LaptopCuNhat #LaptopVanPhong #LaptopGiaRe #LaptopGiaVuong #[MÃ MÁY]
+#LaptopCuNhat #LaptopVanPhong #LaptopGiaRe #LaptopGiaVuong #${detectedCode}
 
-4. Trả về DUY NHẤT nội dung bài viết hoàn chỉnh, không kèm bất kỳ lời giải thích hay code block ngoài.
+8. Trả về DUY NHẤT nội dung bài viết hoàn chỉnh, không kèm bất kỳ lời giải thích hay code block ngoài.
 `;
 
   try {
@@ -223,6 +278,7 @@ YÊU CẦU NGHIÊM NGẶT VỀ CẤU TRÚC VÀ NỘI DUNG:
 
     return {
       content: result.text,
+      machineCode: detectedCode,
       isAIGenerated: true,
       modelUsed: result.model,
       message: `Đã sinh bài viết thành công bằng ${result.model}!`
@@ -232,6 +288,7 @@ YÊU CẦU NGHIÊM NGẶT VỀ CẤU TRÚC VÀ NỘI DUNG:
     // Fallback if API call failed
     return {
       content: fallbackGeneratePost(rawText, userSettings, customPrice),
+      machineCode: detectedCode,
       isAIGenerated: false,
       message: `Gemini API lỗi (${error.message}). Đã sử dụng bộ mẫu thông minh thay thế.`
     };
@@ -487,6 +544,7 @@ QUY TẮC BẮT BUỘC ĐỂ TRÁNH TRÙNG LẶP FACEBOOK (CHỐNG DUPLICATE SPA
 
 module.exports = {
   sanitizeRawText,
+  extractExplicitMachineCode,
   fallbackGeneratePost,
   generatePostWithGemini,
   callGeminiWithFallback,

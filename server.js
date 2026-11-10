@@ -7,7 +7,7 @@ const fs = require('fs');
 const axios = require('axios');
 require('dotenv').config();
 
-const { generatePostWithGemini, sanitizeRawText } = require('./services/gemini');
+const { generatePostWithGemini, sanitizeRawText, extractExplicitMachineCode } = require('./services/gemini');
 const { verifyPageToken } = require('./services/facebook');
 const { sendTestEmail } = require('./services/mailer');
 const {
@@ -597,10 +597,7 @@ app.post('/api/extension/push-post', async (req, res) => {
     const textToParse = rawText || 'Laptop xách tay Nhật Bản chính hãng';
     const generated = await generatePostWithGemini(textToParse, settings, customPrice);
 
-    let machineCode = '';
-    const codeMatch = textToParse.match(/(?:mã|ms|code|#)\s*[:.]?\s*([a-zA-Z0-9]+)/i);
-    if (codeMatch) machineCode = codeMatch[1].toUpperCase();
-    const finalCode = machineCode || generated.machineCode || String(Date.now()).slice(-4);
+    const finalCode = generated.machineCode || extractExplicitMachineCode(textToParse) || String(Date.now()).slice(-4);
     const finalName = generated.machineName || `Laptop #${finalCode}`;
 
     // 2. Download media URLs or decode base64 and upload directly to Supabase Storage

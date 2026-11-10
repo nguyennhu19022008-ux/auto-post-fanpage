@@ -99,6 +99,11 @@
     // 1. Extract Text Content
     let text = '';
     const textSelectors = [
+      '[data-component="message-text-content"]',
+      'span.text',
+      '.text-message__container',
+      '[data-id="div_ReceivedMsg_Text"]',
+      '[data-component="text-container"]',
       '.rich-text-content',
       '.text-content',
       '.card--text',
@@ -120,7 +125,10 @@
     // Fallback: If no dedicated text selector, read text directly from message container
     if (!text) {
       const clone = messageEl.cloneNode(true);
-      clone.querySelectorAll('.vg-zalo-btn-wrapper, button, .msg-menu, .extra-actions, [data-id="avatar"]').forEach(b => b.remove());
+      clone.querySelectorAll(
+        '.vg-zalo-btn-wrapper, button, .msg-menu, .extra-actions, [data-id="avatar"], ' +
+        '.message-sender-name-wrapper, .reaction-emoji-icon, .-reaction, .chat-date, .time'
+      ).forEach(b => b.remove());
       text = clone.innerText.trim();
     }
 
@@ -129,7 +137,7 @@
 
     function collectFrom(el) {
       if (!el) return;
-      const imgElements = el.querySelectorAll('img');
+      const imgElements = el.querySelectorAll('img, img.zimg-el');
       imgElements.forEach(img => {
         const classes = (img.className || '').toLowerCase();
         const src = img.getAttribute('data-original') || img.getAttribute('data-src') || img.getAttribute('src') || '';
@@ -138,6 +146,7 @@
           classes.includes('avatar') ||
           classes.includes('emoji') ||
           classes.includes('icon') ||
+          classes.includes('default-react-icon') ||
           src.includes('avatar') ||
           src.includes('emoji') ||
           src.includes('static.zalo.me') ||
@@ -163,28 +172,73 @@
     // Collect from current message
     collectFrom(messageEl);
 
-    // 3. Smart Neighbor Merge:
-    // If current message has NO text (only photos), check previous or next message by same sender in chat
-    if (!text) {
-      const prev = messageEl.previousElementSibling;
-      if (prev) {
-        const prevTextEl = prev.querySelector('.rich-text-content, .text-content, .card--text');
-        text = prevTextEl ? prevTextEl.innerText.trim() : prev.innerText.trim();
-      }
+    // 3. Smart Neighbor Merge (Hai chiều thông minh - Tự động gom Text + Album Ảnh liền kề):
+    const currentChatItem = messageEl.closest('.chat-item');
+    if (currentChatItem) {
+      // A. Nếu tin nhắn hiện tại CHƯA CÓ TEXT (chỉ có ảnh): Quét tin kế tiếp (next), sau đó quét tin trước (prev) để lấy cấu hình
       if (!text) {
-        const next = messageEl.nextElementSibling;
-        if (next) {
-          const nextTextEl = next.querySelector('.rich-text-content, .text-content, .card--text');
-          text = nextTextEl ? nextTextEl.innerText.trim() : next.innerText.trim();
+        // Quét phía dưới trước (đầu kho hay gửi ảnh trước rồi gửi cấu hình ngay phía dưới)
+        let next = currentChatItem.nextElementSibling;
+        for (let i = 0; i < 3 && next && !text; i++) {
+          if (next.classList && next.classList.contains('chat-item')) {
+            const textEl = next.querySelector('[data-component="message-text-content"], span.text, .text-message__container, [data-id="div_ReceivedMsg_Text"]');
+            if (textEl && textEl.innerText.trim().length > 10) {
+              text = textEl.innerText.trim();
+              break;
+            }
+          }
+          next = next.nextElementSibling;
+        }
+        // Nếu phía dưới không có, quét lên phía trên
+        if (!text) {
+          let prev = currentChatItem.previousElementSibling;
+          for (let i = 0; i < 3 && prev && !text; i++) {
+            if (prev.classList && prev.classList.contains('chat-item')) {
+              const textEl = prev.querySelector('[data-component="message-text-content"], span.text, .text-message__container, [data-id="div_ReceivedMsg_Text"]');
+              if (textEl && textEl.innerText.trim().length > 10) {
+                text = textEl.innerText.trim();
+                break;
+              }
+            }
+            prev = prev.previousElementSibling;
+          }
         }
       }
-    }
 
-    // If current message has NO media (only text), check neighboring message for album/photos
-    if (rawMediaList.length === 0) {
-      collectFrom(messageEl.nextElementSibling);
+      // B. Nếu tin nhắn hiện tại CHƯA CÓ ẢNH (chỉ có text): Quét tin trước (prev), sau đó quét tin sau (next) để gom ảnh HD
+      if (rawMediaList.length === 0) {
+        // Quét phía trên trước (như ảnh kho gửi: chùm ảnh nằm ngay trên bài text cấu hình)
+        let prev = currentChatItem.previousElementSibling;
+        for (let i = 0; i < 3 && prev; i++) {
+          if (prev.classList && prev.classList.contains('chat-item')) {
+            collectFrom(prev);
+            if (rawMediaList.length > 0) break;
+          }
+          prev = prev.previousElementSibling;
+        }
+        // Nếu phía trên không có, quét tiếp phía dưới
+        if (rawMediaList.length === 0) {
+          let next = currentChatItem.nextElementSibling;
+          for (let i = 0; i < 3 && next; i++) {
+            if (next.classList && next.classList.contains('chat-item')) {
+              collectFrom(next);
+              if (rawMediaList.length > 0) break;
+            }
+            next = next.nextElementSibling;
+          }
+        }
+      }
+    } else {
+      // Fallback khi không tìm thấy chat-item
+      if (!text) {
+        const next = messageEl.nextElementSibling;
+        const prev = messageEl.previousElementSibling;
+        if (next && next.innerText) text = next.innerText.trim();
+        else if (prev && prev.innerText) text = prev.innerText.trim();
+      }
       if (rawMediaList.length === 0) {
         collectFrom(messageEl.previousElementSibling);
+        if (rawMediaList.length === 0) collectFrom(messageEl.nextElementSibling);
       }
     }
 
@@ -220,14 +274,17 @@
     }
 
     const originalBtnText = btnElement ? btnElement.innerHTML : '';
+    const mediaCount = data.mediaUrls ? data.mediaUrls.length : 0;
+    const mediaLabel = mediaCount > 0 ? ` (kèm ${mediaCount} ảnh HD)` : '';
+
     if (btnElement) {
-      btnElement.innerHTML = '🌀 Đang xử lý...';
+      btnElement.innerHTML = `🌀 Đang xử lý${mediaCount > 0 ? ' (' + mediaCount + ' ảnh)' : ''}...`;
       btnElement.style.opacity = '0.7';
       btnElement.disabled = true;
     }
 
     const actionName = publishImmediately ? 'Đăng lên Facebook' : 'Đưa vào Hàng đợi';
-    const loadingToast = showToast(`Đang bóc tách AI và ${actionName}...`, 'loading');
+    const loadingToast = showToast(`Đang bóc tách AI và ${actionName}${mediaLabel}...`, 'loading');
 
     try {
       let result;
@@ -276,8 +333,8 @@
       if (result.success) {
         const post = result.post || {};
         const successMsg = publishImmediately
-          ? `Đã đăng thành công mã #${post.machineCode || ''} lên Fanpage!`
-          : `Đã đưa bài #${post.machineCode || ''} vào hàng đợi!`;
+          ? `Đã đăng thành công mã #${post.machineCode || ''}${mediaLabel} lên Fanpage!`
+          : `Đã đưa bài #${post.machineCode || ''}${mediaLabel} vào hàng đợi!`;
 
         showToast(successMsg, 'success', result.fbPostUrl || post.fbPostUrl);
       } else {
@@ -338,8 +395,13 @@
     if (messageEl.querySelector('.vg-zalo-btn-wrapper')) return;
 
     // Check if element is a valid message bubble or card
-    const hasText = Boolean(messageEl.querySelector('.rich-text-content, .text-content, .card--text, [data-translate-inner]'));
-    const hasPhoto = Boolean(messageEl.querySelector('.card--photo, .card--album, .card--group-photo, img:not([class*="avatar"])'));
+    const hasText = Boolean(messageEl.querySelector(
+      '.text-message__container, [data-id="div_ReceivedMsg_Text"], [data-component="message-text-content"], [data-component="text-container"], span.text, .rich-text-content, .text-content, .card--text, [data-translate-inner]'
+    )) || (messageEl.innerText && messageEl.innerText.trim().length > 15);
+
+    const hasPhoto = Boolean(messageEl.querySelector(
+      '.card--photo, .card--album, .card--group-photo, [data-id*="GrpPhoto"], [data-id*="Photo"], [data-id*="Media"], #album-container, img.zimg-el, img:not([class*="avatar"]):not([class*="emoji"]):not([class*="default-react-icon"])'
+    ));
     
     // Ignore non-message elements (like system banners, date separators)
     if (!hasText && !hasPhoto) return;
@@ -350,7 +412,7 @@
     // Button 1: ⚡ ĐĂNG FANPAGE (Đăng ngay lập tức)
     const publishBtn = document.createElement('button');
     publishBtn.className = 'vg-zalo-autopost-btn';
-    publishBtn.title = 'Bấm để AI bóc tách cấu hình, tải ảnh và ĐĂNG NGAY lên Fanpage Facebook';
+    publishBtn.title = 'Bấm để AI bóc tách cấu hình, tải ảnh và ĐĂNG NGAY lên Fanpage Facebook (Hotline: 0876637806)';
     publishBtn.innerHTML = '⚡ ĐĂNG FANPAGE';
     publishBtn.onclick = async (e) => {
       e.stopPropagation();
@@ -379,9 +441,9 @@
     wrapper.appendChild(scheduleBtn);
 
     // Inject into action menu or append directly below message content
-    const actionsMenu = messageEl.querySelector('.msg-menu, .message-actions, .extra-actions');
+    const actionsMenu = messageEl.querySelector('.msg-menu, .message-actions, .extra-actions, [data-id="div_DisabledTargetEventLayer"]');
     if (actionsMenu) {
-      actionsMenu.parentNode.insertBefore(wrapper, actionsMenu);
+      actionsMenu.appendChild(wrapper);
     } else {
       messageEl.appendChild(wrapper);
     }
@@ -405,21 +467,24 @@
     ) || document.body;
 
     const candidateSelectors = [
-      '.msg-item',
-      '.chat-item',
-      '.msg-view',
-      '.card--text',
-      '.card--photo',
-      '.card--album',
+      '[data-component="message-content-view"]',
+      '.message-frame',
       '.card--group-photo',
-      'div[data-id^="msg_"]',
-      'div[id^="msg-"]'
+      '.card--text',
+      '.chat-message',
+      '.msg-item',
+      '.chat-item'
     ];
 
     const elements = chatContainer.querySelectorAll(candidateSelectors.join(', '));
+    const seenBubbles = new Set();
+
     elements.forEach(el => {
       if (!isInsideChatMessageArea(el)) return;
-      const bubble = el.closest('.msg-item, .chat-item, .card') || el;
+      const bubble = el.closest('[data-component="message-content-view"], .message-frame, .chat-message') || el;
+      if (seenBubbles.has(bubble)) return;
+      seenBubbles.add(bubble);
+
       if (isInsideChatMessageArea(bubble)) {
         injectButtons(bubble);
       }
