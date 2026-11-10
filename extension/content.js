@@ -93,11 +93,10 @@
   }
 
   /**
-   * Extract all content and media from a Zalo message bubble
+   * Helper: Extract clean laptop specs text from a message container
    */
-  async function extractMessageData(messageEl) {
-    // 1. Extract Text Content
-    let text = '';
+  function getPureText(container) {
+    if (!container) return '';
     const textSelectors = [
       '[data-component="message-text-content"]',
       'span.text',
@@ -106,139 +105,109 @@
       '[data-component="text-container"]',
       '.rich-text-content',
       '.text-content',
-      '.card--text',
-      '.content',
-      '[data-translate-inner]'
+      '.card--text'
     ];
 
     for (const sel of textSelectors) {
-      const el = messageEl.querySelector(sel);
+      const el = container.querySelector(sel);
       if (el) {
-        // Clone and strip our own injected buttons before reading text
         const clone = el.cloneNode(true);
-        clone.querySelectorAll('.vg-zalo-btn-wrapper, button').forEach(b => b.remove());
-        text = clone.innerText.trim();
-        if (text) break;
+        clone.querySelectorAll('.vg-zalo-btn-wrapper, button, .message-reaction-container, .default-react-icon-thumb').forEach(b => b.remove());
+        const raw = clone.innerText.trim();
+        if (raw.length > 10 && !raw.startsWith('/-heart') && !raw.startsWith('/-strong')) {
+          return raw;
+        }
       }
     }
 
-    // Fallback: If no dedicated text selector, read text directly from message container
-    if (!text) {
-      const clone = messageEl.cloneNode(true);
-      clone.querySelectorAll(
-        '.vg-zalo-btn-wrapper, button, .msg-menu, .extra-actions, [data-id="avatar"], ' +
-        '.message-sender-name-wrapper, .reaction-emoji-icon, .-reaction, .chat-date, .time'
-      ).forEach(b => b.remove());
-      text = clone.innerText.trim();
-    }
+    return '';
+  }
 
-    // 2. Extract Media (Images & Videos)
+  /**
+   * Helper: Extract pure high-resolution media URLs from a message container
+   */
+  function getPureMedia(container) {
+    if (!container) return [];
     const rawMediaList = [];
+    const imgElements = container.querySelectorAll('img, img.zimg-el');
+    imgElements.forEach(img => {
+      const classes = (img.className || '').toLowerCase();
+      const src = img.getAttribute('data-original') || img.getAttribute('data-src') || img.getAttribute('src') || '';
+      
+      const isJunkIcon = (
+        classes.includes('avatar') ||
+        classes.includes('emoji') ||
+        classes.includes('icon') ||
+        classes.includes('default-react-icon') ||
+        classes.includes('react') ||
+        classes.includes('thumb') ||
+        src.includes('avatar') ||
+        src.includes('emoji') ||
+        src.includes('static.zalo.me') ||
+        src.includes('iconlike') ||
+        src.includes('zadn.vn')
+      );
 
-    function collectFrom(el) {
-      if (!el) return;
-      const imgElements = el.querySelectorAll('img, img.zimg-el');
-      imgElements.forEach(img => {
-        const classes = (img.className || '').toLowerCase();
-        const src = img.getAttribute('data-original') || img.getAttribute('data-src') || img.getAttribute('src') || '';
-        
-        if (
-          classes.includes('avatar') ||
-          classes.includes('emoji') ||
-          classes.includes('icon') ||
-          classes.includes('default-react-icon') ||
-          src.includes('avatar') ||
-          src.includes('emoji') ||
-          src.includes('static.zalo.me') ||
-          src.includes('iconlike')
-        ) {
-          return;
-        }
+      if (isJunkIcon) return;
 
-        if (src && (src.startsWith('http') || src.startsWith('blob:'))) {
-          rawMediaList.push(src);
-        }
-      });
-
-      const videoElements = el.querySelectorAll('video, [data-video-url], a[href*=".mp4"]');
-      videoElements.forEach(v => {
-        const vSrc = v.getAttribute('data-video-url') || v.getAttribute('src') || v.getAttribute('href') || '';
-        if (vSrc && (vSrc.startsWith('http') || vSrc.startsWith('blob:'))) {
-          rawMediaList.push(vSrc);
-        }
-      });
-    }
-
-    // Collect from current message
-    collectFrom(messageEl);
-
-    // 3. Smart Neighbor Merge (Hai chiều thông minh - Tự động gom Text + Album Ảnh liền kề):
-    const currentChatItem = messageEl.closest('.chat-item');
-    if (currentChatItem) {
-      // A. Nếu tin nhắn hiện tại CHƯA CÓ TEXT (chỉ có ảnh): Quét tin kế tiếp (next), sau đó quét tin trước (prev) để lấy cấu hình
-      if (!text) {
-        // Quét phía dưới trước (đầu kho hay gửi ảnh trước rồi gửi cấu hình ngay phía dưới)
-        let next = currentChatItem.nextElementSibling;
-        for (let i = 0; i < 3 && next && !text; i++) {
-          if (next.classList && next.classList.contains('chat-item')) {
-            const textEl = next.querySelector('[data-component="message-text-content"], span.text, .text-message__container, [data-id="div_ReceivedMsg_Text"]');
-            if (textEl && textEl.innerText.trim().length > 10) {
-              text = textEl.innerText.trim();
-              break;
-            }
-          }
-          next = next.nextElementSibling;
-        }
-        // Nếu phía dưới không có, quét lên phía trên
-        if (!text) {
-          let prev = currentChatItem.previousElementSibling;
-          for (let i = 0; i < 3 && prev && !text; i++) {
-            if (prev.classList && prev.classList.contains('chat-item')) {
-              const textEl = prev.querySelector('[data-component="message-text-content"], span.text, .text-message__container, [data-id="div_ReceivedMsg_Text"]');
-              if (textEl && textEl.innerText.trim().length > 10) {
-                text = textEl.innerText.trim();
-                break;
-              }
-            }
-            prev = prev.previousElementSibling;
-          }
-        }
+      if (src && (src.startsWith('http') || src.startsWith('blob:'))) {
+        rawMediaList.push(src);
       }
+    });
 
-      // B. Nếu tin nhắn hiện tại CHƯA CÓ ẢNH (chỉ có text): Quét tin trước (prev), sau đó quét tin sau (next) để gom ảnh HD
-      if (rawMediaList.length === 0) {
-        // Quét phía trên trước (như ảnh kho gửi: chùm ảnh nằm ngay trên bài text cấu hình)
-        let prev = currentChatItem.previousElementSibling;
-        for (let i = 0; i < 3 && prev; i++) {
-          if (prev.classList && prev.classList.contains('chat-item')) {
-            collectFrom(prev);
-            if (rawMediaList.length > 0) break;
-          }
+    const videoElements = container.querySelectorAll('video, [data-video-url], a[href*=".mp4"]');
+    videoElements.forEach(v => {
+      const vSrc = v.getAttribute('data-video-url') || v.getAttribute('src') || v.getAttribute('href') || '';
+      if (vSrc && (vSrc.startsWith('http') || vSrc.startsWith('blob:'))) {
+        rawMediaList.push(vSrc);
+      }
+    });
+
+    return rawMediaList;
+  }
+
+  /**
+   * Extract all content and media from a Zalo message bubble
+   */
+  async function extractMessageData(messageEl) {
+    const chatItem = messageEl.closest('.chat-item') || messageEl;
+
+    // 1. Lấy text từ tin nhắn hiện tại
+    let text = getPureText(chatItem);
+
+    // 2. Lấy media từ tin nhắn hiện tại
+    let rawMediaList = getPureMedia(chatItem);
+
+    // 3. Smart Neighbor Merge 2 Chiều:
+    // A. Nếu chưa có text (người dùng click ở tin ảnh): Tìm xuống dưới (next), sau đó tìm lên trên (prev)
+    if (!text) {
+      let next = chatItem.nextElementSibling;
+      for (let i = 0; i < 3 && next && !text; i++) {
+        text = getPureText(next);
+        next = next.nextElementSibling;
+      }
+      if (!text) {
+        let prev = chatItem.previousElementSibling;
+        for (let i = 0; i < 3 && prev && !text; i++) {
+          text = getPureText(prev);
           prev = prev.previousElementSibling;
         }
-        // Nếu phía trên không có, quét tiếp phía dưới
-        if (rawMediaList.length === 0) {
-          let next = currentChatItem.nextElementSibling;
-          for (let i = 0; i < 3 && next; i++) {
-            if (next.classList && next.classList.contains('chat-item')) {
-              collectFrom(next);
-              if (rawMediaList.length > 0) break;
-            }
-            next = next.nextElementSibling;
-          }
-        }
       }
-    } else {
-      // Fallback khi không tìm thấy chat-item
-      if (!text) {
-        const next = messageEl.nextElementSibling;
-        const prev = messageEl.previousElementSibling;
-        if (next && next.innerText) text = next.innerText.trim();
-        else if (prev && prev.innerText) text = prev.innerText.trim();
+    }
+
+    // B. Nếu chưa có ảnh (người dùng click ở tin text): Tìm lên trên (prev), sau đó tìm xuống dưới (next)
+    if (rawMediaList.length === 0) {
+      let prev = chatItem.previousElementSibling;
+      for (let i = 0; i < 3 && prev && rawMediaList.length === 0; i++) {
+        rawMediaList = getPureMedia(prev);
+        prev = prev.previousElementSibling;
       }
       if (rawMediaList.length === 0) {
-        collectFrom(messageEl.previousElementSibling);
-        if (rawMediaList.length === 0) collectFrom(messageEl.nextElementSibling);
+        let next = chatItem.nextElementSibling;
+        for (let i = 0; i < 3 && next && rawMediaList.length === 0; i++) {
+          rawMediaList = getPureMedia(next);
+          next = next.nextElementSibling;
+        }
       }
     }
 
