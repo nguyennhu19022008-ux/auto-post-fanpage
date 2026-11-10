@@ -124,6 +124,36 @@
   }
 
   /**
+   * Helper: Check if a text strictly belongs to a laptop specs listing
+   * Rejects chat noise, group policies, keyboard sticker instructions, etc.
+   */
+  function isLaptopSpecsText(text) {
+    if (!text || text.length < 15) return false;
+    const lower = text.toLowerCase();
+    
+    // Explicit blacklist of non-laptop announcements
+    if (
+      lower.includes('chính sách nhóm') ||
+      lower.includes('nội quy') ||
+      lower.includes('hướng dẫn dán phím') ||
+      lower.includes('các mã hiện bán') ||
+      lower.includes('mua hàng và cọc hàng')
+    ) {
+      return false;
+    }
+
+    const hasCode = /(?:mã|ms|code|lô|lo)\s*[:#\s]?\s*[a-z0-9]+/i.test(text);
+    const hasHardware = (
+      /(?:i3|i5|i7|i9|ryzen|celeron|pentium|gen)/i.test(text) ||
+      /(?:ram|ssd|hdd|16gb|8gb|32gb|256|512|1tb)/i.test(text) ||
+      /(?:inch|\"|fhd|ips)/i.test(text) ||
+      /(?:thinkpad|dell|hp|latitude|probook|elitebook|xps|macbook|surface|panasonic|dynabook|toshiba|fujitsu|nec|vaio|lg\s*gram)/i.test(text)
+    );
+
+    return hasCode || hasHardware;
+  }
+
+  /**
    * Helper: Extract pure high-resolution media URLs from a message container
    */
   function getPureMedia(container) {
@@ -168,47 +198,76 @@
 
   /**
    * Extract all content and media from a Zalo message bubble
+   * STRICT ANTI-MISMATCH PAIRING: Ensures 100% zero-mismatch between text & photos
    */
   async function extractMessageData(messageEl) {
     const chatItem = messageEl.closest('.chat-item') || messageEl;
 
-    // 1. Lấy text từ tin nhắn hiện tại
-    let text = getPureText(chatItem);
+    let directText = getPureText(chatItem);
+    let directMedia = getPureMedia(chatItem);
 
-    // 2. Lấy media từ tin nhắn hiện tại
-    let rawMediaList = getPureMedia(chatItem);
+    let finalFormattedText = '';
+    let rawMediaList = [];
 
-    // 3. Smart Neighbor Merge 2 Chiều:
-    // A. Nếu chưa có text (người dùng click ở tin ảnh): Tìm xuống dưới (next), sau đó tìm lên trên (prev)
-    if (!text) {
-      let next = chatItem.nextElementSibling;
-      for (let i = 0; i < 3 && next && !text; i++) {
-        text = getPureText(next);
-        next = next.nextElementSibling;
-      }
-      if (!text) {
+    // TRƯỜNG HỢP 1: Bấm ở tin nhắn TEXT CẤU HÌNH LAPTOP
+    if (isLaptopSpecsText(directText)) {
+      finalFormattedText = directText;
+
+      if (directMedia.length > 0) {
+        rawMediaList = directMedia;
+      } else {
+        // Quy chuẩn kho: [ẢNH MÁY] đi liền TRƯỚC [TEXT MÁY].
+        // Quét ngược lên TRÊN (prev 1..2), TUYỆT ĐỐI KHÔNG quét xuống dưới để tránh vớ nhầm ảnh của máy đăng sau!
         let prev = chatItem.previousElementSibling;
-        for (let i = 0; i < 3 && prev && !text; i++) {
-          text = getPureText(prev);
+        for (let i = 0; i < 2 && prev && rawMediaList.length === 0; i++) {
+          const prevMedia = getPureMedia(prev);
+          const prevText = getPureText(prev);
+
+          if (prevMedia.length > 0) {
+            rawMediaList = prevMedia;
+            break;
+          }
+
+          // Nếu gặp một tin cấu hình laptop khác ở giữa -> DỪNG NGAY, không vượt biên giới máy khác
+          if (isLaptopSpecsText(prevText)) {
+            break;
+          }
+
           prev = prev.previousElementSibling;
         }
       }
     }
 
-    // B. Nếu chưa có ảnh (người dùng click ở tin text): Tìm lên trên (prev), sau đó tìm xuống dưới (next)
-    if (rawMediaList.length === 0) {
-      let prev = chatItem.previousElementSibling;
-      for (let i = 0; i < 3 && prev && rawMediaList.length === 0; i++) {
-        rawMediaList = getPureMedia(prev);
-        prev = prev.previousElementSibling;
+    // TRƯỜNG HỢP 2: Bấm ở tin CHỈ CÓ ẢNH (Album ảnh máy)
+    else if (directMedia.length > 0) {
+      rawMediaList = directMedia;
+
+      // Quy chuẩn kho: [ẢNH MÁY] đi liền TRƯỚC [TEXT MÁY].
+      // Cụm ảnh quét XUỐNG DƯỚI (next 1..2) để lấy text cấu hình của chính nó!
+      let next = chatItem.nextElementSibling;
+      for (let i = 0; i < 2 && next && !finalFormattedText; i++) {
+        const nextText = getPureText(next);
+        if (isLaptopSpecsText(nextText)) {
+          finalFormattedText = nextText;
+          break;
+        }
+        if (getPureMedia(next).length > 0) {
+          break;
+        }
+        next = next.nextElementSibling;
       }
-      if (rawMediaList.length === 0) {
-        let next = chatItem.nextElementSibling;
-        for (let i = 0; i < 3 && next && rawMediaList.length === 0; i++) {
-          rawMediaList = getPureMedia(next);
-          next = next.nextElementSibling;
+
+      // Fallback hiếm: Nếu kho gửi text trước ảnh sau, tìm lên TRÊN (prev 1)
+      if (!finalFormattedText) {
+        let prev = chatItem.previousElementSibling;
+        if (prev && isLaptopSpecsText(getPureText(prev))) {
+          finalFormattedText = getPureText(prev);
         }
       }
+    } else {
+      // Fallback cho tin nhắn text thông thường
+      finalFormattedText = directText;
+      rawMediaList = directMedia;
     }
 
     // 4. Resolve media (convert blob: to base64, normalize CDN URLs)
@@ -363,17 +422,14 @@
     if (!isInsideChatMessageArea(messageEl)) return;
     if (messageEl.querySelector('.vg-zalo-btn-wrapper')) return;
 
-    // Check if element is a valid message bubble or card
-    const hasText = Boolean(messageEl.querySelector(
-      '.text-message__container, [data-id="div_ReceivedMsg_Text"], [data-component="message-text-content"], [data-component="text-container"], span.text, .rich-text-content, .text-content, .card--text, [data-translate-inner]'
-    )) || (messageEl.innerText && messageEl.innerText.trim().length > 15);
-
-    const hasPhoto = Boolean(messageEl.querySelector(
-      '.card--photo, .card--album, .card--group-photo, [data-id*="GrpPhoto"], [data-id*="Photo"], [data-id*="Media"], #album-container, img.zimg-el, img:not([class*="avatar"]):not([class*="emoji"]):not([class*="default-react-icon"])'
-    ));
+    // Only inject buttons for REAL laptop specs listings or laptop photo albums
+    const pureText = getPureText(messageEl);
+    const isSpecs = isLaptopSpecsText(pureText);
+    const pureMedia = getPureMedia(messageEl);
+    const hasPhoto = pureMedia.length > 0;
     
-    // Ignore non-message elements (like system banners, date separators)
-    if (!hasText && !hasPhoto) return;
+    // Ignore non-laptop elements (system banners, policies, chat noise, date separators)
+    if (!isSpecs && !hasPhoto) return;
 
     const wrapper = document.createElement('div');
     wrapper.className = 'vg-zalo-btn-wrapper';
