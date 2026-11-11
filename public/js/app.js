@@ -975,6 +975,7 @@ async function schedulePost(publishImmediately = false, target = 'fanpage') {
           payload: {
             content,
             mediaUrls,
+            machineCode: machineCode || 'MÁY',
             pagePostUrl: result.data?.facebookPostUrl || result.facebookPostUrl
           },
           postData: {
@@ -1313,6 +1314,7 @@ async function publishPostNow(id, target = 'fanpage') {
         payload: {
           content: postText,
           mediaUrls: postMedia,
+          machineCode: post.machineCode || post.code || 'MÁY',
           pagePostUrl: pageLink
         }
       }, '*');

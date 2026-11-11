@@ -135,6 +135,63 @@
   }
 
   /**
+   * Helper: Realistic Full-Event Click Simulation for React 18 Event Delegation
+   */
+  function simulateRealisticClick(el) {
+    if (!el) return false;
+    try {
+      if (typeof el.scrollIntoView === 'function') {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+      }
+      if (typeof el.focus === 'function') {
+        el.focus();
+      }
+
+      const rect = el.getBoundingClientRect ? el.getBoundingClientRect() : { left: 100, top: 100, width: 50, height: 20 };
+      const clientX = Math.round(rect.left + rect.width / 2);
+      const clientY = Math.round(rect.top + rect.height / 2);
+
+      const eventOpts = {
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        view: window,
+        clientX,
+        clientY,
+        screenX: clientX,
+        screenY: clientY,
+        button: 0,
+        buttons: 1
+      };
+
+      // Full event chain for React 18 / Relay Event Delegation
+      try { el.dispatchEvent(new PointerEvent('pointerover', eventOpts)); } catch (e) {}
+      try { el.dispatchEvent(new MouseEvent('mouseover', eventOpts)); } catch (e) {}
+      try { el.dispatchEvent(new PointerEvent('pointerdown', eventOpts)); } catch (e) {}
+      try { el.dispatchEvent(new MouseEvent('mousedown', eventOpts)); } catch (e) {}
+      try { el.dispatchEvent(new PointerEvent('pointerup', eventOpts)); } catch (e) {}
+      try { el.dispatchEvent(new MouseEvent('mouseup', eventOpts)); } catch (e) {}
+      try { el.dispatchEvent(new MouseEvent('click', eventOpts)); } catch (e) {}
+
+      // Native click
+      if (typeof el.click === 'function') {
+        el.click();
+      }
+
+      // Keyboard trigger fallback (Enter and Space)
+      try {
+        el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }));
+        el.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }));
+      } catch (e) {}
+
+      return true;
+    } catch (err) {
+      console.warn('[VG FB Robot] simulateRealisticClick warning:', err);
+      return false;
+    }
+  }
+
+  /**
    * Wait for a DOM element matching selector
    */
   function waitForElement(selector, root = document, timeout = 7000) {
@@ -170,68 +227,90 @@
     createHud(machineCode);
 
     try {
-      // BƯỚC 1: Tìm ô "Bạn đang nghĩ gì thế?"
-      setStepStatus(1, 'active', 'Đang tìm ô tạo bài viết...');
-      await sleep(1500); // Chờ trang tải ổn định
+      // BƯỚC 1: Tìm và mở ô "Bạn đang nghĩ gì thế?"
+      setStepStatus(1, 'active', 'Đang tìm và mở ô tạo bài viết...');
+      await sleep(1000); // Chờ Facebook render các element
 
-      let composerTrigger = null;
-      const triggerStartTime = Date.now();
-      const triggerTimeout = 10000; // Thử lại tối đa 10s khi tải trang Facebook
+      let modal = null;
+      const openStartTime = Date.now();
+      const openTimeout = 15000; // Thử liên tục trong 15s
 
-      while (!composerTrigger && (Date.now() - triggerStartTime < triggerTimeout)) {
+      while (!modal && (Date.now() - openStartTime < openTimeout)) {
         if (isCancelled) return;
-        // Selector đa ngôn ngữ (Tiếng Việt & Tiếng Anh)
-        const triggerCandidates = Array.from(document.querySelectorAll('div[role="button"], div[aria-label*="Tạo bài viết"], div[aria-label*="Create a post"], span'));
-        for (const el of triggerCandidates) {
+
+        // Check if modal is already open
+        modal = document.querySelector('div[role="dialog"]');
+        if (modal) break;
+
+        // Collect all potential trigger elements on Facebook Desktop feed
+        const candidates = [];
+
+        // 1. Photo/Video button (Green icon "Ảnh/video"): Clicking this ALWAYS opens the dialog
+        const photoButtons = Array.from(document.querySelectorAll('div[role="button"], span, div[tabindex="0"]')).filter(b => {
+          if (b.closest('div[role="dialog"]') || b.closest('#vg-robot-hud')) return false;
+          const text = (b.innerText || b.getAttribute('aria-label') || '').trim().toLowerCase();
+          return text === 'ảnh/video' || text.includes('ảnh/video') || text.includes('photo/video');
+        });
+        photoButtons.forEach(b => {
+          candidates.push(b);
+          if (b.parentElement) candidates.push(b.parentElement);
+          const btn = b.closest('div[role="button"]');
+          if (btn) candidates.push(btn);
+        });
+
+        // 2. Main composer text pill ("Gia ơi, bạn đang nghĩ gì thế?")
+        const textElements = Array.from(document.querySelectorAll('div[role="button"], span, div[tabindex="0"], div[role="region"] div')).filter(el => {
+          if (el.closest('div[role="dialog"]') || el.closest('#vg-robot-hud')) return false;
           const text = (el.innerText || el.getAttribute('aria-label') || '').toLowerCase();
-          if (
-            (text.includes('bạn đang nghĩ gì') || text.includes("what's on your mind") || text.includes('tạo bài viết') || text.includes('create post')) &&
-            !el.closest('div[role="dialog"]') // Không phải trong modal đã mở
-          ) {
-            // Quan trọng: Trên Facebook React, event click gắn vào div[role="button"], không phải thẻ span bên trong!
-            composerTrigger = el.closest('div[role="button"]') || el;
-            break;
-          }
+          return (
+            text.includes('nghĩ gì') ||
+            text.includes("what's on your mind") ||
+            text.includes('tạo bài viết') ||
+            text.includes('create post')
+          ) && !text.includes('xem thêm') && !text.includes('bình luận');
+        });
+        textElements.forEach(el => {
+          candidates.push(el);
+          const btn = el.closest('div[role="button"]');
+          if (btn) candidates.push(btn);
+          if (el.parentElement) candidates.push(el.parentElement);
+        });
+
+        // 3. Pagelet and Feed composers
+        const feedComposers = document.querySelectorAll(
+          'div[data-pagelet*="Composer"] div[role="button"], div[data-pagelet="ProfileComposer"] div[role="button"], div[role="main"] div[role="button"]'
+        );
+        feedComposers.forEach(fc => candidates.push(fc));
+
+        // Deduplicate candidates
+        const uniqueCandidates = Array.from(new Set(candidates));
+
+        // Try clicking each unique candidate
+        for (const target of uniqueCandidates) {
+          simulateRealisticClick(target);
+          await sleep(350);
+          modal = document.querySelector('div[role="dialog"]');
+          if (modal) break;
         }
 
-        if (!composerTrigger) {
-          // Thử tìm nút [Ảnh/video] ngay cạnh ô "Bạn đang nghĩ gì thế?"
-          const photoTrigger = Array.from(document.querySelectorAll('div[role="button"]')).find(b => {
-            const label = (b.getAttribute('aria-label') || b.innerText || '').toLowerCase();
-            return (label.includes('ảnh/video') || label.includes('photo/video')) && !b.closest('div[role="dialog"]');
-          });
-          if (photoTrigger) {
-            composerTrigger = photoTrigger;
-          }
-        }
-
-        if (!composerTrigger) {
-          // Fallback: Tìm qua form feed
-          composerTrigger = document.querySelector('div[data-pagelet="ProfileComposer"] div[role="button"], div[data-pagelet="FeedUnit_0"] div[role="button"]');
-        }
-
-        if (composerTrigger) break;
-        await sleep(500);
+        if (modal) break;
+        await sleep(600);
       }
 
-      if (!composerTrigger) {
-        throw new Error('Không tìm thấy ô "Bạn đang nghĩ gì thế?" trên giao diện Facebook.');
+      if (!modal) {
+        // Last resort: Add a pulsating notice to click the box if browser sandbox blocked synthetic click
+        setStepStatus(1, 'active', '👉 Vui lòng click vào ô "Bạn đang nghĩ gì thế?"...');
+        modal = await waitForElement('div[role="dialog"]', document.body, 12000);
+      }
+
+      if (!modal) {
+        throw new Error('Hộp thoại tạo bài viết không xuất hiện. Hãy thử click bằng tay vào ô đăng bài trên Facebook.');
       }
 
       setStepStatus(1, 'success', 'Đã mở khung soạn bài!');
-      composerTrigger.focus();
-      composerTrigger.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-      composerTrigger.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-      composerTrigger.click();
 
-      // BƯỚC 2: Chờ Modal soạn bài xuất hiện
-      await sleep(1200);
-      const modal = await waitForElement('div[role="dialog"]', document.body, 8000);
-      if (!modal) {
-        throw new Error('Hộp thoại tạo bài viết không xuất hiện.');
-      }
-
-      // BƯỚC 3: Điền nội dung bài viết vào Lexical Editor
+      // BƯỚC 2: Chờ Modal soạn bài ổn định và điền nội dung vào Editor
+      await sleep(600);
       setStepStatus(2, 'active', 'Đang nhập nội dung bài viết...');
       const editor = await waitForElement(
         'div[role="textbox"][contenteditable="true"], div[data-lexical-editor="true"], div[aria-label*="Bạn đang nghĩ gì"], div[aria-label*="What\'s on your mind"]',
@@ -244,15 +323,35 @@
       }
 
       editor.focus();
-      await sleep(400);
+      await sleep(300);
 
-      // Điền nội dung văn bản chuẩn Lexical
+      // Điền nội dung văn bản chuẩn Lexical & Selection API
       const textToInsert = content || '';
       try {
-        document.execCommand('selectAll', false, null);
+        const sel = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(editor);
+        range.collapse(false);
+        if (sel) {
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }
         document.execCommand('insertText', false, textToInsert);
       } catch (e) {
-        console.warn('[VG FB Robot] execCommand insertText thất bại, dùng fallback:', e);
+        console.warn('[VG FB Robot] execCommand insertText fallback:', e);
+      }
+
+      // Fallback: If editor is still empty, dispatch ClipboardEvent paste
+      if (!editor.innerText || editor.innerText.trim().length === 0) {
+        try {
+          const pasteEvent = new ClipboardEvent('paste', {
+            bubbles: true,
+            cancelable: true,
+            clipboardData: new DataTransfer()
+          });
+          pasteEvent.clipboardData.setData('text/plain', textToInsert);
+          editor.dispatchEvent(pasteEvent);
+        } catch (e) {}
       }
 
       // Dispatch event để React cập nhật State
@@ -273,8 +372,8 @@
             return label.includes('ảnh') || label.includes('photo');
           });
           if (photoBtn) {
-            photoBtn.click();
-            await sleep(1000);
+            simulateRealisticClick(photoBtn);
+            await sleep(800);
           }
           fileInput = await waitForElement('input[type="file"][accept*="image"]', modal, 5000);
         }
@@ -292,6 +391,7 @@
             fileObjects.forEach(f => dataTransfer.items.add(f));
             fileInput.files = dataTransfer.files;
             fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+            fileInput.dispatchEvent(new Event('input', { bubbles: true }));
             setStepStatus(3, 'success', `Đã gắn thành công ${fileObjects.length} ảnh HD!`);
           } else {
             setStepStatus(3, 'success', 'Bỏ qua đính kèm ảnh (ảnh rỗng).');
