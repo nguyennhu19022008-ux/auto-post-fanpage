@@ -13,8 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const mediaPreview = document.getElementById('mediaPreview');
 
   const btnDualPost = document.getElementById('btnDualPost');
-  const btnFanpagePost = document.getElementById('btnFanpagePost');
-  const btnPersonalPost = document.getElementById('btnPersonalPost');
   const btnSchedulePost = document.getElementById('btnSchedulePost');
 
   const statusMsg = document.getElementById('statusMsg');
@@ -123,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function setButtonsDisabled(disabled) {
-    [btnDualPost, btnFanpagePost, btnPersonalPost, btnSchedulePost].forEach(b => {
+    [btnDualPost, btnSchedulePost].forEach(b => {
       if (b) b.disabled = disabled;
     });
   }
@@ -216,11 +214,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 6. Button Listeners
-  btnDualPost.addEventListener('click', () => handlePostAction('both'));
-  btnFanpagePost.addEventListener('click', () => handlePostAction('fanpage'));
-  btnPersonalPost.addEventListener('click', () => handlePostAction('personal'));
-  btnSchedulePost.addEventListener('click', () => handlePostAction('schedule'));
+  // 6. Button Listeners (2 Nút Đăng Kép)
+  if (btnDualPost) btnDualPost.addEventListener('click', () => handlePostAction('both'));
+  if (btnSchedulePost) btnSchedulePost.addEventListener('click', () => handlePostAction('schedule'));
 
   // 7. Open Full Web App Dashboard (/app)
   openFullAppBtn.addEventListener('click', () => {

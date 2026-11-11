@@ -222,18 +222,12 @@
                 <span id="cockpitCountdown" class="text-neutral-500 font-mono text-[11px]">Đang đếm ngược...</span>
               </div>
             </div>
-            <div class="pt-2 flex gap-1.5">
-              <button id="cockpitPublishBothBtn" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 flex-1 py-2 text-xs font-black shadow-[2px_2px_0px_#18181B]" title="Đăng lên cả Fanpage và Facebook Cá Nhân">
-                🚀 Đăng Cả Hai
+            <div class="pt-2 flex gap-2">
+              <button id="cockpitPublishNowBtn" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 flex-1 py-2.5 text-xs font-black uppercase shadow-[2.5px_2.5px_0px_#18181B]" title="Đăng ngay lên cả Fanpage và Facebook Cá Nhân">
+                🚀 ĐĂNG NGAY (FANPAGE + CÁ NHÂN)
               </button>
-              <button id="cockpitPublishNowBtn" class="neo-btn neo-btn-yellow px-3 py-2 text-xs font-black" title="Đăng lên Fanpage ngay lập tức">
-                ⚡ Fanpage
-              </button>
-              <button id="cockpitPublishPersonalBtn" class="flex-1 py-2 px-2 bg-white text-black font-black uppercase text-xs border-2 border-black shadow-[2px_2px_0px_0px_#000] hover:bg-zinc-100 flex items-center justify-center gap-1 active:translate-x-0.5 active:translate-y-0.5" title="Đăng lên Facebook Cá Nhân qua Extension">
-                👤 Cá Nhân
-              </button>
-              <button id="cockpitViewNextBtn" class="neo-btn neo-btn-white px-2.5 py-2 text-xs font-bold" title="Xem chi tiết">
-                👁️
+              <button id="cockpitViewNextBtn" class="neo-btn neo-btn-white px-3.5 py-2.5 text-xs font-bold" title="Xem chi tiết">
+                👁️ Xem
               </button>
             </div>
           </div>
@@ -732,16 +726,12 @@
             <span class="text-xs font-black uppercase text-[#18181B]">Khung giờ đề xuất tiếp theo:</span>
             <span class="text-xs font-black text-emerald-700 font-mono" id="suggestedSlotText">Đang tính toán...</span>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-            <button onclick="schedulePost(true, 'both'); closeManualPostModal();" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 py-2.5 text-xs font-black uppercase shadow-[2px_2px_0px_#18181B]" title="Đăng lên cả Fanpage và Facebook Cá Nhân">
-              🚀 ĐĂNG CẢ HAI
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button onclick="schedulePost(true, 'both'); closeManualPostModal();" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 py-3 text-xs font-black uppercase shadow-[2.5px_2.5px_0px_#18181B]" title="Đăng ngay lên cả Fanpage và Facebook Cá Nhân">
+              🚀 ĐĂNG NGAY (FANPAGE + CÁ NHÂN)
             </button>
-            <button onclick="schedulePost(true, 'fanpage'); closeManualPostModal();" class="neo-btn neo-btn-yellow py-2.5 text-xs font-black uppercase" title="Đăng ngay lên Fanpage">
-              ⚡ ĐĂNG FANPAGE
-            </button>
-            <button type="button" onclick="schedulePost(true, 'personal')" class="flex-1 py-2.5 px-3 bg-white text-black font-black text-xs border-2 border-black shadow-[2px_2px_0px_0px_#000] hover:bg-zinc-100 flex items-center justify-center gap-1" title="Đăng lên Facebook Cá Nhân qua Extension">👤 ĐĂNG CÁ NHÂN</button>
-            <button onclick="schedulePost(false, 'queue'); closeManualPostModal();" class="neo-btn neo-btn-green py-2.5 text-xs font-black uppercase" title="Xếp vào hàng đợi giờ vàng">
-              📅 ĐƯA VÀO HÀNG ĐỢI
+            <button onclick="schedulePost(false, 'both'); closeManualPostModal();" class="neo-btn neo-btn-green py-3 text-xs font-black uppercase shadow-[2.5px_2.5px_0px_#18181B]" title="Xếp vào hàng đợi giờ vàng để đăng cả Fanpage lẫn Cá Nhân">
+              ⏳ LÊN LỊCH HÀNG ĐỢI (CẢ HAI)
             </button>
           </div>
         </div>
@@ -1141,6 +1131,6 @@
     </div>
   </div>
 
-  <script src="/js/app.js?v=20261111_v17_robot_active_click" defer></script>
+  <script src="/js/app.js?v=20261111_v18_unified_dual_post_buttons" defer></script>
 </body>
 </html>

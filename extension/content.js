@@ -586,52 +586,24 @@
     const wrapper = document.createElement('div');
     wrapper.className = 'vg-zalo-btn-wrapper';
 
-    // Nút 1: 🚀 ĐĂNG CẢ HAI (Khuyên dùng: Đăng Fanpage + Mở chia sẻ Cá Nhân)
-    const dualBtn = document.createElement('button');
-    dualBtn.className = 'vg-zalo-autopost-btn vg-btn-dual';
-    dualBtn.title = 'Đăng Album HD lên Fanpage đồng thời mở chia sẻ lên Trang Cá Nhân (Khuyên dùng)';
-    dualBtn.innerHTML = '🚀 ĐĂNG CẢ HAI';
-    dualBtn.onclick = async (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      dualBtn.disabled = true;
-      dualBtn.innerHTML = '🌀 Đang nạp ảnh...';
-      const data = await extractMessageData(messageEl);
-      pushToFacebook(data, { publishImmediately: true, target: 'both' }, dualBtn);
-    };
-
-    // Nút 2: ⚡ FANPAGE (Chỉ đăng lên Fanpage)
+    // Nút 1: 🚀 ĐĂNG NGAY (Đăng đồng thời cả Fanpage + Facebook Cá Nhân)
     const publishBtn = document.createElement('button');
-    publishBtn.className = 'vg-zalo-autopost-btn';
-    publishBtn.title = 'Bấm để AI bóc tách cấu hình, tải ảnh và ĐĂNG NGAY lên Fanpage Facebook (Hotline: 0876637806)';
-    publishBtn.innerHTML = '⚡ FANPAGE';
+    publishBtn.className = 'vg-zalo-autopost-btn vg-btn-dual';
+    publishBtn.title = 'Bấm để AI bóc tách cấu hình, tải ảnh và ĐĂNG NGAY lên cả Fanpage lẫn Facebook Cá Nhân (Hotline: 0876637806)';
+    publishBtn.innerHTML = '🚀 ĐĂNG NGAY';
     publishBtn.onclick = async (e) => {
       e.stopPropagation();
       e.preventDefault();
       publishBtn.disabled = true;
       publishBtn.innerHTML = '🌀 Đang nạp ảnh...';
       const data = await extractMessageData(messageEl);
-      pushToFacebook(data, { publishImmediately: true, target: 'fanpage' }, publishBtn);
+      pushToFacebook(data, { publishImmediately: true, target: 'both' }, publishBtn);
     };
 
-    // Nút 3: 👤 CÁ NHÂN (Chỉ đăng lên Trang Cá Nhân)
-    const personalBtn = document.createElement('button');
-    personalBtn.className = 'vg-zalo-autopost-btn vg-btn-personal';
-    personalBtn.title = 'Bấm để AI bóc tách cấu hình, copy vào Clipboard và mở Facebook Cá Nhân để bạn đăng';
-    personalBtn.innerHTML = '👤 CÁ NHÂN';
-    personalBtn.onclick = async (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      personalBtn.disabled = true;
-      personalBtn.innerHTML = '🌀 Đang nạp ảnh...';
-      const data = await extractMessageData(messageEl);
-      pushToFacebook(data, { publishImmediately: false, target: 'personal' }, personalBtn);
-    };
-
-    // Nút 4: ⏳ LÊN LỊCH (Đưa vào hàng đợi giờ vàng)
+    // Nút 2: ⏳ LÊN LỊCH (Đưa vào Hàng Đợi - Đăng cả Fanpage lẫn Facebook Cá Nhân)
     const scheduleBtn = document.createElement('button');
     scheduleBtn.className = 'vg-zalo-autopost-btn vg-btn-secondary';
-    scheduleBtn.title = 'Bấm để đưa bài vào Hàng Đợi (Đăng tự động vào khung giờ vàng tiếp theo)';
+    scheduleBtn.title = 'Bấm để đưa bài vào Hàng Đợi (Đăng tự động cả Fanpage lẫn Facebook Cá Nhân vào khung giờ vàng tiếp theo)';
     scheduleBtn.innerHTML = '⏳ LÊN LỊCH';
     scheduleBtn.onclick = async (e) => {
       e.stopPropagation();
@@ -639,12 +611,10 @@
       scheduleBtn.disabled = true;
       scheduleBtn.innerHTML = '🌀 Đang nạp ảnh...';
       const data = await extractMessageData(messageEl);
-      pushToFacebook(data, { publishImmediately: false, target: 'fanpage' }, scheduleBtn);
+      pushToFacebook(data, { publishImmediately: false, target: 'both' }, scheduleBtn);
     };
 
-    wrapper.appendChild(dualBtn);
     wrapper.appendChild(publishBtn);
-    wrapper.appendChild(personalBtn);
     wrapper.appendChild(scheduleBtn);
 
     // Inject into action menu or append directly below message content

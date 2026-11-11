@@ -267,17 +267,17 @@ async function loadCockpitStatus() {
         if (countdownEl) countdownEl.innerText = `⏳ Đã đến giờ đăng!`;
       }
 
+      const publishBtn = document.getElementById('cockpitPublishNowBtn');
+      if (publishBtn) {
+        publishBtn.onclick = () => publishPostNow(nextPost.id, 'both');
+      }
       const publishBothBtn = document.getElementById('cockpitPublishBothBtn');
       if (publishBothBtn) {
         publishBothBtn.onclick = () => publishPostNow(nextPost.id, 'both');
       }
-      const publishBtn = document.getElementById('cockpitPublishNowBtn');
-      if (publishBtn) {
-        publishBtn.onclick = () => publishPostNow(nextPost.id, 'fanpage');
-      }
       const personalBtn = document.getElementById('cockpitPublishPersonalBtn');
       if (personalBtn) {
-        personalBtn.onclick = () => publishPostNow(nextPost.id, 'personal');
+        personalBtn.onclick = () => publishPostNow(nextPost.id, 'both');
       }
       const viewBtn = document.getElementById('cockpitViewNextBtn');
       if (viewBtn) {
@@ -347,14 +347,8 @@ function renderCockpitTimeline(posts) {
           <button onclick="openPostPreviewModal('${post.id}')" class="neo-btn neo-btn-white px-2 py-1 text-xs font-bold" title="Xem chi tiết">
             👁️ Xem
           </button>
-          <button onclick="publishPostNow('${post.id}', 'both')" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 px-2.5 py-1 text-xs font-black shadow-[1.5px_1.5px_0px_#18181B]" title="Đăng cả Fanpage + Cá Nhân">
-            🚀 Cả Hai
-          </button>
-          <button onclick="publishPostNow('${post.id}', 'fanpage')" class="neo-btn neo-btn-yellow px-2 py-1 text-xs font-black" title="Đăng Fanpage">
-            ⚡ Fanpage
-          </button>
-          <button onclick="publishPostNow('${post.id}', 'personal')" class="px-2 py-1 bg-white text-black border border-black font-black text-xs hover:bg-zinc-100" title="Đăng Facebook Cá Nhân qua Extension">
-            👤 Cá Nhân
+          <button onclick="publishPostNow('${post.id}', 'both')" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 px-3 py-1 text-xs font-black shadow-[1.5px_1.5px_0px_#18181B]" title="Đăng ngay cả Fanpage + Facebook Cá Nhân">
+            🚀 ĐĂNG NGAY (CẢ HAI)
           </button>
         </div>
       </div>
@@ -935,7 +929,7 @@ function updateFacebookPreview() {
 
 // ======================== SCHEDULE & PUBLISH POSTS ========================
 
-async function schedulePost(publishImmediately = false, target = 'fanpage') {
+async function schedulePost(publishImmediately = false, target = 'both') {
   const content = document.getElementById('finalContentInput').value.trim();
   const machineCode = document.getElementById('machineCodeInput').value.trim();
   const price = document.getElementById('customPriceInput').value.trim();
@@ -1132,14 +1126,8 @@ function renderQueueList(posts) {
             <a href="/quick-upload?id=${post.id}" target="_blank" class="neo-btn neo-btn-lavender px-2.5 py-1.5 text-xs font-black" title="Xem hoặc thêm ảnh/video">
               <span>🎬 ${mCount > 0 ? `Media (${mCount})` : 'Nạp'}</span>
             </a>
-            <button onclick="publishPostNow('${post.id}', 'both')" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 px-3 py-1.5 text-xs font-black shadow-[2px_2px_0px_#18181B]" title="Đăng lên cả Fanpage và Facebook cá nhân">
-              <span>🚀 Đăng Cả Hai</span>
-            </button>
-            <button onclick="publishPostNow('${post.id}', 'fanpage')" class="neo-btn neo-btn-yellow px-2.5 py-1.5 text-xs font-black" title="Đăng bài này lên Fanpage ngay lập tức">
-              <span>⚡ Fanpage</span>
-            </button>
-            <button onclick="publishPostNow('${post.id}', 'personal')" class="neo-btn bg-[#38BDF8] text-[#082F49] hover:bg-sky-400 px-2.5 py-1.5 text-xs font-black shadow-[2px_2px_0px_#18181B]" title="Đăng bài này lên Facebook cá nhân">
-              <span>👤 Cá Nhân</span>
+            <button onclick="publishPostNow('${post.id}', 'both')" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 px-3.5 py-1.5 text-xs font-black shadow-[2px_2px_0px_#18181B]" title="Đăng ngay lên cả Fanpage và Facebook Cá Nhân">
+              <span>🚀 ĐĂNG NGAY (CẢ HAI)</span>
             </button>
             <button onclick="deletePost('${post.id}')" class="neo-btn neo-btn-white px-2 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50" title="Xóa khỏi hàng đợi">
               <span>Xóa</span>
@@ -1956,14 +1944,8 @@ function viewQueuedPostContent(postId) {
         <span>🎬 Media (${mFiles.length})</span>
       </a>
       ${post.status === 'queued' || post.status === 'pending_media' ? `
-        <button onclick="publishPostNow('${post.id}', 'both'); closePostPreviewModal();" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 px-3 py-1.5 text-xs font-black shadow-[2px_2px_0px_#18181B]" title="Đăng lên cả Fanpage và Facebook Cá Nhân">
-          <span>🚀 Đăng Cả Hai</span>
-        </button>
-        <button onclick="publishPostNow('${post.id}', 'fanpage'); closePostPreviewModal();" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-black" title="Đăng lên Fanpage">
-          <span>⚡ Fanpage</span>
-        </button>
-        <button onclick="publishPostNow('${post.id}', 'personal'); closePostPreviewModal();" class="neo-btn bg-[#38BDF8] text-[#082F49] hover:bg-sky-400 px-3 py-1.5 text-xs font-black shadow-[2px_2px_0px_#18181B]" title="Đăng lên Facebook Cá Nhân">
-          <span>👤 Cá Nhân</span>
+        <button onclick="publishPostNow('${post.id}', 'both'); closePostPreviewModal();" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 px-3.5 py-1.5 text-xs font-black shadow-[2px_2px_0px_#18181B]" title="Đăng lên cả Fanpage và Facebook Cá Nhân">
+          <span>🚀 ĐĂNG NGAY (CẢ HAI)</span>
         </button>
       ` : ''}
       ${post.fbPostUrl ? `
