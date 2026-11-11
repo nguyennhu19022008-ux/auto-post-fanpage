@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Laptop Vương Gia // Zalo Autopost 1-Click",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Đẩy trực tiếp bài viết Zalo kèm toàn bộ ảnh HD & video lên Fanpage Facebook chỉ với 1 cú click",
   "permissions": [
     "storage",

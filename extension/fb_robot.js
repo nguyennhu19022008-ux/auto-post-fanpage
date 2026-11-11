@@ -311,59 +311,48 @@
   }
 
   /**
-   * Find all clickable composer trigger candidates on Facebook Desktop Feed
+   * Find the EXACT "Bạn đang nghĩ gì?" composer pill on Facebook Desktop Feed
+   * NOTE: Strictly DO NOT click "Ảnh/video" here because Chrome blocks untrusted file chooser dialogs
    */
   function findFeedComposerTriggers() {
     const list = [];
 
-    // Direct selector query for fast discovery of composer triggers
+    // 1. Target leaf span/div containing "đang nghĩ gì" or "what's on your mind"
+    const allTextNodes = Array.from(document.querySelectorAll('span, div'));
+    for (const node of allTextNodes) {
+      if (node.children.length > 0) continue; // leaf node only
+      if (node.closest('div[role="dialog"]') || node.closest('#vg-fb-robot-hud')) continue;
+
+      const text = (node.innerText || '').trim().toLowerCase();
+      if (
+        (text.includes('nghĩ gì') || text.includes("what's on your mind") || text.includes('tạo bài viết') || text.includes('create post')) &&
+        !text.includes('bình luận') && !text.includes('xem thêm') && !text.includes('tin nhắn') && !text.includes('ảnh/video')
+      ) {
+        // The interactive role="button" container
+        const button = node.closest('div[role="button"][tabindex="0"]') || node.closest('div[role="button"]');
+        if (button && isVisible(button)) {
+          list.push(button);
+          list.push(node);
+          if (node.parentElement && node.parentElement !== button) {
+            list.push(node.parentElement);
+          }
+        }
+      }
+    }
+
+    // 2. Direct query for aria-label or data-pagelet composer button (excluding photo/video)
     const directQuery = Array.from(document.querySelectorAll(
-      'div[aria-label*="ảnh/video" i], div[aria-label*="photo/video" i], div[aria-label*="nghĩ gì" i], div[aria-label*="what\'s on your mind" i], div[data-pagelet*="Composer"] div[role="button"], div[data-pagelet="FeedUnit_0"] div[role="button"]'
+      'div[aria-label*="nghĩ gì" i][role="button"], div[aria-label*="what\'s on your mind" i][role="button"], div[data-pagelet*="Composer"] div[role="button"][tabindex="0"], div[data-pagelet="FeedUnit_0"] div[role="button"][tabindex="0"]'
     ));
     for (const el of directQuery) {
+      const text = (el.innerText || el.getAttribute('aria-label') || '').toLowerCase();
+      if (text.includes('ảnh/video') || text.includes('photo/video')) continue;
       if (!el.closest('div[role="dialog"]') && !el.closest('#vg-fb-robot-hud') && isVisible(el)) {
         list.push(el);
       }
     }
 
-    const elements = Array.from(document.querySelectorAll('div[role="button"], div[tabindex="0"], span, div'));
-
-    // Priority 1: Photo/video button (Green icon button next to composer pill)
-    for (const el of elements) {
-      if (el.closest('div[role="dialog"]') || el.closest('#vg-fb-robot-hud')) continue;
-      const text = (el.innerText || el.getAttribute('aria-label') || '').trim().toLowerCase();
-      if ((text === 'ảnh/video' || text.includes('ảnh/video') || text.includes('photo/video')) && isVisible(el)) {
-        list.push(el);
-        const btn = el.closest('div[role="button"]') || el.closest('div[tabindex="0"]');
-        if (btn) list.push(btn);
-      }
-    }
-
-    // Priority 2: Composer text pill ("Gia ơi, bạn đang nghĩ gì thế?", "Bạn đang nghĩ gì thế?")
-    for (const el of elements) {
-      if (el.closest('div[role="dialog"]') || el.closest('#vg-fb-robot-hud')) continue;
-      const text = (el.innerText || el.getAttribute('aria-label') || '').toLowerCase();
-      if (
-        (text.includes('nghĩ gì') || text.includes("what's on your mind") || text.includes('tạo bài viết') || text.includes('create post')) &&
-        !text.includes('bình luận') && !text.includes('xem thêm') && !text.includes('tin nhắn') && isVisible(el)
-      ) {
-        list.push(el);
-        const btn = el.closest('div[role="button"]') || el.closest('div[tabindex="0"]');
-        if (btn) list.push(btn);
-        if (el.parentElement) list.push(el.parentElement);
-      }
-    }
-
-    // Priority 3: Pagelet and Feed composer containers
-    const pageletBtns = Array.from(document.querySelectorAll(
-      'div[data-pagelet*="Composer"] div[role="button"], div[data-pagelet="FeedUnit_0"] div[role="button"], div[role="region"] div[role="button"]'
-    ));
-    for (const btn of pageletBtns) {
-      if (isVisible(btn) && !btn.closest('div[role="dialog"]') && !btn.closest('#vg-fb-robot-hud')) {
-        list.push(btn);
-      }
-    }
-
+    // Deduplicate
     return Array.from(new Set(list)).filter(Boolean);
   }
 
