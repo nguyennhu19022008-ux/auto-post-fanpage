@@ -167,6 +167,7 @@
         cancelable: true,
         composed: true,
         view: window,
+        detail: 1,
         clientX,
         clientY,
         screenX: clientX + (window.screenX || 0),
@@ -227,6 +228,8 @@
       try {
         el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }));
         el.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }));
+        el.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', keyCode: 32, which: 32, bubbles: true }));
+        el.dispatchEvent(new KeyboardEvent('keyup', { key: ' ', code: 'Space', keyCode: 32, which: 32, bubbles: true }));
       } catch (e) {}
 
       return true;
@@ -243,13 +246,13 @@
     if (!d || !(d instanceof Element)) return false;
     if (d.closest('#vg-fb-robot-hud')) return false;
 
-    // Must be visible and reasonably large (at least 320x180 px)
+    // 1. Must be visible and reasonably large (at least 320x200 px)
     const rect = d.getBoundingClientRect();
-    if (rect.width < 320 || rect.height < 180) return false;
+    if (rect.width < 320 || rect.height < 200) return false;
     const style = window.getComputedStyle(d);
     if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') return false;
 
-    // Strictly exclude Messenger / Chat windows & Meta AI
+    // 2. Strictly exclude Messenger / Chat windows & Meta AI
     const aria = (d.getAttribute('aria-label') || '').toLowerCase();
     if (
       aria.includes('đoạn chat') ||
@@ -264,29 +267,36 @@
     const chatInput = d.querySelector('div[aria-label*="nhắn tin" i], div[aria-label*="tin nhắn" i], div[aria-label*="send a message" i]');
     if (chatInput) return false;
 
-    // Criterion 1: Heading title contains "Tạo bài viết" or "Create post"
-    const headings = Array.from(d.querySelectorAll('h1, h2, h3, div[role="heading"], span'));
-    const hasCreatePostHeading = headings.some(h => {
-      const text = (h.innerText || '').trim().toLowerCase();
-      return text === 'tạo bài viết' || text === 'create post' || text === 'tạo bài viết công khai' || text.startsWith('tạo bài viết');
-    });
+    // 3. MUST contain a Lexical / contenteditable textbox.
+    // If there is NO editor, it CANNOT be the create-post dialog (e.g. menus, quick action popovers)
+    const editor = d.querySelector(
+      'div[role="textbox"][contenteditable="true"], div[data-lexical-editor="true"], div[contenteditable="true"][role="textbox"]'
+    );
+    if (!editor) return false;
 
-    // Criterion 2: Button "Đăng" or "Post"
+    // 4. Editor must NOT be chat or comments
+    const editorAria = (editor.getAttribute('aria-label') || '').toLowerCase();
+    if (editorAria.includes('nhắn tin') || editorAria.includes('tin nhắn') || editorAria.includes('bình luận') || editorAria.includes('comment')) {
+      return false;
+    }
+
+    // 5. Must have the submit button whose label is EXACTLY "Đăng" or "Post" (NOT "Đăng xuất", NOT "Đăng nhập")
     const buttons = Array.from(d.querySelectorAll('div[role="button"]'));
     const hasPostButton = buttons.some(b => {
       const label = (b.innerText || b.getAttribute('aria-label') || '').trim().toLowerCase();
-      return label === 'đăng' || label === 'post' || label.startsWith('đăng ') || label.startsWith('post ');
+      return label === 'đăng' || label === 'post';
     });
+    if (!hasPostButton) return false;
 
-    // Criterion 3: Lexical editor specific to post creation
-    const editor = d.querySelector(
-      'div[role="textbox"][contenteditable="true"], div[data-lexical-editor="true"], div[aria-label*="nghĩ gì" i], div[aria-label*="what\'s on your mind" i]'
-    );
-    const hasPostEditor = !!editor;
+    // 6. Must have "Tạo bài viết" / "Create post" title OR editor aria contains "nghĩ gì" / "what's on your mind"
+    const headings = Array.from(d.querySelectorAll('h1, h2, h3, div[role="heading"], span'));
+    const hasCreatePostHeading = headings.some(h => {
+      const text = (h.innerText || '').trim().toLowerCase();
+      return text === 'tạo bài viết' || text === 'create post' || text === 'tạo bài viết công khai';
+    });
+    const hasMindLabel = editorAria.includes('nghĩ gì') || editorAria.includes("what's on your mind");
 
-    // A real Facebook Create Post modal MUST satisfy:
-    // (hasCreatePostHeading && hasPostButton) OR (hasPostEditor && hasPostButton) OR (hasCreatePostHeading && hasPostEditor)
-    return (hasCreatePostHeading && hasPostButton) || (hasPostEditor && hasPostButton) || (hasCreatePostHeading && hasPostEditor);
+    return hasCreatePostHeading || hasMindLabel;
   }
 
   /**
@@ -305,6 +315,17 @@
    */
   function findFeedComposerTriggers() {
     const list = [];
+
+    // Direct selector query for fast discovery of composer triggers
+    const directQuery = Array.from(document.querySelectorAll(
+      'div[aria-label*="ảnh/video" i], div[aria-label*="photo/video" i], div[aria-label*="nghĩ gì" i], div[aria-label*="what\'s on your mind" i], div[data-pagelet*="Composer"] div[role="button"], div[data-pagelet="FeedUnit_0"] div[role="button"]'
+    ));
+    for (const el of directQuery) {
+      if (!el.closest('div[role="dialog"]') && !el.closest('#vg-fb-robot-hud') && isVisible(el)) {
+        list.push(el);
+      }
+    }
+
     const elements = Array.from(document.querySelectorAll('div[role="button"], div[tabindex="0"], span, div'));
 
     // Priority 1: Photo/video button (Green icon button next to composer pill)
@@ -409,9 +430,11 @@
     try {
       // BƯỚC 1: Tìm và mở ô "Bạn đang nghĩ gì thế?"
       setStepStatus(1, 'active', 'Đang tìm và mở ô tạo bài viết...');
+      try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {}
       await sleep(1000); // Chờ Facebook render các element
 
       let modal = findCreatePostModal();
+      console.log('[VG FB Robot] Trạng thái modal ban đầu:', modal);
       const openStartTime = Date.now();
       const openTimeout = 15000; // Thử tự động trong 15s
 
@@ -434,6 +457,7 @@
         if (modal) break;
 
         const triggers = findFeedComposerTriggers();
+        console.log('[VG FB Robot] Tìm thấy', triggers.length, 'phần tử kích hoạt bài viết.');
 
         // Thử click từng phần tử kích hoạt
         for (const target of triggers) {
@@ -448,8 +472,8 @@
 
         if (modal) break;
 
-        // Nếu sau 2.5 giây mà Facebook chưa mở, làm nổi bật viền vàng nhấp nháy để hướng dẫn người dùng
-        if (Date.now() - openStartTime > 2500 && !modal) {
+        // Nếu sau 1.5 giây mà Facebook chưa mở, làm nổi bật viền vàng nhấp nháy để hướng dẫn người dùng
+        if (Date.now() - openStartTime > 1500 && !modal) {
           setStepStatus(1, 'active', '👉 Vui lòng click vào ô "Bạn đang nghĩ gì thế?" (viền vàng)...');
           triggers.forEach(c => {
             if (c.style && !c.dataset.vgStyled) {
