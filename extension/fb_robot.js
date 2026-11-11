@@ -19,22 +19,41 @@
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   /**
-   * Convert Data URL (Base64) to real Browser File object
+   * Convert Data URL (Base64) or HTTP/HTTPS/Blob URL to real Browser File object
    */
-  function dataUrlToFile(dataUrl, filename) {
+  async function urlToFile(url, filename) {
     try {
-      const arr = dataUrl.split(',');
-      const mimeMatch = arr[0].match(/:(.*?);/);
-      const mime = mimeMatch ? mimeMatch[1] : 'image/jpeg';
-      const bstr = atob(arr[1]);
-      let n = bstr.length;
-      const u8arr = new Uint8Array(n);
-      while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
+      if (!url || typeof url !== 'string') return null;
+
+      // Case 1: Base64 Data URL
+      if (url.startsWith('data:')) {
+        const arr = url.split(',');
+        const mimeMatch = arr[0].match(/:(.*?);/);
+        const mime = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], filename, { type: mime });
       }
-      return new File([u8arr], filename, { type: mime });
+
+      // Case 2: HTTP/HTTPS or Blob URL
+      if (url.startsWith('http') || url.startsWith('blob:')) {
+        const resp = await fetch(url);
+        if (!resp.ok && !url.startsWith('blob:')) {
+          console.warn('[VG FB Robot] Không tải được ảnh từ URL:', url, resp.status);
+          return null;
+        }
+        const blob = await resp.blob();
+        const mime = blob.type || 'image/jpeg';
+        return new File([blob], filename, { type: mime });
+      }
+
+      return null;
     } catch (e) {
-      console.warn('[VG FB Robot] Lỗi chuyển dataUrl sang File:', e);
+      console.warn('[VG FB Robot] Lỗi chuyển URL sang File:', e);
       return null;
     }
   }
@@ -156,22 +175,31 @@
       await sleep(1500); // Chờ trang tải ổn định
 
       let composerTrigger = null;
-      // Selector đa ngôn ngữ (Tiếng Việt & Tiếng Anh)
-      const triggerCandidates = Array.from(document.querySelectorAll('div[role="button"], div[aria-label*="Tạo bài viết"], div[aria-label*="Create a post"], span'));
-      for (const el of triggerCandidates) {
-        const text = (el.innerText || el.getAttribute('aria-label') || '').toLowerCase();
-        if (
-          (text.includes('bạn đang nghĩ gì') || text.includes("what's on your mind") || text.includes('tạo bài viết') || text.includes('create post')) &&
-          !el.closest('div[role="dialog"]') // Không phải trong modal đã mở
-        ) {
-          composerTrigger = el;
-          break;
-        }
-      }
+      const triggerStartTime = Date.now();
+      const triggerTimeout = 10000; // Thử lại tối đa 10s khi tải trang Facebook
 
-      if (!composerTrigger) {
-        // Fallback: Tìm qua form feed
-        composerTrigger = document.querySelector('div[data-pagelet="ProfileComposer"] div[role="button"], div[data-pagelet="FeedUnit_0"] div[role="button"]');
+      while (!composerTrigger && (Date.now() - triggerStartTime < triggerTimeout)) {
+        if (isCancelled) return;
+        // Selector đa ngôn ngữ (Tiếng Việt & Tiếng Anh)
+        const triggerCandidates = Array.from(document.querySelectorAll('div[role="button"], div[aria-label*="Tạo bài viết"], div[aria-label*="Create a post"], span'));
+        for (const el of triggerCandidates) {
+          const text = (el.innerText || el.getAttribute('aria-label') || '').toLowerCase();
+          if (
+            (text.includes('bạn đang nghĩ gì') || text.includes("what's on your mind") || text.includes('tạo bài viết') || text.includes('create post')) &&
+            !el.closest('div[role="dialog"]') // Không phải trong modal đã mở
+          ) {
+            composerTrigger = el;
+            break;
+          }
+        }
+
+        if (!composerTrigger) {
+          // Fallback: Tìm qua form feed
+          composerTrigger = document.querySelector('div[data-pagelet="ProfileComposer"] div[role="button"], div[data-pagelet="FeedUnit_0"] div[role="button"]');
+        }
+
+        if (composerTrigger) break;
+        await sleep(500);
       }
 
       if (!composerTrigger) {
@@ -239,8 +267,8 @@
         if (fileInput) {
           const fileObjects = [];
           for (let i = 0; i < mediaUrls.length; i++) {
-            const dataUrl = mediaUrls[i];
-            const fileObj = dataUrlToFile(dataUrl, `laptop_vuonggia_${machineCode}_${i + 1}.jpg`);
+            const url = mediaUrls[i];
+            const fileObj = await urlToFile(url, `laptop_vuonggia_${machineCode}_${i + 1}.jpg`);
             if (fileObj) fileObjects.push(fileObj);
           }
 
@@ -272,12 +300,36 @@
 
       async function triggerSubmit() {
         if (isCancelled) return;
+        setStepStatus(4, 'active', '⚡ Đang kiểm tra tiến trình tải ảnh & chuẩn bị đăng...');
+
+        // Chờ tiến trình upload ảnh hoàn tất (Facebook hiển thị progress bar hoặc nút Đăng có aria-disabled="true")
+        let uploadWaitTime = 0;
+        const maxUploadWait = 15000; // Chờ tối đa 15s cho ảnh tải lên hoàn tất
+        while (uploadWaitTime < maxUploadWait) {
+          if (isCancelled) return;
+          const isUploading = modal.querySelector('div[role="progressbar"], [aria-valuemin], .sp_progress, div[data-visualcompletion="loading-state"]');
+          const readyBtn = Array.from(modal.querySelectorAll('div[role="button"]')).find(b => {
+            const label = (b.getAttribute('aria-label') || b.innerText || '').trim().toLowerCase();
+            return (label === 'đăng' || label === 'post') &&
+                   b.getAttribute('aria-disabled') !== 'true' &&
+                   !b.classList.contains('disabled');
+          });
+
+          if (!isUploading && readyBtn) {
+            break;
+          }
+          await sleep(500);
+          uploadWaitTime += 500;
+        }
+
         setStepStatus(4, 'active', '⚡ Đang bấm nút ĐĂNG...');
 
         // Tìm nút "Đăng" (Post)
         const postBtn = Array.from(modal.querySelectorAll('div[role="button"]')).find(b => {
           const label = (b.getAttribute('aria-label') || b.innerText || '').trim().toLowerCase();
-          return (label === 'đăng' || label === 'post') && !b.disabled;
+          return (label === 'đăng' || label === 'post') &&
+                 b.getAttribute('aria-disabled') !== 'true' &&
+                 !b.classList.contains('disabled');
         });
 
         if (postBtn) {

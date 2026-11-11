@@ -20,7 +20,7 @@
   <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
   <link rel="apple-touch-icon" href="/icons/icon.svg" />
 
-  <link rel="stylesheet" href="/css/style.css?v=20261106_v15_cockpit_slide0">
+  <link rel="stylesheet" href="/css/style.css?v=20261111_v16_dual_personal_robot">
 </head>
 <body class="bg-[#FDFBF7] text-[#18181B] min-h-screen">
 
@@ -62,7 +62,7 @@
 
       <!-- Non-commercial Strict Clause -->
       <div class="bg-neutral-950/80 border border-white/80 p-3 sm:p-4 text-center my-4 text-xs leading-relaxed">
-        <div class="font-bold text-amber-400 mb-1 flex items-center justify-center gap-1.5">
+        <div class="font-bold text-white mb-1 flex items-center justify-center gap-1.5">
           <span>⚠️</span>
           <span>ĐIỀU KHOẢN NGHIÊM NGẶT: KHÔNG THƯƠNG MẠI HÓA</span>
         </div>
@@ -228,6 +228,9 @@
               </button>
               <button id="cockpitPublishNowBtn" class="neo-btn neo-btn-yellow px-3 py-2 text-xs font-black" title="Đăng lên Fanpage ngay lập tức">
                 ⚡ Fanpage
+              </button>
+              <button id="cockpitPublishPersonalBtn" class="flex-1 py-2 px-2 bg-white text-black font-black uppercase text-xs border-2 border-black shadow-[2px_2px_0px_0px_#000] hover:bg-zinc-100 flex items-center justify-center gap-1 active:translate-x-0.5 active:translate-y-0.5" title="Đăng lên Facebook Cá Nhân qua Extension">
+                👤 Cá Nhân
               </button>
               <button id="cockpitViewNextBtn" class="neo-btn neo-btn-white px-2.5 py-2 text-xs font-bold" title="Xem chi tiết">
                 👁️
@@ -729,13 +732,14 @@
             <span class="text-xs font-black uppercase text-[#18181B]">Khung giờ đề xuất tiếp theo:</span>
             <span class="text-xs font-black text-emerald-700 font-mono" id="suggestedSlotText">Đang tính toán...</span>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
             <button onclick="schedulePost(true, 'both'); closeManualPostModal();" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 py-2.5 text-xs font-black uppercase shadow-[2px_2px_0px_#18181B]" title="Đăng lên cả Fanpage và Facebook Cá Nhân">
               🚀 ĐĂNG CẢ HAI
             </button>
             <button onclick="schedulePost(true, 'fanpage'); closeManualPostModal();" class="neo-btn neo-btn-yellow py-2.5 text-xs font-black uppercase" title="Đăng ngay lên Fanpage">
               ⚡ ĐĂNG FANPAGE
             </button>
+            <button type="button" onclick="schedulePost(true, 'personal')" class="flex-1 py-2.5 px-3 bg-white text-black font-black text-xs border-2 border-black shadow-[2px_2px_0px_0px_#000] hover:bg-zinc-100 flex items-center justify-center gap-1" title="Đăng lên Facebook Cá Nhân qua Extension">👤 ĐĂNG CÁ NHÂN</button>
             <button onclick="schedulePost(false, 'queue'); closeManualPostModal();" class="neo-btn neo-btn-green py-2.5 text-xs font-black uppercase" title="Xếp vào hàng đợi giờ vàng">
               📅 ĐƯA VÀO HÀNG ĐỢI
             </button>
@@ -752,7 +756,6 @@
     </div>
   </div>
 
-  <script src="/js/app.js?v=20261111_v16_dual_personal_robot"></script>
   <!-- Modal: Post Preview -->
   <div id="postPreviewModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4" onclick="if(event.target === this) closePostPreviewModal()">
     <div class="neo-card bg-white max-w-2xl w-full p-4 sm:p-6 space-y-3.5 max-h-[92vh] flex flex-col shadow-[6px_6px_0px_#18181B]">
@@ -1076,5 +1079,7 @@
       </div>
     </div>
   </div>
+
+  <script src="/js/app.js?v=20261111_v16_dual_personal_robot" defer></script>
 </body>
 </html>

@@ -13,7 +13,9 @@
     "https://*.zadn.vn/*",
     "https://*.facebook.com/*",
     "https://auto-post-fanpage-coral.vercel.app/*",
-    "http://localhost:3000/*"
+    "https://*.supabase.co/*",
+    "http://localhost:3000/*",
+    "http://127.0.0.1:3000/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -60,7 +62,8 @@
     {
       "matches": [
         "https://auto-post-fanpage-coral.vercel.app/*",
-        "http://localhost:3000/*"
+        "http://localhost:3000/*",
+        "http://127.0.0.1:3000/*"
       ],
       "js": [
         "web_bridge.js"

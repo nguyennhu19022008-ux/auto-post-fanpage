@@ -26,10 +26,6 @@ async function getPosts() {
     if (Array.isArray(dbPosts) && dbPosts.length > 0) {
       return dbPosts;
     }
-    // If Supabase returned an empty array, verify if local has posts as fallback
-    if (Array.isArray(dbPosts)) {
-      return dbPosts;
-    }
   } catch (e) {
     console.error('[Scheduler] Error fetching posts from Supabase in getPosts:', e.message);
   }

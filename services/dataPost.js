@@ -761,8 +761,9 @@ async function deleteCircularQueueItem(id) {
  * Instantly publishes a circular post to Facebook Fanpage & updates stats
  */
 async function triggerCircularPost(params = {}) {
-  const queueId = params.queue_id || params.queueId;
-  const templateId = params.template_id || params.templateId;
+  const p = params || {};
+  const queueId = p.queue_id || p.queueId;
+  const templateId = p.template_id || p.templateId;
 
   let targetTemplate = null;
   let targetQueueItem = null;
@@ -777,6 +778,33 @@ async function triggerCircularPost(params = {}) {
 
   if (!targetTemplate && templateId) {
     targetTemplate = await getModelTemplateById(templateId);
+  }
+
+  // If neither queue_id nor template_id is passed, automatically select the next available
+  // circular queue item, or if the queue is empty, select the template with the oldest last_posted_at (or lowest post_count)
+  if (!targetTemplate && !queueId && !templateId) {
+    const queue = await getCircularQueue();
+    targetQueueItem = queue.find(q => q.status === 'queued' || q.status === 'pending') || (queue.length > 0 && queue[0].status !== 'completed' ? queue[0] : null);
+    if (targetQueueItem) {
+      targetTemplate = await getModelTemplateById(targetQueueItem.template_id);
+    }
+
+    if (!targetTemplate) {
+      const templates = await getModelTemplates();
+      if (Array.isArray(templates) && templates.length > 0) {
+        const sortedTemplates = [...templates].sort((a, b) => {
+          const aTime = a.last_posted_at ? new Date(a.last_posted_at).getTime() : 0;
+          const bTime = b.last_posted_at ? new Date(b.last_posted_at).getTime() : 0;
+          if (aTime !== bTime) {
+            return aTime - bTime;
+          }
+          const aCount = Number(a.post_count) || 0;
+          const bCount = Number(b.post_count) || 0;
+          return aCount - bCount;
+        });
+        targetTemplate = sortedTemplates[0];
+      }
+    }
   }
 
   if (!targetTemplate) {
@@ -828,9 +856,12 @@ async function triggerCircularPost(params = {}) {
 
   // 3. Update template post_count & last_posted_at
   const currentCount = Number(targetTemplate.post_count) || 0;
+  const nowIso = new Date().toISOString();
+  targetTemplate.post_count = currentCount + 1;
+  targetTemplate.last_posted_at = nowIso;
   await updateModelTemplate(targetTemplate.id, {
     post_count: currentCount + 1,
-    last_posted_at: new Date().toISOString()
+    last_posted_at: nowIso
   });
 
   // 4. Update queue item status if triggered from queue
@@ -869,6 +900,7 @@ async function triggerCircularPost(params = {}) {
     content: publishedPost.content,
     rewritten_content: publishedPost.content,
     template: targetTemplate,
+    post_count: currentCount + 1,
     fbPostUrl: publishedPost.fbPostUrl,
     message: 'Đã xuất bản thành công bài viết tuần hoàn lên Facebook Fanpage!'
   };

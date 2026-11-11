@@ -71,10 +71,9 @@ function copySlide0Contact(val, btn) {
   }
   const orig = btn.innerText;
   btn.innerText = 'ĐÃ CHÉP';
-  btn.classList.add('bg-emerald-400');
+  btn.classList.add('bg-white', 'text-black');
   setTimeout(() => {
     btn.innerText = orig;
-    btn.classList.remove('bg-emerald-400');
   }, 2000);
 }
 
@@ -276,6 +275,10 @@ async function loadCockpitStatus() {
       if (publishBtn) {
         publishBtn.onclick = () => publishPostNow(nextPost.id, 'fanpage');
       }
+      const personalBtn = document.getElementById('cockpitPublishPersonalBtn');
+      if (personalBtn) {
+        personalBtn.onclick = () => publishPostNow(nextPost.id, 'personal');
+      }
       const viewBtn = document.getElementById('cockpitViewNextBtn');
       if (viewBtn) {
         viewBtn.onclick = () => openPostPreviewModal(nextPost.id);
@@ -341,7 +344,7 @@ function renderCockpitTimeline(posts) {
         </div>
 
         <div class="flex items-center gap-1.5">
-          <button onclick="openPostPreviewModal('${post.id}')" class="neo-btn neo-btn-white px-2 py-1 text-xs font-bold">
+          <button onclick="openPostPreviewModal('${post.id}')" class="neo-btn neo-btn-white px-2 py-1 text-xs font-bold" title="Xem chi tiết">
             👁️ Xem
           </button>
           <button onclick="publishPostNow('${post.id}', 'both')" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 px-2.5 py-1 text-xs font-black shadow-[1.5px_1.5px_0px_#18181B]" title="Đăng cả Fanpage + Cá Nhân">
@@ -349,6 +352,9 @@ function renderCockpitTimeline(posts) {
           </button>
           <button onclick="publishPostNow('${post.id}', 'fanpage')" class="neo-btn neo-btn-yellow px-2 py-1 text-xs font-black" title="Đăng Fanpage">
             ⚡ Fanpage
+          </button>
+          <button onclick="publishPostNow('${post.id}', 'personal')" class="px-2 py-1 bg-white text-black border border-black font-black text-xs hover:bg-zinc-100" title="Đăng Facebook Cá Nhân qua Extension">
+            👤 Cá Nhân
           </button>
         </div>
       </div>
@@ -940,13 +946,15 @@ async function schedulePost(publishImmediately = false, target = 'fanpage') {
     return;
   }
 
+  const shouldPublishImmediately = publishImmediately && target !== 'personal';
+
   const postPayload = {
     machineCode: machineCode || 'MÁY',
     content,
     price,
     mediaFiles: currentMediaFiles,
     scheduledTime: publishImmediately ? new Date().toISOString() : suggestedSlot,
-    publishImmediately
+    publishImmediately: shouldPublishImmediately
   };
 
   try {
@@ -963,10 +971,18 @@ async function schedulePost(publishImmediately = false, target = 'fanpage') {
         const mediaUrls = currentMediaFiles.map(m => typeof m === 'string' ? m : (m.url || m.path || ''));
         window.postMessage({
           action: 'VG_TRIGGER_PERSONAL_POST',
+          type: 'VG_TRIGGER_PERSONAL_POST',
           payload: {
             content,
             mediaUrls,
             pagePostUrl: result.data?.facebookPostUrl || result.facebookPostUrl
+          },
+          postData: {
+            title: machineCode ? `[${machineCode}] Laptop` : 'Laptop',
+            content,
+            price,
+            mediaUrls,
+            machineCode: machineCode || 'MÁY'
           }
         }, '*');
 
@@ -976,13 +992,16 @@ async function schedulePost(publishImmediately = false, target = 'fanpage') {
 
         const alertMsg = target === 'both'
           ? `🚀 ĐÃ ĐĂNG LÊN FANPAGE THÀNH CÔNG!\n\n🤖 Đang kích hoạt Robot để đăng lên Facebook Cá Nhân...\n(Nội dung đã được sao chép vào bộ nhớ tạm).`
-          : `👤 Đã chuẩn bị bài viết cho Facebook Cá Nhân!\n\n🤖 Đang kích hoạt Robot...`;
+          : `👤 Đã lưu bài và chuẩn bị bài viết cho Facebook Cá Nhân!\n\n🤖 Đang kích hoạt Robot...`;
         alert(alertMsg);
         window.open('https://www.facebook.com/', '_blank');
       } else {
         alert(publishImmediately ? '🚀 ' + result.message : '📅 ' + result.message);
       }
 
+      if (typeof closeManualPostModal === 'function') {
+        closeManualPostModal();
+      }
       clearRawInput();
       await loadNextSlot();
       await loadPosts();
@@ -1837,6 +1856,12 @@ function viewQueuedPostContent(postId) {
     if (scrollContainer) scrollContainer.scrollTop = 0;
   }
 }
+
+// D1: Alias openPostPreviewModal to viewQueuedPostContent for Cockpit compatibility
+function openPostPreviewModal(postId) {
+  return viewQueuedPostContent(postId);
+}
+window.openPostPreviewModal = viewQueuedPostContent;
 
 function closePostPreviewModal() {
   const modal = document.getElementById('postPreviewModal');

@@ -703,6 +703,17 @@ app.post('/api/extension/push-post', async (req, res) => {
       console.log(`[Extension] 🚀 Đang tiến hành đăng kép Fanpage + Cá nhân cho bài [${newPost.id}]...`);
       const published = await executePost(newPost);
       await upsertPostToDb(published);
+
+      if (published.status === 'failed') {
+        return res.status(500).json({
+          success: false,
+          target: 'both',
+          post: published,
+          error: published.errorMessage || 'Lỗi xuất bản Fanpage khi đăng kép',
+          message: published.errorMessage || 'Lỗi xuất bản Fanpage khi đăng kép'
+        });
+      }
+
       const shareUrl = published.fbPostUrl
         ? `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(published.fbPostUrl)}`
         : null;
@@ -722,6 +733,17 @@ app.post('/api/extension/push-post', async (req, res) => {
       console.log(`[Extension] ⚡ Đang tiến hành đăng ngay bài [${newPost.id}] lên Facebook...`);
       const published = await executePost(newPost);
       await upsertPostToDb(published);
+
+      if (published.status === 'failed') {
+        return res.status(500).json({
+          success: false,
+          target: 'fanpage',
+          post: published,
+          error: published.errorMessage || 'Lỗi xuất bản bài viết lên Facebook Fanpage',
+          message: published.errorMessage || 'Lỗi xuất bản bài viết lên Facebook Fanpage'
+        });
+      }
+
       return res.json({
         success: true,
         target: 'fanpage',
@@ -750,14 +772,28 @@ app.post('/api/posts/:id/publish-now', async (req, res) => {
     const posts = await getPosts();
     const post = posts.find(p => p.id === req.params.id);
     if (!post) {
-      return res.status(404).json({ error: 'Không tìm thấy bài viết.' });
+      return res.status(404).json({ success: false, error: 'Không tìm thấy bài viết.' });
     }
 
     const updatedPost = await executePost(post);
     await upsertPostToDb(updatedPost);
-    res.json({ success: true, post: updatedPost, message: 'Đã thực thi đăng bài thành công!' });
+
+    if (updatedPost.status === 'failed') {
+      return res.status(500).json({
+        success: false,
+        error: updatedPost.errorMessage || 'Lỗi đăng bài Facebook',
+        post: updatedPost
+      });
+    }
+
+    res.json({
+      success: true,
+      post: updatedPost,
+      facebookPostUrl: updatedPost.fbPostUrl || updatedPost.facebookPostUrl,
+      message: 'Đã thực thi đăng bài thành công!'
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -936,8 +972,8 @@ app.delete('/api/data-post/queue/:id', async (req, res) => {
   }
 });
 
-// 12.10. Trigger Circular Post Immediately
-app.post('/api/data-post/queue/trigger-post', async (req, res) => {
+// 12.10. Trigger Circular Post Immediately (Dual Route Alias)
+app.post(['/api/data-post/trigger-circular', '/api/data-post/queue/trigger-post'], async (req, res) => {
   try {
     const result = await dataPostService.triggerCircularPost(req.body);
     res.json(result);

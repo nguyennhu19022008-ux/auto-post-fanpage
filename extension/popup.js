@@ -152,6 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
       rawText: text,
       mediaUrls: selectedMediaBase64,
       target: target,
+      publishImmediately: (target === 'fanpage' || target === 'both'),
       sourceUrl: 'popup_miniapp'
     };
 
@@ -172,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const post = resData.post || {};
 
       if (target === 'both') {
-        const pageLink = resData.facebookPostUrl || post.facebookPostUrl;
+        const pageLink = resData.fbPostUrl || post.fbPostUrl || resData.facebookPostUrl;
         setStatus(`✅ Fanpage thành công! Đang chuyển hướng sang Facebook cá nhân...`, 'success');
 
         // Kích hoạt Robot cá nhân
@@ -204,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedMediaBase64 = [];
 
       } else {
-        const pageLink = resData.facebookPostUrl || post.facebookPostUrl;
+        const pageLink = resData.fbPostUrl || post.fbPostUrl || resData.facebookPostUrl;
         let linkHtml = pageLink ? `<br><a href="${pageLink}" target="_blank" style="color: #166534; font-weight: 800; text-decoration: underline;">👉 Xem bài viết trên Fanpage</a>` : '';
         setStatus(`⚡ Đã đăng lên Fanpage thành công!${linkHtml}`, 'success');
         rawTextInput.value = '';

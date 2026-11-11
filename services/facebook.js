@@ -112,8 +112,8 @@ async function uploadVideo(pageId, pageToken, filePath, description, title = '',
 /**
  * Publish post to Fanpage (handles text, single photo, multiple photos, or video)
  */
-async function publishPostToFanpage(postData, userSettings) {
-  const pageId = userSettings.fanpageId;
+async function publishPostToFanpage(postData, userSettings = {}) {
+  const pageId = userSettings.fanpageId || process.env.FANPAGE_ID || '1154184381110692';
   const pageToken = userSettings.facebookPageToken;
   const { content, mediaFiles = [] } = postData;
   const videoTitle = postData.title || (postData.machineName ? `Laptop ${postData.machineName}` : 'Laptop Vương Gia');

@@ -1,5 +1,74 @@
 [
   {
+    "id": "tpl_1794396116753_p3tf5",
+    "model_key": "scriptalert1script-thinkpad-t490__core-i7-8565u__16gb__512gb",
+    "model_name": "<script>alert(1)</script> ThinkPad T490",
+    "brand": "ThinkPad",
+    "cpu": "Core i7-8565U",
+    "ram": "16GB",
+    "ssd": "512GB",
+    "screen": "",
+    "standard_config": "Core i7-8565U / RAM 16GB / SSD 512GB / Màn",
+    "price_min": 0,
+    "price_max": 0,
+    "price_display": "6.5 triệu (Xả kho cuối năm)",
+    "price_range_category": "5m_8m",
+    "status": "active",
+    "base_ai_prompt": "",
+    "media_files": [],
+    "tags": [],
+    "post_count": 12,
+    "last_posted_at": "2026-11-11T11:32:07.439Z",
+    "created_at": "2026-11-11T11:21:56.753Z",
+    "updated_at": "2026-11-11T11:32:07.702Z"
+  },
+  {
+    "id": "tpl_1794396086379_70dlk",
+    "model_key": "scriptalert1script-thinkpad__i7__16gb__512gb",
+    "model_name": "<script>alert(1)</script> ThinkPad",
+    "brand": "ThinkPad",
+    "cpu": "i7",
+    "ram": "16GB",
+    "ssd": "512GB",
+    "screen": "",
+    "standard_config": "i7 / RAM 16GB / SSD 512GB / Màn",
+    "price_min": 0,
+    "price_max": 0,
+    "price_display": "Liên hệ",
+    "price_range_category": "5m_8m",
+    "status": "active",
+    "base_ai_prompt": "",
+    "media_files": [],
+    "tags": [],
+    "post_count": 3,
+    "last_posted_at": "2026-11-11T11:32:17.832Z",
+    "created_at": "2026-11-11T11:21:26.379Z",
+    "updated_at": "2026-11-11T11:32:18.104Z"
+  },
+  {
+    "id": "tpl_1794395898968_6kogi",
+    "model_key": "dell-precision-5550__core-i7-10750h__32gb__512gb",
+    "model_name": "Dell Precision 5550",
+    "brand": "Dell",
+    "cpu": "Core i7-10750H",
+    "ram": "32GB",
+    "ssd": "512GB",
+    "screen": "",
+    "standard_config": "Core i7-10750H / RAM 32GB / SSD 512GB / Màn",
+    "price_min": 15000000,
+    "price_max": 17000000,
+    "price_display": "16.5 triệu mới cập nhật",
+    "price_range_category": "above_12m",
+    "status": "active",
+    "base_ai_prompt": "",
+    "media_files": [],
+    "tags": [],
+    "post_count": 12,
+    "last_posted_at": "2026-11-11T11:28:20.002Z",
+    "created_at": "2026-11-11T11:18:18.968Z",
+    "updated_at": "2026-11-11T11:28:20.270Z"
+  },
+  {
     "id": "tpl_dell_lat_5350",
     "model_key": "dell-latitude-5350__intel-core-ultra-5__16gb__256gb-ssd__133-inch-fhd-ips",
     "model_name": "Dell Latitude 5350",
@@ -71,10 +140,10 @@
       "Mỏng nhẹ",
       "Đời mới 2024"
     ],
-    "post_count": 142,
-    "last_posted_at": "2026-11-10T14:14:12.800Z",
+    "post_count": 166,
+    "last_posted_at": "2026-11-11T11:31:20.374Z",
     "created_at": "2026-11-01T08:00:00Z",
-    "updated_at": "2026-11-10T14:14:13.036Z"
+    "updated_at": "2026-11-11T11:31:20.575Z"
   },
   {
     "id": "tpl_hp_envy_x360_14",
@@ -131,7 +200,7 @@
   },
   {
     "id": "tpl_hp_envy_x360_13",
-    "model_key": "hp-envy-x360-13-3__ryzen-5-4500u__8gb__256gb__13-3-inch",
+    "model_key": "hp-envy-x360-133__amd-ryzen-5-4500u__8gb__256gb-ssd__133-inch-fhd-cam-ung-xoay-360",
     "model_name": "HP Envy x360 13.3",
     "brand": "HP",
     "cpu": "AMD Ryzen 5 4500U",
@@ -185,10 +254,10 @@
       "Nhỏ gọn",
       "Văn phòng"
     ],
-    "post_count": 4,
-    "last_posted_at": "2026-11-02T09:15:00Z",
+    "post_count": 6,
+    "last_posted_at": "2026-11-11T11:26:42.288Z",
     "created_at": "2026-11-01T09:00:00Z",
-    "updated_at": "2026-11-02T09:15:00Z"
+    "updated_at": "2026-11-11T11:26:42.292Z"
   },
   {
     "id": "tpl_hp_elitebook_630_g9",
@@ -222,22 +291,6 @@
         "filename": "1793348698786-735708326.jpg",
         "mimetype": "image/jpeg",
         "originalname": "hp_elite_630_g9_2.jpg"
-      },
-      {
-        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793880993077-940381395.jpg",
-        "size": 145020,
-        "storage": "supabase",
-        "filename": "1793880993077-940381395.jpg",
-        "mimetype": "image/jpeg",
-        "originalname": "hp_elite_630_g9_3.jpg"
-      },
-      {
-        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793880993717-316524388.jpg",
-        "size": 128450,
-        "storage": "supabase",
-        "filename": "1793880993717-316524388.jpg",
-        "mimetype": "image/jpeg",
-        "originalname": "hp_elite_630_g9_4.jpg"
       }
     ],
     "tags": [
@@ -445,10 +498,10 @@
       "Bền bỉ quân đội",
       "Văn phòng"
     ],
-    "post_count": 10,
-    "last_posted_at": "2026-11-05T13:45:55.664Z",
+    "post_count": 14,
+    "last_posted_at": "2026-11-11T11:30:30.269Z",
     "created_at": "2026-11-01T11:00:00Z",
-    "updated_at": "2026-11-08T01:09:52.671Z"
+    "updated_at": "2026-11-11T11:30:30.507Z"
   },
   {
     "id": "tpl_dell_inspiron_5490",

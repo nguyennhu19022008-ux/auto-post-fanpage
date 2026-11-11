@@ -174,8 +174,7 @@
         src.includes('avatar') ||
         src.includes('emoji') ||
         src.includes('static.zalo.me') ||
-        src.includes('iconlike') ||
-        src.includes('zadn.vn')
+        src.includes('iconlike')
       );
 
       if (isJunkIcon) return;
@@ -287,7 +286,7 @@
     }
 
     return {
-      text,
+      text: finalFormattedText,
       mediaUrls
     };
   }
