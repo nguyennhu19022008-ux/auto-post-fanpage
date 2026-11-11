@@ -586,7 +586,7 @@ app.post('/api/posts', async (req, res) => {
 // 8.1. Dedicated 1-Click Push from Chrome Extension (Zalo Web)
 app.post('/api/extension/push-post', async (req, res) => {
   try {
-    const { rawText, mediaUrls = [], publishImmediately = false, customPrice = '' } = req.body;
+    const { rawText, mediaUrls = [], publishImmediately = false, customPrice = '', target = 'fanpage' } = req.body;
     if (!rawText && (!mediaUrls || mediaUrls.length === 0)) {
       return res.status(400).json({ success: false, error: 'Thiếu nội dung hoặc ảnh/video từ Zalo.' });
     }
@@ -603,7 +603,7 @@ app.post('/api/extension/push-post', async (req, res) => {
     // 2. Download media URLs or decode base64 and upload directly to Supabase Storage
     const uploadedMediaFiles = [];
     if (Array.isArray(mediaUrls) && mediaUrls.length > 0) {
-      console.log(`[Extension] 📥 Đang xử lý ${mediaUrls.length} tệp media...`);
+      console.log(`[Extension] 📥 Đang xử lý ${mediaUrls.length} tệp media (kênh: ${target})...`);
       for (let i = 0; i < mediaUrls.length; i++) {
         const mUrl = mediaUrls[i];
         if (!mUrl) continue;
@@ -663,7 +663,8 @@ app.post('/api/extension/push-post', async (req, res) => {
       price: generated.price || customPrice || '',
       mediaFiles: uploadedMediaFiles,
       scheduledTime: scheduledTime,
-      status: uploadedMediaFiles.length > 0 ? 'queued' : 'pending_media',
+      status: target === 'personal' ? 'personal_draft' : (uploadedMediaFiles.length > 0 ? 'queued' : 'pending_media'),
+      targetChannel: target,
       mediaReminderSent: false,
       cloudLink: null,
       createdAt: new Date().toISOString(),
@@ -673,7 +674,7 @@ app.post('/api/extension/push-post', async (req, res) => {
       fbPostId: null,
       fbPostUrl: null,
       isSimulation: false,
-      lastMessage: 'Được tạo bởi Zalo Chrome Extension'
+      lastMessage: `Được tạo bởi Zalo Extension (Chế độ: ${target})`
     };
 
     // 4. Save to Posts list & Supabase DB
@@ -682,13 +683,43 @@ app.post('/api/extension/push-post', async (req, res) => {
     await savePosts(posts);
     await upsertPostToDb(newPost);
 
-    // 5. If publishImmediately is true, publish to Facebook right away!
+    // 5. Handle Target: PERSONAL (Chỉ đăng trang cá nhân)
+    if (target === 'personal') {
+      return res.json({
+        success: true,
+        target: 'personal',
+        post: newPost,
+        message: `Đã chuẩn bị xong bài viết #${finalCode} kèm ${uploadedMediaFiles.length} ảnh HD cho Trang Cá Nhân!`
+      });
+    }
+
+    // 6. Handle Target: BOTH (Đăng Fanpage ngay + Chuẩn bị link chia sẻ Trang Cá Nhân)
+    if (target === 'both') {
+      console.log(`[Extension] 🚀 Đang tiến hành đăng kép Fanpage + Cá nhân cho bài [${newPost.id}]...`);
+      const published = await executePost(newPost);
+      await upsertPostToDb(published);
+      const shareUrl = published.fbPostUrl
+        ? `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(published.fbPostUrl)}`
+        : null;
+
+      return res.json({
+        success: true,
+        target: 'both',
+        post: published,
+        fbPostUrl: published.fbPostUrl,
+        shareUrl: shareUrl,
+        message: 'Đã xuất bản thành công lên Fanpage và sẵn sàng chia sẻ lên Trang Cá Nhân!'
+      });
+    }
+
+    // 7. Handle Target: FANPAGE (Đăng ngay hoặc lên lịch)
     if (publishImmediately) {
       console.log(`[Extension] ⚡ Đang tiến hành đăng ngay bài [${newPost.id}] lên Facebook...`);
       const published = await executePost(newPost);
       await upsertPostToDb(published);
       return res.json({
         success: true,
+        target: 'fanpage',
         post: published,
         fbPostUrl: published.fbPostUrl,
         message: 'Đã xuất bản thành công bài viết lên Facebook Fanpage!'
@@ -697,6 +728,7 @@ app.post('/api/extension/push-post', async (req, res) => {
 
     return res.json({
       success: true,
+      target: 'fanpage',
       post: newPost,
       message: `Đã đưa bài #${finalCode} vào hàng đợi lên lịch lúc ${new Date(scheduledTime).toLocaleString('vi-VN')}!`
     });

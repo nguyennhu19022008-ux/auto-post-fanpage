@@ -4,11 +4,13 @@
   "version": "1.0.0",
   "description": "Đẩy trực tiếp bài viết Zalo kèm toàn bộ ảnh HD & video lên Fanpage Facebook chỉ với 1 cú click",
   "permissions": [
-    "storage"
+    "storage",
+    "clipboardWrite"
   ],
   "host_permissions": [
     "https://chat.zalo.me/*",
     "https://*.zadn.vn/*",
+    "https://*.facebook.com/*",
     "https://auto-post-fanpage-coral.vercel.app/*",
     "http://localhost:3000/*"
   ],

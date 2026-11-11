@@ -294,12 +294,16 @@
 
   /**
    * Send post data to Laptop Vương Gia backend
+   * Supports: 'fanpage' | 'personal' | 'both'
    */
-  async function pushToFacebook(data, publishImmediately = true, btnElement = null) {
+  async function pushToFacebook(data, options = { publishImmediately: true, target: 'fanpage' }, btnElement = null) {
     if (!data.text && data.mediaUrls.length === 0) {
       showToast('Không tìm thấy nội dung bài viết hoặc hình ảnh để đăng!', 'error');
       return;
     }
+
+    const target = options.target || 'fanpage';
+    const publishImmediately = Boolean(options.publishImmediately);
 
     const originalBtnText = btnElement ? btnElement.innerHTML : '';
     const mediaCount = data.mediaUrls ? data.mediaUrls.length : 0;
@@ -311,11 +315,21 @@
       btnElement.disabled = true;
     }
 
-    const actionName = publishImmediately ? 'Đăng lên Facebook' : 'Đưa vào Hàng đợi';
-    const loadingToast = showToast(`Đang bóc tách AI và ${actionName}${mediaLabel}...`, 'loading');
+    let actionLabel = 'Đăng lên Fanpage';
+    if (target === 'both') actionLabel = 'Đăng Kép (Fanpage + Cá Nhân)';
+    if (target === 'personal') actionLabel = 'Soạn bài Trang Cá Nhân';
+    if (!publishImmediately && target === 'fanpage') actionLabel = 'Đưa vào Hàng đợi';
+
+    const loadingToast = showToast(`Đang bóc tách AI và ${actionLabel}${mediaLabel}...`, 'loading');
 
     try {
       let result;
+      const payload = {
+        rawText: data.text,
+        mediaUrls: data.mediaUrls,
+        publishImmediately: publishImmediately,
+        target: target
+      };
 
       // Delegate to Background Service Worker to bypass Zalo Web page CSP completely
       if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
@@ -323,11 +337,7 @@
           chrome.runtime.sendMessage({
             action: 'pushPost',
             serverUrl: defaultServerUrl,
-            payload: {
-              rawText: data.text,
-              mediaUrls: data.mediaUrls,
-              publishImmediately: publishImmediately
-            }
+            payload: payload
           }, (res) => {
             if (chrome.runtime.lastError) {
               resolve({ success: false, error: chrome.runtime.lastError.message });
@@ -347,11 +357,7 @@
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            rawText: data.text,
-            mediaUrls: data.mediaUrls,
-            publishImmediately: publishImmediately
-          })
+          body: JSON.stringify(payload)
         });
         result = await response.json();
       }
@@ -360,11 +366,55 @@
 
       if (result.success) {
         const post = result.post || {};
-        const successMsg = publishImmediately
-          ? `Đã đăng thành công mã #${post.machineCode || ''}${mediaLabel} lên Fanpage!`
-          : `Đã đưa bài #${post.machineCode || ''}${mediaLabel} vào hàng đợi!`;
+        const code = post.machineCode ? `#${post.machineCode}` : '';
 
-        showToast(successMsg, 'success', result.fbPostUrl || post.fbPostUrl);
+        // Tự động sao chép nội dung bài viết vào Clipboard để người dùng dán tự do
+        if (post.content && navigator.clipboard && navigator.clipboard.writeText) {
+          try {
+            await navigator.clipboard.writeText(post.content);
+          } catch (clipErr) {
+            console.warn('[Clipboard] Không thể tự copy:', clipErr);
+          }
+        }
+
+        // 1. Chế độ ĐĂNG CẢ HAI (Both: Fanpage + Facebook cá nhân)
+        if (target === 'both') {
+          showToast(`Đã xuất bản mã ${code} lên Fanpage! Đang mở cửa sổ chia sẻ lên Trang Cá Nhân...`, 'success', result.fbPostUrl);
+          
+          if (result.shareUrl) {
+            const width = 640;
+            const height = 700;
+            const left = Math.max(0, (window.screen.width - width) / 2);
+            const top = Math.max(0, (window.screen.height - height) / 2);
+            window.open(
+              result.shareUrl,
+              'fb_share_dialog',
+              `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`
+            );
+          }
+        }
+        // 2. Chế độ ĐĂNG TRANG CÁ NHÂN (Personal only)
+        else if (target === 'personal') {
+          showToast(`✅ Đã copy bài viết ${code} vào Clipboard! Đang mở Facebook để bạn dán và đăng...`, 'success');
+          
+          const width = 800;
+          const height = 750;
+          const left = Math.max(0, (window.screen.width - width) / 2);
+          const top = Math.max(0, (window.screen.height - height) / 2);
+          window.open(
+            'https://www.facebook.com/',
+            'fb_personal_composer',
+            `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`
+          );
+        }
+        // 3. Chế độ FANPAGE
+        else {
+          const successMsg = publishImmediately
+            ? `Đã đăng thành công mã ${code}${mediaLabel} lên Fanpage!`
+            : `Đã đưa bài ${code}${mediaLabel} vào hàng đợi!`;
+
+          showToast(successMsg, 'success', result.fbPostUrl || post.fbPostUrl);
+        }
       } else {
         showToast(`Lỗi: ${result.error || 'Không thể đăng bài'}`, 'error');
       }
@@ -434,21 +484,49 @@
     const wrapper = document.createElement('div');
     wrapper.className = 'vg-zalo-btn-wrapper';
 
-    // Button 1: ⚡ ĐĂNG FANPAGE (Đăng ngay lập tức)
+    // Nút 1: 🚀 ĐĂNG CẢ HAI (Khuyên dùng: Đăng Fanpage + Mở chia sẻ Cá Nhân)
+    const dualBtn = document.createElement('button');
+    dualBtn.className = 'vg-zalo-autopost-btn vg-btn-dual';
+    dualBtn.title = 'Đăng Album HD lên Fanpage đồng thời mở chia sẻ lên Trang Cá Nhân (Khuyên dùng)';
+    dualBtn.innerHTML = '🚀 ĐĂNG CẢ HAI';
+    dualBtn.onclick = async (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      dualBtn.disabled = true;
+      dualBtn.innerHTML = '🌀 Đang nạp ảnh...';
+      const data = await extractMessageData(messageEl);
+      pushToFacebook(data, { publishImmediately: true, target: 'both' }, dualBtn);
+    };
+
+    // Nút 2: ⚡ FANPAGE (Chỉ đăng lên Fanpage)
     const publishBtn = document.createElement('button');
     publishBtn.className = 'vg-zalo-autopost-btn';
     publishBtn.title = 'Bấm để AI bóc tách cấu hình, tải ảnh và ĐĂNG NGAY lên Fanpage Facebook (Hotline: 0876637806)';
-    publishBtn.innerHTML = '⚡ ĐĂNG FANPAGE';
+    publishBtn.innerHTML = '⚡ FANPAGE';
     publishBtn.onclick = async (e) => {
       e.stopPropagation();
       e.preventDefault();
       publishBtn.disabled = true;
       publishBtn.innerHTML = '🌀 Đang nạp ảnh...';
       const data = await extractMessageData(messageEl);
-      pushToFacebook(data, true, publishBtn);
+      pushToFacebook(data, { publishImmediately: true, target: 'fanpage' }, publishBtn);
     };
 
-    // Button 2: ⏳ LÊN LỊCH (Đưa vào hàng đợi giờ vàng)
+    // Nút 3: 👤 CÁ NHÂN (Chỉ đăng lên Trang Cá Nhân)
+    const personalBtn = document.createElement('button');
+    personalBtn.className = 'vg-zalo-autopost-btn vg-btn-personal';
+    personalBtn.title = 'Bấm để AI bóc tách cấu hình, copy vào Clipboard và mở Facebook Cá Nhân để bạn đăng';
+    personalBtn.innerHTML = '👤 CÁ NHÂN';
+    personalBtn.onclick = async (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      personalBtn.disabled = true;
+      personalBtn.innerHTML = '🌀 Đang nạp ảnh...';
+      const data = await extractMessageData(messageEl);
+      pushToFacebook(data, { publishImmediately: false, target: 'personal' }, personalBtn);
+    };
+
+    // Nút 4: ⏳ LÊN LỊCH (Đưa vào hàng đợi giờ vàng)
     const scheduleBtn = document.createElement('button');
     scheduleBtn.className = 'vg-zalo-autopost-btn vg-btn-secondary';
     scheduleBtn.title = 'Bấm để đưa bài vào Hàng Đợi (Đăng tự động vào khung giờ vàng tiếp theo)';
@@ -459,10 +537,12 @@
       scheduleBtn.disabled = true;
       scheduleBtn.innerHTML = '🌀 Đang nạp ảnh...';
       const data = await extractMessageData(messageEl);
-      pushToFacebook(data, false, scheduleBtn);
+      pushToFacebook(data, { publishImmediately: false, target: 'fanpage' }, scheduleBtn);
     };
 
+    wrapper.appendChild(dualBtn);
     wrapper.appendChild(publishBtn);
+    wrapper.appendChild(personalBtn);
     wrapper.appendChild(scheduleBtn);
 
     // Inject into action menu or append directly below message content

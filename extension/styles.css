@@ -56,6 +56,26 @@
   background: #E0E7FF !important;
 }
 
+/* Nút Đăng Cả Hai (Dual-Post: Fanpage + Cá Nhân) */
+.vg-zalo-autopost-btn.vg-btn-dual {
+  background: #FB923C !important;
+  color: #431407 !important;
+}
+
+.vg-zalo-autopost-btn.vg-btn-dual:hover {
+  background: #FDBA74 !important;
+}
+
+/* Nút Đăng Trang Cá Nhân */
+.vg-zalo-autopost-btn.vg-btn-personal {
+  background: #38BDF8 !important;
+  color: #082F49 !important;
+}
+
+.vg-zalo-autopost-btn.vg-btn-personal:hover {
+  background: #7DD3FC !important;
+}
+
 /* Toast Notifications */
 #vg-toast-container {
   position: fixed;
