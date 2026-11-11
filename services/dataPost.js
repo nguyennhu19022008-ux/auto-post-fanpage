@@ -19,11 +19,12 @@ const {
 } = require('./gemini');
 
 // File paths for local fallbacks
-const LOCAL_TEMPLATES_FILE = path.join(__dirname, '..', 'data', 'model_templates.json');
-const TMP_TEMPLATES_FILE = path.join('/tmp', 'model_templates.json');
+const { dataFile, tmpFile } = require('../utils/runtime');
+const LOCAL_TEMPLATES_FILE = dataFile('model_templates.json');
+const TMP_TEMPLATES_FILE = tmpFile('model_templates.json');
 
-const LOCAL_QUEUE_FILE = path.join(__dirname, '..', 'data', 'circular_queue.json');
-const TMP_QUEUE_FILE = path.join('/tmp', 'circular_queue.json');
+const LOCAL_QUEUE_FILE = dataFile('circular_queue.json');
+const TMP_QUEUE_FILE = tmpFile('circular_queue.json');
 
 /**
  * Remove Vietnamese diacritics and convert to ASCII slug

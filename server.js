@@ -686,11 +686,26 @@ app.post('/api/extension/push-post', async (req, res) => {
 
           const originalName = `zalo_${finalCode}_${i + 1}${ext}`;
           const uploaded = await uploadToSupabaseStorage(buffer, originalName, mime);
-          uploadedMediaFiles.push(uploaded);
-          console.log(`[Extension] ✅ Đã lưu media #${i + 1} lên Supabase Storage:`, uploaded.url);
+          if (uploaded) {
+            uploadedMediaFiles.push(uploaded);
+            console.log(`[Extension] ✅ Đã lưu media #${i + 1} lên Supabase Storage:`, uploaded.url);
+          }
         } catch (mediaErr) {
           console.warn(`[Extension] ⚠️ Lỗi xử lý media #${i + 1}:`, mediaErr.message);
         }
+      }
+    }
+
+    // 2b. Auto-Replenish Fallback: Nếu bài thiếu ảnh hoặc toàn bộ ảnh bị bộ lọc chặn, tự động bù ảnh HD từ kho Template
+    if (uploadedMediaFiles.length === 0) {
+      try {
+        const matchRes = await dataPostService.smartMatchTemplate(`${finalName || ''} ${rawText || ''} ${generated.content || ''}`);
+        if (matchRes && matchRes.matched && matchRes.template && Array.isArray(matchRes.template.media_files) && matchRes.template.media_files.length > 0) {
+          uploadedMediaFiles.push(...matchRes.template.media_files);
+          console.log(`[AutoReplenish] 📸 Đã tự động bù ${uploadedMediaFiles.length} ảnh HD chính hãng từ template [${matchRes.template.model_name}] cho mã #${finalCode}`);
+        }
+      } catch (repErr) {
+        console.warn('[AutoReplenish] Không thể bù ảnh từ template:', repErr.message);
       }
     }
 

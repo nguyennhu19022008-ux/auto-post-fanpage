@@ -5,6 +5,54 @@ const FormData = require('form-data');
 
 const GRAPH_API_VERSION = 'v21.0';
 const BASE_URL = `https://graph.facebook.com/${GRAPH_API_VERSION}`;
+const { IS_TEST_MODE } = require('../utils/runtime');
+
+// Mã lỗi Graph API mang tính tạm thời (an toàn để thử lại):
+// 1 = Unknown, 2 = Service temporarily unavailable, 4 = App rate limit,
+// 17 = User rate limit, 32 = Page rate limit, 341 = Application limit reached
+const TRANSIENT_FB_CODES = new Set([1, 2, 4, 17, 32, 341]);
+
+const sleepMs = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Phân loại lỗi để quyết định có thử lại hay không.
+ * @param {Error} error
+ * @param {boolean} idempotent - true nếu gửi lại KHÔNG tạo bài trùng (vd: upload ảnh unpublished)
+ */
+function isRetryableError(error, idempotent) {
+  const fbCode = error.response?.data?.error?.code;
+  const status = error.response?.status;
+
+  // Facebook đã trả lời và báo lỗi tạm thời -> request chưa được thực hiện -> an toàn thử lại
+  if (fbCode !== undefined) return TRANSIENT_FB_CODES.has(fbCode);
+  if (status >= 500) return true;
+
+  // Không có response (timeout / mất mạng): request CÓ THỂ đã thành công phía Facebook.
+  // Chỉ thử lại nếu thao tác idempotent, tránh đăng trùng bài lên Fanpage.
+  if (!error.response) return idempotent;
+
+  return false;
+}
+
+/**
+ * Bọc một lời gọi Graph API với cơ chế thử lại tối đa 3 lần (backoff 1.5s -> 3s).
+ */
+async function withRetry(label, fn, { idempotent = false, attempts = 3 } = {}) {
+  let lastError;
+  for (let i = 1; i <= attempts; i++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      if (i === attempts || !isRetryableError(error, idempotent)) throw error;
+      const wait = 1500 * i;
+      const reason = error.response?.data?.error?.message || error.code || error.message;
+      console.warn(`[FB API] ${label} lỗi tạm thời (lần ${i}/${attempts}): ${reason}. Thử lại sau ${wait}ms...`);
+      await sleepMs(wait);
+    }
+  }
+  throw lastError;
+}
 
 /**
  * Verify Facebook Page Access Token and retrieve page info
@@ -50,21 +98,27 @@ function resolveMediaFilePath(filePath) {
  * Supports both public HTTPS URLs (Supabase Storage) and local file streams
  */
 async function uploadUnpublishedPhoto(pageId, pageToken, filePath, fileUrl = '') {
-  const form = new FormData();
-  form.append('published', 'false');
-  form.append('access_token', pageToken);
+  // FormData stream chỉ dùng được 1 lần -> dựng lại form ở mỗi lần thử
+  const buildForm = () => {
+    const form = new FormData();
+    form.append('published', 'false');
+    form.append('access_token', pageToken);
+    if (fileUrl && fileUrl.startsWith('http')) {
+      form.append('url', fileUrl);
+    } else {
+      form.append('source', fs.createReadStream(resolveMediaFilePath(filePath)));
+    }
+    return form;
+  };
 
-  if (fileUrl && fileUrl.startsWith('http')) {
-    form.append('url', fileUrl);
-  } else {
-    const resolved = resolveMediaFilePath(filePath);
-    form.append('source', fs.createReadStream(resolved));
-  }
-
-  const response = await axios.post(`${BASE_URL}/${pageId}/photos`, form, {
-    headers: form.getHeaders(),
-    timeout: 30000
-  });
+  // Ảnh unpublished không hiển thị trên Fanpage -> thử lại không gây trùng bài
+  const response = await withRetry('Upload ảnh album', () => {
+    const form = buildForm();
+    return axios.post(`${BASE_URL}/${pageId}/photos`, form, {
+      headers: form.getHeaders(),
+      timeout: 30000
+    });
+  }, { idempotent: true });
 
   return response.data.id;
 }
@@ -119,8 +173,11 @@ async function publishPostToFanpage(postData, userSettings = {}) {
   const videoTitle = postData.title || (postData.machineName ? `Laptop ${postData.machineName}` : 'Laptop Vương Gia');
 
   // Check if credentials are present; if not, run in Test/Simulation Mode
-  if (!pageToken || pageToken.trim() === '') {
-    console.log('[FB SIMULATION] Đang chạy chế độ kiểm thử nội bộ (chưa cài Facebook Token).');
+  // VG_TEST_MODE: bộ test E2E không bao giờ được đăng bài thật lên Fanpage
+  if (IS_TEST_MODE || !pageToken || pageToken.trim() === '') {
+    console.log(IS_TEST_MODE
+      ? '[FB SIMULATION] VG_TEST_MODE đang bật: mô phỏng đăng bài, không gọi Facebook thật.'
+      : '[FB SIMULATION] Đang chạy chế độ kiểm thử nội bộ (chưa cài Facebook Token).');
     return {
       success: true,
       isSimulation: true,
@@ -194,8 +251,8 @@ async function publishPostToFanpage(postData, userSettings = {}) {
         mediaFbidList.push({ media_fbid: photoId });
       }
 
-      // Create multi-photo feed post
-      const response = await axios.post(
+      // Create multi-photo feed post (chỉ retry khi Facebook trả lỗi tạm thời rõ ràng)
+      const response = await withRetry('Xuất bản album', () => axios.post(
         `${BASE_URL}/${pageId}/feed`,
         null,
         {
@@ -206,7 +263,7 @@ async function publishPostToFanpage(postData, userSettings = {}) {
           },
           timeout: 45000
         }
-      );
+      ));
 
       const postId = response.data.id;
       return {
@@ -219,7 +276,7 @@ async function publishPostToFanpage(postData, userSettings = {}) {
 
     // 4. Text-only post
     console.log('[FB API] Đang đăng bài viết thuần text...');
-    const response = await axios.post(
+    const response = await withRetry('Đăng bài text', () => axios.post(
       `${BASE_URL}/${pageId}/feed`,
       null,
       {
@@ -229,7 +286,7 @@ async function publishPostToFanpage(postData, userSettings = {}) {
         },
         timeout: 30000
       }
-    );
+    ));
 
     const postId = response.data.id;
     return {

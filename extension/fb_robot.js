@@ -288,13 +288,18 @@
     });
     if (!hasPostButton) return false;
 
-    // 6. Must have "Tạo bài viết" / "Create post" title OR editor aria contains "nghĩ gì" / "what's on your mind"
+    // 6. Must have "Tạo bài viết" / "Create post" title OR editor aria contains "nghĩ gì" / "what's on your mind" / "dòng thời gian"
     const headings = Array.from(d.querySelectorAll('h1, h2, h3, div[role="heading"], span'));
     const hasCreatePostHeading = headings.some(h => {
       const text = (h.innerText || '').trim().toLowerCase();
       return text === 'tạo bài viết' || text === 'create post' || text === 'tạo bài viết công khai';
     });
-    const hasMindLabel = editorAria.includes('nghĩ gì') || editorAria.includes("what's on your mind");
+    const hasMindLabel =
+      editorAria.includes('nghĩ gì') ||
+      editorAria.includes("what's on your mind") ||
+      editorAria.includes('dòng thời gian') ||
+      editorAria.includes('timeline') ||
+      editorAria.includes('write something');
 
     return hasCreatePostHeading || hasMindLabel;
   }
@@ -311,13 +316,13 @@
   }
 
   /**
-   * Find the EXACT "Bạn đang nghĩ gì?" composer pill on Facebook Desktop Feed
+   * Find the EXACT "Bạn đang nghĩ gì?" composer pill on Facebook Desktop Feed & Personal Profile
    * NOTE: Strictly DO NOT click "Ảnh/video" here because Chrome blocks untrusted file chooser dialogs
    */
   function findFeedComposerTriggers() {
     const list = [];
 
-    // 1. Target leaf span/div containing "đang nghĩ gì" or "what's on your mind"
+    // 1. Target leaf span/div containing "đang nghĩ gì", "what's on your mind", or "dòng thời gian"
     const allTextNodes = Array.from(document.querySelectorAll('span, div'));
     for (const node of allTextNodes) {
       if (node.children.length > 0) continue; // leaf node only
@@ -325,7 +330,12 @@
 
       const text = (node.innerText || '').trim().toLowerCase();
       if (
-        (text.includes('nghĩ gì') || text.includes("what's on your mind") || text.includes('tạo bài viết') || text.includes('create post')) &&
+        (text.includes('nghĩ gì') ||
+         text.includes("what's on your mind") ||
+         text.includes('tạo bài viết') ||
+         text.includes('create post') ||
+         text.includes('dòng thời gian') ||
+         text.includes('write something')) &&
         !text.includes('bình luận') && !text.includes('xem thêm') && !text.includes('tin nhắn') && !text.includes('ảnh/video')
       ) {
         // The interactive role="button" container
@@ -342,7 +352,7 @@
 
     // 2. Direct query for aria-label or data-pagelet composer button (excluding photo/video)
     const directQuery = Array.from(document.querySelectorAll(
-      'div[aria-label*="nghĩ gì" i][role="button"], div[aria-label*="what\'s on your mind" i][role="button"], div[data-pagelet*="Composer"] div[role="button"][tabindex="0"], div[data-pagelet="FeedUnit_0"] div[role="button"][tabindex="0"]'
+      'div[aria-label*="nghĩ gì" i][role="button"], div[aria-label*="what\'s on your mind" i][role="button"], div[aria-label*="dòng thời gian" i][role="button"], div[data-pagelet*="Composer"] div[role="button"][tabindex="0"], div[data-pagelet="ProfileComposer"] div[role="button"][tabindex="0"], div[data-pagelet="FeedUnit_0"] div[role="button"][tabindex="0"]'
     ));
     for (const el of directQuery) {
       const text = (el.innerText || el.getAttribute('aria-label') || '').toLowerCase();
@@ -549,9 +559,18 @@
         } catch (e) {}
       }
 
-      // Dispatch event để React cập nhật State
-      editor.dispatchEvent(new InputEvent('beforeinput', { bubbles: true, inputType: 'insertText', data: textToInsert }));
-      editor.dispatchEvent(new InputEvent('input', { bubbles: true }));
+      // Dispatch event để React Lexical cập nhật State và bật nút Đăng (aria-disabled="false")
+      editor.dispatchEvent(new InputEvent('beforeinput', { bubbles: true, cancelable: true, inputType: 'insertText', data: textToInsert }));
+      editor.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: textToInsert }));
+      try {
+        document.execCommand('insertText', false, ' ');
+        document.execCommand('delete', false, null);
+      } catch (e) {}
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(textToInsert).catch(() => {});
+        }
+      } catch (e) {}
       setStepStatus(2, 'success', 'Đã điền xong cấu hình máy!');
       await sleep(800);
 
@@ -614,7 +633,7 @@
 
         // Chờ tiến trình upload ảnh hoàn tất (Facebook hiển thị progress bar hoặc nút Đăng có aria-disabled="true")
         let uploadWaitTime = 0;
-        const maxUploadWait = 15000; // Chờ tối đa 15s cho ảnh tải lên hoàn tất
+        const maxUploadWait = 30000; // Chờ tối đa 30s cho album ảnh HD tải lên hoàn tất
         while (uploadWaitTime < maxUploadWait) {
           if (isCancelled) return;
           const isUploading = modal.querySelector('div[role="progressbar"], [aria-valuemin], .sp_progress, div[data-visualcompletion="loading-state"]');
@@ -643,7 +662,7 @@
         });
 
         if (postBtn) {
-          postBtn.click();
+          simulateRealisticClick(postBtn);
           setStepStatus(4, 'success', '✅ ĐÃ XUẤT BẢN THÀNH CÔNG LÊN TRANG CÁ NHÂN!');
           if (countdownBox) {
             countdownBox.innerHTML = '<span style="color:#059669; font-weight:900; font-size:14px;">🎉 BÀI VIẾT ĐÃ ĐƯỢC ĐĂNG LÊN TRANG CÁ NHÂN!</span>';

@@ -110,8 +110,9 @@ async function fetchAllPostsFromDb() {
   }
 
   // Fallback to /tmp/posts.json or local posts.json
-  const tmpFile = path.join('/tmp', 'posts.json');
-  const localFile = path.join(__dirname, '..', 'data', 'posts.json');
+  const runtime = require('../utils/runtime');
+  const tmpFile = runtime.tmpFile('posts.json');
+  const localFile = runtime.dataFile('posts.json');
   try {
     if (fs.existsSync(tmpFile)) {
       return JSON.parse(fs.readFileSync(tmpFile, 'utf8') || '[]');

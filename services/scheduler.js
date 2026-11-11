@@ -12,10 +12,11 @@ const {
   saveSettingsToDb
 } = require('./supabase');
 
-const POSTS_FILE = path.join(__dirname, '..', 'data', 'posts.json');
-const POSTS_TMP_FILE = path.join('/tmp', 'posts.json');
-const SETTINGS_FILE = path.join(__dirname, '..', 'data', 'settings.json');
-const SETTINGS_TMP_FILE = path.join('/tmp', 'settings.json');
+const { dataFile, tmpFile } = require('../utils/runtime');
+const POSTS_FILE = dataFile('posts.json');
+const POSTS_TMP_FILE = tmpFile('posts.json');
+const SETTINGS_FILE = dataFile('settings.json');
+const SETTINGS_TMP_FILE = tmpFile('settings.json');
 
 /**
  * Fetch all posts: Supabase is Single Source of Truth, falls back to /tmp & local file
@@ -224,8 +225,23 @@ async function checkAndPublishDuePosts() {
 
     // 2. T (Due time): Check if scheduledTime has arrived
     if (now >= scheduledDate && (post.status === 'queued' || post.status === 'pending_media')) {
+      // Auto-Replenish Fallback before skipping if media is missing
+      let readyMedia = hasMedia;
+      if (!readyMedia) {
+        try {
+          const dataPostService = require('./dataPost');
+          const matchRes = await dataPostService.smartMatchTemplate(`${post.machineName || ''} ${post.content || ''}`);
+          if (matchRes && matchRes.matched && matchRes.template && Array.isArray(matchRes.template.media_files) && matchRes.template.media_files.length > 0) {
+            post.mediaFiles = matchRes.template.media_files;
+            readyMedia = true;
+            hasUpdates = true;
+            console.log(`[Scheduler] 📸 Tự động bù ${post.mediaFiles.length} ảnh HD từ template [${matchRes.template.model_name}] cho bài [${post.id}]`);
+          }
+        } catch (e) {}
+      }
+
       // Safety check: Does it have at least 1 image or video or cloud link?
-      if (!hasMedia) {
+      if (!readyMedia) {
         console.log(`[Scheduler] ⏭️ BỎ QUA bài [${post.id}] (Mã #${post.machineCode}): Đến giờ đăng nhưng chưa được cấp ảnh/video.`);
         post.status = 'skipped_no_media';
         post.skippedAt = new Date().toISOString();

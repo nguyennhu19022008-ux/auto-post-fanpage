@@ -109,6 +109,7 @@ function generateEmailHtml(post, settings) {
  * Send email notification when a post is successfully published
  */
 async function sendPostNotification(post, settings) {
+  if (require('../utils/runtime').IS_TEST_MODE) return { success: false, reason: 'test_mode' };
   if (settings.emailNotificationEnabled === false) {
     console.log('[Mailer] 🔕 Thông báo email đang tắt theo cài đặt.');
     return { success: false, reason: 'disabled' };
@@ -179,6 +180,7 @@ async function sendTestEmail(settings) {
  * Send 20-minute pre-publish reminder email asking for media
  */
 async function sendMediaReminderEmail(post, quickUploadUrl, settings) {
+  if (require('../utils/runtime').IS_TEST_MODE) return { success: false, reason: 'test_mode' };
   if (settings.emailNotificationEnabled === false) return { success: false, reason: 'disabled' };
 
   const recipient = settings.notificationEmail || settings.email || 'nguyennhu19022008@gmail.com';

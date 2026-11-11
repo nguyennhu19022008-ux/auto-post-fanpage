@@ -24,6 +24,7 @@ function escapeHtml(text) {
  * Send a message via Telegram Bot API
  */
 async function sendTelegramMessage(token, chatId, text, options = {}) {
+  if (require('../utils/runtime').IS_TEST_MODE) return null;
   if (!token || !chatId) {
     console.warn('[Telegram] Thiếu token hoặc chatId để gửi tin nhắn');
     return null;

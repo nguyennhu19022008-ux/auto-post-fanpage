@@ -5,6 +5,37 @@
  * Executes Tiers 1-4, reports detailed per-test status, and returns proper exit codes.
  */
 
+// ============ CÔ LẬP MÔI TRƯỜNG KIỂM THỬ (phải chạy TRƯỚC khi nạp bất kỳ service nào) ============
+// Mục tiêu: chạy test KHÔNG BAO GIỜ đăng bài thật lên Fanpage, ghi Supabase Cloud,
+// gửi email/Telegram, tiêu hạn mức Gemini, hay làm bẩn thư mục data/ production.
+(function isolateTestEnvironment() {
+  const fs = require('fs');
+  const os = require('os');
+  const path = require('path');
+
+  process.env.VG_TEST_MODE = '1';
+  // dotenv không ghi đè biến đã tồn tại -> chuỗi rỗng = vô hiệu hóa Supabase Cloud
+  process.env.SUPABASE_URL = '';
+  process.env.SUPABASE_KEY = '';
+  process.env.SUPABASE_ANON_KEY = '';
+
+  const sourceDataDir = path.join(__dirname, '..', '..', 'data');
+  const sandboxDir = fs.mkdtempSync(path.join(os.tmpdir(), 'vg-e2e-data-'));
+  if (fs.existsSync(sourceDataDir)) {
+    for (const file of fs.readdirSync(sourceDataDir)) {
+      const src = path.join(sourceDataDir, file);
+      if (fs.statSync(src).isFile()) fs.copyFileSync(src, path.join(sandboxDir, file));
+    }
+  }
+  fs.mkdirSync(path.join(sandboxDir, '_tmp'), { recursive: true });
+  process.env.VG_DATA_DIR = sandboxDir;
+
+  process.on('exit', () => {
+    try { fs.rmSync(sandboxDir, { recursive: true, force: true }); } catch (e) {}
+  });
+  console.log(`[Harness] 🔒 Test sandbox: ${sandboxDir} (Facebook/Supabase/Email/Telegram/Gemini đã bị cô lập)`);
+})();
+
 const { startTestServer } = require('./test_helpers');
 const tier1 = require('./tier1_feature.test');
 const tier2 = require('./tier2_boundary.test');

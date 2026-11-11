@@ -1,15 +1,29 @@
 const axios = require('axios');
 require('dotenv').config();
 
-const GEMINI_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];
+// Danh sách model chính thức hiện hành (theo tài liệu Gemini API).
+// Free Tier tính hạn mức theo TỪNG model, nên nhiều model fallback = nhiều hạn mức hơn.
+const GEMINI_MODELS = ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite'];
+
+// Model đã hết hạn mức ngày (429) được tạm gác lại để không tốn thời gian gọi lại liên tục
+const exhaustedUntil = new Map();
+const EXHAUSTED_COOLDOWN_MS = 60 * 60 * 1000; // 1 giờ
 
 /**
  * Reusable Gemini API caller with automatic fallback across reliable models
  */
 async function callGeminiWithFallback(contents, apiKey, timeout = 35000) {
-  let lastError = null;
+  if (require('../utils/runtime').IS_TEST_MODE) {
+    // Bộ test không được tiêu tốn hạn mức Gemini thật -> ép dùng fallback nội bộ
+    throw new Error('VG_TEST_MODE: bỏ qua Gemini API, dùng bộ viết bài dự phòng.');
+  }
 
-  for (const model of GEMINI_MODELS) {
+  let lastError = null;
+  const now = Date.now();
+  const available = GEMINI_MODELS.filter((m) => (exhaustedUntil.get(m) || 0) <= now);
+  const candidates = available.length > 0 ? available : GEMINI_MODELS;
+
+  for (const model of candidates) {
     try {
       const response = await axios.post(
         `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
@@ -25,7 +39,12 @@ async function callGeminiWithFallback(contents, apiKey, timeout = 35000) {
       lastError = err;
       const status = err.response?.status;
       const msg = err.response?.data?.error?.message || err.message;
-      console.warn(`[Gemini API] Thử model ${model} không thành công (Status: ${status}): ${msg}. Chuyển sang model dự phòng tiếp theo...`);
+      if (status === 429) {
+        exhaustedUntil.set(model, Date.now() + EXHAUSTED_COOLDOWN_MS);
+        console.warn(`[Gemini API] ${model} hết hạn mức (429). Tạm gác 1 giờ, chuyển model dự phòng...`);
+      } else {
+        console.warn(`[Gemini API] Thử model ${model} không thành công (Status: ${status}): ${String(msg).slice(0, 200)}. Chuyển sang model dự phòng tiếp theo...`);
+      }
     }
   }
 
