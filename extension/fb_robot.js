@@ -135,50 +135,95 @@
   }
 
   /**
+   * Helper: Check if element is truly visible in viewport
+   */
+  function isVisible(el) {
+    if (!el || !(el instanceof Element)) return false;
+    const rect = el.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return false;
+    const style = window.getComputedStyle(el);
+    return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+  }
+
+  /**
    * Helper: Realistic Full-Event Click Simulation for React 18 Event Delegation
    */
   function simulateRealisticClick(el) {
-    if (!el) return false;
+    if (!el || !(el instanceof Element)) return false;
     try {
       if (typeof el.scrollIntoView === 'function') {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+        el.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'center' });
       }
       if (typeof el.focus === 'function') {
         el.focus();
       }
 
-      const rect = el.getBoundingClientRect ? el.getBoundingClientRect() : { left: 100, top: 100, width: 50, height: 20 };
-      const clientX = Math.round(rect.left + rect.width / 2);
-      const clientY = Math.round(rect.top + rect.height / 2);
+      const rect = el.getBoundingClientRect();
+      const clientX = Math.round(rect.left + Math.max(5, rect.width / 2));
+      const clientY = Math.round(rect.top + Math.max(5, rect.height / 2));
 
-      const eventOpts = {
+      const commonOpts = {
         bubbles: true,
         cancelable: true,
         composed: true,
         view: window,
         clientX,
         clientY,
-        screenX: clientX,
-        screenY: clientY,
-        button: 0,
-        buttons: 1
+        screenX: clientX + (window.screenX || 0),
+        screenY: clientY + (window.screenY || 0)
       };
 
-      // Full event chain for React 18 / Relay Event Delegation
-      try { el.dispatchEvent(new PointerEvent('pointerover', eventOpts)); } catch (e) {}
-      try { el.dispatchEvent(new MouseEvent('mouseover', eventOpts)); } catch (e) {}
-      try { el.dispatchEvent(new PointerEvent('pointerdown', eventOpts)); } catch (e) {}
-      try { el.dispatchEvent(new MouseEvent('mousedown', eventOpts)); } catch (e) {}
-      try { el.dispatchEvent(new PointerEvent('pointerup', eventOpts)); } catch (e) {}
-      try { el.dispatchEvent(new MouseEvent('mouseup', eventOpts)); } catch (e) {}
-      try { el.dispatchEvent(new MouseEvent('click', eventOpts)); } catch (e) {}
+      const downOpts = {
+        ...commonOpts,
+        button: 0,
+        buttons: 1,
+        isPrimary: true,
+        pointerId: 1,
+        pointerType: 'mouse',
+        pressure: 0.5
+      };
 
-      // Native click
+      const upOpts = {
+        ...commonOpts,
+        button: 0,
+        buttons: 0,
+        isPrimary: true,
+        pointerId: 1,
+        pointerType: 'mouse',
+        pressure: 0
+      };
+
+      // 1. Hover / pointerover
+      try { el.dispatchEvent(new PointerEvent('pointerover', downOpts)); } catch (e) {}
+      try { el.dispatchEvent(new PointerEvent('pointerenter', downOpts)); } catch (e) {}
+      try { el.dispatchEvent(new MouseEvent('mouseover', downOpts)); } catch (e) {}
+      try { el.dispatchEvent(new MouseEvent('mouseenter', downOpts)); } catch (e) {}
+
+      // 2. Pointer down & mouse down (buttons: 1)
+      try { el.dispatchEvent(new PointerEvent('pointerdown', downOpts)); } catch (e) {}
+      try { el.dispatchEvent(new MouseEvent('mousedown', downOpts)); } catch (e) {}
+
+      // 3. Pointer up & mouse up (buttons: 0)
+      try { el.dispatchEvent(new PointerEvent('pointerup', upOpts)); } catch (e) {}
+      try { el.dispatchEvent(new MouseEvent('mouseup', upOpts)); } catch (e) {}
+
+      // 4. Click event (buttons: 0)
+      try { el.dispatchEvent(new MouseEvent('click', upOpts)); } catch (e) {}
+
+      // 5. Native click
       if (typeof el.click === 'function') {
         el.click();
       }
 
-      // Keyboard trigger fallback (Enter and Space)
+      // 6. Click top-most element at coordinates if it's an overlay
+      try {
+        const topEl = document.elementFromPoint(clientX, clientY);
+        if (topEl && topEl !== el && !topEl.contains(el) && !el.contains(topEl) && typeof topEl.click === 'function') {
+          topEl.click();
+        }
+      } catch (e) {}
+
+      // 7. Keyboard trigger fallback (Enter and Space)
       try {
         el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }));
         el.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }));
@@ -189,6 +234,141 @@
       console.warn('[VG FB Robot] simulateRealisticClick warning:', err);
       return false;
     }
+  }
+
+  /**
+   * Strictly check if a dialog is the REAL Facebook Create Post Modal (Zero False Positives)
+   */
+  function isCreatePostModal(d) {
+    if (!d || !(d instanceof Element)) return false;
+    if (d.closest('#vg-fb-robot-hud')) return false;
+
+    // Must be visible and reasonably large (at least 320x180 px)
+    const rect = d.getBoundingClientRect();
+    if (rect.width < 320 || rect.height < 180) return false;
+    const style = window.getComputedStyle(d);
+    if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') return false;
+
+    // Strictly exclude Messenger / Chat windows & Meta AI
+    const aria = (d.getAttribute('aria-label') || '').toLowerCase();
+    if (
+      aria.includes('đoạn chat') ||
+      aria.includes('tin nhắn') ||
+      aria.includes('chat with') ||
+      aria.includes('messenger') ||
+      aria.includes('cuộc trò chuyện') ||
+      aria.includes('meta ai')
+    ) {
+      return false;
+    }
+    const chatInput = d.querySelector('div[aria-label*="nhắn tin" i], div[aria-label*="tin nhắn" i], div[aria-label*="send a message" i]');
+    if (chatInput) return false;
+
+    // Criterion 1: Heading title contains "Tạo bài viết" or "Create post"
+    const headings = Array.from(d.querySelectorAll('h1, h2, h3, div[role="heading"], span'));
+    const hasCreatePostHeading = headings.some(h => {
+      const text = (h.innerText || '').trim().toLowerCase();
+      return text === 'tạo bài viết' || text === 'create post' || text === 'tạo bài viết công khai' || text.startsWith('tạo bài viết');
+    });
+
+    // Criterion 2: Button "Đăng" or "Post"
+    const buttons = Array.from(d.querySelectorAll('div[role="button"]'));
+    const hasPostButton = buttons.some(b => {
+      const label = (b.innerText || b.getAttribute('aria-label') || '').trim().toLowerCase();
+      return label === 'đăng' || label === 'post' || label.startsWith('đăng ') || label.startsWith('post ');
+    });
+
+    // Criterion 3: Lexical editor specific to post creation
+    const editor = d.querySelector(
+      'div[role="textbox"][contenteditable="true"], div[data-lexical-editor="true"], div[aria-label*="nghĩ gì" i], div[aria-label*="what\'s on your mind" i]'
+    );
+    const hasPostEditor = !!editor;
+
+    // A real Facebook Create Post modal MUST satisfy:
+    // (hasCreatePostHeading && hasPostButton) OR (hasPostEditor && hasPostButton) OR (hasCreatePostHeading && hasPostEditor)
+    return (hasCreatePostHeading && hasPostButton) || (hasPostEditor && hasPostButton) || (hasCreatePostHeading && hasPostEditor);
+  }
+
+  /**
+   * Find the REAL Facebook Create Post modal on document
+   */
+  function findCreatePostModal() {
+    const dialogs = Array.from(document.querySelectorAll('div[role="dialog"]'));
+    for (const d of dialogs) {
+      if (isCreatePostModal(d)) return d;
+    }
+    return null;
+  }
+
+  /**
+   * Find all clickable composer trigger candidates on Facebook Desktop Feed
+   */
+  function findFeedComposerTriggers() {
+    const list = [];
+    const elements = Array.from(document.querySelectorAll('div[role="button"], div[tabindex="0"], span, div'));
+
+    // Priority 1: Photo/video button (Green icon button next to composer pill)
+    for (const el of elements) {
+      if (el.closest('div[role="dialog"]') || el.closest('#vg-fb-robot-hud')) continue;
+      const text = (el.innerText || el.getAttribute('aria-label') || '').trim().toLowerCase();
+      if ((text === 'ảnh/video' || text.includes('ảnh/video') || text.includes('photo/video')) && isVisible(el)) {
+        list.push(el);
+        const btn = el.closest('div[role="button"]') || el.closest('div[tabindex="0"]');
+        if (btn) list.push(btn);
+      }
+    }
+
+    // Priority 2: Composer text pill ("Gia ơi, bạn đang nghĩ gì thế?", "Bạn đang nghĩ gì thế?")
+    for (const el of elements) {
+      if (el.closest('div[role="dialog"]') || el.closest('#vg-fb-robot-hud')) continue;
+      const text = (el.innerText || el.getAttribute('aria-label') || '').toLowerCase();
+      if (
+        (text.includes('nghĩ gì') || text.includes("what's on your mind") || text.includes('tạo bài viết') || text.includes('create post')) &&
+        !text.includes('bình luận') && !text.includes('xem thêm') && !text.includes('tin nhắn') && isVisible(el)
+      ) {
+        list.push(el);
+        const btn = el.closest('div[role="button"]') || el.closest('div[tabindex="0"]');
+        if (btn) list.push(btn);
+        if (el.parentElement) list.push(el.parentElement);
+      }
+    }
+
+    // Priority 3: Pagelet and Feed composer containers
+    const pageletBtns = Array.from(document.querySelectorAll(
+      'div[data-pagelet*="Composer"] div[role="button"], div[data-pagelet="FeedUnit_0"] div[role="button"], div[role="region"] div[role="button"]'
+    ));
+    for (const btn of pageletBtns) {
+      if (isVisible(btn) && !btn.closest('div[role="dialog"]') && !btn.closest('#vg-fb-robot-hud')) {
+        list.push(btn);
+      }
+    }
+
+    return Array.from(new Set(list)).filter(Boolean);
+  }
+
+  /**
+   * Wait for Create Post modal specifically via MutationObserver
+   */
+  function waitForCreatePostModal(timeout = 10000) {
+    return new Promise((resolve) => {
+      const existing = findCreatePostModal();
+      if (existing) return resolve(existing);
+
+      const observer = new MutationObserver(() => {
+        const found = findCreatePostModal();
+        if (found) {
+          observer.disconnect();
+          resolve(found);
+        }
+      });
+
+      observer.observe(document.body, { childList: true, subtree: true });
+
+      setTimeout(() => {
+        observer.disconnect();
+        resolve(findCreatePostModal());
+      }, timeout);
+    });
   }
 
   /**
@@ -231,77 +411,72 @@
       setStepStatus(1, 'active', 'Đang tìm và mở ô tạo bài viết...');
       await sleep(1000); // Chờ Facebook render các element
 
-      let modal = null;
+      let modal = findCreatePostModal();
       const openStartTime = Date.now();
-      const openTimeout = 15000; // Thử liên tục trong 15s
+      const openTimeout = 15000; // Thử tự động trong 15s
+
+      // Lắng nghe click thủ công từ người dùng để bắt ngay lập tức nếu người dùng bấm bằng tay
+      const manualClickListener = () => {
+        setTimeout(() => {
+          const m = findCreatePostModal();
+          if (m) modal = m;
+        }, 300);
+      };
+      document.addEventListener('click', manualClickListener, { capture: true, passive: true });
 
       while (!modal && (Date.now() - openStartTime < openTimeout)) {
-        if (isCancelled) return;
+        if (isCancelled) {
+          document.removeEventListener('click', manualClickListener, true);
+          return;
+        }
 
-        // Check if modal is already open
-        modal = document.querySelector('div[role="dialog"]');
+        modal = findCreatePostModal();
         if (modal) break;
 
-        // Collect all potential trigger elements on Facebook Desktop feed
-        const candidates = [];
+        const triggers = findFeedComposerTriggers();
 
-        // 1. Photo/Video button (Green icon "Ảnh/video"): Clicking this ALWAYS opens the dialog
-        const photoButtons = Array.from(document.querySelectorAll('div[role="button"], span, div[tabindex="0"]')).filter(b => {
-          if (b.closest('div[role="dialog"]') || b.closest('#vg-robot-hud')) return false;
-          const text = (b.innerText || b.getAttribute('aria-label') || '').trim().toLowerCase();
-          return text === 'ảnh/video' || text.includes('ảnh/video') || text.includes('photo/video');
-        });
-        photoButtons.forEach(b => {
-          candidates.push(b);
-          if (b.parentElement) candidates.push(b.parentElement);
-          const btn = b.closest('div[role="button"]');
-          if (btn) candidates.push(btn);
-        });
-
-        // 2. Main composer text pill ("Gia ơi, bạn đang nghĩ gì thế?")
-        const textElements = Array.from(document.querySelectorAll('div[role="button"], span, div[tabindex="0"], div[role="region"] div')).filter(el => {
-          if (el.closest('div[role="dialog"]') || el.closest('#vg-robot-hud')) return false;
-          const text = (el.innerText || el.getAttribute('aria-label') || '').toLowerCase();
-          return (
-            text.includes('nghĩ gì') ||
-            text.includes("what's on your mind") ||
-            text.includes('tạo bài viết') ||
-            text.includes('create post')
-          ) && !text.includes('xem thêm') && !text.includes('bình luận');
-        });
-        textElements.forEach(el => {
-          candidates.push(el);
-          const btn = el.closest('div[role="button"]');
-          if (btn) candidates.push(btn);
-          if (el.parentElement) candidates.push(el.parentElement);
-        });
-
-        // 3. Pagelet and Feed composers
-        const feedComposers = document.querySelectorAll(
-          'div[data-pagelet*="Composer"] div[role="button"], div[data-pagelet="ProfileComposer"] div[role="button"], div[role="main"] div[role="button"]'
-        );
-        feedComposers.forEach(fc => candidates.push(fc));
-
-        // Deduplicate candidates
-        const uniqueCandidates = Array.from(new Set(candidates));
-
-        // Try clicking each unique candidate
-        for (const target of uniqueCandidates) {
+        // Thử click từng phần tử kích hoạt
+        for (const target of triggers) {
           simulateRealisticClick(target);
+          if (target.firstElementChild) {
+            simulateRealisticClick(target.firstElementChild);
+          }
           await sleep(350);
-          modal = document.querySelector('div[role="dialog"]');
+          modal = findCreatePostModal();
           if (modal) break;
         }
 
         if (modal) break;
-        await sleep(600);
+
+        // Nếu sau 2.5 giây mà Facebook chưa mở, làm nổi bật viền vàng nhấp nháy để hướng dẫn người dùng
+        if (Date.now() - openStartTime > 2500 && !modal) {
+          setStepStatus(1, 'active', '👉 Vui lòng click vào ô "Bạn đang nghĩ gì thế?" (viền vàng)...');
+          triggers.forEach(c => {
+            if (c.style && !c.dataset.vgStyled) {
+              c.dataset.vgStyled = 'true';
+              c.style.outline = '4px solid #EAB308';
+              c.style.boxShadow = '0 0 16px rgba(234, 179, 8, 0.8)';
+              c.style.transition = 'all 0.3s ease';
+              c.style.cursor = 'pointer';
+            }
+          });
+        }
+
+        await sleep(500);
       }
 
       if (!modal) {
-        // Last resort: Add a pulsating notice to click the box if browser sandbox blocked synthetic click
-        setStepStatus(1, 'active', '👉 Vui lòng click vào ô "Bạn đang nghĩ gì thế?"...');
-        modal = await waitForElement('div[role="dialog"]', document.body, 12000);
+        modal = await waitForCreatePostModal(8000);
       }
+
+      document.removeEventListener('click', manualClickListener, true);
+
+      // Xóa viền vàng làm nổi bật nếu có
+      document.querySelectorAll('[data-vg-styled]').forEach(el => {
+        el.style.outline = '';
+        el.style.boxShadow = '';
+        delete el.dataset.vgStyled;
+      });
 
       if (!modal) {
         throw new Error('Hộp thoại tạo bài viết không xuất hiện. Hãy thử click bằng tay vào ô đăng bài trên Facebook.');
@@ -312,11 +487,18 @@
       // BƯỚC 2: Chờ Modal soạn bài ổn định và điền nội dung vào Editor
       await sleep(600);
       setStepStatus(2, 'active', 'Đang nhập nội dung bài viết...');
-      const editor = await waitForElement(
-        'div[role="textbox"][contenteditable="true"], div[data-lexical-editor="true"], div[aria-label*="Bạn đang nghĩ gì"], div[aria-label*="What\'s on your mind"]',
+      let editor = await waitForElement(
+        'div[role="textbox"][contenteditable="true"], div[data-lexical-editor="true"], div[contenteditable="true"], div[aria-label*="nghĩ gì" i], div[aria-label*="what\'s on your mind" i]',
         modal,
         6000
       );
+
+      // Fallback search across active modal and document
+      if (!editor) {
+        editor = modal.querySelector('div[role="textbox"][contenteditable="true"]') ||
+                 modal.querySelector('[contenteditable="true"]') ||
+                 document.querySelector('div[role="dialog"] div[data-lexical-editor="true"]');
+      }
 
       if (!editor) {
         throw new Error('Không tìm thấy khung soạn thảo văn bản trong hộp thoại.');
@@ -360,10 +542,10 @@
       setStepStatus(2, 'success', 'Đã điền xong cấu hình máy!');
       await sleep(800);
 
-      // BƯỚC 4: Đính kèm hình ảnh
+      // BƯỚC 3: Đính kèm hình ảnh
       setStepStatus(3, 'active', `Đang tải lên ${mediaUrls.length} ảnh HD...`);
       if (mediaUrls.length > 0) {
-        let fileInput = modal.querySelector('input[type="file"][accept*="image"]');
+        let fileInput = modal.querySelector('input[type="file"][accept*="image"]') || document.querySelector('input[type="file"][accept*="image"]');
         
         // Nếu input file chưa có sẵn trong DOM, bấm nút "Ảnh/video" để kích hoạt
         if (!fileInput) {
@@ -375,7 +557,7 @@
             simulateRealisticClick(photoBtn);
             await sleep(800);
           }
-          fileInput = await waitForElement('input[type="file"][accept*="image"]', modal, 5000);
+          fileInput = await waitForElement('input[type="file"][accept*="image"]', modal, 5000) || document.querySelector('input[type="file"][accept*="image"]');
         }
 
         if (fileInput) {
