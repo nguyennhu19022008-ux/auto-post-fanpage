@@ -377,35 +377,35 @@
           }
         }
 
-        // 1. Chế độ ĐĂNG CẢ HAI (Both: Fanpage + Facebook cá nhân)
+        // 1. Chế độ ĐĂNG CẢ HAI (Both: Fanpage + Facebook cá nhân Robot)
         if (target === 'both') {
-          showToast(`Đã xuất bản mã ${code} lên Fanpage! Đang mở cửa sổ chia sẻ lên Trang Cá Nhân...`, 'success', result.fbPostUrl);
+          showToast(`Đã xuất bản mã ${code} lên Fanpage! Robot đang tự động đăng tiếp lên Trang Cá Nhân...`, 'success', result.fbPostUrl);
           
-          if (result.shareUrl) {
-            const width = 640;
-            const height = 700;
-            const left = Math.max(0, (window.screen.width - width) / 2);
-            const top = Math.max(0, (window.screen.height - height) / 2);
-            window.open(
-              result.shareUrl,
-              'fb_share_dialog',
-              `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`
-            );
+          if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+            chrome.runtime.sendMessage({
+              action: 'triggerPersonalRobot',
+              payload: {
+                content: post.content,
+                mediaUrls: data.mediaUrls,
+                machineCode: post.machineCode || ''
+              }
+            });
           }
         }
-        // 2. Chế độ ĐĂNG TRANG CÁ NHÂN (Personal only)
+        // 2. Chế độ ĐĂNG TRANG CÁ NHÂN (Personal only via Robot)
         else if (target === 'personal') {
-          showToast(`✅ Đã copy bài viết ${code} vào Clipboard! Đang mở Facebook để bạn dán và đăng...`, 'success');
+          showToast(`🤖 Robot đang tự động mở Facebook và đăng bài ${code}...`, 'success');
           
-          const width = 800;
-          const height = 750;
-          const left = Math.max(0, (window.screen.width - width) / 2);
-          const top = Math.max(0, (window.screen.height - height) / 2);
-          window.open(
-            'https://www.facebook.com/',
-            'fb_personal_composer',
-            `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`
-          );
+          if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+            chrome.runtime.sendMessage({
+              action: 'triggerPersonalRobot',
+              payload: {
+                content: post.content,
+                mediaUrls: data.mediaUrls,
+                machineCode: post.machineCode || ''
+              }
+            });
+          }
         }
         // 3. Chế độ FANPAGE
         else {

@@ -1,0 +1,147 @@
+/* ========================================================
+   LAPTOP VƯƠNG GIA // FACEBOOK PERSONAL PROFILE ROBOT UI
+   Warm Neo-Brutalist Heads-Up Display (HUD)
+   ======================================================== */
+
+#vg-fb-robot-hud {
+  position: fixed !important;
+  top: 24px !important;
+  right: 24px !important;
+  z-index: 2147483647 !important;
+  background: #FFFFFF !important;
+  color: #18181B !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+  font-size: 13px !important;
+  border: 3px solid #18181B !important;
+  border-radius: 10px !important;
+  box-shadow: 5px 5px 0px #18181B !important;
+  width: 360px !important;
+  max-width: 90vw !important;
+  overflow: hidden !important;
+  animation: vgHudSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  pointer-events: auto !important;
+}
+
+@keyframes vgHudSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.vg-hud-header {
+  background: #FDE047 !important;
+  color: #18181B !important;
+  padding: 10px 14px !important;
+  border-bottom: 2px solid #18181B !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  font-weight: 900 !important;
+  font-size: 12px !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+}
+
+.vg-hud-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.vg-hud-close-btn {
+  background: transparent !important;
+  border: none !important;
+  font-size: 16px !important;
+  cursor: pointer !important;
+  font-weight: 900 !important;
+  color: #18181B !important;
+  padding: 0 4px !important;
+}
+
+.vg-hud-close-btn:hover {
+  color: #DC2626 !important;
+}
+
+.vg-hud-body {
+  padding: 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.vg-hud-step {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+}
+
+.vg-hud-step.active {
+  color: #18181B !important;
+  font-weight: 800 !important;
+}
+
+.vg-hud-step.success {
+  color: #059669 !important;
+}
+
+.vg-hud-step-icon {
+  font-size: 14px !important;
+  width: 18px !important;
+  text-align: center !important;
+}
+
+.vg-hud-countdown-box {
+  background: #FEF3C7 !important;
+  border: 2px solid #18181B !important;
+  border-radius: 6px !important;
+  padding: 10px !important;
+  text-align: center !important;
+  margin-top: 4px !important;
+}
+
+.vg-hud-countdown-text {
+  font-weight: 900 !important;
+  font-size: 14px !important;
+  color: #92400E !important;
+  margin-bottom: 8px !important;
+}
+
+.vg-hud-actions {
+  display: flex !important;
+  gap: 8px !important;
+  justify-content: center !important;
+}
+
+.vg-hud-btn {
+  padding: 6px 12px !important;
+  font-size: 11.5px !important;
+  font-weight: 800 !important;
+  border: 2px solid #18181B !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  box-shadow: 2px 2px 0px #18181B !important;
+  transition: transform 0.1s ease !important;
+}
+
+.vg-hud-btn:active {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 1px 1px 0px #18181B !important;
+}
+
+.vg-hud-btn-cancel {
+  background: #FEE2E2 !important;
+  color: #991B1B !important;
+}
+
+.vg-hud-btn-now {
+  background: #DCFCE7 !important;
+  color: #166534 !important;
+}

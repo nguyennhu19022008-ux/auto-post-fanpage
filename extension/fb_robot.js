@@ -1,0 +1,340 @@
+/**
+ * LAPTOP VƯƠNG GIA // FACEBOOK PERSONAL PROFILE ROBOT
+ * Content Script for facebook.com
+ * Automates 100% posting to User Personal Timeline with zero human effort
+ */
+
+(function () {
+  'use strict';
+
+  console.log('[VG FB Robot] Robot tự động đăng bài Facebook cá nhân đã kích hoạt!');
+
+  let hudEl = null;
+  let countdownTimer = null;
+  let isCancelled = false;
+
+  /**
+   * Helper: Sleep for ms
+   */
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  /**
+   * Convert Data URL (Base64) to real Browser File object
+   */
+  function dataUrlToFile(dataUrl, filename) {
+    try {
+      const arr = dataUrl.split(',');
+      const mimeMatch = arr[0].match(/:(.*?);/);
+      const mime = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new File([u8arr], filename, { type: mime });
+    } catch (e) {
+      console.warn('[VG FB Robot] Lỗi chuyển dataUrl sang File:', e);
+      return null;
+    }
+  }
+
+  /**
+   * Create and show HUD status widget
+   */
+  function createHud(machineCode = '') {
+    if (document.getElementById('vg-fb-robot-hud')) {
+      document.getElementById('vg-fb-robot-hud').remove();
+    }
+
+    hudEl = document.createElement('div');
+    hudEl.id = 'vg-fb-robot-hud';
+    hudEl.innerHTML = `
+      <div class="vg-hud-header">
+        <div class="vg-hud-title">
+          <span>⚡</span> LAPTOP VƯƠNG GIA ROBOT
+        </div>
+        <button class="vg-hud-close-btn" id="vg-hud-close" title="Đóng">&times;</button>
+      </div>
+      <div class="vg-hud-body">
+        <div class="vg-hud-step active" id="vg-step-1">
+          <span class="vg-hud-step-icon">🔍</span>
+          <span>Đang tìm ô tạo bài viết cá nhân...</span>
+        </div>
+        <div class="vg-hud-step" id="vg-step-2">
+          <span class="vg-hud-step-icon">📝</span>
+          <span>Đang điền cấu hình máy #${machineCode}...</span>
+        </div>
+        <div class="vg-hud-step" id="vg-step-3">
+          <span class="vg-hud-step-icon">🖼️</span>
+          <span>Đang đính kèm ảnh thực tế...</span>
+        </div>
+        <div class="vg-hud-step" id="vg-step-4">
+          <span class="vg-hud-step-icon">🚀</span>
+          <span>Đang chuẩn bị xuất bản...</span>
+        </div>
+        <div class="vg-hud-countdown-box" id="vg-hud-countdown-area" style="display: none;">
+          <div class="vg-hud-countdown-text" id="vg-countdown-label">Tự động bấm 'Đăng' sau 3s...</div>
+          <div class="vg-hud-actions">
+            <button class="vg-hud-btn vg-hud-btn-cancel" id="vg-btn-cancel-post">HỦY TỰ ĐỘNG</button>
+            <button class="vg-hud-btn vg-hud-btn-now" id="vg-btn-post-now">ĐĂNG NGAY</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(hudEl);
+
+    document.getElementById('vg-hud-close').onclick = () => {
+      cancelAutoPost();
+      hudEl.remove();
+    };
+
+    document.getElementById('vg-btn-cancel-post').onclick = () => {
+      cancelAutoPost();
+    };
+
+    return hudEl;
+  }
+
+  function setStepStatus(stepNum, status = 'active', text = null) {
+    const stepEl = document.getElementById(`vg-step-${stepNum}`);
+    if (!stepEl) return;
+    stepEl.className = `vg-hud-step ${status}`;
+    if (text) {
+      stepEl.querySelector('span:last-child').innerText = text;
+    }
+  }
+
+  function cancelAutoPost() {
+    isCancelled = true;
+    if (countdownTimer) clearInterval(countdownTimer);
+    const area = document.getElementById('vg-hud-countdown-area');
+    if (area) {
+      area.innerHTML = '<span style="color:#DC2626; font-weight:bold;">⛔ Đã hủy tự động đăng! Bạn có thể tự chỉnh sửa và bấm Đăng.</span>';
+    }
+  }
+
+  /**
+   * Wait for a DOM element matching selector
+   */
+  function waitForElement(selector, root = document, timeout = 7000) {
+    return new Promise((resolve) => {
+      const el = root.querySelector(selector);
+      if (el) return resolve(el);
+
+      const observer = new MutationObserver(() => {
+        const found = root.querySelector(selector);
+        if (found) {
+          observer.disconnect();
+          resolve(found);
+        }
+      });
+
+      observer.observe(root, { childList: true, subtree: true });
+
+      setTimeout(() => {
+        observer.disconnect();
+        resolve(null);
+      }, timeout);
+    });
+  }
+
+  /**
+   * MAIN AUTOMATION WORKFLOW
+   */
+  async function executePersonalPost(payload) {
+    const { content, mediaUrls = [], machineCode = '' } = payload;
+    isCancelled = false;
+
+    console.log('[VG FB Robot] Bắt đầu quy trình tự động đăng bài lên trang cá nhân:', machineCode);
+    createHud(machineCode);
+
+    try {
+      // BƯỚC 1: Tìm ô "Bạn đang nghĩ gì thế?"
+      setStepStatus(1, 'active', 'Đang tìm ô tạo bài viết...');
+      await sleep(1500); // Chờ trang tải ổn định
+
+      let composerTrigger = null;
+      // Selector đa ngôn ngữ (Tiếng Việt & Tiếng Anh)
+      const triggerCandidates = Array.from(document.querySelectorAll('div[role="button"], div[aria-label*="Tạo bài viết"], div[aria-label*="Create a post"], span'));
+      for (const el of triggerCandidates) {
+        const text = (el.innerText || el.getAttribute('aria-label') || '').toLowerCase();
+        if (
+          (text.includes('bạn đang nghĩ gì') || text.includes("what's on your mind") || text.includes('tạo bài viết') || text.includes('create post')) &&
+          !el.closest('div[role="dialog"]') // Không phải trong modal đã mở
+        ) {
+          composerTrigger = el;
+          break;
+        }
+      }
+
+      if (!composerTrigger) {
+        // Fallback: Tìm qua form feed
+        composerTrigger = document.querySelector('div[data-pagelet="ProfileComposer"] div[role="button"], div[data-pagelet="FeedUnit_0"] div[role="button"]');
+      }
+
+      if (!composerTrigger) {
+        throw new Error('Không tìm thấy ô "Bạn đang nghĩ gì thế?" trên giao diện Facebook.');
+      }
+
+      setStepStatus(1, 'success', 'Đã mở khung soạn bài!');
+      composerTrigger.click();
+
+      // BƯỚC 2: Chờ Modal soạn bài xuất hiện
+      await sleep(1200);
+      const modal = await waitForElement('div[role="dialog"]', document.body, 8000);
+      if (!modal) {
+        throw new Error('Hộp thoại tạo bài viết không xuất hiện.');
+      }
+
+      // BƯỚC 3: Điền nội dung bài viết vào Lexical Editor
+      setStepStatus(2, 'active', 'Đang nhập nội dung bài viết...');
+      const editor = await waitForElement(
+        'div[role="textbox"][contenteditable="true"], div[data-lexical-editor="true"], div[aria-label*="Bạn đang nghĩ gì"], div[aria-label*="What\'s on your mind"]',
+        modal,
+        6000
+      );
+
+      if (!editor) {
+        throw new Error('Không tìm thấy khung soạn thảo văn bản trong hộp thoại.');
+      }
+
+      editor.focus();
+      await sleep(400);
+
+      // Điền nội dung văn bản chuẩn Lexical
+      const textToInsert = content || '';
+      try {
+        document.execCommand('selectAll', false, null);
+        document.execCommand('insertText', false, textToInsert);
+      } catch (e) {
+        console.warn('[VG FB Robot] execCommand insertText thất bại, dùng fallback:', e);
+      }
+
+      // Dispatch event để React cập nhật State
+      editor.dispatchEvent(new InputEvent('beforeinput', { bubbles: true, inputType: 'insertText', data: textToInsert }));
+      editor.dispatchEvent(new InputEvent('input', { bubbles: true }));
+      setStepStatus(2, 'success', 'Đã điền xong cấu hình máy!');
+      await sleep(800);
+
+      // BƯỚC 4: Đính kèm hình ảnh
+      setStepStatus(3, 'active', `Đang tải lên ${mediaUrls.length} ảnh HD...`);
+      if (mediaUrls.length > 0) {
+        let fileInput = modal.querySelector('input[type="file"][accept*="image"]');
+        
+        // Nếu input file chưa có sẵn trong DOM, bấm nút "Ảnh/video" để kích hoạt
+        if (!fileInput) {
+          const photoBtn = Array.from(modal.querySelectorAll('div[role="button"], div[aria-label*="Ảnh/video"], div[aria-label*="Photo/video"], img[src*="photo"]')).find(b => {
+            const label = (b.getAttribute('aria-label') || b.innerText || '').toLowerCase();
+            return label.includes('ảnh') || label.includes('photo');
+          });
+          if (photoBtn) {
+            photoBtn.click();
+            await sleep(1000);
+          }
+          fileInput = await waitForElement('input[type="file"][accept*="image"]', modal, 5000);
+        }
+
+        if (fileInput) {
+          const fileObjects = [];
+          for (let i = 0; i < mediaUrls.length; i++) {
+            const dataUrl = mediaUrls[i];
+            const fileObj = dataUrlToFile(dataUrl, `laptop_vuonggia_${machineCode}_${i + 1}.jpg`);
+            if (fileObj) fileObjects.push(fileObj);
+          }
+
+          if (fileObjects.length > 0) {
+            const dataTransfer = new DataTransfer();
+            fileObjects.forEach(f => dataTransfer.items.add(f));
+            fileInput.files = dataTransfer.files;
+            fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+            setStepStatus(3, 'success', `Đã gắn thành công ${fileObjects.length} ảnh HD!`);
+          } else {
+            setStepStatus(3, 'success', 'Bỏ qua đính kèm ảnh (ảnh rỗng).');
+          }
+        } else {
+          setStepStatus(3, 'active', 'Không tìm thấy nút nạp ảnh, tiếp tục văn bản.');
+        }
+      } else {
+        setStepStatus(3, 'success', 'Bài đăng không có ảnh.');
+      }
+
+      await sleep(1500); // Chờ Facebook xử lý ảnh đính kèm
+
+      // BƯỚC 5: Đếm ngược và Tự động Bấm "ĐĂNG"
+      setStepStatus(4, 'active', 'Chuẩn bị xuất bản...');
+      const countdownBox = document.getElementById('vg-hud-countdown-area');
+      if (countdownBox) countdownBox.style.display = 'block';
+
+      let remaining = 3;
+      const countdownLabel = document.getElementById('vg-countdown-label');
+
+      async function triggerSubmit() {
+        if (isCancelled) return;
+        setStepStatus(4, 'active', '⚡ Đang bấm nút ĐĂNG...');
+
+        // Tìm nút "Đăng" (Post)
+        const postBtn = Array.from(modal.querySelectorAll('div[role="button"]')).find(b => {
+          const label = (b.getAttribute('aria-label') || b.innerText || '').trim().toLowerCase();
+          return (label === 'đăng' || label === 'post') && !b.disabled;
+        });
+
+        if (postBtn) {
+          postBtn.click();
+          setStepStatus(4, 'success', '✅ ĐÃ XUẤT BẢN THÀNH CÔNG LÊN TRANG CÁ NHÂN!');
+          if (countdownBox) {
+            countdownBox.innerHTML = '<span style="color:#059669; font-weight:900; font-size:14px;">🎉 BÀI VIẾT ĐÃ ĐƯỢC ĐĂNG LÊN TRANG CÁ NHÂN!</span>';
+          }
+          await sleep(3500);
+          if (hudEl) hudEl.remove();
+        } else {
+          setStepStatus(4, 'active', 'Vui lòng bấm nút "Đăng" màu xanh trên Facebook để hoàn tất.');
+        }
+      }
+
+      document.getElementById('vg-btn-post-now').onclick = () => {
+        if (countdownTimer) clearInterval(countdownTimer);
+        triggerSubmit();
+      };
+
+      countdownTimer = setInterval(() => {
+        if (isCancelled) {
+          clearInterval(countdownTimer);
+          return;
+        }
+        remaining -= 1;
+        if (countdownLabel) {
+          countdownLabel.innerText = `Tự động bấm 'Đăng' sau ${remaining}s...`;
+        }
+        if (remaining <= 0) {
+          clearInterval(countdownTimer);
+          triggerSubmit();
+        }
+      }, 1000);
+
+    } catch (err) {
+      console.error('[VG FB Robot Lỗi]', err);
+      setStepStatus(1, 'active', `❌ Lỗi: ${err.message}`);
+    }
+  }
+
+  // Lắng nghe lệnh từ Service Worker hoặc kiểm tra Storage
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === 'executePersonalPost' && request.payload) {
+      executePersonalPost(request.payload);
+      sendResponse({ status: 'started' });
+    }
+  });
+
+  // Tự động kiểm tra Storage nếu tab vừa được mở mới
+  chrome.storage.local.get(['vg_pending_personal_post'], (res) => {
+    if (res.vg_pending_personal_post) {
+      const payload = res.vg_pending_personal_post;
+      chrome.storage.local.remove(['vg_pending_personal_post'], () => {
+        setTimeout(() => executePersonalPost(payload), 1200);
+      });
+    }
+  });
+
+})();

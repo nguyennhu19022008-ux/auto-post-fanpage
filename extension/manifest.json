@@ -5,7 +5,8 @@
   "description": "Đẩy trực tiếp bài viết Zalo kèm toàn bộ ảnh HD & video lên Fanpage Facebook chỉ với 1 cú click",
   "permissions": [
     "storage",
-    "clipboardWrite"
+    "clipboardWrite",
+    "tabs"
   ],
   "host_permissions": [
     "https://chat.zalo.me/*",
@@ -40,6 +41,19 @@
       ],
       "css": [
         "styles.css"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://www.facebook.com/*",
+        "https://web.facebook.com/*"
+      ],
+      "js": [
+        "fb_robot.js"
+      ],
+      "css": [
+        "fb_robot.css"
       ],
       "run_at": "document_idle"
     }
