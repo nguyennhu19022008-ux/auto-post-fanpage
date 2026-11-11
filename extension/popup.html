@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Laptop Vương Gia // Autopost Helper</title>
+  <title>Laptop Vương Gia // Autopost App</title>
   <style>
     * {
       box-sizing: border-box;
@@ -10,19 +10,19 @@
       padding: 0;
     }
     body {
-      width: 320px;
+      width: 350px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: #FDFBF7;
       color: #18181B;
-      padding: 16px;
+      padding: 14px;
     }
     .header {
       display: flex;
       align-items: center;
       gap: 10px;
       border-bottom: 2px solid #18181B;
-      padding-bottom: 12px;
-      margin-bottom: 12px;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
     }
     .badge-icon {
       background: #FDE047;
@@ -34,7 +34,7 @@
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 16px;
+      font-size: 15px;
       box-shadow: 2px 2px 0px #18181B;
     }
     .title {
@@ -48,86 +48,160 @@
       color: #71717A;
       font-weight: 600;
     }
+    .tabs-nav {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      border: 2px solid #18181B;
+      border-radius: 6px;
+      background: #FFFFFF;
+      cursor: pointer;
+      box-shadow: 2px 2px 0px #18181B;
+      transition: all 0.1s ease;
+    }
+    .tab-btn.active {
+      background: #FDE047;
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0px #18181B;
+    }
+    .tab-pane {
+      display: none;
+    }
+    .tab-pane.active {
+      display: block;
+    }
     .card {
       background: #FFFFFF;
       border: 2px solid #18181B;
       border-radius: 8px;
       padding: 12px;
       box-shadow: 3px 3px 0px #18181B;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .label {
       font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
       display: block;
     }
-    .input {
+    .textarea {
       width: 100%;
-      padding: 8px 10px;
+      height: 90px;
+      padding: 8px;
       border: 2px solid #18181B;
       border-radius: 6px;
       font-size: 12px;
-      font-family: monospace;
+      font-family: inherit;
       outline: none;
       background: #FAF8F5;
+      resize: vertical;
     }
-    .input:focus {
+    .textarea:focus {
       background: #FFFFFF;
       border-color: #4F46E5;
     }
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      font-weight: 800;
-      padding: 4px 8px;
+    .input {
+      width: 100%;
+      padding: 7px 10px;
+      border: 2px solid #18181B;
       border-radius: 6px;
-      border: 1px solid #18181B;
+      font-size: 11.5px;
+      outline: none;
+      background: #FAF8F5;
+    }
+    .btn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
       margin-top: 8px;
-    }
-    .status-online {
-      background: #DCFCE7;
-      color: #166534;
-    }
-    .status-offline {
-      background: #FEE2E2;
-      color: #991B1B;
     }
     .btn {
       width: 100%;
-      background: #FDE047;
-      color: #18181B;
       border: 2px solid #18181B;
       border-radius: 6px;
-      padding: 8px;
-      font-size: 12px;
+      padding: 8px 6px;
+      font-size: 11px;
       font-weight: 900;
       text-transform: uppercase;
       cursor: pointer;
       box-shadow: 2px 2px 0px #18181B;
       transition: transform 0.1s;
-      margin-top: 6px;
-    }
-    .btn:hover {
-      background: #FEF08A;
-      transform: translate(-1px, -1px);
-      box-shadow: 3px 3px 0px #18181B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      text-align: center;
     }
     .btn:active {
       transform: translate(1px, 1px);
       box-shadow: 1px 1px 0px #18181B;
     }
-    .btn-secondary {
-      background: #FFFFFF;
+    .btn-dual {
+      background: #FB923C;
+      color: #431407;
+      grid-column: span 2;
+      padding: 9px;
+      font-size: 12px;
     }
-    .instructions {
+    .btn-fanpage {
+      background: #FDE047;
+      color: #18181B;
+    }
+    .btn-personal {
+      background: #38BDF8;
+      color: #082F49;
+    }
+    .btn-schedule {
+      background: #EEF2FF;
+      color: #312E81;
+      grid-column: span 2;
+    }
+    .status-msg {
       font-size: 11px;
-      color: #52525B;
-      line-height: 1.5;
-      font-weight: 500;
+      font-weight: 700;
+      margin-top: 8px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1.5px solid #18181B;
+      display: none;
+    }
+    .status-msg.loading {
+      display: block;
+      background: #FEF08A;
+      color: #854D0E;
+    }
+    .status-msg.success {
+      display: block;
+      background: #DCFCE7;
+      color: #166534;
+    }
+    .status-msg.error {
+      display: block;
+      background: #FEE2E2;
+      color: #991B1B;
+    }
+    .media-preview {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      margin-top: 6px;
+      padding-bottom: 4px;
+    }
+    .media-thumb {
+      width: 44px;
+      height: 44px;
+      border: 1.5px solid #18181B;
+      border-radius: 4px;
+      object-fit: cover;
+      flex-shrink: 0;
     }
   </style>
 </head>
@@ -136,30 +210,55 @@
   <div class="header">
     <div class="badge-icon">VG</div>
     <div>
-      <div class="title">Zalo 1-Click Pusher</div>
-      <div class="subtitle">Laptop Vương Gia Fanpage</div>
+      <div class="title">Laptop Vương Gia</div>
+      <div class="subtitle">Hệ Thống Autopost Đa Kênh 2.5</div>
     </div>
   </div>
 
-  <div class="card">
-    <label class="label">Địa chỉ máy chủ (Backend):</label>
-    <input type="text" id="backendUrlInput" class="input" value="https://auto-post-fanpage-coral.vercel.app">
-    
-    <div id="connectionStatus" class="status-pill status-online">
-      <span style="font-size: 8px;">●</span> Đang kết nối Vercel Production
-    </div>
-
-    <button id="saveBtn" class="btn" style="margin-top: 10px;">💾 Lưu Cấu Hình</button>
+  <div class="tabs-nav">
+    <button class="tab-btn active" data-tab="tab-compose">⚡ Soạn & Đăng</button>
+    <button class="tab-btn" data-tab="tab-settings">⚙️ Cài Đặt</button>
   </div>
 
-  <div class="card" style="margin-bottom: 0;">
-    <div class="label">Cách Sử Dụng:</div>
-    <div class="instructions">
-      1. Mở trang <a href="https://chat.zalo.me" target="_blank" style="color: #4F46E5; font-weight: 700;">chat.zalo.me</a>.<br>
-      2. Tại mỗi bài viết trong nhóm thợ, bạn sẽ thấy nút vàng <b>[⚡ ĐĂNG FANPAGE]</b>.<br>
-      3. Bấm 1 click là bài tự động bóc cấu hình và đăng lên Facebook kèm toàn bộ ảnh HD & video!
+  <!-- TAB 1: SOẠN & ĐĂNG BÀI NHANH -->
+  <div id="tab-compose" class="tab-pane active">
+    <div class="card">
+      <label class="label">Nội dung cấu hình từ Zalo / Kho:</label>
+      <textarea id="rawTextInput" class="textarea" placeholder="Ví dụ: Mã 09: HP Probook 430 G8 i5-11Th/16/256/13.3 vỏ nhôm. Giá 7.x tr..."></textarea>
+      
+      <div style="margin-top: 8px;">
+        <label class="label">Đính kèm ảnh máy HD:</label>
+        <input type="file" id="mediaFileInput" multiple accept="image/*" class="input" style="padding: 4px 6px;">
+        <div id="mediaPreview" class="media-preview"></div>
+      </div>
+
+      <div class="btn-grid">
+        <button id="btnDualPost" class="btn btn-dual">🚀 ĐĂNG CẢ HAI (FANPAGE + CÁ NHÂN)</button>
+        <button id="btnFanpagePost" class="btn btn-fanpage">⚡ FANPAGE</button>
+        <button id="btnPersonalPost" class="btn btn-personal">👤 CÁ NHÂN</button>
+        <button id="btnSchedulePost" class="btn btn-schedule">⏳ LÊN LỊCH GIỜ VÀNG</button>
+      </div>
+
+      <div id="statusMsg" class="status-msg"></div>
     </div>
-    <button id="openDashboardBtn" class="btn btn-secondary" style="margin-top: 10px;">🌐 Mở Dashboard Quản Lý</button>
+
+    <button id="openFullAppBtn" class="btn" style="background: #FFFFFF; width: 100%;">
+      🌐 Mở Web App Dashboard (/app) ➔
+    </button>
+  </div>
+
+  <!-- TAB 2: CÀI ĐẶT -->
+  <div id="tab-settings" class="tab-pane">
+    <div class="card">
+      <label class="label">Địa chỉ máy chủ (Backend):</label>
+      <input type="text" id="backendUrlInput" class="input" value="https://auto-post-fanpage-coral.vercel.app">
+      
+      <div id="connectionStatus" style="font-size: 11px; font-weight: 800; margin-top: 8px; color: #166534;">
+        ● Đang kiểm tra kết nối...
+      </div>
+
+      <button id="saveBtn" class="btn btn-fanpage" style="margin-top: 10px;">💾 Lưu Cấu Hình</button>
+    </div>
   </div>
 
   <script src="popup.js"></script>

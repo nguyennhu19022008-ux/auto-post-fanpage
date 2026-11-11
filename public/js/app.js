@@ -268,9 +268,13 @@ async function loadCockpitStatus() {
         if (countdownEl) countdownEl.innerText = `⏳ Đã đến giờ đăng!`;
       }
 
+      const publishBothBtn = document.getElementById('cockpitPublishBothBtn');
+      if (publishBothBtn) {
+        publishBothBtn.onclick = () => publishPostNow(nextPost.id, 'both');
+      }
       const publishBtn = document.getElementById('cockpitPublishNowBtn');
       if (publishBtn) {
-        publishBtn.onclick = () => publishPostNow(nextPost.id);
+        publishBtn.onclick = () => publishPostNow(nextPost.id, 'fanpage');
       }
       const viewBtn = document.getElementById('cockpitViewNextBtn');
       if (viewBtn) {
@@ -336,12 +340,15 @@ function renderCockpitTimeline(posts) {
           </div>
         </div>
 
-        <div class="flex items-center gap-2">
-          <button onclick="openPostPreviewModal('${post.id}')" class="neo-btn neo-btn-white px-2.5 py-1 text-xs font-bold">
+        <div class="flex items-center gap-1.5">
+          <button onclick="openPostPreviewModal('${post.id}')" class="neo-btn neo-btn-white px-2 py-1 text-xs font-bold">
             👁️ Xem
           </button>
-          <button onclick="publishPostNow('${post.id}')" class="neo-btn neo-btn-yellow px-2.5 py-1 text-xs font-black">
-            ⚡ Đăng ngay
+          <button onclick="publishPostNow('${post.id}', 'both')" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 px-2.5 py-1 text-xs font-black shadow-[1.5px_1.5px_0px_#18181B]" title="Đăng cả Fanpage + Cá Nhân">
+            🚀 Cả Hai
+          </button>
+          <button onclick="publishPostNow('${post.id}', 'fanpage')" class="neo-btn neo-btn-yellow px-2 py-1 text-xs font-black" title="Đăng Fanpage">
+            ⚡ Fanpage
           </button>
         </div>
       </div>
@@ -922,7 +929,7 @@ function updateFacebookPreview() {
 
 // ======================== SCHEDULE & PUBLISH POSTS ========================
 
-async function schedulePost(publishImmediately = false) {
+async function schedulePost(publishImmediately = false, target = 'fanpage') {
   const content = document.getElementById('finalContentInput').value.trim();
   const machineCode = document.getElementById('machineCodeInput').value.trim();
   const price = document.getElementById('customPriceInput').value.trim();
@@ -951,11 +958,37 @@ async function schedulePost(publishImmediately = false) {
     const result = await res.json();
 
     if (result.success) {
-      alert(publishImmediately ? '🚀 ' + result.message : '📅 ' + result.message);
+      if (publishImmediately && (target === 'both' || target === 'personal')) {
+        // Trigger Personal Robot via Web Bridge
+        const mediaUrls = currentMediaFiles.map(m => typeof m === 'string' ? m : (m.url || m.path || ''));
+        window.postMessage({
+          action: 'VG_TRIGGER_PERSONAL_POST',
+          payload: {
+            content,
+            mediaUrls,
+            pagePostUrl: result.data?.facebookPostUrl || result.facebookPostUrl
+          }
+        }, '*');
+
+        if (navigator.clipboard) {
+          try { await navigator.clipboard.writeText(content); } catch (e) {}
+        }
+
+        const alertMsg = target === 'both'
+          ? `🚀 ĐÃ ĐĂNG LÊN FANPAGE THÀNH CÔNG!\n\n🤖 Đang kích hoạt Robot để đăng lên Facebook Cá Nhân...\n(Nội dung đã được sao chép vào bộ nhớ tạm).`
+          : `👤 Đã chuẩn bị bài viết cho Facebook Cá Nhân!\n\n🤖 Đang kích hoạt Robot...`;
+        alert(alertMsg);
+        window.open('https://www.facebook.com/', '_blank');
+      } else {
+        alert(publishImmediately ? '🚀 ' + result.message : '📅 ' + result.message);
+      }
+
       clearRawInput();
       await loadNextSlot();
       await loadPosts();
-      switchTab(publishImmediately ? 'history' : 'queue');
+      switchTab(publishImmediately ? 'cockpit' : 'queue');
+    } else {
+      alert('Không thể lưu/đăng: ' + (result.error || 'Lỗi không xác định'));
     }
   } catch (err) {
     alert('Lỗi đăng bài: ' + err.message);
@@ -1064,17 +1097,23 @@ function renderQueueList(posts) {
             </div>
           </div>
 
-          <div class="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap pt-2 md:pt-0 border-t md:border-t-0 border-neutral-100">
+          <div class="flex items-center gap-1.5 w-full md:w-auto justify-end flex-wrap pt-2 md:pt-0 border-t md:border-t-0 border-neutral-100">
             <button onclick="viewQueuedPostContent('${post.id}')" class="neo-btn neo-btn-white px-2.5 py-1.5 text-xs font-black text-indigo-700 hover:bg-indigo-50 border-2 border-[#18181B]" title="Xem nội dung bài viết và thông số">
-              <span>👁️ Xem bài viết</span>
+              <span>👁️ Xem</span>
             </button>
-            <a href="/quick-upload?id=${post.id}" target="_blank" class="neo-btn neo-btn-lavender px-3 py-1.5 text-xs font-black" title="Xem hoặc thêm ảnh/video">
-              <span>🎬 ${mCount > 0 ? `Media (${mCount})` : 'Nạp media'}</span>
+            <a href="/quick-upload?id=${post.id}" target="_blank" class="neo-btn neo-btn-lavender px-2.5 py-1.5 text-xs font-black" title="Xem hoặc thêm ảnh/video">
+              <span>🎬 ${mCount > 0 ? `Media (${mCount})` : 'Nạp'}</span>
             </a>
-            <button onclick="publishPostNow('${post.id}')" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-black" title="Đăng bài này lên Fanpage ngay lập tức">
-              <span>⚡ Đăng ngay</span>
+            <button onclick="publishPostNow('${post.id}', 'both')" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 px-3 py-1.5 text-xs font-black shadow-[2px_2px_0px_#18181B]" title="Đăng lên cả Fanpage và Facebook cá nhân">
+              <span>🚀 Đăng Cả Hai</span>
             </button>
-            <button onclick="deletePost('${post.id}')" class="neo-btn neo-btn-white px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50" title="Xóa khỏi hàng đợi">
+            <button onclick="publishPostNow('${post.id}', 'fanpage')" class="neo-btn neo-btn-yellow px-2.5 py-1.5 text-xs font-black" title="Đăng bài này lên Fanpage ngay lập tức">
+              <span>⚡ Fanpage</span>
+            </button>
+            <button onclick="publishPostNow('${post.id}', 'personal')" class="neo-btn bg-[#38BDF8] text-[#082F49] hover:bg-sky-400 px-2.5 py-1.5 text-xs font-black shadow-[2px_2px_0px_#18181B]" title="Đăng bài này lên Facebook cá nhân">
+              <span>👤 Cá Nhân</span>
+            </button>
+            <button onclick="deletePost('${post.id}')" class="neo-btn neo-btn-white px-2 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50" title="Xóa khỏi hàng đợi">
               <span>Xóa</span>
             </button>
           </div>
@@ -1207,15 +1246,69 @@ function renderHistoryList(posts) {
   }).join('');
 }
 
-async function publishPostNow(id) {
-  if (!confirm('Bạn có chắc muốn đăng bài viết này lên Fanpage ngay bây giờ không?')) return;
+async function publishPostNow(id, target = 'fanpage') {
+  const targetLabel = target === 'both' 
+    ? 'CẢ HAI (Fanpage + Facebook Cá Nhân)' 
+    : (target === 'personal' ? 'Facebook Cá Nhân' : 'Fanpage');
+
+  if (!confirm(`Bạn có chắc muốn đăng bài viết này lên ${targetLabel} ngay bây giờ không?`)) return;
+
   try {
-    const res = await fetch(`/api/posts/${id}/publish-now`, { method: 'POST' });
-    const result = await res.json();
-    alert(result.message || 'Đã thực hiện xong!');
+    let fanpageSuccess = false;
+    let pageLink = null;
+
+    // 1. If target is 'both' or 'fanpage', trigger Fanpage publishing via server
+    if (target === 'both' || target === 'fanpage') {
+      const res = await fetch(`/api/posts/${id}/publish-now`, { method: 'POST' });
+      const result = await res.json();
+      if (!res.ok || !result.success) {
+        throw new Error(result.error || 'Lỗi khi đăng lên Fanpage');
+      }
+      fanpageSuccess = true;
+      pageLink = result.data?.facebookPostUrl || result.facebookPostUrl;
+      
+      if (target === 'fanpage') {
+        alert(result.message || '⚡ Đã xuất bản lên Fanpage thành công!');
+        await loadPosts();
+        return;
+      }
+    }
+
+    // 2. If target is 'both' or 'personal', trigger Personal Profile automation
+    const post = allPosts.find(p => p.id === id);
+    if (post) {
+      const postText = post.content || '';
+      const postMedia = post.mediaUrls || (post.mediaFiles ? post.mediaFiles.map(m => typeof m === 'string' ? m : (m.url || m.path || '')) : []);
+
+      // A. Emit Web Bridge event for Chrome Extension
+      window.postMessage({
+        action: 'VG_TRIGGER_PERSONAL_POST',
+        payload: {
+          content: postText,
+          mediaUrls: postMedia,
+          pagePostUrl: pageLink
+        }
+      }, '*');
+
+      // B. Copy text to clipboard as universal fallback
+      if (navigator.clipboard) {
+        try {
+          await navigator.clipboard.writeText(postText);
+        } catch (e) {}
+      }
+
+      // C. Alert & trigger Facebook
+      const msg = target === 'both'
+        ? `✅ ĐÃ ĐĂNG LÊN FANPAGE THÀNH CÔNG!\n\n🤖 Đang kích hoạt Robot để đăng lên Facebook Cá Nhân...\n(Nội dung bài viết cũng đã được sao chép vào bộ nhớ tạm).`
+        : `👤 Đã chuẩn bị xong bài viết cho Facebook Cá Nhân!\n\n🤖 Đang kích hoạt Robot đăng bài...\n(Nội dung bài viết đã được sao chép vào bộ nhớ tạm).`;
+      
+      alert(msg);
+      window.open('https://www.facebook.com/', '_blank');
+    }
+
     await loadPosts();
   } catch (err) {
-    alert('Lỗi đăng ngay: ' + err.message);
+    alert('Lỗi đăng bài: ' + err.message);
   }
 }
 
@@ -1717,8 +1810,14 @@ function viewQueuedPostContent(postId) {
         <span>🎬 Media (${mFiles.length})</span>
       </a>
       ${post.status === 'queued' || post.status === 'pending_media' ? `
-        <button onclick="publishPostNow('${post.id}'); closePostPreviewModal();" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-black">
-          <span>⚡ Đăng ngay</span>
+        <button onclick="publishPostNow('${post.id}', 'both'); closePostPreviewModal();" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 px-3 py-1.5 text-xs font-black shadow-[2px_2px_0px_#18181B]" title="Đăng lên cả Fanpage và Facebook Cá Nhân">
+          <span>🚀 Đăng Cả Hai</span>
+        </button>
+        <button onclick="publishPostNow('${post.id}', 'fanpage'); closePostPreviewModal();" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-black" title="Đăng lên Fanpage">
+          <span>⚡ Fanpage</span>
+        </button>
+        <button onclick="publishPostNow('${post.id}', 'personal'); closePostPreviewModal();" class="neo-btn bg-[#38BDF8] text-[#082F49] hover:bg-sky-400 px-3 py-1.5 text-xs font-black shadow-[2px_2px_0px_#18181B]" title="Đăng lên Facebook Cá Nhân">
+          <span>👤 Cá Nhân</span>
         </button>
       ` : ''}
       ${post.fbPostUrl ? `

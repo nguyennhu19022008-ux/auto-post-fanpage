@@ -46,6 +46,11 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
+// Dedicated routes for Web App Dashboard Cockpit
+app.get(['/app', '/dashboard', '/cockpit'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'app.html'));
+});
+
 // Storage configuration for media uploads: Memory storage for universal serverless/Vercel support
 const storage = multer.memoryStorage();
 

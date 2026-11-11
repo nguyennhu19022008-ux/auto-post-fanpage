@@ -56,6 +56,16 @@
         "fb_robot.css"
       ],
       "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://auto-post-fanpage-coral.vercel.app/*",
+        "http://localhost:3000/*"
+      ],
+      "js": [
+        "web_bridge.js"
+      ],
+      "run_at": "document_idle"
     }
   ]
 }

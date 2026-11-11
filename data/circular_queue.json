@@ -929,13 +929,14 @@
         "originalname": "dell_lat_5350_overview.jpg"
       }
     ],
-    "status": "queued",
-    "post_id": null,
-    "fb_post_id": null,
-    "fb_post_url": null,
-    "execution_log": "Đã đưa vào hàng đợi tuần hoàn tự động.",
+    "status": "completed",
+    "post_id": "post_1794319981266",
+    "fb_post_id": "1154184381110692_122145652251344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122145652251344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
     "created_at": "2026-11-05T14:09:00.241Z",
-    "updated_at": "2026-11-05T14:09:00.241Z"
+    "updated_at": "2026-11-10T14:13:24.330Z",
+    "posted_at": "2026-11-10T14:13:24.330Z"
   },
   {
     "id": "cpq_1793887744271_wm70y",
@@ -6790,13 +6791,14 @@
         "originalname": "hp_envy_14_3.jpg"
       }
     ],
-    "status": "queued",
-    "post_id": null,
-    "fb_post_id": null,
-    "fb_post_url": null,
-    "execution_log": "Đã đưa vào hàng đợi tuần hoàn tự động.",
+    "status": "completed",
+    "post_id": "post_1794320005034",
+    "fb_post_id": "1154184381110692_122145652647344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122145652647344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
     "created_at": "2026-11-05T15:11:08.885Z",
-    "updated_at": "2026-11-05T15:11:08.885Z"
+    "updated_at": "2026-11-10T14:13:38.570Z",
+    "posted_at": "2026-11-10T14:13:38.570Z"
   },
   {
     "id": "cpq_1793891475206_vksic",
@@ -6832,13 +6834,14 @@
         "originalname": "hp_envy_14_3.jpg"
       }
     ],
-    "status": "queued",
-    "post_id": null,
-    "fb_post_id": null,
-    "fb_post_url": null,
-    "execution_log": "Đã đưa vào hàng đợi tuần hoàn tự động.",
+    "status": "completed",
+    "post_id": "post_1794320018949",
+    "fb_post_id": "1154184381110692_122145653001344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122145653001344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
     "created_at": "2026-11-05T15:11:15.206Z",
-    "updated_at": "2026-11-05T15:11:15.206Z"
+    "updated_at": "2026-11-10T14:13:48.569Z",
+    "posted_at": "2026-11-10T14:13:48.569Z"
   },
   {
     "id": "cpq_1793891478512_l8o3i",
@@ -6874,13 +6877,14 @@
         "originalname": "hp_envy_14_3.jpg"
       }
     ],
-    "status": "queued",
-    "post_id": null,
-    "fb_post_id": null,
-    "fb_post_url": null,
-    "execution_log": "Đã đưa vào hàng đợi tuần hoàn tự động.",
+    "status": "completed",
+    "post_id": "post_1794320028977",
+    "fb_post_id": "1154184381110692_122145653853344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122145653853344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
     "created_at": "2026-11-05T15:11:18.512Z",
-    "updated_at": "2026-11-05T15:11:18.512Z"
+    "updated_at": "2026-11-10T14:13:57.523Z",
+    "posted_at": "2026-11-10T14:13:57.523Z"
   },
   {
     "id": "cpq_1793891511924_jvxgn",
@@ -7495,13 +7499,14 @@
         "originalname": "dell_lat_5350_overview.jpg"
       }
     ],
-    "status": "queued",
-    "post_id": null,
-    "fb_post_id": null,
-    "fb_post_url": null,
-    "execution_log": "Đã đưa vào hàng đợi tuần hoàn tự động.",
+    "status": "completed",
+    "post_id": "post_1794320037818",
+    "fb_post_id": "1154184381110692_122145655545344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122145655545344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
     "created_at": "2026-11-05T15:15:22.000Z",
-    "updated_at": "2026-11-05T15:15:22.000Z"
+    "updated_at": "2026-11-10T14:14:13.168Z",
+    "posted_at": "2026-11-10T14:14:13.168Z"
   },
   {
     "id": "cpq_1793892072466_6saay",
@@ -9569,5 +9574,694 @@
     "created_at": "2026-11-05T17:00:46.220Z",
     "updated_at": "2026-11-05T17:00:54.652Z",
     "posted_at": "2026-11-05T17:00:54.652Z"
+  },
+  {
+    "id": "cpq_1794099940181_tt6pa",
+    "template_id": "tpl_dell_lat_5350",
+    "model_name": "Dell Latitude 5350",
+    "scheduled_time": "2026-11-08T02:05:28.462Z",
+    "priority": 1,
+    "rewrite_style": "featured_review",
+    "ai_rewritten_content": "✨ [REVIEW CHI TIẾT DÒNG MÁY] — DELL LATITUDE 5350\n\n💼 Cực phẩm laptop tuyển chọn trực tiếp từ Nhật Bản — Dell Latitude 5350 chính là \"vũ khí thực chiến\" tối thượng dành cho dân văn phòng, kế toán và doanh nhân hiện đại!\n\n⚡ HIỆU NĂNG THỰC CHIẾN — ĐA NHIỆM VƯỢT TRỘI:\n🔹 Trang bị vi xử lý thế hệ mới Intel Core Ultra 5 kết hợp dung lượng RAM 16GB đỉnh cao, Dell Latitude 5350 giải quyết gọn gàng mọi tác vụ nặng. Bạn có thể thoải mái mở hàng chục tab trình duyệt, xử lý các bảng tính Excel hàng ngàn dòng phức tạp hay soạn thảo văn bản Word liên tục mà máy vẫn chạy mượt mà, mát mẻ.\n🔹 Trải nghiệm gõ phím chuẩn dòng doanh nhân: Bàn phím có độ nảy hoàn hảo, phím êm và bám tay, mang lại cảm giác gõ thoải mái suốt cả ngày dài làm việc mà không sợ mỏi tay.\n\n⚡ THÔNG SỐ KỸ THUẬT TUYỂN CHỌN:\n🔹 CPU: Intel Core Ultra 5 mạnh mẽ, tối ưu điện năng\n🔹 RAM: 16GB chạy đa nhiệm cực mượt\n🔹 Ổ cứng: SSD 256GB truy xuất dữ liệu siêu tốc\n🔹 Màn hình: 13.3 inch FHD IPS hiển thị sắc nét, chống chói hiệu quả\n\n💰 Giá bán tham khảo siêu ưu đãi: 13.9 triệu\n\n🛡️ CAM KẾT & CHÍNH SÁCH BẢO HÀNH TẠI LAPTOP VƯƠNG GIA:\n🔹 Bao test 7 ngày lỗi 1 đổi 1. Bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n🔹 Cọc 300k kiểm tra legit, hỗ trợ gọi video call check máy trực tiếp từng góc cạnh trước khi xuống tiền.\n\n🎁 QÙA TẶNG KÈM THEO HẤP DẪN:\n🔹 Túi chống sốc cao cấp\n🔹 Chuột không dây thời trang\n🔹 Sạc zin theo máy\n🔹 Gói cài win trọn đời\n\n📲 Nhanh tay chốt ngay dòng máy văn phòng đẳng cấp này!\n💬 Hotline / Zalo: 0876637806\n\n#LaptopDoanhNhan #LaptopVuongGia #ReviewLaptop #LaptopVanPhong #DellLatitude5350",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545141-962277818.jpg",
+        "size": 194419,
+        "storage": "supabase",
+        "filename": "1793096545141-962277818.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_front.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545885-412751655.jpg",
+        "size": 137721,
+        "storage": "supabase",
+        "filename": "1793096545885-412751655.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_keyboard.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547033-359836312.jpg",
+        "size": 112904,
+        "storage": "supabase",
+        "filename": "1793096547033-359836312.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_side.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547703-425915759.jpg",
+        "size": 161942,
+        "storage": "supabase",
+        "filename": "1793096547703-425915759.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_ports.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096548836-575482563.jpg",
+        "size": 180772,
+        "storage": "supabase",
+        "filename": "1793096548836-575482563.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_back.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096549734-428300807.jpg",
+        "size": 97817,
+        "storage": "supabase",
+        "filename": "1793096549734-428300807.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_overview.jpg"
+      }
+    ],
+    "status": "completed",
+    "post_id": "post_1794099940772",
+    "fb_post_id": "1154184381110692_122145135081344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122145135081344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-08T01:05:40.181Z",
+    "updated_at": "2026-11-08T01:06:04.714Z",
+    "posted_at": "2026-11-08T01:06:04.714Z"
+  },
+  {
+    "id": "cpq_1794100007244_edobr",
+    "template_id": "tpl_dell_lat_5350",
+    "model_name": "Dell Latitude 5350",
+    "scheduled_time": "2026-11-08T02:06:35.326Z",
+    "priority": 1,
+    "rewrite_style": "featured_review",
+    "ai_rewritten_content": "✨ [REVIEW CHI TIẾT DÒNG MÁY] — DELL LATITUDE 5350\n\n💼 Bạn đang tìm kiếm một chiếc laptop chuẩn văn phòng thực chiến, bền bỉ và sở hữu hiệu năng mạnh mẽ? Dell Latitude 5350 — dòng máy tuyển chọn chất lượng từ Nhật Bản tại Laptop Vương Gia chính là trợ thủ đắc lực không thể bỏ qua!\n\n⚡ HIỆU NĂNG VƯỢT TRỘI & TRẢI NGHIỆM VĂN PHÒNG ĐẮC LỰC:\n🔹 Bộ vi xử lý Intel Core Ultra 5 kết hợp cùng RAM 16GB: Mang lại khả năng đa nhiệm cực kỳ ấn tượng. Anh chị em thoải mái mở hàng chục tab Chrome, xử lý các file Excel nặng hàng nghìn dòng hay thao tác phần mềm văn phòng Word, Powerpoint mượt mà không chút giật lag.\n🔹 Ổ cứng SSD 256GB: Tốc độ truy xuất dữ liệu siêu nhanh, khởi động máy và ứng dụng chỉ trong vài giây.\n🔹 Màn hình 13.3 inch FHD IPS: Hình ảnh hiển thị sắc nét, góc nhìn rộng, chống chói hiệu quả giúp làm việc nhiều giờ liền mà không lo mỏi mắt.\n🔹 Thiết kế & Bàn phím: Bàn phím dòng Latitude đỉnh cao với hành trình phím sâu, độ nảy tốt, gõ siêu êm ái cả ngày dài mà vẫn vô cùng thoải mái.\n\n💰 Giá tham khảo cực tốt: Chỉ 13.9 Triệu VNĐ cho một dòng máy chuẩn doanh nhân, hiệu năng đời mới!\n\n🛡️ CAM KẾT & CHẾ ĐỘ BẢO HÀNH CHU ĐÁO:\n🔹 Bao test 7 ngày (lỗi 1 đổi 1 nhanh chóng).\n🔹 Bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n🔹 Hỗ trợ cọc 300k kiểm tra legit, gọi Video Call check máy thực tế trực tiếp trước khi giao.\n\n🎁 QUÀ TẶNG KÈM THEO HẤP DẪN:\n🔹 Túi chống sốc cao cấp.\n🔹 Chuột không dây thời trang.\n🔹 Sạc zin chuẩn theo máy.\n🔹 Miễn phí gói hỗ trợ cài Win và bảo trì phần mềm trọn đời.\n\n📲 Nhanh tay liên hệ ngay để nhận ưu đãi đặc biệt:\n💬 Inbox trực tiếp Fanpage Laptop Vương Gia hoặc Hotline / Zalo: 0876637806 để được tư vấn chi tiết!\n\n#LaptopDoanhNhan #LaptopVuongGia #ReviewLaptop #LaptopVanPhong #DellLatitude5350",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545141-962277818.jpg",
+        "size": 194419,
+        "storage": "supabase",
+        "filename": "1793096545141-962277818.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_front.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545885-412751655.jpg",
+        "size": 137721,
+        "storage": "supabase",
+        "filename": "1793096545885-412751655.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_keyboard.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547033-359836312.jpg",
+        "size": 112904,
+        "storage": "supabase",
+        "filename": "1793096547033-359836312.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_side.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547703-425915759.jpg",
+        "size": 161942,
+        "storage": "supabase",
+        "filename": "1793096547703-425915759.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_ports.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096548836-575482563.jpg",
+        "size": 180772,
+        "storage": "supabase",
+        "filename": "1793096548836-575482563.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_back.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096549734-428300807.jpg",
+        "size": 97817,
+        "storage": "supabase",
+        "filename": "1793096549734-428300807.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_overview.jpg"
+      }
+    ],
+    "status": "completed",
+    "post_id": "post_1794100007648",
+    "fb_post_id": "1154184381110692_122145138249344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122145138249344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-08T01:06:47.244Z",
+    "updated_at": "2026-11-08T01:07:04.372Z",
+    "posted_at": "2026-11-08T01:07:04.372Z"
+  },
+  {
+    "id": "cpq_1794100039752_rrxbj",
+    "template_id": "tpl_dell_lat_5350",
+    "model_name": "Dell Latitude 5350",
+    "scheduled_time": "2026-11-08T02:07:05.877Z",
+    "priority": 2,
+    "rewrite_style": "flash_sale",
+    "ai_rewritten_content": "🔥 [TIÊU ĐIỂM GIÁ TỐT] — DELL LATITUDE 5350 CHUẨN NỘI ĐIA NHẬT\n\n🚀 Bạn đang tìm kiếm một chiếc laptop văn phòng mỏng nhẹ, hiệu năng cực khỏe nhưng phải tối ưu ngân sách tối đa? Laptop Vương Gia mang đến giải pháp đầu tư cực kỳ thông minh: DELL LATITUDE 5350 dòng máy tuyển chọn trực tiếp từ Nhật Bản – giải pháp tối ưu chi phí hoàn hảo cho cá nhân và doanh nghiệp!\n\n💰 MỨC GIÁ ƯU ĐÃI ĐẶC BIỆT: Chỉ 13.9 Triệu (Giá trị sử dụng vượt xa chi phí đầu tư)\n\n⚡ Ổ CỨNG SSD: 256GB SSD siêu tốc – Truy xuất dữ liệu tức thì, khởi động Win chỉ trong vài giây, vận hành cực kỳ mượt mà.\n⚡ VI XỬ LÝ (CPU): Intel Core Ultra 5 thế hệ mới tích hợp AI – Xử lý gọn gàng mọi tác vụ văn phòng, đồ họa 2D nhẹ và đa nhiệm nâng cao.\n⚡ BỘ NHỚ RAM: 16GB RAM chuẩn tốc độ cao – Tha hồ mở hàng chục tab trình duyệt và phần mềm làm việc cùng lúc không lo giật lag.\n⚡ MÀN HÌNH: 13.3 inch FHD IPS – Góc nhìn rộng, hình ảnh sắc nét, chống chói bảo vệ mắt khi làm việc cường độ cao.\n\n🚀 Thiết kế nhỏ gọn, độ bền chuẩn doanh nhân Nhật Bản, Dell Latitude 5350 chính là chiếc laptop \"Đáng tiền nhất phân khúc\" thời điểm hiện tại!\n\n🛡️ CAM KẾT VÀ BẢO HÀNH TẠI LAPTOP VƯƠNG GIA:\n🔹 Bao test 7 ngày lỗi 1 đổi 1 nhanh chóng.\n🔹 Bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n🔹 Cọc 300k kiểm tra legit, hỗ trợ gọi Video Call check máy trực tiếp trước khi gửi.\n\n🎁 BỘ QUÀ TẶNG ĐI KÈM HẤP DẪN:\n🔹 Túi chống sốc cao cấp.\n🔹 Chuột không dây thời trang.\n🔹 Sạc zin theo máy chuẩn hãng.\n🔹 Gói hỗ trợ cài đặt Windows và phần mềm trọn đời.\n\n📲 THÔNG TIN LIÊN HỆ:\n💬 Inbox ngay cho Fanpage để nhận tư vấn chi tiết!\n📞 Hotline / Zalo: 0876637806\n\n#LaptopGiaRe #LaptopTuyenChon #GiaUuDai #LaptopVuongGia #DellLatitude5350",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545141-962277818.jpg",
+        "size": 194419,
+        "storage": "supabase",
+        "filename": "1793096545141-962277818.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_front.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545885-412751655.jpg",
+        "size": 137721,
+        "storage": "supabase",
+        "filename": "1793096545885-412751655.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_keyboard.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547033-359836312.jpg",
+        "size": 112904,
+        "storage": "supabase",
+        "filename": "1793096547033-359836312.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_side.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547703-425915759.jpg",
+        "size": 161942,
+        "storage": "supabase",
+        "filename": "1793096547703-425915759.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_ports.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096548836-575482563.jpg",
+        "size": 180772,
+        "storage": "supabase",
+        "filename": "1793096548836-575482563.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_back.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096549734-428300807.jpg",
+        "size": 97817,
+        "storage": "supabase",
+        "filename": "1793096549734-428300807.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_overview.jpg"
+      }
+    ],
+    "status": "completed",
+    "post_id": "post_1794100056459",
+    "fb_post_id": "1154184381110692_122145139995344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122145139995344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-08T01:07:19.752Z",
+    "updated_at": "2026-11-08T01:07:51.935Z",
+    "posted_at": "2026-11-08T01:07:51.935Z"
+  },
+  {
+    "id": "cpq_1794100086227_6p2df",
+    "template_id": "tpl_dell_lat_5350",
+    "model_name": "Dell Latitude 5350",
+    "scheduled_time": "2026-11-08T02:07:52.692Z",
+    "priority": 0,
+    "rewrite_style": "featured_review",
+    "ai_rewritten_content": "✨ [REVIEW CHI TIẾT DÒNG MÁY] — DELL LATITUDE 5350\n\n💼 Dòng laptop văn phòng thực chiến đỉnh cao từ thị trường tuyển chọn Nhật Bản! Dell Latitude 5350 chính là giải pháp hoàn hảo dành cho doanh nhân, nhân viên văn phòng và những ai đang tìm kiếm một cỗ máy làm việc bền bỉ, tối ưu hiệu năng mỗi ngày.\n\n⚡ HIỆU NĂNG MẠNH MẼ — CÂN MỌI TÁC VỤ VĂN PHÒNG\n🔹 CPU Intel Core Ultra 5: Chip thế hệ mới xử lý cực mượt các bảng tính Excel hàng ngàn dòng, báo cáo chuyên nghiệp hay các phần mềm quản lý mà không lo giật lag.\n🔹 RAM 16GB: Khả năng đa nhiệm ấn tượng, thoải mái mở 20-30 tab Chrome cùng lúc kết hợp làm việc trên Word, Powerpoint mượt mà.\n🔹 Ổ cứng SSD 256GB: Khởi động máy chỉ trong vài giây, tốc độ đọc ghi dữ liệu cực nhanh, tiết kiệm tối đa thời gian làm việc.\n🔹 Màn hình 13.3 inch FHD IPS: Hình ảnh hiển thị sắc nét, chống chói tốt, giúp đôi mắt luôn dễ chịu dù phải nhìn màn hình liên tục 8 tiếng làm việc.\n\n✨ TRẢI NGHIỆM THỰC CHUYÊN NGHỆP\n🔹 Bàn phím nảy êm, gõ cả ngày không mỏi tay — điểm cộng lớn cho những ai làm công việc nhập liệu, soạn thảo văn bản thường xuyên.\n🔹 Thiết kế nhỏ gọn, sang trọng, chuẩn độ bền doanh nhân, cực kỳ tiện lợi khi di chuyển hay đi công tác.\n\n💰 Giá bán tham khảo siêu ưu đãi: 13.9 Triệu\n\n🛡️ CHÍNH SÁCH BẢO HÀNH & CAM KẾT UY TÍN\n🔹 Bao test 7 ngày lỗi 1 đổi 1. Bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n🔹 Cọc 300k kiểm tra legit, hỗ trợ gọi Video Call check máy trực tiếp rõ ràng trước khi giao.\n\n🎁 QUÀ TẶNG ĐI KÈM HẤP DẪN\n🔹 Túi chống sốc cao cấp.\n🔹 Chuột không dây thời trang.\n🔹 Bộ sạc zin theo máy.\n🔹 Miễn phí gói cài Win và phần mềm văn phòng trọn đời.\n\n📲 Nhanh tay nhắn tin cho Laptop Vương Gia để nhận tư vấn chi tiết!\n💬 Hotline / Zalo: 0876637806\n\n#LaptopDoanhNhan #LaptopVuongGia #ReviewLaptop #LaptopVanPhong #DellLatitude5350",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545141-962277818.jpg",
+        "size": 194419,
+        "storage": "supabase",
+        "filename": "1793096545141-962277818.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_front.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545885-412751655.jpg",
+        "size": 137721,
+        "storage": "supabase",
+        "filename": "1793096545885-412751655.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_keyboard.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547033-359836312.jpg",
+        "size": 112904,
+        "storage": "supabase",
+        "filename": "1793096547033-359836312.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_side.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547703-425915759.jpg",
+        "size": 161942,
+        "storage": "supabase",
+        "filename": "1793096547703-425915759.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_ports.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096548836-575482563.jpg",
+        "size": 180772,
+        "storage": "supabase",
+        "filename": "1793096548836-575482563.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_back.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096549734-428300807.jpg",
+        "size": 97817,
+        "storage": "supabase",
+        "filename": "1793096549734-428300807.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_overview.jpg"
+      }
+    ],
+    "status": "completed",
+    "post_id": "post_1794100086719",
+    "fb_post_id": "1154184381110692_122145141651344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122145141651344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-08T01:08:06.227Z",
+    "updated_at": "2026-11-08T01:08:23.622Z",
+    "posted_at": "2026-11-08T01:08:23.622Z"
+  },
+  {
+    "id": "cpq_1794100114831_gb84h",
+    "template_id": "tpl_dell_lat_5350",
+    "model_name": "Dell Latitude 5350",
+    "scheduled_time": "2026-11-08T02:08:24.218Z",
+    "priority": 0,
+    "rewrite_style": "flash_sale",
+    "ai_rewritten_content": "🔥 [TIÊU ĐIỂM GIÁ TỐT] — DELL LATITUDE 5350 CHUẨN NỘI ĐIA NHẬT\n\n💰 BẠN ĐANG TÌM MỘT CHIẾC LAPTOP CẤU HÌNH ĐỜI MỚI - GIÁ XUẤT SẮC TRONG TẦM TAY?\nNhật Bản luôn nổi tiếng với những tiêu chuẩn kiểm định khắt khe, và dòng máy tuyển chọn Dell Latitude 5350 chính là giải pháp tối ưu ngân sách số 1 hiện nay cho cá nhân và doanh nghiệp!\n\n⚡ ĐẦU TƯ THÔNG MINH - CẤU HÌNH VƯỢT XA GIÁ TIỀN:\n💰 Mức giá ưu đãi đặc biệt: CHỈ 13.9 TRỆU (Tiết kiệm hàng triệu đồng so với máy mới mà chất lượng không đổi)\n🚀 Ổ cứng: SSD 256GB chuẩn NVMe siêu tốc — Truy xuất dữ liệu tức thì, mở máy chỉ vài giây\n⚡ CPU: Intel Core Ultra 5 thế hệ mới nhất — Xử lý mượt mà mọi tác vụ văn phòng, đồ họa nhẹ và tối ưu năng lượng cực tốt\n🔹 Bộ nhớ RAM: 16GB — Đa nhiệm đỉnh cao, mở hàng chục tab Chrome không lo lag giật\n🚀 Màn hình: 13.3 inch FHD IPS — Nhỏ gọn, sắc nét, chống chói cao cấp giúp làm việc nhiều giờ không mỏi mắt\n\n Bền bỉ, mỏng nhẹ, chuẩn phím Nhật chắc chắn — Đây chính là món đầu tư \"đáng đồng tiền bát gạo\" nhất thời điểm hiện tại!\n\n🛡️ CAM KẾT VÀ BẢO HÀNH CHUYÊN NGHIỆP TẠI LAPTOP VƯƠNG GIA:\n🔹 Bao test 7 ngày lỗi 1 đổi 1 nhanh chóng.\n🔹 Bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n🔹 Cọc nhẹ 300k kiểm tra legit, hỗ trợ gọi video call check máy trực tiếp tận tay trước khi đi đơn.\n\n🎁 TRỌN BỘ QUÀ TẶNG KÈM THEO:\n✨ Túi chống sốc cao cấp.\n✨ Chuột không dây thời trang.\n✨ Sạc zin theo máy.\n✨ Gói hỗ trợ cài Win và phần mềm trọn đời.\n\n📲 Đừng bỏ lỡ cơ hội sở hữu chiếc laptop siêu hời này!\n💬 Nhắn tin ngay cho Fanpage hoặc liên hệ Hotline/Zalo: 0876637806 để tư vấn chi tiết và nhận giá tốt nhất hôm nay!\n\n#LaptopGiaRe #LaptopTuyenChon #GiaUuDai #LaptopVuongGia #DellLatitude5350",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545141-962277818.jpg",
+        "size": 194419,
+        "storage": "supabase",
+        "filename": "1793096545141-962277818.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_front.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545885-412751655.jpg",
+        "size": 137721,
+        "storage": "supabase",
+        "filename": "1793096545885-412751655.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_keyboard.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547033-359836312.jpg",
+        "size": 112904,
+        "storage": "supabase",
+        "filename": "1793096547033-359836312.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_side.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547703-425915759.jpg",
+        "size": 161942,
+        "storage": "supabase",
+        "filename": "1793096547703-425915759.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_ports.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096548836-575482563.jpg",
+        "size": 180772,
+        "storage": "supabase",
+        "filename": "1793096548836-575482563.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_back.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096549734-428300807.jpg",
+        "size": 97817,
+        "storage": "supabase",
+        "filename": "1793096549734-428300807.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_overview.jpg"
+      }
+    ],
+    "status": "completed",
+    "post_id": "post_1794100115521",
+    "fb_post_id": "1154184381110692_122145143679344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122145143679344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-08T01:08:34.831Z",
+    "updated_at": "2026-11-08T01:08:50.841Z",
+    "posted_at": "2026-11-08T01:08:50.841Z"
+  },
+  {
+    "id": "cpq_1794100144119_fifbk",
+    "template_id": "tpl_dell_lat_5350",
+    "model_name": "Dell Latitude 5350",
+    "scheduled_time": "2026-11-08T02:08:51.606Z",
+    "priority": 0,
+    "rewrite_style": "curated_pick",
+    "ai_rewritten_content": "🌟 [HÀNG TUYỂN CHỌN LOẠI A] — DELL LATITUDE 5350\n\n🛡️ BỀN BỈ NỒI ĐỒNG CỐI ĐÁ - ĐẠT CHUẨN QUÂN ĐỘI NHẬT BẢN 🛡️\n\nLaptop Vương Gia xin giới thiệu đến quý khách hàng dòng sản phẩm tuyển chọn cao cấp Dell Latitude 5350 - chiếc laptop doanh nhân sở hữu độ bền vượt trội, nguyên zin 100% chuẩn máy Nhật tuyển chọn kỹ lưỡng từng chi tiết!\n\n💎 ĐẶC ĐIỂM NỔI BẬT DÒNG MÁY:\n🔹 Khung vỏ hợp kim siêu cứng cáp: Đạt tiêu chuẩn độ bền quân sự MIL-STD, chống va đập, chịu lực và va đập cực tốt, đồng hành cùng bạn trên mọi hành trình công tác.\n🔹 Bàn phím chống tràn cao cấp: Thiết kế gõ êm ái, độ nảy tốt, hỗ trợ chống nước tràn bảo vệ an toàn cho bo mạch bên trong.\n🔹 Màn hình 13.3 inch FHD IPS chống chói: Hình ảnh sắc nét, góc nhìn rộng, tối ưu hiển thị làm việc thoải mái nhiều giờ liên tục.\n🔹 Cấu hình thế hệ mới vượt trội: Sở hữu CPU Intel Core Ultra 5 mạnh mẽ, kết hợp RAM 16GB đa nhiệm mượt mà cùng SSD 256GB tốc độ cao, xử lý gọn gàng mọi tác vụ văn phòng, quản lý và đồ họa cơ bản.\n\n💰 GIÁ THAM KHẢO HẤP DẪN: 13.900.000 VNĐ\n\n✅ CAM KẾT & CHÍNH SÁCH BẢO HÀNH TRỌN NIỀM TIN:\n- Bao test 7 ngày lỗi 1 đổi 1 nhanh chóng.\n- Bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n- Khách ở xa hỗ trợ cọc 300k kiểm tra legit, gọi video call check máy trực tiếp 100% trước khi gửi.\n\n🎁 BỘ QUÀ TẶNG KÈM HẤP DẪN:\n- Túi chống sốc cao cấp bảo vệ máy.\n- Chuột không dây thời trang cực mượt.\n- Bộ sạc zin chuẩn theo máy.\n- Hỗ trợ gói cài Win và phần mềm ứng dụng trọn đời.\n\n☎️ Hotline / Zalo tư vấn & đặt hàng: 0876637806\nLiên hệ ngay Laptop Vương Gia để sở hữu chiếc laptop chuẩn zin, bền bỉ tuyệt đối này!\n\n#LaptopChuanZin #HangTuyenChon #LaptopDoanhNhan #DoBenChuanNhat #LaptopVuongGia #DellLatitude5350",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545141-962277818.jpg",
+        "size": 194419,
+        "storage": "supabase",
+        "filename": "1793096545141-962277818.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_front.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545885-412751655.jpg",
+        "size": 137721,
+        "storage": "supabase",
+        "filename": "1793096545885-412751655.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_keyboard.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547033-359836312.jpg",
+        "size": 112904,
+        "storage": "supabase",
+        "filename": "1793096547033-359836312.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_side.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547703-425915759.jpg",
+        "size": 161942,
+        "storage": "supabase",
+        "filename": "1793096547703-425915759.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_ports.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096548836-575482563.jpg",
+        "size": 180772,
+        "storage": "supabase",
+        "filename": "1793096548836-575482563.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_back.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096549734-428300807.jpg",
+        "size": 97817,
+        "storage": "supabase",
+        "filename": "1793096549734-428300807.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_overview.jpg"
+      }
+    ],
+    "status": "completed",
+    "post_id": "post_1794100144561",
+    "fb_post_id": "1154184381110692_122145145251344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122145145251344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-08T01:09:04.119Z",
+    "updated_at": "2026-11-08T01:09:20.492Z",
+    "posted_at": "2026-11-08T01:09:20.492Z"
+  },
+  {
+    "id": "cpq_1794100175663_zexza",
+    "template_id": "tpl_dell_lat_5350",
+    "model_name": "Dell Latitude 5350",
+    "scheduled_time": "2026-11-08T02:09:20.923Z",
+    "priority": 0,
+    "rewrite_style": "value_champion",
+    "ai_rewritten_content": "🏆 [LỰA CHỌN THỰC CHIẾN SỐ 1] — DELL LATITUDE 5350\n\n🎯 Bạn đang tìm kiếm một người bạn đồng hành \"chuẩn Nhật\" siêu gọn nhẹ, sẵn sàng cùng bạn chinh chiến trên mọi chuyến công tác hay lịch học tập dày đặc? \n\nLaptop Vương Gia trân trọng giới thiệu dòng laptop tuyển chọn cao cấp DELL LATITUDE 5350 — Biểu tượng của sự linh hoạt, bền bỉ và tối ưu thời lượng pin cho người dùng di chuyển liên tục!\n\n💻 ĐẶC QUYỀN MỎNG NHẸ & THỜI LƯỢNG PIN VƯỢT TRỘI\n🔹 Thiết kế siêu gọn nhẹ với kích thước 13.3 inch, dễ dàng bỏ vừa mọi balo, túi xách để mang đi làm việc, học tập mọi lúc mọi nơi.\n🔹 Pin khỏe bứt phá: Tối ưu năng lượng thông minh, đáp ứng trọn vẹn một ngày làm việc thực chiến mà không cần lo lắng tìm ổ cắm.\n🔹 Độ bền chuẩn quân đội: Khung vỏ cứng cáp, chống va đập tốt, chịu được áp lực cao trong môi trường di chuyển thường xuyên.\n\n🎯 CẤU HÌNH THỰC CHIẾN THẾ HỆ MỚI\n🔹 CPU: Intel Core Ultra 5 — Chip xử lý thế hệ mới cực mạnh mẽ, vận hành mượt mà từ tác vụ văn phòng đến xử lý dữ liệu phức tạp.\n🔹 RAM: 16GB — Đa nhiệm cực đỉnh, mở hàng chục tab Chrome và ứng dụng làm việc cùng lúc không lo giật lag.\n🔹 Ổ cứng: SSD 256GB — Tốc độ khởi động máy và truy xuất dữ liệu cực nhanh trong chớp mắt.\n🔹 Màn hình: 13.3 inch FHD IPS — Hình ảnh sắc nét, chống chói cao cấp, bảo vệ mắt tối đa khi làm việc cường độ cao.\n\n💰 GIÁ BÁN THAM KHẢO MÁY TUYỂN CHỌN: 13.9 triệu (Ưu đãi cực tốt cho dòng máy phân khúc doanh nhân cao cấp!)\n\n🛡️ CHÍNH SÁCH BẢO HÀNH & CAM KẾT CHẤT LƯỢNG\n🔹 Bao test 7 ngày lỗi 1 đổi 1 cực kỳ uy tín.\n🔹 Bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n🔹 Hỗ trợ cọc 300k kiểm tra legit — Nhận hỗ trợ Video Call check máy trực tiếp từng chi tiết trước khi chốt đơn.\n\n🎁 BỘ QUÀ TẶNG ĐẮC LỰC ĐI KÈM:\n- Túi chống sốc cao cấp.\n- Chuột không dây thời trang.\n- Sạc zin chuẩn theo máy.\n- Gói hỗ trợ cài Win & bảo dưỡng trọn đời.\n\n📲 LIÊN HỆ ĐẶT HÀNG NGAY:\nHotline / Zalo: 0876637806\nHãy nhắn tin ngay cho Laptop Vương Gia để nhận video check máy chi tiết và tư vấn nhanh nhất!\n\n#LaptopBenBi #LaptopVanPhong #LaptopGiaTot #LaptopDiDong #LaptopVuongGia #DellLatitude5350",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545141-962277818.jpg",
+        "size": 194419,
+        "storage": "supabase",
+        "filename": "1793096545141-962277818.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_front.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545885-412751655.jpg",
+        "size": 137721,
+        "storage": "supabase",
+        "filename": "1793096545885-412751655.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_keyboard.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547033-359836312.jpg",
+        "size": 112904,
+        "storage": "supabase",
+        "filename": "1793096547033-359836312.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_side.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547703-425915759.jpg",
+        "size": 161942,
+        "storage": "supabase",
+        "filename": "1793096547703-425915759.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_ports.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096548836-575482563.jpg",
+        "size": 180772,
+        "storage": "supabase",
+        "filename": "1793096548836-575482563.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_back.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096549734-428300807.jpg",
+        "size": 97817,
+        "storage": "supabase",
+        "filename": "1793096549734-428300807.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_overview.jpg"
+      }
+    ],
+    "status": "completed",
+    "post_id": "post_1794100176112",
+    "fb_post_id": "1154184381110692_122145147009344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122145147009344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-08T01:09:35.663Z",
+    "updated_at": "2026-11-08T01:09:52.072Z",
+    "posted_at": "2026-11-08T01:09:52.072Z"
+  },
+  {
+    "id": "cpq_1794100206063_7rbfp",
+    "template_id": "tpl_dell_lat_5350",
+    "model_name": "Dell Latitude 5350",
+    "scheduled_time": "2026-11-08T02:09:53.774Z",
+    "priority": 0,
+    "rewrite_style": "featured_review",
+    "ai_rewritten_content": "✨ [REVIEW CHI TIẾT DÒNG MÁY] — DELL LATITUDE 5350\n\n💼 Bạn đang tìm kiếm một chiến mã văn phòng chuẩn chất lượng tuyển chọn Nhật Bản, vừa sở hữu thiết kế gọn nhẹ vừa có hiệu năng thực chiến đỉnh cao? Dell Latitude 5350 chính là giải pháp tối ưu hàng đầu tại Laptop Vương Gia dành cho dân công sở, kế toán và doanh nhân!\n\n⚡ HIỆU NĂNG VĂN PHÒNG THỰC CHIẾN MẠNH MẼ\n🔹 Đỉnh cao đa nhiệm với CPU Intel Core Ultra 5 thế hệ mới kết hợp cùng dung lượng RAM 16GB. Máy xử lý mượt mà trơn tru từ các file Excel nặng hàng triệu dòng, báo cáo Word phức tạp cho đến mở cùng lúc hàng chục tab Chrome mà không hề có dấu hiệu giật lag.\n🔹 Trải nghiệm gõ phím tuyệt vời: Bàn phím dòng Latitude luôn được đánh giá cao nhờ hành trình phím sâu, độ nảy cực tốt, êm ái giúp bạn nhập liệu cả ngày dài mà không mỏi tay.\n\n⚙️ CẤU HÌNH CHI TIẾT (DÒNG MÁY TUYỂN CHỌN NHẬT BẢN):\n🔹 CPU: Intel Core Ultra 5 (Xử lý tác vụ siêu tốc, tối ưu pin)\n🔹 RAM: 16GB (Chạy đa nhiệm mượt mà, không lo tràn RAM)\n🔹 Ổ cứng: SSD 256GB (Tốc độ đọc ghi nhanh, khởi động máy trong vài giây)\n🔹 Màn hình: 13.3 inch FHD IPS (Góc nhìn rộng, hình ảnh sắc nét, chống chói bảo vệ mắt)\n\n💰 Giá bán tham khảo siêu ưu đãi: 13.9 triệu\n\n🛡️ CAM KẾT & CHÍNH SÁCH BẢO HÀNH CHU ĐÁO:\n🔹 Bao test 7 ngày lỗi 1 đổi 1 cực kỳ uy tín.\n🔹 Bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n🔹 Hỗ trợ cọc 300k kiểm tra legit, sẵn sàng gọi video call check máy trực tiếp trước khi gửi.\n\n🎁 BỘ QUÀ TẶNG KÈM THEO MÁY:\n🔹 Túi chống sốc cao cấp\n🔹 Chuột không dây thời trang\n🔹 Bộ sạc zin theo máy\n🔹 Gói hỗ trợ cài đặt Win và phần mềm văn phòng trọn đời\n\n📲 Nhanh tay inbox hoặc liên hệ ngay với Laptop Vương Gia để được tư vấn chi tiết:\n💬 Hotline / Zalo: 0876637806\n\n#LaptopDoanhNhan #LaptopVuongGia #ReviewLaptop #LaptopVanPhong #DellLatitude5350",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545141-962277818.jpg",
+        "size": 194419,
+        "storage": "supabase",
+        "filename": "1793096545141-962277818.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_front.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545885-412751655.jpg",
+        "size": 137721,
+        "storage": "supabase",
+        "filename": "1793096545885-412751655.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_keyboard.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547033-359836312.jpg",
+        "size": 112904,
+        "storage": "supabase",
+        "filename": "1793096547033-359836312.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_side.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547703-425915759.jpg",
+        "size": 161942,
+        "storage": "supabase",
+        "filename": "1793096547703-425915759.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_ports.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096548836-575482563.jpg",
+        "size": 180772,
+        "storage": "supabase",
+        "filename": "1793096548836-575482563.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_back.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096549734-428300807.jpg",
+        "size": 97817,
+        "storage": "supabase",
+        "filename": "1793096549734-428300807.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_overview.jpg"
+      }
+    ],
+    "status": "completed",
+    "post_id": "post_1794100206684",
+    "fb_post_id": "1154184381110692_122145148647344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122145148647344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-08T01:10:06.063Z",
+    "updated_at": "2026-11-08T01:10:24.409Z",
+    "posted_at": "2026-11-08T01:10:24.409Z"
+  },
+  {
+    "id": "cpq_1794100237199_r1x6j",
+    "template_id": "tpl_hp_envy_x360_14",
+    "model_name": "HP Envy x360 14",
+    "scheduled_time": "2026-11-08T02:10:24.844Z",
+    "priority": 0,
+    "rewrite_style": "flash_sale",
+    "ai_rewritten_content": "🔥 [TIÊU ĐIỂM GIÁ TỐT] — HP ENVY X360 14 CHUẨN NỘI ĐIA NHẬT\n\n💰 Bạn đang tìm kiếm một chiếc laptop cao cấp, xoay gập 360° sang trọng nhưng muốn tối ưu chi phí đầu tư? HP Envy x360 14 dòng tuyển chọn trực tiếp từ Nhật Bản chính là lời giải hoàn hảo: Cấu hình đời mới cực mạnh - Mức giá vượt xa giá trị thực tế!\n\n🚀 Chỉ từ 13.5 đến 15.5 triệu, bạn đã sở hữu ngay một chiếc siêu phẩm dòng Envy danh tiếng với chi phí tiết kiệm đáng kể cho cá nhân và doanh nghiệp!\n\n🔹 THÔNG SỐ TỐI ƯU TRONG TẦM GIÁ:\n💰 Giá siêu ưu đãi: Chỉ 13.5 - 15.5 triệu VNĐ\n⚡ Ổ cứng: SSD 512GB siêu tốc - Khởi động Win trong vài giây, truy xuất dữ liệu cực mượt.\n🚀 CPU: Intel Core Ultra 5 125U thế hệ mới nhất - Xử lý mượt mà mọi tác vụ văn phòng, đồ họa và tối ưu thời lượng pin.\n🔹 RAM: 16GB đa nhiệm vượt trội, mở hàng chục tab công việc không lo giật lag.\n⚡ Màn hình: 14 inch FHD Cảm ứng xoay gập 360° linh hoạt - Biến hóa dễ dàng từ laptop thành máy tính bảng tiện lợi.\n\n✨ VÌ SAO ĐÂY LÀ LỰA CHỌN TỐI ƯU NGÂN SÁCH?\n- Chuẩn hàng nội địa Nhật Bản tuyển chọn: Máy đẹp nguyên bản, độ bền vượt thời gian.\n- Thiết kế nhôm nguyên khối mỏng nhẹ, đẳng cấp, nâng tầm hình ảnh chuyên nghiệp.\n- Màn hình cảm ứng sắc nét, hỗ trợ làm việc, ghi chú và giải trí đa năng.\n\n🛡️ CAM KẾT VÀ BẢO HÀNH TẠI LAPTOP VƯƠNG GIA:\n- Bao test 7 ngày lỗi 1 đổi 1.\n- Bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n- Hỗ trợ cọc 300k kiểm tra legit, gọi video call check máy trực tiếp trước khi giao.\n\n🎁 BỘ QUÀ TẶNG CAO CẤP ĐI KÈM:\n- Túi chống sốc cao cấp.\n- Chuột không dây thời trang.\n- Sạc zin theo máy.\n- Gói cài Win & bảo dưỡng trọn đời.\n\n📲 Inbox ngay cho Fanpage hoặc gọi hotline để sở hữu chiếc laptop đỉnh cao với giá siêu hời!\n💬 Hotline / Zalo: 0876637806\n\n#LaptopGiaRe #LaptopTuyenChon #GiaUuDai #LaptopVuongGia #HPEnvyx36014",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096687803-731324845.jpg",
+        "size": 46597,
+        "storage": "supabase",
+        "filename": "1793096687803-731324845.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_envy_14_1.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096688177-60235549.jpg",
+        "size": 39379,
+        "storage": "supabase",
+        "filename": "1793096688177-60235549.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_envy_14_2.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096688587-699817184.jpg",
+        "size": 43319,
+        "storage": "supabase",
+        "filename": "1793096688587-699817184.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_envy_14_3.jpg"
+      }
+    ],
+    "status": "completed",
+    "post_id": "post_1794100237620",
+    "fb_post_id": "1154184381110692_122145149613344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122145149613344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-08T01:10:37.199Z",
+    "updated_at": "2026-11-08T01:10:51.691Z",
+    "posted_at": "2026-11-08T01:10:51.691Z"
+  },
+  {
+    "id": "cpq_1794100268248_4vdha",
+    "template_id": "tpl_dell_lat_5350",
+    "model_name": "Dell Latitude 5350",
+    "scheduled_time": "2026-11-08T02:10:52.116Z",
+    "priority": 0,
+    "rewrite_style": "curated_pick",
+    "ai_rewritten_content": "🌟 [HÀNG TUYỂN CHỌN LOẠI A] — DELL LATITUDE 5350\n\n🛡️ \"NỒI ĐỒNG CỐI ĐÁ\" CHUẨN QUÂN ĐỘI – NGUYÊN ZIN 100% NỘI ĐỊA NHẬT BẢN!\n\nBạn đang tìm kiếm một cỗ máy làm việc vừa mỏng nhẹ, sang trọng nhưng phải đạt độ bền tối đa để đồng hành lâu dài? Laptop Vương Gia xin giới thiệu dòng máy tuyển chọn Dell Latitude 5350 – biểu tượng của sự bền bỉ và hiệu năng hiện đại dành riêng cho giới doanh nhân!\n\n💎 ĐIỂM NỔI BẬT CỦA ĐÒNG MÁY TUYỂN CHỌN:\n🔹 ĐỘ BỀN CHUẨN QUÂN ĐỘI MIL-STD 810H: Khung vỏ hợp kim siêu cứng cáp, chống va đập, chịu rung lắc tốt và hoạt động ổn định trong mọi môi trường khắc nghiệt.\n🔹 BÀN PHÍM CHỐNG TRÀN NƯỚC: Phím gõ cực êm, hành trình phím sâu cho trải nghiệm nhập liệu thoải mái, tích hợp tính năng chống tràn bảo vệ an toàn tuyệt đối cho bo mạch.\n🔹 MÀN HÌNH CHỐNG CHÓI HIỆN ĐẠI: Kích thước 13.3 inch FHD IPS hiển thị sắc nét, trang bị công nghệ Anti-Glare bảo vệ thị lực tuyệt đối khi làm việc cường độ cao.\n🔹 CHÍP INTEL CORE ULTRA 5 THẾ HỆ MỚI: Tích hợp trí tuệ nhân tạo AI, xử lý mượt mà mọi tác vụ văn phòng, quản lý và tối ưu hóa thời lượng pin vượt trội.\n🔹 DUNG LƯỢNG BỘ NHỚ LỚN: RAM 16GB đa nhiệm cực đỉnh không lo giật lag, kết hợp ổ cứng SSD 256GB tốc độ cao cho khả năng khởi động và truy xuất dữ liệu cực nhanh.\n\n💰 GIÁ THAM KHẢO CỰC ƯU ĐÃI: 13.9 triệu VNĐ\n\n✅ CHÍNH SÁCH BẢO HÀNH & CAM KẾT VÀNG:\n- Bao test 7 ngày lỗi 1 đổi 1. Bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n- Khách hàng xa chỉ cần CỌC 300K kiểm tra legit, hỗ trợ GỌI VIDEO CALL CHECK MÁY TRỰC TIẾP trước khi đóng gói.\n- Cam kết máy nguyên zin 100%, hàng tuyển chọn từng chiếc chuẩn chất lượng Nhật Bản.\n\n🎁 BỘ QUÀ TẶNG CAO CẤP ĐI KÈM:\n- Túi chống sốc cao cấp fit chuẩn máy.\n- Chuột không dây thời trang cực tiện lợi.\n- Sạc ZIN chính hãng theo máy.\n- Gói hỗ trợ vệ sinh & cài đặt Windows, phần mềm TRỌN ĐỜI.\n\n☎️ HOTLINE / ZALO TƯ VẤN TRỰC TIẾP: 0876637806\nNhanh tay liên hệ với Laptop Vương Gia để sở hữu chiếc máy tuyển chọn chất lượng nhất ngay hôm nay!\n\n#LaptopChuanZin #HangTuyenChon #LaptopDoanhNhan #DoBenChuanNhat #LaptopVuongGia #DellLatitude5350",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545141-962277818.jpg",
+        "size": 194419,
+        "storage": "supabase",
+        "filename": "1793096545141-962277818.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_front.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545885-412751655.jpg",
+        "size": 137721,
+        "storage": "supabase",
+        "filename": "1793096545885-412751655.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_keyboard.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547033-359836312.jpg",
+        "size": 112904,
+        "storage": "supabase",
+        "filename": "1793096547033-359836312.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_side.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547703-425915759.jpg",
+        "size": 161942,
+        "storage": "supabase",
+        "filename": "1793096547703-425915759.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_ports.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096548836-575482563.jpg",
+        "size": 180772,
+        "storage": "supabase",
+        "filename": "1793096548836-575482563.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_back.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096549734-428300807.jpg",
+        "size": 97817,
+        "storage": "supabase",
+        "filename": "1793096549734-428300807.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_overview.jpg"
+      }
+    ],
+    "status": "completed",
+    "post_id": "post_1794100268670",
+    "fb_post_id": "1154184381110692_122145151071344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122145151071344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-08T01:11:08.248Z",
+    "updated_at": "2026-11-08T01:11:25.362Z",
+    "posted_at": "2026-11-08T01:11:25.362Z"
+  },
+  {
+    "id": "cpq_1794100302060_yoi40",
+    "template_id": "tpl_hp_envy_x360_14",
+    "model_name": "HP Envy x360 14",
+    "scheduled_time": "2026-11-08T02:11:25.818Z",
+    "priority": 0,
+    "rewrite_style": "value_champion",
+    "ai_rewritten_content": "🏆 [LỰA CHỌN THỰC CHIẾN SỐ 1] — HP ENVY X360 14\n\n🎯 Bạn là người thường xuyên phải di chuyển, đi công tác hay học tập thực chiến và đang tìm kiếm một chiếc laptop mỏng nhẹ, pin trâu cùng khả năng linh hoạt tối đa? Dòng máy HP Envy x360 14 tuyển chọn trực tiếp từ Nhật Bản tại Laptop Vương Gia chính là người bạn đồng hành không thể tuyệt vời hơn!\n\n💻 THIẾT KẾ DI ĐỘNG & THỜI LƯỢNG PIN BỀN BỈ\n🔹 Thân máy gọn nhẹ xuất sắc, chất liệu vỏ nhôm nguyên khối sang trọng, dễ dàng cất gọn vào balo hay túi xách để mang đi bất cứ đâu.\n🔹 Màn hình 14 inch FHD C",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096687803-731324845.jpg",
+        "size": 46597,
+        "storage": "supabase",
+        "filename": "1793096687803-731324845.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_envy_14_1.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096688177-60235549.jpg",
+        "size": 39379,
+        "storage": "supabase",
+        "filename": "1793096688177-60235549.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_envy_14_2.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096688587-699817184.jpg",
+        "size": 43319,
+        "storage": "supabase",
+        "filename": "1793096688587-699817184.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "hp_envy_14_3.jpg"
+      }
+    ],
+    "status": "completed",
+    "post_id": "post_1794100302721",
+    "fb_post_id": "1154184381110692_122145152703344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122145152703344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-08T01:11:42.060Z",
+    "updated_at": "2026-11-08T01:11:56.005Z",
+    "posted_at": "2026-11-08T01:11:56.005Z"
   }
 ]
