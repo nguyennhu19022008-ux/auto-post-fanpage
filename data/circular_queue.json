@@ -2330,13 +2330,14 @@
         "originalname": "thinkpad_t480s_4.jpg"
       }
     ],
-    "status": "queued",
-    "post_id": null,
-    "fb_post_id": null,
-    "fb_post_url": null,
-    "execution_log": "Đã đưa vào hàng đợi tuần hoàn tự động.",
+    "status": "completed",
+    "post_id": "post_1794397300599",
+    "fb_post_id": "1154184381110692_122146063755344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122146063755344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
     "created_at": "2026-11-11T11:25:40.223Z",
-    "updated_at": "2026-11-11T11:25:40.223Z"
+    "updated_at": "2026-11-11T11:41:50.798Z",
+    "posted_at": "2026-11-11T11:41:50.798Z"
   },
   {
     "id": "cpq_1794396401650_3fno1",
@@ -2853,5 +2854,419 @@
     "created_at": "2026-11-11T11:32:12.594Z",
     "updated_at": "2026-11-11T11:32:18.225Z",
     "posted_at": "2026-11-11T11:32:18.225Z"
+  },
+  {
+    "id": "cpq_1794397270918_glj80",
+    "template_id": "tpl_dell_lat_5350",
+    "model_name": "Dell Latitude 5350",
+    "scheduled_time": "2026-11-11T12:41:06.693Z",
+    "priority": 1,
+    "rewrite_style": "featured_review",
+    "ai_rewritten_content": "✨ [REVIEW CHI TIẾT DÒNG MÁY] — DELL LATITUDE 5350\n────────────────────────────\n🌟 Vì sao dòng máy này luôn nằm trong top bán chạy tại Laptop Vương Gia?\n🔹 Vi xử lý trung tâm: Intel Core Ultra 5 (xử lý đa nhiệm mượt mà tác vụ Office, phần mềm quản lý, duyệt web)\n🔹 Bộ nhớ RAM: 16GB (chuyển đổi qua lại giữa hàng chục cửa sổ làm việc trơn tru, không giật lag)\n🔹 Ổ cứng lưu trữ: 256GB SSD (tốc độ đọc ghi cao, mở ứng dụng và khởi động máy trong vài giây)\n🔹 Màn hình hiển thị: 13.3 inch FHD IPS (góc nhìn rộng, độ sáng tốt phục vụ cả trong nhà lẫn ngoài trời)\n🔹 Bàn phím tiêu chuẩn cao, thiết kế thanh lịch đĩnh đạc mang phong cách doanh nhân Nhật Bản.\n💰 KHOẢNG GIÁ ƯU ĐÃI: 13.9 triệu\n────────────────────────────\n🎁 TRỌN BỘ PHỤ KIỆN CAO CẤP:\n• Tặng túi chống sốc cao cấp + Chuột không dây thời trang\n• Sạc zin chuẩn máy + Gói cài win trọn đời\n🛡️ CHÍNH SÁCH HẬU MÃI TOÀN DIỆN:\n✅ Bao test 7 ngày lỗi 1 đổi 1. Bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n✅ Cọc 300k check legit, gọi video call xem máy trực tiếp trước khi chốt đơn.\n✅ Giao hàng toàn quốc - Đồng kiểm kiểm tra máy thoải mái trước khi thanh toán.\n📲 Liên hệ ngay Hotline / Zalo: 0876637806\n💬 Inbox Fanpage Laptop Vương Gia để nhận video test máy chi tiết!\n#LaptopDoanhNhan #LaptopVuongGia #ReviewLaptop #LaptopVanPhong #DellLatitude5350",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545141-962277818.jpg",
+        "size": 194419,
+        "storage": "supabase",
+        "filename": "1793096545141-962277818.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_front.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545885-412751655.jpg",
+        "size": 137721,
+        "storage": "supabase",
+        "filename": "1793096545885-412751655.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_keyboard.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547033-359836312.jpg",
+        "size": 112904,
+        "storage": "supabase",
+        "filename": "1793096547033-359836312.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_side.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547703-425915759.jpg",
+        "size": 161942,
+        "storage": "supabase",
+        "filename": "1793096547703-425915759.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_ports.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096548836-575482563.jpg",
+        "size": 180772,
+        "storage": "supabase",
+        "filename": "1793096548836-575482563.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_back.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096549734-428300807.jpg",
+        "size": 97817,
+        "storage": "supabase",
+        "filename": "1793096549734-428300807.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_overview.jpg"
+      }
+    ],
+    "status": "completed",
+    "post_id": "post_1794397271382",
+    "fb_post_id": "1154184381110692_122146062507344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122146062507344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-11T11:41:10.918Z",
+    "updated_at": "2026-11-11T11:41:24.898Z",
+    "posted_at": "2026-11-11T11:41:24.898Z"
+  },
+  {
+    "id": "cpq_1794397332887_newy2",
+    "template_id": "tpl_thinkpad_t480s",
+    "model_name": "ThinkPad T480s",
+    "scheduled_time": "2026-11-11T12:42:08.758Z",
+    "priority": 3,
+    "rewrite_style": "featured_review",
+    "ai_rewritten_content": "✨ [REVIEW CHI TIẾT DÒNG MÁY] — THINKPAD T480S\n\n💼 Doanh nhân, dân văn phòng hay anh em làm tài chính đang tìm kiếm một \"cỗ máy thực chiến\" để xử lý gọn gàng mọi tác vụ công việc hằng ngày? Laptop Vương Gia xin giới thiệu dòng máy tuyển chọn Nhật Bản đình đám: ThinkPad T480s — Biểu tượng của sự bền bỉ và năng suất làm việc đỉnh cao!\n\n⚡ HIỆU NĂNG & VĂN PHÒNG THỰC CHIChiẾN:\n🔹 Chip xử lý: Intel Core i5-8350U mạnh mẽ, tối ưu hóa tốc độ xử lý các tác vụ văn phòng từ cơ bản đến nâng cao.\n🔹 Bộ nhớ: RAM 16GB đa nhiệm cực đỉnh, mở hàng chục tab Chrome cùng lúc, chạy file Excel nặng hàng megabyte hay phần mềm kế toán mượt mà không giật lag.\n🔹 Tốc độ lưu trữ: Ổ cứng SSD 256GB NVMe truy xuất dữ liệu siêu tốc, khởi động máy chỉ trong vài giây.\n🔹 Khung hình: Màn hình 14 inch FHD IPS chống chói sắc nét, bảo vệ thị giác, làm việc lâu không lo mỏi mắt.\n🔹 Trải nghiệm gõ phím: Bàn phím huyền thoại độ nảy cực tốt, gõ êm ái cả ngày không mỏi tay, năng suất nhân đôi.\n\n💰 XẢ KHO CUỐI NĂM — GIÁ CỰC HỜI: Chỉ 6.5 triệu đồng để sở hữu ngay trợ thủ đắc lực cho công việc của bạn!\n\n🎁 QUÀ TẶNG & ƯU ĐÃI ĐẶC BIỆT:\n- Tặng kèm túi chống sốc cao cấp.\n- Tặng chuột không dây thời trang.\n- Sạc zin theo máy chính hãng.\n- Gói hỗ trợ cài đặt Windows & phần mềm trọn đời.\n\n🛡️ CHÍNH SÁCH BẢO HÀNH & CAM KẾT TẠI LAPTOP VƯƠNG GIA:\n- Bao test 7 ngày lỗi 1 đổi 1 cực kỳ an tâm.\n- Bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n- Chính sách từ xa uy tín: Chỉ cần cọc trước 300k, shop hỗ trợ gọi video call kiểm tra máy trực tiếp trước khi gửi hàng.\n\n📲 Mọi thắc mắc cần tư vấn chi tiết, anh em đừng ngần ngại liên hệ ngay:\n- Hotline / Zalo: 0876637806\n- Ghé trực tiếp Laptop Vương Gia để trải nghiệm thực tế dòng máy Nhật Bản tuyển chọn này nhé!\n\n#LaptopDoanhNhan #LaptopVuongGia #ReviewLaptop #LaptopVanPhong #ThinkPadT480s",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793881184742-50486176.jpg",
+        "size": 169988,
+        "storage": "supabase",
+        "filename": "1793881184742-50486176.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "thinkpad_t480s_1.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793881185484-280334922.jpg",
+        "size": 64936,
+        "storage": "supabase",
+        "filename": "1793881185484-280334922.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "thinkpad_t480s_2.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793881185916-805878701.jpg",
+        "size": 99319,
+        "storage": "supabase",
+        "filename": "1793881185916-805878701.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "thinkpad_t480s_3.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793881186852-508811718.jpg",
+        "size": 113963,
+        "storage": "supabase",
+        "filename": "1793881186852-508811718.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "thinkpad_t480s_4.jpg"
+      }
+    ],
+    "status": "completed",
+    "post_id": "post_1794397333267",
+    "fb_post_id": "1154184381110692_122146068003344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122146068003344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-11T11:42:12.887Z",
+    "updated_at": "2026-11-11T11:42:25.194Z",
+    "posted_at": "2026-11-11T11:42:25.194Z"
+  },
+  {
+    "id": "cpq_1794402392318_rv79n",
+    "template_id": "tpl_dell_lat_5350",
+    "model_name": "Dell Latitude 5350",
+    "scheduled_time": "2026-11-11T14:06:28.514Z",
+    "priority": 1,
+    "rewrite_style": "featured_review",
+    "ai_rewritten_content": "✨ [REVIEW CHI TIẾT DÒNG MÁY] — DELL LATITUDE 5350\n\n💼 Bạn đang tìm kiếm một \"vũ khí\" tối thượng cho công việc văn phòng, xử lý dữ liệu nặng và đa nhiệm mượt mà suốt cả ngày dài? \n\nLaptop Vương Gia xin giới thiệu dòng máy tuyển chọn Nhật Bản đình đám: Dell Latitude 5350 — Biểu tượng của hiệu năng thực chiến và độ bền bỉ vượt thời gian!\n\n⚡ CẤU HÌNH CHI TIẾT & SỨC MẠNH VẬN HÀNH:\n🔹 CPU: Intel Core Ultra 5 thế hệ mới — Xử lý trơn tru mọi tác vụ văn phòng, phân tích dữ liệu thần tốc.\n🔹 RAM: 16GB — Đa nhiệm đỉnh cao, mở hàng chục tab Chrome kết hợp file Excel hàng ngàn dòng mà không hề giật lag.\n🔹 Ổ cứng: SSD 256GB — Tốc độ khởi động máy và truy xuất dữ liệu chỉ trong tích tắc.\n🔹 Màn hình: 13.3 inch FHD IPS — Không gian hiển thị sắc nét, góc nhìn rộng, bảo vệ thị giác khi làm việc lâu giờ.\n\n💼 TRẢI NGHIỆM VĂN PHÒNG THỰC CHIẾN (OFFICE PRODUCTIVITY):\nKhông chỉ mạnh mẽ về phần cứng, Dell Latitude 5350 còn được lòng giới văn phòng nhờ bàn phím thiết kế công thái học: hành trình phím sâu, độ nảy cực tốt, gõ êm ái cả ngày không mỏi tay. Thiết kế gọn nhẹ, sang trọng giúp bạn dễ dàng mang theo đến mọi cuộc họp hay quán cafe.\n\n💰 GIÁ BÁN THAM KHẢO: 13.9 triệu (Mức giá quá hời cho một siêu phẩm doanh nhân đời mới).\n\n🎁 QUÀ TẶNG KÈM THEO HẤP DẪN:\n• Tặng ngay túi chống sốc cao cấp.\n• Tặng kèm chuột không dây thời trang.\n• Sạc zin chính hãng theo máy.\n• Gói cài đặt Windows và vệ sinh máy trọn đời.\n\n🛡️ CHÍNH SÁCH BẢO HÀNH & MUA HÀNG TẠI LAPTOP VƯƠNG GIA:\n• Bao test 7 ngày lỗi 1 đổi 1 cực kỳ an tâm.\n• Bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n• Hình thức thanh toán linh hoạt: Cọc chỉ 300k để kiểm tra hàng uy tín, hỗ trợ gọi video call check máy trực tiếp tại cửa hàng.\n\n📲 Mọi chi tiết xin liên hệ ngay:\n• Hotline / Zalo: 0876637806\n• Inbox trực tiếp cho Fanpage Laptop Vương Gia để được tư vấn nhanh chóng nhất!\n\n#LaptopDoanhNhan #LaptopVuongGia #ReviewLaptop #LaptopVanPhong #DellLatitude5350",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545141-962277818.jpg",
+        "size": 194419,
+        "storage": "supabase",
+        "filename": "1793096545141-962277818.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_front.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545885-412751655.jpg",
+        "size": 137721,
+        "storage": "supabase",
+        "filename": "1793096545885-412751655.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_keyboard.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547033-359836312.jpg",
+        "size": 112904,
+        "storage": "supabase",
+        "filename": "1793096547033-359836312.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_side.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547703-425915759.jpg",
+        "size": 161942,
+        "storage": "supabase",
+        "filename": "1793096547703-425915759.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_ports.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096548836-575482563.jpg",
+        "size": 180772,
+        "storage": "supabase",
+        "filename": "1793096548836-575482563.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_back.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096549734-428300807.jpg",
+        "size": 97817,
+        "storage": "supabase",
+        "filename": "1793096549734-428300807.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_overview.jpg"
+      }
+    ],
+    "status": "completed",
+    "post_id": "post_1794402392725",
+    "fb_post_id": "1154184381110692_122146086315344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122146086315344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-11T13:06:32.318Z",
+    "updated_at": "2026-11-11T13:06:45.741Z",
+    "posted_at": "2026-11-11T13:06:45.741Z"
+  },
+  {
+    "id": "cpq_1794402426149_drfrh",
+    "template_id": "tpl_dell_lat_5350",
+    "model_name": "Dell Latitude 5350",
+    "scheduled_time": "2026-11-11T14:07:02.661Z",
+    "priority": 1,
+    "rewrite_style": "featured_review",
+    "ai_rewritten_content": "✨ [REVIEW CHI TIẾT DÒNG MÁY] — DELL LATITUDE 5350\n\n💼 Anh chị em dân văn phòng, kế toán hay quản lý đang tìm kiếm một \"vũ khí tối thượng\" để xử lý gọn gàng khối lượng công việc khổng lồ mỗi ngày? Laptop Vương Gia xin giới thiệu dòng máy tuyển chọn chuẩn Nhật Bản: Dell Latitude 5350 — Siêu phẩm văn phòng thực chiến, cân mọi tác vụ nặng nhọc một cách mượt mà nhất!\n\n⚡ ĐIỂM NHẤN HIỆU NĂNG & ĐA NHIỆM:\n🔹 Chip xử lý: Intel Core Ultra 5 thế hệ mới cực mạnh, tối ưu điện năng và xử lý dữ liệu thần tốc.\n🔹 Bộ nhớ RAM: 16GB đa nhiệm mượt mà, mở cùng lúc hàng chục tab Chrome và các file Excel nặng hàng chục MB mà không hề giật lag.\n🔹 Ổ cứng: SSD 256GB tốc độ cao, khởi động máy và truy xuất dữ liệu chỉ trong tích tắc.\n🔹 Màn hình: 13.3 inch FHD IPS sắc nét, góc nhìn rộng, chống chói tốt, bảo vệ thị lực suốt nhiều giờ làm việc.\n\n💼 GÕ PHÍM ÊM ÁI - LÀM VIỆC CẢ NGÀY KHÔNG MỎI:\nSở hữu bàn phím có hành trình phím sâu, độ nảy cực tốt cùng thiết kế layout khoa học, Dell Latitude 5350 mang lại cảm giác gõ êm ái, chuẩn xác. Đây chính là trợ thủ đắc lực giúp các \"sĩ tử\" văn phòng soạn thảo văn bản, nhập liệu và xử lý bảng tính Excel liên tục cả ngày dài mà không lo mỏi cổ tay.\n\n💰 GIÁ BÁN THAM KHẢO: Chỉ 13.9 triệu cho một siêu phẩm doanh nhân đẳng cấp!\n\n🛡️ CHÍNH SÁCH BẢO HÀNH & HẬU MÃI TẠI LAPTOP VƯƠNG GIA:\n- Bao test 7 ngày lỗi 1 đổi 1 cực kỳ yên tâm.\n- Bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n- Hỗ trợ cọc 300k kiểm tra hàng chuẩn chỉnh, gọi video call check máy trực tiếp trước khi nhận.\n\n🎁 BỘ QUÀ TẶNG KÈM THEO:\n- Túi chống sốc cao cấp.\n- Chuột không dây thời trang.\n- Sạc zin theo máy.\n- Gói cài đặt Windows và phần mềm trọn đời.\n\n📲 Mọi chi tiết xin liên hệ ngay với chúng tôi:\n- Hotline / Zalo: 0876637806\n- Inbox trực tiếp Fanpage để được tư vấn chi tiết cấu hình phù hợp nhất với nhu cầu của bạn!\n\n#LaptopDoanhNhan #LaptopVuongGia #ReviewLaptop #LaptopVanPhong #DellLatitude5350",
+    "media_files": [
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545141-962277818.jpg",
+        "size": 194419,
+        "storage": "supabase",
+        "filename": "1793096545141-962277818.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_front.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096545885-412751655.jpg",
+        "size": 137721,
+        "storage": "supabase",
+        "filename": "1793096545885-412751655.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_keyboard.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547033-359836312.jpg",
+        "size": 112904,
+        "storage": "supabase",
+        "filename": "1793096547033-359836312.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_side.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096547703-425915759.jpg",
+        "size": 161942,
+        "storage": "supabase",
+        "filename": "1793096547703-425915759.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_ports.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096548836-575482563.jpg",
+        "size": 180772,
+        "storage": "supabase",
+        "filename": "1793096548836-575482563.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_back.jpg"
+      },
+      {
+        "url": "https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/1793096549734-428300807.jpg",
+        "size": 97817,
+        "storage": "supabase",
+        "filename": "1793096549734-428300807.jpg",
+        "mimetype": "image/jpeg",
+        "originalname": "dell_lat_5350_overview.jpg"
+      }
+    ],
+    "status": "completed",
+    "post_id": "post_1794402426544",
+    "fb_post_id": "1154184381110692_122146087779344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122146087779344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-11T13:07:06.149Z",
+    "updated_at": "2026-11-11T13:07:18.877Z",
+    "posted_at": "2026-11-11T13:07:18.877Z"
+  },
+  {
+    "id": "cpq_1794402448134_1k0rj",
+    "template_id": "tpl_1794396116753_p3tf5",
+    "model_name": "<script>alert(1)</script> ThinkPad T490",
+    "scheduled_time": "2026-11-11T14:07:21.097Z",
+    "priority": 2,
+    "rewrite_style": "flash_sale",
+    "ai_rewritten_content": "🔥 [TIÊU ĐIỂM GIÁ TỐT] — <SCRIPT>ALERT(1)</SCRIPT> THINKPAD T490 CHUẨN NỘI ĐIA NHẬT\n\n💰 Xả kho cuối năm với mức giá không tưởng: Chỉ 6.5 triệu đồng cho một siêu phẩm phân khúc doanh nhân! Bạn đang tìm kiếm giải pháp tối ưu chi phí đầu tư cho công việc hay học tập mà vẫn đảm bảo hiệu năng mạnh mẽ vượt tầm giá? Laptop Vương Gia mang đến dòng máy tuyển chọn Nhật Bản đáp ứng trọn vẹn mọi tiêu chí: Ngân sách siêu tiết kiệm - Giá trị vượt thời gian!\n\n⚡ Cấu hình tối ưu, bứt phá hiệu suất công việc:\n🔹 Ổ cứng SSD 512GB siêu tốc: Khởi động máy, truy xuất dữ liệu, lưu trữ tài liệu nặng chỉ trong chớp mắt mà không lo giật lag.\n🔹 CPU Core i7-8565U: Xử lý mượt mà các tác vụ văn phòng nặng, đa nhiệm tuyệt vời, làm việc liền mạch suốt cả ngày dài.\n🔹 RAM 16GB: Mở hàng chục tab Chrome và các ứng dụng đồ họa, bảng tính cỡ lớn cùng lúc vẫn mượt mà ổn định.\n🔹 Màn hình sắc nét: Trải nghiệm hiển thị chân thực, không gian làm việc rộng rãi, bảo vệ thị giác tối ưu.\n\n🛡️ CAM KẾT VÀNG TỪ LAPTOP VƯƠNG GIA:\n• Bao test 7 ngày lỗi 1 đổi 1 cực kỳ yên tâm.\n• Bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n• Cọc 300k kiểm tra hàng chuẩn chỉnh, hỗ trợ gọi video call check máy trực tiếp từ xa.\n\n🎁 QUÀ TẶNG HẤP DẪN KÈM THEO:\n• Túi chống sốc cao cấp bảo vệ máy toàn diện.\n• Chuột không dây thời trang, nhạy bén.\n• Sạc zin chính hãng theo máy.\n• Tặng gói cài đặt Windows và phần mềm trọn đời.\n\n📲 Nhanh tay sở hữu ngay trợ",
+    "media_files": [],
+    "status": "completed",
+    "post_id": "post_1794402453049",
+    "fb_post_id": "1154184381110692_122146088139344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122146088139344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-11T13:07:28.134Z",
+    "updated_at": "2026-11-11T13:07:37.292Z",
+    "posted_at": "2026-11-11T13:07:37.292Z"
+  },
+  {
+    "id": "cpq_1794402466699_tc795",
+    "template_id": "tpl_1794396116753_p3tf5",
+    "model_name": "<script>alert(1)</script> ThinkPad T490",
+    "scheduled_time": "2026-11-11T14:07:38.491Z",
+    "priority": 0,
+    "rewrite_style": "featured_review",
+    "ai_rewritten_content": "✨ [REVIEW CHI TIẾT DÒNG MÁY] — <SCRIPT>ALERT(1)</SCRIPT> THINKPAD T490\n\n💼 Bạn đang tìm kiếm một \"vũ khí\" tối thượng cho công việc văn phòng, xử lý dữ liệu nặng và làm việc đa nhiệm cường độ cao cả ngày dài? Hãy để Laptop Vương Gia giới thiệu dòng máy tuyển chọn Nhật Bản cực kỳ đáng sở hữu: <script>alert(1)</script> ThinkPad T490 - Biểu tượng của sự bền bỉ và hiệu năng thực chiến!\n\n⚡ HIỆU NĂNG ĐỈNH CAO - XỬ LÝ MƯỢT MÀ MỌI TÁC VỤ VĂN PHÒNG:\n🔹 CPU: Intel Core i7-8565U mạnh mẽ, tối ưu hóa tốc độ xử lý dữ liệu cực nhanh.\n🔹 RAM: 16GB đa nhiệm mượt mà, mở hàng chục tab Chrome kết hợp file Excel nặng, Word, phần mềm kế toán cùng lúc không lo giật lag.\n🔹 Ổ cứng: SSD 512GB khởi động máy trong tích tắc, không gian lưu trữ dữ liệu thoải mái.\n🔹 Màn hình: Màn hình sắc nét, hiển thị chân thực, bảo vệ thị giác khi làm việc lâu trước máy tính.\n\n💻 TRẢI NGHIỆM GÕ PHÍM HUYỀN THOẠI:\nĐiểm \"ăn tiền\" của dòng ThinkPad chính là bàn phím có hành trình phím sâu, độ nảy cực tốt, gõ êm ái cả ngày không mỏi tay - trợ thủ đắc lực cho dân văn phòng, lập trình viên và người thường xuyên soạn thảo văn bản.\n\n💰 GIÁ BÁN XẢ KHO CUỐI NĂM: Chỉ 6.5 triệu đồng cho một siêu phẩm chuẩn Nhật!\n\n🎁 ƯU ĐÃI & QUÀ TẶNG KÈM THEO:\n- Tặng ngay: Túi chống sốc cao cấp, chuột không dây thời trang, sạc zin theo máy, gói cài win trọn đời.\n\n🛡️ CHÍNH SÁCH BẢO HÀNH & CAM KẾT TỪ LAPTOP VƯƠNG GIA:\n- Bao test 7 ngày lỗi 1 đổi 1 an tâm tuyệt đối.\n- Bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n- Hỗ trợ ship COD toàn quốc: Cọc chỉ 300k, khách được kiểm tra máy thoải mái trước khi thanh toán. Hỗ trợ gọi video call check máy trực tiếp từ A-Z.\n\n📲 LIÊN HỆ NGAY VỚI CHÚNG TÔI:\n- Hotline / Zalo: 0876637806\n\n💬 Inbox ngay cho Laptop Vương Gia để chốt đơn dòng máy tuyển chọn chất lượng này nhé!\n\n#LaptopDoanhNhan #LaptopVuongGia #ReviewLaptop #LaptopVanPhong #scriptalert1scriptThinkPadT490",
+    "media_files": [],
+    "status": "completed",
+    "post_id": "post_1794402467369",
+    "fb_post_id": "1154184381110692_122146089279344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122146089279344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-11T13:07:46.699Z",
+    "updated_at": "2026-11-11T13:07:51.685Z",
+    "posted_at": "2026-11-11T13:07:51.685Z"
+  },
+  {
+    "id": "cpq_1794402507082_udfl0",
+    "template_id": "tpl_1794396116753_p3tf5",
+    "model_name": "<script>alert(1)</script> ThinkPad T490",
+    "scheduled_time": "2026-11-11T14:07:52.641Z",
+    "priority": 0,
+    "rewrite_style": "flash_sale",
+    "ai_rewritten_content": "🔥 [TIÊU ĐIỂM GIÁ TỐT] — <SCRIPT>ALERT(1)</SCRIPT> THINKPAD T490 CHUẨN NỘI ĐIA NHẬT\n\n💰 Xả kho cuối năm với mức giá không tưởng: Chỉ 6.5 triệu đồng cho một siêu phẩm tối ưu ngân sách tuyệt đối! Nếu bạn đang tìm kiếm giải pháp nâng cấp hiệu suất làm việc mà vẫn muốn tiết kiệm tối đa chi phí đầu tư cho cá nhân hay doanh nghiệp, đây chính là câu trả lời hoàn hảo từ Laptop Vương Gia.\n\n🚀 TỐI ƯU NGÂN SÁCH - GIÁ TRỊ VƯỢT XA GIÁ TIỀN:\n🔹 Ổ cứng SSD 512GB tốc độ cao: Khởi động máy, lưu trữ dữ liệu nặng, file excel dung lượng lớn chỉ trong tích tắc, không giật lag.\n🔹 CPU Intel Core i7-8565U mạnh mẽ: Xử lý mượt mà mọi tác vụ văn phòng, quản lý doanh nghiệp, đồ họa cơ bản và đa nhiệm cực tốt.\n🔹 RAM 16GB thoải mái mở hàng chục tab Chrome và các ứng dụng làm việc cùng lúc mà không lo nghẽn bộ nhớ.\n🔹 Màn hình hiển thị sắc nét, góc nhìn rộng, làm việc lâu không mỏi mắt.\n\n🛡️ CAM KẾT CHẤT LƯỢNG TỪ LAPTOP VƯƠNG GIA:\n- 1 đổi 1 trong 7 ngày đầu nếu có lỗi từ nhà sản xuất.\n- Bảo hành phần cứng chu đáo từ 1 - 3 tháng yên tâm sử dụng.\n- Nhận cọc 300k, hỗ trợ gọi video call kiểm tra máy trực tiếp cực kỳ minh bạch và uy tín.\n\n🎁 QUÀ TẶNG KÈM THEO HẤP DẪN:\n- Túi chống sốc cao cấp bảo vệ máy tối ưu.\n- Chuột không dây thời trang, tiện lợi.\n- Sạc zin theo máy chuẩn an toàn.\n- Gói cài đặt Windows và vệ sinh máy trọn đời.\n\n📲 Nhanh tay liên hệ ngay với Laptop Vương Gia để sở hữu dòng máy tuyển chọn chất lượng Nhật Bản với mức giá ưu đãi nhất!\nHotline / Zalo: 0876637806\n💬 Inbox trực tiếp cho Fanpage để được tư vấn chi tiết cấu hình và hình ảnh thực tế của máy.\n\n#LaptopGiaRe #LaptopTuyenChon #GiaUuDai #LaptopVuongGia #scriptalert1scriptThinkPadT490",
+    "media_files": [],
+    "status": "completed",
+    "post_id": "post_1794402507942",
+    "fb_post_id": "1154184381110692_122146089615344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122146089615344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-11T13:08:27.082Z",
+    "updated_at": "2026-11-11T13:08:32.915Z",
+    "posted_at": "2026-11-11T13:08:32.915Z"
+  },
+  {
+    "id": "cpq_1794402520272_fkohk",
+    "template_id": "tpl_1794396116753_p3tf5",
+    "model_name": "<script>alert(1)</script> ThinkPad T490",
+    "scheduled_time": "2026-11-11T14:08:33.582Z",
+    "priority": 0,
+    "rewrite_style": "curated_pick",
+    "ai_rewritten_content": "🌟 [HÀNG TUYỂN CHỌN LOẠI A] — <SCRIPT>ALERT(1)</SCRIPT> THINKPAD T490\n\n🛡️ CHUẨN MỰC ĐỘ BỀN QUÂN ĐỘI -",
+    "media_files": [],
+    "status": "completed",
+    "post_id": "post_1794402520813",
+    "fb_post_id": "1154184381110692_122146089657344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122146089657344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-11T13:08:40.272Z",
+    "updated_at": "2026-11-11T13:08:45.214Z",
+    "posted_at": "2026-11-11T13:08:45.214Z"
+  },
+  {
+    "id": "cpq_1794402531270_r01ve",
+    "template_id": "tpl_1794396116753_p3tf5",
+    "model_name": "<script>alert(1)</script> ThinkPad T490",
+    "scheduled_time": "2026-11-11T14:08:45.972Z",
+    "priority": 0,
+    "rewrite_style": "value_champion",
+    "ai_rewritten_content": "🏆 [LỰA CHỌN THỰC CHIẾN SỐ 1] — <SCRIPT>ALERT(1)</SCRIPT> THINKPAD T490\n\nBạn là người luôn phải di chuyển, thường xuyên làm việc tại quán cà phê, những chuyến công tác xa hay sinh viên năng động cần một thiết bị đồng hành bền bỉ, gọn nhẹ và pin trâu? \n\n🔹 TỐI ƯU CHO SỰ DI CHUYỂN & LÀM VIỆC THỰC CHIẾN:\nSở hữu thiết kế mỏng nhẹ chuẩn doanh nhân, trọng lượng tối ưu giúp bạn dễ dàng bỏ gọn vào balo, mang theo cả ngày mà không lo nặng nề. Kết hợp cùng thời lượng pin ấn tượng và màn hình sắc nét, chiếc máy này sẵn sàng đáp ứng trọn vẹn mọi tác vụ liên tục ở bất cứ đâu.\n\n💻 CẤU HÌNH MẠNH MẼ BÊN TRONG:\n• CPU: Intel Core i7-8565U mượt mà, xử lý nhanh gọn mọi công việc văn phòng và đồ họa nhẹ.\n• RAM: 16GB đa nhiệm thoải mái, mở hàng chục tab không giật lag.\n• Ổ cứng: SSD 512GB siêu tốc, khởi động máy và lưu trữ dữ liệu thả ga.\n\n💰 GIÁ BÁN XẢ KHO CUỐI NĂM: Chỉ 6.5 triệu đồng cho một siêu phẩm tuyển chọn từ Nhật Bản!\n\n🎁 QUÀ TẶNG HẤP DẪN KÈM THEO:\n• Túi chống sốc cao cấp\n• Chuột không dây thời trang\n• Sạc zin theo máy\n• Gói cài đặt Windows và vệ sinh máy trọn đời\n\n🛡️ CHÍNH SÁCH BẢO HÀNH & MUA HÀNG UY TÍN:\n• Bao test 7 ngày lỗi 1 đổi 1 cực yên tâm.\n• Bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n• Hỗ trợ từ xa: Cọc chỉ 300k, shop hỗ trợ gọi video call kiểm tra máy trực tiếp trước khi nhận hàng.\n\n📲 Mọi chi tiết xin liên hệ ngay Hotline / Zalo: 0876637806 để được tư vấn nhanh nhất!\n\n#LaptopBenBi #LaptopVanPhong #LaptopGiaTot #LaptopDiDong #LaptopVuongGia #scriptalert1scriptThinkPadT490",
+    "media_files": [],
+    "status": "completed",
+    "post_id": "post_1794402531999",
+    "fb_post_id": "1154184381110692_122146089705344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122146089705344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-11T13:08:51.270Z",
+    "updated_at": "2026-11-11T13:08:55.551Z",
+    "posted_at": "2026-11-11T13:08:55.551Z"
+  },
+  {
+    "id": "cpq_1794402543461_uhqx6",
+    "template_id": "tpl_1794396116753_p3tf5",
+    "model_name": "<script>alert(1)</script> ThinkPad T490",
+    "scheduled_time": "2026-11-11T14:08:57.184Z",
+    "priority": 0,
+    "rewrite_style": "featured_review",
+    "ai_rewritten_content": "✨ [REVIEW CHI TIẾT DÒNG MÁY] — <SCRIPT>ALERT(1)</SCRIPT> THINKPAD T490\n\n💼 Bạn đang tìm kiếm một \"chiến thần\" văn phòng thực chiến, xử lý gọn gàng mọi tác vụ nặng nhọc từ Excel hàng ngàn dòng đến hàng chục tab Chrome cùng lúc mà không hề giật lag? \n\n🔹 Laptop Vương Gia xin giới thiệu dòng máy tuyển chọn Nhật Bản đỉnh cao dành riêng cho dân văn phòng, lập trình viên và doanh nhân: <script>alert(1)</script> ThinkPad T490. Chiếc laptop hội tụ đầy đủ sự bền bỉ, hiệu năng mạnh mẽ và trải nghiệm gõ phím huyền thoại!\n\n⚡ HIỆU NĂNG & ĐẶC ĐIỂM NỔI BẬT:\n• CPU: Intel Core i7-8565U mạnh mẽ, tối ưu hóa tốc độ xử lý công việc cực nhanh.\n• RAM: 16GB đa nhiệm mượt mà, thoải mái mở nhiều ứng dụng làm việc cùng lúc.\n• Ổ cứng: SSD 512GB tốc độ cao, không gian lưu trữ tài liệu vô tận và khởi động máy trong chớp mắt.\n• Màn hình: Sắc nét, hiển thị trung thực, bảo vệ thị giác suốt ngày dài làm việc.\n• Bàn phím: Thiết kế công thái học trứ danh, độ nảy cực tốt, gõ êm ái suốt cả ngày không mỏi tay.\n\n💰 Giá bán xả kho cuối năm cực sốc: Chỉ 6.5 triệu đồng!\n\n🎁 ƯU ĐÃI & QUÀ TẶNG KÈM THEO:\n• Tặng ngay túi chống sốc cao cấp, chuột không dây thời trang.\n• Sạc zin theo máy chính hãng.\n• Hỗ trợ cài đặt Windows và phần mềm trọn đời.\n\n🛡️ CHÍNH SÁCH BẢO HÀNH & MUA HÀNG:\n• Bao test 7 ngày, lỗi 1 đổi 1 cực kỳ an tâm.\n• Bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n• Hình thức mua hàng linh hoạt: Cọc trước 300k để chốt đơn, hỗ trợ gọi video call kiểm tra máy trực tiếp trước khi gửi hàng.\n\n📲 Mọi chi tiết xin liên hệ Hotline / Zalo: 0876637806 để được tư vấn nhanh chóng nhất!\n💬 Inbox ngay cho Laptop Vương Gia để sở hữu ngay dòng máy tuyển chọn chất lượng này!\n\n#LaptopDoanhNhan #LaptopVuongGia #ReviewLaptop #LaptopVanPhong #scriptalert1scriptThinkPadT490",
+    "media_files": [],
+    "status": "completed",
+    "post_id": "post_1794402544302",
+    "fb_post_id": "1154184381110692_122146089747344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122146089747344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-11T13:09:03.461Z",
+    "updated_at": "2026-11-11T13:09:08.656Z",
+    "posted_at": "2026-11-11T13:09:08.656Z"
+  },
+  {
+    "id": "cpq_1794402553200_n69ec",
+    "template_id": "tpl_1794396086379_70dlk",
+    "model_name": "<script>alert(1)</script> ThinkPad",
+    "scheduled_time": "2026-11-11T14:09:09.364Z",
+    "priority": 0,
+    "rewrite_style": "flash_sale",
+    "ai_rewritten_content": "🔥 [TIÊU ĐIỂM GIÁ TỐT] — <SCRIPT>ALERT(1)</SCRIPT> THINKPAD CHUẨN NỘI ĐIA NHẬT\n\n🔹 Bạn đang tìm kiếm một trợ thủ đắc lực cho công việc văn phòng, học tập hay kinh doanh nhưng lại muốn tối ưu hóa tối đa chi phí đầu tư? \n🔹 Laptop Vương Gia mang đến giải pháp đỉnh cao với dòng máy tuyển chọn Nhật Bản: <SCRIPT>ALERT(1)</SCRIPT> THINKPAD - Sự kết hợp hoàn hảo giữa độ bền huyền thoại và mức giá không tưởng!\n\n💰 Mức giá cực kỳ cạnh tranh, mang lại giá trị vượt trội so với số tiền bạn bỏ ra. Đầu tư thông minh, sinh lời hiệu quả cho cả cá nhân lẫn doanh nghiệp!\n\n⚡ CẤU HÌNH MẠNH MẼ - HIỆU NĂNG VƯỢT TẦM GIÁ:\n- Ổ cứng SSD 512GB: Tốc độ truy xuất dữ liệu cực nhanh, khởi động máy và ứng dụng chỉ trong tích tắc, không gian lưu trữ cực thoải mái.\n- CPU i7: Xử lý mượt mà mọi tác vụ văn phòng nặng, bảng tính Excel khủng đến các phần mềm quản lý, đồ họa cơ bản.\n- RAM 16GB: Đa nhiệm thả ga, mở hàng chục tab Chrome và ứng dụng cùng lúc không lo giật lag.\n- Màn hình: Hiển thị sắc nét, góc nhìn rộng, làm việc lâu không mỏi mắt.\n\n🎁 QUÀ TẶNG & ƯU ĐÃI ĐẶC BIỆT KHI MUA MÁY:\n- Tặng ngay túi chống sốc cao cấp bảo vệ máy tối đa.\n- Tặng kèm chuột không dây thời trang, nhạy bén.\n- Sạc zin theo máy chuẩn hãng an toàn tuyệt đối.\n- Miễn phí trọn đời gói cài đặt Windows và phần mềm cơ bản.\n\n🛡️ CHÍNH SÁCH BẢO HÀNH & MUA HÀNG AN TÂM:\n- Bao test 7 ngày lỗi 1 đổi 1 cực kỳ minh bạch.\n- Bảo hành phần cứng chu đáo từ 1 - 3 tháng yên tâm sử dụng.\n- Khách hàng ở xa chỉ cần cọc 300k là kiểm tra hàng uy tín (legit), hỗ trợ gọi video call check máy trực tiếp từ A-Z trước khi nhận.\n\n📲 Liên hệ ngay với Laptop Vương Gia để sở hữu dòng máy tối ưu ngân sách này nhé!\n- Hotline / Zalo: 0876637806\n- Inbox trực tiếp cho Fanpage để được tư vấn chi tiết.\n\n#LaptopGiaRe #LaptopTuyenChon #GiaUuDai #LaptopVuongGia #scriptalert1scriptThinkPad",
+    "media_files": [],
+    "status": "completed",
+    "post_id": "post_1794402553613",
+    "fb_post_id": "1154184381110692_122146089801344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122146089801344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-11T13:09:13.200Z",
+    "updated_at": "2026-11-11T13:09:17.719Z",
+    "posted_at": "2026-11-11T13:09:17.719Z"
+  },
+  {
+    "id": "cpq_1794402564153_z8i6z",
+    "template_id": "tpl_1794396116753_p3tf5",
+    "model_name": "<script>alert(1)</script> ThinkPad T490",
+    "scheduled_time": "2026-11-11T14:09:18.401Z",
+    "priority": 0,
+    "rewrite_style": "curated_pick",
+    "ai_rewritten_content": "🌟 [HÀNG TUYỂN CHỌN LOẠI A] — <SCRIPT>ALERT(1)</SCRIPT> THINKPAD T490\n\n🛡️ CHUẨN MỰC ĐỘ BỀN QUÂN ĐỘI — NỒI ĐỒNG CỐI ĐÁ TỪ NHẬT BẢN!\nNếu anh em đang tìm kiếm một người bạn đồng hành \"cày cuốc\" bất chấp thời gian, bền bỉ theo năm tháng thì <SCRIPT>ALERT(1)</SCRIPT> ThinkPad T490 phiên bản tuyển chọn Nhật Bản tại Laptop Vương Gia chính là sự lựa chọn hoàn hảo. \n🔹 Khung hợp kim magie siêu cứng cáp, chịu lực cực tốt, chống va đập đạt chuẩn độ bền quân sự Mỹ.\n🔹 Bàn phím huyền thoại gõ êm ái, thiết kế chống tràn nước thông minh, bảo vệ tối đa linh kiện bên trong.\n🔹 Máy nguyên zin 100%, ngoại hình đẹp keng tuyển chọn kỹ lưỡng từng chi tiết.\n\n💎 TRẢI NGHIỆM THỰC TẾ & HIỆU NĂNG MẠNH MẼ:\n🔹 Màn hình hiển thị sắc nét, góc nhìn rộng, chống chói tốt giúp làm việc lâu không mỏi mắt.\n🔹 Sức mạnh vượt trội từ CPU Intel Core i7-8565U đa nhiệm mượt mà.\n🔹 RAM 16GB thoải mái mở hàng chục tab Chrome và các ứng dụng nặng cùng lúc.\n🔹 Ổ cứng SSD 512GB tốc độ cao, khởi động máy và truy xuất dữ liệu chỉ trong tích tắc.\n\n💰 GIÁ BÁN XẢ KHO CUỐI NĂM: Chỉ 6.5 triệu đồng cho một siêu phẩm doanh nhân bền bỉ!\n\n🎁 ĐẶC QUYỀN & QUÀ TẶNG KÈM THEO:\n✅ Tặng ngay túi chống sốc cao cấp, chuột không dây thời trang.\n✅ Sạc zin theo máy siêu bền.\n✅ Hỗ trợ cài đặt Windows và vệ sinh máy trọn đời.\n✅ Chính sách bảo hành: Bao test 7 ngày lỗi 1 đổi 1, bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n🤝 Hỗ trợ từ xa minh bạch: Cọc trước 300k, shop hỗ trợ gọi video call kiểm tra máy trực tiếp trước khi giao.\n\n☎️ Lên đời máy bền, gọi ngay Laptop Vương Gia: 0876637806 (Hotline / Zalo)\n\n#LaptopChuanZin #HangTuyenChon #LaptopDoanhNhan #DoBenChuanNhat #LaptopVuongGia #scriptalert1scriptThinkPadT490",
+    "media_files": [],
+    "status": "completed",
+    "post_id": "post_1794402564652",
+    "fb_post_id": "1154184381110692_122146089945344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122146089945344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-11T13:09:24.153Z",
+    "updated_at": "2026-11-11T13:09:29.029Z",
+    "posted_at": "2026-11-11T13:09:29.029Z"
+  },
+  {
+    "id": "cpq_1794402573830_spn30",
+    "template_id": "tpl_1794396086379_70dlk",
+    "model_name": "<script>alert(1)</script> ThinkPad",
+    "scheduled_time": "2026-11-11T14:09:29.692Z",
+    "priority": 0,
+    "rewrite_style": "value_champion",
+    "ai_rewritten_content": "🏆 [LỰA CHỌN THỰC CHIẾN SỐ 1] — <SCRIPT>ALERT(1)</SCRIPT> THINKPAD\n\n🔹 Bạn là người phải di chuyển liên tục, làm việc quán cà phê hay thường xuyên đi công tác, gặp gỡ đối tác? Bạn đang tìm kiếm một người bạn đồng hành vừa gọn nhẹ như cuốn sổ tay, vừa sở hữu viên pin \"trâu\" bền bỉ để chiến đấu suốt cả ngày dài? Dòng máy tuyển chọn chuẩn Nhật Bản <SCRIPT>ALERT(1)</SCRIPT> ThinkPad tại Laptop Vương Gia chính là câu trả lời hoàn hảo dành cho bạn!\n\n💻 TRẢI NGHIỆM GỌN NHẺ & DI CHUYỂN TỐI ƯU\n🎯 Thiết kế mỏng nhẹ đẳng cấp, dễ dàng bỏ gọn trong balo, túi xách mà không lo cồng kềnh.\n🎯 Thời lượng pin ấn tượng, đáp ứng trọn vẹn một ngày làm việc thực chiến ngoài văn phòng mà không cần kè kè cục sạc bên mình.\n🎯 Độ bền đạt chuẩn quân đội, chống chịu va đập cực tốt, yên tâm di chuyển mọi lúc mọi nơi.\n\n⚙️ SỨC MẠNH BÊN TRONG - HIỆU NĂNG VƯỢT TRỘI\n🔹 CPU: Intel Core i7 mạnh mẽ, xử lý mượt mà mọi tác vụ văn phòng, học tập và đồ họa cơ bản.\n🔹 RAM: 16GB đa nhiệm mượt mà, mở hàng chục tab Chrome và ứng dụng cùng lúc không giật lag.\n🔹 Ổ cứng: SSD 512GB siêu tốc, khởi động máy và lưu trữ dữ liệu thoải mái.\n🔹 Màn hình: Sắc nét, góc nhìn rộng, hiển thị trung thực giúp bảo vệ thị lực khi làm việc lâu.\n\n💰 Giá bán tham khảo: Liên hệ ngay để nhận ưu đãi tốt nhất!\n\n🎁 QUÀ TẶNG KÈM HẤP DẪN KHI MUA MÁY:\n• Túi chống sốc cao cấp bảo vệ máy tối đa\n• Chuột không dây thời trang nhanh nhạy\n• Sạc zin theo máy chuẩn hãng\n• Gói cài đặt Windows và vệ sinh máy trọn đời\n\n🛡️ CHÍNH SÁCH BẢO HÀNH VÀ CAM KẾT:\n• Bao test 7 ngày lỗi 1 đổi 1 cực kỳ an tâm.\n• Bảo hành phần cứng chu đáo từ 1 - 3 tháng.\n• Hỗ trợ cọc 300k kiểm tra hàng uy tín, hỗ trợ gọi video call check máy trực tiếp từ xa.\n\n📲 Liên hệ ngay Laptop Vương Gia:\n• Hotline / Zalo: 0876637806\n\n#LaptopBenBi #LaptopVanPhong #LaptopGiaTot #LaptopDiDong #LaptopVuongGia #scriptalert1scriptThinkPad",
+    "media_files": [],
+    "status": "completed",
+    "post_id": "post_1794402574356",
+    "fb_post_id": "1154184381110692_122146090113344239",
+    "fb_post_url": "https://www.facebook.com/1154184381110692_122146090113344239",
+    "execution_log": "Đã xuất bản thành công bài đăng tuần hoàn lên Facebook Fanpage.",
+    "created_at": "2026-11-11T13:09:33.830Z",
+    "updated_at": "2026-11-11T13:09:38.010Z",
+    "posted_at": "2026-11-11T13:09:38.010Z"
   }
 ]

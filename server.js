@@ -23,6 +23,7 @@ const {
   deletePostFromDb
 } = require('./services/supabase');
 const { normalizeMachineCode, isValidMachineCode, deduplicateItemsByCode } = require('./utils/dedup');
+const { inspectMedia } = require('./services/mediaFilter');
 const {
   startScheduler,
   executePost,
@@ -239,6 +240,13 @@ app.post('/api/upload-media', upload.array('files', 35), async (req, res) => {
   try {
     const files = [];
     for (const f of (req.files || [])) {
+      if (f.mimetype && !f.mimetype.startsWith('video/')) {
+        const banCheck = inspectMedia({ buffer: f.buffer, url: f.originalname });
+        if (banCheck.isBanned) {
+          console.log(`[MediaFilter] 🚫 Bỏ qua tệp tải lên cấm: ${banCheck.reason} (${f.originalname})`);
+          continue;
+        }
+      }
       let fileObj = null;
       try {
         const supaRes = await uploadToSupabaseStorage(f.buffer, f.originalname, f.mimetype);
@@ -409,6 +417,13 @@ app.post('/api/posts/:id/attach-media', upload.array('files', 35), async (req, r
 
     const newFiles = [];
     for (const f of (req.files || [])) {
+      if (f.mimetype && !f.mimetype.startsWith('video/')) {
+        const banCheck = inspectMedia({ buffer: f.buffer, url: f.originalname });
+        if (banCheck.isBanned) {
+          console.log(`[MediaFilter] 🚫 Bỏ qua tệp tải lên cấm: ${banCheck.reason} (${f.originalname})`);
+          continue;
+        }
+      }
       let fileObj = null;
       try {
         const supaRes = await uploadToSupabaseStorage(f.buffer, f.originalname, f.mimetype);
@@ -541,15 +556,28 @@ app.post('/api/posts', async (req, res) => {
     }
 
     const nextAvailableTime = await getNextAvailableScheduleTime();
+
+    // Strict Anti-Spam: Filter out any banned media (Zalo avatars, Excel spreadsheets, tiny images)
+    const cleanedMedia = (mediaFiles || []).filter(m => {
+      const url = typeof m === 'string' ? m : (m.url || '');
+      const check = inspectMedia({ url });
+      if (check.isBanned) {
+        console.log(`[MediaFilter] 🚫 Loại bỏ ảnh cấm khỏi bài đăng: ${check.reason} (${url.slice(0, 80)})`);
+        return false;
+      }
+      return true;
+    });
+
     const newPost = {
       id: 'post_' + Date.now(),
       machineCode: (machineCode || 'MÁY').toUpperCase(),
       machineName: machineName || 'Laptop Nhật Bãi',
       content: content || '',
       price: price || '',
-      mediaFiles: mediaFiles || [],
+      mediaFiles: cleanedMedia,
       scheduledTime: publishImmediately ? new Date().toISOString() : (scheduledTime || nextAvailableTime),
-      status: publishImmediately ? 'processing' : 'queued',
+      status: publishImmediately ? 'processing' : (cleanedMedia.length === 0 ? 'pending_media' : 'queued'),
+      notes: cleanedMedia.length === 0 ? 'Chờ bổ sung ảnh máy thật (đã lọc bỏ ảnh đại diện/bảng tính).' : undefined,
       createdAt: new Date().toISOString()
     };
 
@@ -646,6 +674,14 @@ app.post('/api/extension/push-post', async (req, res) => {
             mime = isVideo ? 'video/mp4' : 'image/jpeg';
           } else {
             continue;
+          }
+
+          if (!isVideo) {
+            const banCheck = inspectMedia({ buffer, url: mUrl });
+            if (banCheck.isBanned) {
+              console.log(`[MediaFilter] 🚫 Đã chặn ảnh cấm từ Zalo (#${finalCode}): ${banCheck.reason}`);
+              continue;
+            }
           }
 
           const originalName = `zalo_${finalCode}_${i + 1}${ext}`;

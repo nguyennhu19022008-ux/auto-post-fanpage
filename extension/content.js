@@ -155,6 +155,7 @@
 
   /**
    * Helper: Extract pure high-resolution media URLs from a message container
+   * Strictly filters out Zalo user avatars, tiny icons, emojis, and banned images
    */
   function getPureMedia(container) {
     if (!container) return [];
@@ -164,6 +165,30 @@
       const classes = (img.className || '').toLowerCase();
       const src = img.getAttribute('data-original') || img.getAttribute('data-src') || img.getAttribute('src') || '';
       
+      // 1. Strict Avatar container check: Never take images located inside avatar wrappers
+      const isInsideAvatar = Boolean(
+        img.closest('.avatar') ||
+        img.closest('.avt-m') ||
+        img.closest('[class*="avatar"]') ||
+        img.closest('[class*="avt"]') ||
+        img.closest('.chat-item-avatar') ||
+        (img.closest('.rel') && img.closest('.rel').querySelector('.avt-m'))
+      );
+      if (isInsideAvatar) return;
+
+      // 2. Strict Avatar URL pattern check
+      const isAvatarUrl = (
+        src.includes('ava-talk') ||
+        src.includes('avatar') ||
+        src.includes('/w120/') ||
+        src.includes('/w160/') ||
+        src.includes('/w200/') ||
+        src.includes('static.zalo.me/avatar') ||
+        (src.includes('zadn.vn') && (src.includes('120') || src.includes('160')))
+      );
+      if (isAvatarUrl) return;
+
+      // 3. Junk icons, reaction icons, emojis
       const isJunkIcon = (
         classes.includes('avatar') ||
         classes.includes('emoji') ||
@@ -171,13 +196,20 @@
         classes.includes('default-react-icon') ||
         classes.includes('react') ||
         classes.includes('thumb') ||
-        src.includes('avatar') ||
         src.includes('emoji') ||
         src.includes('static.zalo.me') ||
         src.includes('iconlike')
       );
-
       if (isJunkIcon) return;
+
+      // 4. Natural dimensions check (reject small/square avatars and tiny thumbnails)
+      const w = img.naturalWidth || img.width || 0;
+      const h = img.naturalHeight || img.height || 0;
+      if (w > 0 && h > 0) {
+        if ((w <= 250 && h <= 250) || w < 250 || h < 250) {
+          return;
+        }
+      }
 
       if (src && (src.startsWith('http') || src.startsWith('blob:'))) {
         rawMediaList.push(src);
@@ -193,6 +225,73 @@
     });
 
     return rawMediaList;
+  }
+
+  /**
+   * Helper: Detect if an image is a spreadsheet, document, or phone screenshot (Banned Media)
+   * Samples a 40x40 pixel grid via offscreen canvas.
+   * Excel tables and documents have > 70% white background and < 8% color saturation.
+   */
+  async function isBannedDocumentOrSpreadsheet(src) {
+    return new Promise((resolve) => {
+      try {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          const w = img.naturalWidth || img.width;
+          const h = img.naturalHeight || img.height;
+
+          // Reject avatars or tiny images
+          if ((w <= 250 && h <= 250) || w < 250 || h < 250) {
+            console.log('[Content] 🚫 Chặn ảnh đại diện / ảnh nhỏ:', `${w}x${h}`);
+            return resolve(true);
+          }
+
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = 40;
+            canvas.height = 40;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, 40, 40);
+            const data = ctx.getImageData(0, 0, 40, 40).data;
+            let whitePixels = 0;
+            let totalSat = 0;
+            const total = 40 * 40;
+
+            for (let i = 0; i < data.length; i += 4) {
+              const r = data[i];
+              const g = data[i + 1];
+              const b = data[i + 2];
+              if (r > 230 && g > 230 && b > 230) {
+                whitePixels++;
+              }
+              const maxC = Math.max(r, g, b);
+              const minC = Math.min(r, g, b);
+              if (maxC > 0) totalSat += (maxC - minC) / maxC;
+            }
+
+            const whiteRatio = whitePixels / total;
+            const avgSat = totalSat / total;
+
+            if (whiteRatio > 0.70 && avgSat < 0.08) {
+              console.log('[Content] 🚫 Chặn ảnh Bảng Excel / Ảnh chụp màn hình tra Google:', {
+                w, h,
+                whitePercent: Math.round(whiteRatio * 100) + '%',
+                satPercent: Math.round(avgSat * 100) + '%'
+              });
+              return resolve(true);
+            }
+          } catch (e) {
+            // If cross-origin prevents canvas reading, allow photo
+          }
+          resolve(false);
+        };
+        img.onerror = () => resolve(false);
+        img.src = src;
+      } catch (err) {
+        resolve(false);
+      }
+    });
   }
 
   /**
@@ -276,6 +375,10 @@
     for (const src of rawMediaList) {
       if (seen.has(src)) continue;
       seen.add(src);
+
+      // Strict Anti-Spam: Filter banned spreadsheet, document, or search screenshot
+      const isBanned = await isBannedDocumentOrSpreadsheet(src);
+      if (isBanned) continue;
 
       if (src.startsWith('blob:')) {
         const base64 = await blobUrlToBase64(src);

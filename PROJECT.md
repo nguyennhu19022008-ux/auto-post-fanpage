@@ -32,6 +32,7 @@
 | 19 | D7: Đồng bộ Cache Service Worker v16 | Cập nhật `CACHE_NAME = 'vg-laptop-app-v16'` và query `v=20261111_v16_dual_personal_robot` trong `public/sw.js` | M3 | explorer_survey_dashboard |
 | 20 | D8: Slide 0 Pure Monochrome Polish | Đổi `text-amber-400` thành `text-white font-bold`, nút copy feedback đổi sang đen/trắng thuần khiết | M3 | explorer_survey_dashboard |
 | 21 | E2E-01: Bộ Kiểm thử Tự động Toàn diện | Xây dựng và thực thi bộ test E2E 4-tier chứng nhận 100% tính năng hoạt động không lỗi | M4 | ORIGINAL_REQUEST |
+| 22 | CLEAN-01: Lọc Sạch Ảnh Cấm Hàng Đợi | Rà soát và tiêu hủy 50 ảnh cấm (15 avatar Zalo, 4 ảnh nhỏ, 31 bảng Excel & ảnh chụp màn hình tra Google), chuyển 8 bài thiếu ảnh sang `pending_media`, bổ sung `services/mediaFilter.js` và thuật toán Canvas lọc ảnh cấm 2 tầng | M5 | USER_DIRECTIVE |
 
 ## Milestones
 | # | Name | Scope | Dependencies | Status |
@@ -39,7 +40,8 @@
 | M1 | Backend & API Remediation | Sửa lỗi `server.js`, `services/dataPost.js`, `services/facebook.js`, `services/scheduler.js` (GAP-01 đến GAP-05) | none | DONE |
 | M2 | Chrome Extension MV3 Remediation | Sửa lỗi `extension/content.js`, `extension/fb_robot.js`, `extension/popup.js`, `extension/manifest.json` (DEF-EXT-01 đến DEF-EXT-07) | none | DONE |
 | M3 | Web Dashboard & Client Remediation | Sửa lỗi `public/index.html`, `public/app.html`, `public/js/app.js`, `public/sw.js`, `data/model_templates.json` (D1 đến D8) | M1 | DONE |
-| M4 | Final E2E Automated Verification & Quality Gate Audit | Chạy 100% test suite, Syntax check toàn dự án, HTTP status check, Reviewers, Challengers, Forensic Auditor (Clean pass) | M1, M2, M3 | IN_PROGRESS |
+| M4 | Final E2E Automated Verification & Quality Gate Audit | Chạy 100% test suite, Syntax check toàn dự án, HTTP status check, Reviewers, Challengers, Forensic Auditor (Clean pass) | M1, M2, M3 | DONE (Gate PASSED) |
+| M5 | Banned Media Quarantine & Dual-Layer Prevention | Thanh lọc toàn bộ ảnh đại diện Zalo, bảng tính Excel, ảnh chụp màn hình khỏi Database và Storage, tích hợp chặn tự động | M1, M2 | DONE |
 
 ## Interface Contracts
 ### API Endpoint `/api/data-post/trigger-circular`
