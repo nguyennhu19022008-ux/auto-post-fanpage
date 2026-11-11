@@ -143,40 +143,23 @@ function fallbackGeneratePost(rawText, userSettings, customPrice) {
     firstLine = firstLine.split('-')[0].trim();
   }
   const machineName = (firstLine.length >= 3 && firstLine.length <= 60) ? firstLine : `LAPTOP CHÍNH HÃNG NHẬT BÃI`;
+  const cleanModelTag = machineName.replace(/[^a-zA-Z0-9]/g, '');
+  const hotline = userSettings.hotline || '0876637806';
 
-  const gifts = (userSettings.giftList || [
-    'Tặng túi chống sốc cao cấp cho 2 máy trở lên',
-    'Tặng chuột không dây thời trang',
-    'Sạc zin chuẩn theo máy',
-    'Gói cài win'
-  ]).map(g => `• ${g}`).join('\n');
+  return `🔥 [GIÁ TỐT] - MÃ #${machineCode}: ${machineName.toUpperCase()}
+💰 Giá công khai: ${retailPrice} (Chuẩn nội địa Nhật zin đẹp)
 
-  const depositLine = userSettings.depositNote 
-    ? `✅ ${userSettings.depositNote}` 
-    : '✅ Cọc 300k cho đơn đầu tiên, hỗ trợ call video check legit!';
+⚡ Cấu hình chi tiết:
+• CPU: ${cpu}
+• RAM: ${ram} | SSD: ${ssd}
+• Màn hình: ${screen}
+• Thiết kế: Vỏ nhôm nguyên khối, mỏng nhẹ, pin tốt
 
-  return `🔥 [SIÊU PHẨM GIÁ TỐT] - MÃ ${machineCode}: ${machineName.toUpperCase()}
-────────────────────────────
-⚡ ĐẶC ĐIỂM & CẤU HÌNH VƯỢT TRỘI:
-🔹 Mã máy: #${machineCode}
-🔹 Vi xử lý: ${cpu} (xử lý đa nhiệm mượt mà Office, lướt web, Photoshop 2D)
-🔹 Bộ nhớ RAM: ${ram} (mở hàng chục tab Chrome làm việc không lo giật lag)
-🔹 Ổ cứng: ${ssd} (khởi động Windows và mở ứng dụng chỉ trong 3 giây)
-🔹 Màn hình: ${screen}
-🔹 Bàn phím gõ êm, phím nảy tốt, thiết kế cứng cáp chuẩn tiêu chuẩn Nhật
-💰 GIÁ ƯU ĐÃI HÔM NAY: ${retailPrice}
-────────────────────────────
-🎁 QUÀ TẶNG KÈM THEO:
-${gifts}
-🛡️ CHÍNH SÁCH BẢO HÀNH & HẬU MÃI:
-✅ ${userSettings.warrantyPolicy || 'Bao test 7 ngày lỗi 1 đổi 1. Bảo hành phần cứng 3 tháng cho máy màn không cảm ứng, và 1 tháng cho máy màn cảm ứng, chu đáo.'}
-✅ Kiểm tra máy thoải mái trước khi nhận - Đúng hàng mới thanh toán!
-${depositLine}
-📲 LIÊN HỆ ĐẶT HÀNG NGAY HÔM NAY:
-☎️ Hotline / Zalo: ${userSettings.hotline || '0876637806'}
-💬 Inbox trực tiếp Fanpage để nhận video test máy chi tiết!
-🚚 ${userSettings.storeAddress || 'Giao hàng toàn quốc - Đồng kiểm kiểm tra máy trước khi thanh toán.'}
-#LaptopCuNhat #LaptopVanPhong #LaptopGiaRe #LaptopGiaVuong #${machineCode}`;
+🎁 Tặng kèm: Sạc zin + Túi chống sốc + Chuột không dây (Cài sẵn Win/Office)
+🛡️ Bảo hành: Bao test 7 ngày 1 đổi 1, bảo hành phần cứng 3 tháng chu đáo
+🚚 Giao hàng toàn quốc - Đồng kiểm kiểm tra máy trước khi thanh toán!
+📞 Hotline / Zalo: ${hotline} (Gia Vương)
+#LaptopVuongGia #${cleanModelTag} #${machineCode}`;
 }
 
 /**
@@ -207,53 +190,33 @@ ${rawText || 'Hãy phân tích hình ảnh bảng danh sách mã laptop đính k
 Thông tin cửa hàng của anh Gia Vương:
 - Tên cửa hàng/Fanpage: ${userSettings.fanpageName || 'Laptop Nhật Bãi Giá Rẻ'}
 - Hotline & Zalo chốt đơn: ${userSettings.hotline || '0876637806'}
-- Chính sách bảo hành: ${userSettings.warrantyPolicy || 'Bao test 7 ngày 1 đổi 1, bảo hành phần cứng 3-6 tháng, hỗ trợ trọn đời'}
-- Quà tặng kèm: ${(userSettings.giftList || []).join(', ')}
-- Địa chỉ/Giao hàng: ${userSettings.storeAddress || 'Giao hàng toàn quốc, kiểm tra máy ưng ý mới thanh toán'}
+- Chính sách bảo hành: ${userSettings.warrantyPolicy || 'Bao test 7 ngày 1 đổi 1, bảo hành phần cứng 3 tháng chu đáo'}
+- Quà tặng kèm: Sạc zin + Túi chống sốc + Chuột không dây (Cài sẵn Win/Office)
+- Địa chỉ/Giao hàng: ${userSettings.storeAddress || 'Giao hàng toàn quốc - Đồng kiểm kiểm tra máy trước khi thanh toán!'}
 - Giá bán lẻ mong muốn: ${customPrice ? customPrice : 'Hãy lấy giá trong bài thô và định dạng thành giá bán lẻ hấp dẫn'}
 
-YÊU CẦU NGHIÊM NGẶT VỀ CẤU TRÚC VÀ NỘI DUNG:
-1. TUYỆT ĐỐI KHÔNG ĐƯỢC để lộ các từ nhạy cảm như "lương 500k", "lương CTV", "hoa hồng", "giá sỉ", "sỉ ib riêng", "win ae tự cài", "hướng dẫn dán phím cho CTV", "trưởng/phó cộng đồng", "chốt". Phải xóa sạch 100%!
-2. BẢO TOÀN SỐ ĐIỆN THOẠI DUY NHẤT: Bắt buộc 100% mọi thông tin liên hệ, hotline, Zalo phải là Hotline / Zalo: 0876637806 (Gia Vương). Tuyệt đối không để lọt số điện thoại của bên sỉ hay số nào khác (như 0982.732.678...).
-3. XỬ LÝ TIN ĐĂNG THEO LÔ: Nếu tin gốc từ Zalo đăng dạng bán sỉ/bán lô (như "Lô 08. 4 em ThinkPad...", "Lô 09: 4 máy HP...", "sỉ ib riêng, win ae tự cài"), hãy viết lại bài dưới góc độ BÁN LẺ TỪNG CHIẾC cho khách hàng học sinh, sinh viên, dân văn phòng. Nhấn mạnh: Máy đã được tuyển chọn kỹ, cài sẵn Windows và ứng dụng văn phòng đầy đủ, bảo hành chu đáo.
-4. XỬ LÝ GIÁ BÁN: Nếu bài thô ghi "giá ib" hoặc "giá sỉ ae ib" hoặc "giá 7.x tr", hãy viết là: "💰 GIÁ ƯU ĐÃI HÔM NAY: [Giá nếu có, ví dụ 7.x triệu / Chỉ từ vài triệu] - Inbox Fanpage hoặc gọi ngay Hotline/Zalo 0876637806 để chốt giá tốt nhất!".
-5. ĐỊNH DANH MÃ MÁY CHUẨN XÁC:
-- MÃ MÁY CỦA SẢN PHẨM NÀY LÀ: "${detectedCode}" (Ví dụ: 09, 129, 056B, 093, 08, 137...).
-- BẮT BUỘC dùng đúng mã máy "${detectedCode}" ở tiêu đề: "🔥 [SIÊU PHẨM GIÁ TỐT] - MÃ #${detectedCode}: [TÊN MÁY VIẾT HOA]".
-- BẮT BUỘC ghi ở dòng cấu hình: "🔹 Mã máy: #${detectedCode}".
-- BẮT BUỘC có hashtag ở cuối: "#${detectedCode}".
-- TUYỆT ĐỐI KHÔNG ĐƯỢC tự ý gộp tên model thành mã máy (như "#HP430G8", "#DELL5560")!
-6. Bóc tách rõ ràng: Cấu hình chi tiết (CPU, RAM, SSD, Màn hình, Card đồ họa).
-7. Tuân thủ CHÍNH XÁC cấu trúc khung bài bán lẻ sau:
-🔥 [SIÊU PHẨM GIÁ TỐT] - MÃ #${detectedCode}: [TÊN MÁY VIẾT HOA]
-────────────────────────────
-⚡ ĐẶC ĐIỂM & CẤU HÌNH VƯỢT TRỘI:
-🔹 Mã máy: #${detectedCode}
-🔹 Vi xử lý: [CPU chi tiết] (xử lý đa nhiệm mượt mà Office, lướt web, Photoshop 2D)
-🔹 Bộ nhớ RAM: [RAM] (mở hàng chục tab Chrome làm việc không lo giật lag)
-🔹 Ổ cứng: [SSD] (khởi động Windows và mở ứng dụng chỉ trong 3 giây)
-🔹 Màn hình: [Màn hình chi tiết, ghi rõ có cảm ứng hay xoay 360 nếu có]
-🔹 Bàn phím gõ êm, phím nảy tốt, thiết kế cứng cáp chuẩn tiêu chuẩn Nhật
-💰 GIÁ ƯU ĐÃI HÔM NAY: [Giá bán lẻ]
-────────────────────────────
-🎁 QUÀ TẶNG KÈM THEO:
-• Tặng túi chống sốc cao cấp cho 2 máy trở lên
-• Tặng chuột không dây thời trang
-• Sạc zin chuẩn theo máy
-• Gói cài win
+YÊU CẦU NGHIÊM NGẶT VỀ ĐỘ DÀI VÀ CẤU TRÚC (TINH GỌN, KHÔNG DÀI DÒNG):
+1. BÀI VIẾT PHẢI TINH GỌN (KHOẢNG 400 - 520 KÝ TỰ, 10-12 DÒNG): Tuyệt đối không viết lan man, không dùng các đường kẻ ngang dài ngoằng (────────────────────────────), không giải thích rườm rà trong ngoặc đơn. Khách hàng lướt Facebook cần nắm bắt Mã máy, Tên máy, Giá và Cấu hình chỉ trong 5 giây!
+2. TUYỆT ĐỐI XÓA SẠCH từ ngữ nhạy cảm của bên sỉ: "lương 500k", "lương CTV", "hoa hồng", "giá sỉ", "sỉ ib riêng", "win ae tự cài", "chốt", v.v.
+3. BẢO TOÀN SỐ ĐIỆN THOẠI DUY NHẤT: Bắt buộc Hotline/Zalo là 0876637806 (Gia Vương). Tuyệt đối không để lọt số điện thoại của bên sỉ hay số nào khác.
+4. ĐỊNH DANH MÃ MÁY CHUẨN XÁC: Mã máy là "${detectedCode}".
+5. TUÂN THỦ CHÍNH XÁC CẤU TRÚC KHUNG BÀI BÁN LẺ TINH GỌN SAU ĐÂY:
+🔥 [GIÁ TỐT] - MÃ #${detectedCode}: [TÊN MÁY VIẾT HOA]
+💰 Giá công khai: [Giá bán lẻ, ví dụ 8.3 triệu] (Chuẩn nội địa Nhật zin đẹp)
 
-🛡️ CHÍNH SÁCH BẢO HÀNH & HẬU MÃI:
-✅ Bao test 7 ngày lỗi 1 đổi 1. Bảo hành phần cứng 3 tháng cho máy màn không cảm ứng, và 1 tháng cho máy màn cảm ứng, chu đáo.
-✅ Kiểm tra máy thoải mái trước khi nhận - Đúng hàng mới thanh toán!
-✅ Cọc 300k cho đơn đầu tiên, hỗ trợ call video check legit trực tiếp!
+⚡ Cấu hình chi tiết:
+• CPU: [Tên CPU ngắn gọn]
+• RAM: [Dung lượng RAM] | SSD: [Dung lượng SSD siêu tốc]
+• Màn hình: [Kích thước và độ phân giải màn hình]
+• Thiết kế: Vỏ nhôm nguyên khối, mỏng nhẹ, pin tốt
 
-📲 LIÊN HỆ ĐẶT HÀNG NGAY HÔM NAY:
-☎️ Hotline / Zalo: 0876637806
-💬 Inbox trực tiếp Fanpage để nhận video test máy chi tiết!
-🚚 ${userSettings.storeAddress || 'Giao hàng toàn quốc - Đồng kiểm kiểm tra máy trước khi thanh toán.'}
-#LaptopCuNhat #LaptopVanPhong #LaptopGiaRe #LaptopGiaVuong #${detectedCode}
+🎁 Tặng kèm: Sạc zin + Túi chống sốc + Chuột không dây (Cài sẵn Win & Office)
+🛡️ Bảo hành: Bao test 7 ngày 1 đổi 1, bảo hành phần cứng 3 tháng chu đáo
+🚚 Giao hàng toàn quốc - Đồng kiểm kiểm tra máy trước khi thanh toán!
+📞 Hotline / Zalo: 0876637806 (Gia Vương)
+#LaptopVuongGia #[TenModelVietLien] #${detectedCode}
 
-8. Trả về DUY NHẤT nội dung bài viết hoàn chỉnh, không kèm bất kỳ lời giải thích hay code block ngoài.
+6. Trả về DUY NHẤT nội dung bài viết hoàn chỉnh, không kèm bất kỳ lời giải thích hay code block ngoài.
 `;
 
   try {
@@ -316,95 +279,71 @@ function fallbackCircularRewrite(template, style = 'featured_review') {
 
   // 1. Theme: Flash Sale / Budget Value (flash_sale, hook_budget, budget, deal)
   if (normStyle.includes('flash') || normStyle.includes('sale') || normStyle.includes('budget') || normStyle === 'deal') {
-    return `🔥 [TIÊU ĐIỂM GIÁ TỐT] — ${model.toUpperCase()} CHUẨN NỘI ĐỊA NHẬT
-────────────────────────────
-⚡ CƠ HỘI SỞ HỮU DÒNG MÁY DOANH NHÂN CAO CẤP VỚI GIÁ CỰC TỐT:
-💰 GIÁ ƯU ĐÃI ĐẦU TƯ: ${price}
-🚀 Ổ cứng SSD: ${ssd} (khởi động Windows chỉ trong 3 giây, mở file dung lượng lớn trong chớp mắt)
-⚡ Vi xử lý: ${cpu} (xung nhịp ổn định, đáp ứng đa nhiệm văn phòng, kế toán và giải trí mượt mà)
-⚡ Bộ nhớ RAM: ${ram} (thoải mái chạy đồng thời nhiều tác vụ nặng mà không lo tràn RAM)
-🖥️ Màn hình: ${screen} (góc nhìn rộng, lớp phủ chống lóa dịu mắt bảo vệ thị lực)
-🔹 Vỏ máy nguyên khối cứng cáp, vượt qua các bài test khắt khe nội địa Nhật Bản.
-────────────────────────────
-🎁 BỘ QUÀ TẶNG TRỌN GÓI:
-• Túi chống sốc cao cấp + Chuột không dây thời trang
-• Sạc zin chuẩn thông số kỹ thuật nhà sản xuất
-• Gói cài đặt Windows và phần mềm văn phòng trọn đời miễn phí
-🛡️ CHÍNH SÁCH BẢO HÀNH CHU ĐÁO:
-✅ Bao test 7 ngày lỗi 1 đổi 1. Bảo hành phần cứng chu đáo từ 1 - 3 tháng.
-✅ Cọc 300k kiểm tra legit, hỗ trợ video call trực tiếp xem máy thực tế.
-✅ Đồng kiểm tận tay - Đúng hàng đúng chất lượng mới thanh toán.
-📲 Hotline / Zalo đặt hàng: 0876637806
-💬 Inbox ngay nhận báo giá ưu đãi và video chi tiết góc cạnh máy!
-#LaptopGiaRe #LaptopTuyenChon #GiaUuDai #LaptopVuongGia #${modelTag}`;
+    return `🔥 [TIÊU ĐIỂM GIÁ TỐT] — ${model.toUpperCase()}
+💰 Giá ưu đãi: ${price} (Chuẩn nội địa Nhật)
+
+⚡ Cấu hình nổi bật:
+• CPU: ${cpu} | RAM: ${ram}
+• Ổ cứng: ${ssd} siêu tốc
+• Màn hình: ${screen} chống lóa dịu mắt
+• Khung vỏ cứng cáp, vượt qua bài test nội địa Nhật
+
+🎁 Tặng: Túi chống sốc + Chuột không dây + Sạc zin (Cài Win/Office trọn đời)
+🛡️ Bao test 7 ngày lỗi 1 đổi 1, bảo hành chu đáo 1 - 3 tháng
+🚚 Đồng kiểm tận tay - Đúng máy chuẩn zin mới thanh toán!
+📞 Hotline / Zalo đặt hàng: 0876637806 (Gia Vương)
+#LaptopGiaRe #LaptopVuongGia #${modelTag}`;
   }
 
   // 2. Theme: Military Durability / Curated Japanese Pick (curated_pick, hook_durability, durability, military)
   if (normStyle.includes('curated') || normStyle.includes('durability') || normStyle.includes('pick') || normStyle.includes('military')) {
     return `🌟 [HÀNG TUYỂN CHỌN LOẠI A] — ${model.toUpperCase()}
-────────────────────────────
-✨ Đỉnh cao độ bền và sự thanh lịch từ thị trường Nhật Bản:
-🛡️ Khung vỏ hợp kim cứng cáp, chịu lực va đập vượt trội chuẩn quân đội bền bỉ qua năm tháng.
-⌨️ Bàn phím chống tràn, hành trình phím sâu, cảm giác gõ êm tay không gây mỏi ngón khi gõ văn bản dài.
-🖥️ Màn hình hiển thị: ${screen} (độ tương phản cao, hình ảnh trung thực, chống mỏi mắt hiệu quả).
-🔹 Trái tim vận hành: ${cpu} phối hợp cùng RAM ${ram} xử lý tác vụ trơn tru, ổn định suốt ngày dài.
-🔹 Lưu trữ siêu tốc: ${ssd} bảo đảm an toàn dữ liệu và tốc độ truy xuất tức thì.
-🔹 Linh kiện nguyên bản 100% tuyển chọn khắt khe, pin bền bỉ.
-💰 TẦM GIÁ ĐẦU TƯ: ${price}
-────────────────────────────
-🎁 ƯU ĐÃI ĐI KÈM THEO MÁY:
-• Tặng đầy đủ phụ kiện: Túi chống sốc thời trang, chuột quang không dây, sạc zin chính hãng.
-• Hỗ trợ vệ sinh, bảo dưỡng và tra keo tản nhiệt định kỳ hoàn toàn miễn phí.
-🛡️ CAM KẾT CHẤT LƯỢNG VÀNG:
-✅ Đúng máy - đúng cấu hình nguyên zin, bao test đổi mới linh hoạt 7 ngày đầu.
-✅ Bảo hành phần cứng trách nhiệm 1 - 3 tháng, hỗ trợ kỹ thuật tận tâm 24/7.
-✅ Hỗ trợ video call check máy thực tế trước khi gửi hàng, cọc 300k an tâm tuyệt đối.
-☎️ Hotline tư vấn trực tiếp: 0876637806
-#LaptopChuanZin #HangTuyenChon #LaptopDoanhNhan #DoBenChuanNhat #LaptopVuongGia #${modelTag}`;
+💰 Giá đầu tư: ${price} (Zin nguyên bản 100%)
+
+✨ Điểm mạnh nổi bật:
+• Khung vỏ hợp kim bền bỉ chuẩn quân đội, bàn phím gõ êm
+• Vi xử lý: ${cpu} | Bộ nhớ: RAM ${ram}
+• Lưu trữ: ${ssd} | Màn hình hiển thị: ${screen}
+• Linh kiện tuyển chọn khắt khe, pin bền bỉ qua năm tháng
+
+🎁 Trọn bộ: Túi thời trang + Chuột quang + Sạc xịn (Tra keo vệ sinh trọn đời)
+🛡️ Cam kết vàng: Bao test 7 ngày 1 đổi 1, bảo hành trách nhiệm 1 - 3 tháng
+📞 Hotline tư vấn trực tiếp: 0876637806 (Gia Vương)
+#HangTuyenChon #DoBenChuanNhat #LaptopVuongGia #${modelTag}`;
   }
 
   // 3. Theme: Lightweight Mobility & Practical Value (value_champion, hook_mobility, mobility, champion)
   if (normStyle.includes('value') || normStyle.includes('champion') || normStyle.includes('mobility')) {
-    return `🏆 [LỰA CHỌN THỰC CHIẾN SỐ 1] — ${model.toUpperCase()}
-────────────────────────────
-💻 Bền bỉ, mượt mà và tối ưu chi phí cho công việc văn phòng, lập trình và học tập:
-✈️ Thiết kế tinh gọn, trọng lượng nhẹ nhàng, lý tưởng cho người hay di chuyển công tác và học tập.
-🔋 Thời lượng pin ấn tượng, hệ thống tản nhiệt thông minh giữ máy luôn mát mẻ khi làm việc liên tục.
-🔹 Cấu hình thực chiến: ${config}
-🔹 Xử lý mượt các ứng dụng Word, Excel nặng hàng nghìn dòng, Photoshop 2D và đa nhiệm nhiều tab.
-🔹 Bàn phím nảy tốt, touchpad mượt mà, kết nối WiFi tốc độ cao bắt sóng khỏe.
-💰 MỨC GIÁ HỢP LÝ: ${price}
-────────────────────────────
-🎁 PHỤ KIỆN TẶNG KÈM: Túi chống sốc + Chuột không dây + Sạc xịn chuẩn dòng
-🛡️ BẢO HÀNH CHU ĐÁO:
-✅ 1 đổi 1 trong 7 ngày nếu phát sinh lỗi phần cứng, bảo hành chu đáo 1 - 3 tháng.
-✅ Cọc 300k hỗ trợ xem máy qua video call chân thực, kiểm tra ưng ý mới nhận hàng.
-📲 Hotline / Zalo: 0876637806
-💬 Nhắn tin ngay để giữ máy đẹp tuyển chọn loại A!
-#LaptopBenBi #LaptopVanPhong #LaptopGiaTot #LaptopDiDong #LaptopVuongGia #${modelTag}`;
+    return `🏆 [LỰA CHỌN THỰC CHIẾN] — ${model.toUpperCase()}
+💰 Tầm giá hợp lý: ${price} (Mỏng nhẹ tối ưu)
+
+💻 Cấu hình thực chiến:
+• Cấu hình: ${config}
+• Trọng lượng nhẹ, thiết kế tinh gọn tiện bỏ balo di chuyển
+• Xử lý mượt Word, Excel nặng, đa nhiệm Chrome không độ trễ
+
+🎁 Phụ kiện kèm máy: Túi chống sốc + Chuột không dây + Sạc zin chuẩn dòng
+🛡️ 1 đổi 1 trong 7 ngày nếu lỗi phần cứng, bảo hành chu đáo 1 - 3 tháng
+🚚 Giao hàng toàn quốc - Kiểm tra ưng ý mới thanh toán!
+📞 Hotline / Zalo: 0876637806
+#LaptopVanPhong #LaptopDiDong #LaptopVuongGia #${modelTag}`;
   }
 
   // 4. Theme: Office Productivity & Detailed Review (featured_review, hook_office, office, default)
-  return `✨ [REVIEW CHI TIẾT DÒNG MÁY] — ${model.toUpperCase()}
-────────────────────────────
-🌟 Vì sao dòng máy này luôn nằm trong top bán chạy tại Laptop Vương Gia?
-🔹 Vi xử lý trung tâm: ${cpu} (xử lý đa nhiệm mượt mà tác vụ Office, phần mềm quản lý, duyệt web)
-🔹 Bộ nhớ RAM: ${ram} (chuyển đổi qua lại giữa hàng chục cửa sổ làm việc trơn tru, không giật lag)
-🔹 Ổ cứng lưu trữ: ${ssd} (tốc độ đọc ghi cao, mở ứng dụng và khởi động máy trong vài giây)
-🔹 Màn hình hiển thị: ${screen} (góc nhìn rộng, độ sáng tốt phục vụ cả trong nhà lẫn ngoài trời)
-🔹 Bàn phím tiêu chuẩn cao, thiết kế thanh lịch đĩnh đạc mang phong cách doanh nhân Nhật Bản.
-💰 KHOẢNG GIÁ ƯU ĐÃI: ${price}
-────────────────────────────
-🎁 TRỌN BỘ PHỤ KIỆN CAO CẤP:
-• Tặng túi chống sốc cao cấp + Chuột không dây thời trang
-• Sạc zin chuẩn máy + Gói cài win trọn đời
-🛡️ CHÍNH SÁCH HẬU MÃI TOÀN DIỆN:
-✅ Bao test 7 ngày lỗi 1 đổi 1. Bảo hành phần cứng chu đáo từ 1 - 3 tháng.
-✅ Cọc 300k check legit, gọi video call xem máy trực tiếp trước khi chốt đơn.
-✅ Giao hàng toàn quốc - Đồng kiểm kiểm tra máy thoải mái trước khi thanh toán.
-📲 Liên hệ ngay Hotline / Zalo: 0876637806
-💬 Inbox Fanpage Laptop Vương Gia để nhận video test máy chi tiết!
-#LaptopDoanhNhan #LaptopVuongGia #ReviewLaptop #LaptopVanPhong #${modelTag}`;
+  return `✨ [REVIEW DÒNG MÁY] — ${model.toUpperCase()}
+💰 Khoảng giá ưu đãi: ${price} (Top bán chạy chuẩn Nhật)
+
+⚡ Đánh giá chi tiết:
+• CPU: ${cpu} | RAM: ${ram} chuyển đổi cửa sổ trơn tru
+• SSD: ${ssd} mở ứng dụng trong vài giây
+• Màn hình: ${screen} hiển thị sắc nét, góc nhìn rộng
+• Thiết kế thanh lịch, phím gõ êm phong cách doanh nhân
+
+🎁 Đầy đủ phụ kiện: Sạc zin theo máy + Túi 2 ngăn + Chuột thời trang
+🛡️ Bao test 7 ngày lỗi 1 đổi 1, bảo hành phần cứng 1 - 3 tháng
+🚚 Đồng kiểm toàn quốc, cọc 300k gọi video call xem máy thực tế
+📞 Hotline / Zalo: 0876637806 (Gia Vương)
+#ReviewLaptop #LaptopDoanhNhan #LaptopVuongGia #${modelTag}`;
 }
 
 /**
@@ -489,15 +428,15 @@ DÒNG TIÊU ĐỀ ĐẦU TIÊN BẮT BUỘC (PHẢI BẮT ĐẦU CHÍNH XÁC B�
 ${requiredTitle}
 
 QUY TẮC BẮT BUỘC ĐỂ TRÁNH TRÙNG LẶP FACEBOOK (CHỐNG DUPLICATE SPAM):
-1. TUYỆT ĐỐI KHÔNG dùng mã máy đơn lẻ tạm thời dạng #101, #046, Lô 5. Chuyển thành bài giới thiệu dòng máy tuyển chọn: "${model.toUpperCase()}".
-2. ĐẢO THỨ TỰ TRÌNH BÀY THÔNG SỐ: ${specEmphasis}.
-3. BIẾN THIÊN EMOJI & ICON: Sử dụng bộ icon đa dạng [${themeEmojis}] phù hợp phong cách.
-4. CAM KẾT & QUÀ TẶNG:
-   - Bao test 7 ngày lỗi 1 đổi 1. Bảo hành phần cứng chu đáo từ 1 - 3 tháng.
-   - Cọc 300k kiểm tra legit, gọi video call check máy trực tiếp.
-   - Quà tặng: Túi chống sốc cao cấp, chuột không dây thời trang, sạc zin theo máy, gói cài win trọn đời.
-   - Hotline / Zalo: 0876637806.
-5. HASHTAGS BẮT BUỘC Ở CUỐI BÀI:
+1. BÀI VIẾT PHẢI TINH GỌN (KHOẢNG 450 - 550 KÝ TỰ, 12-14 DÒNG): Không viết lan man, không dùng các đường kẻ ngang dài ngoằng (────────────────────────────). Khách hàng lướt mạng xã hội cần nắm bắt thông tin nhanh gọn!
+2. TUYỆT ĐỐI KHÔNG dùng mã máy đơn lẻ tạm thời dạng #101, #046, Lô 5. Chuyển thành bài giới thiệu dòng máy tuyển chọn: "${model.toUpperCase()}".
+3. ĐẢO THỨ TỰ TRÌNH BÀY THÔNG SỐ: ${specEmphasis}.
+4. BIẾN THIÊN EMOJI & ICON: Sử dụng bộ icon đa dạng [${themeEmojis}] phù hợp phong cách.
+5. CAM KẾT & QUÀ TẶNG (TINH GỌN 2-3 DÒNG):
+   - Quà tặng: Sạc zin + Túi chống sốc + Chuột không dây (Cài sẵn Win/Office trọn đời).
+   - Bảo hành: Bao test 7 ngày lỗi 1 đổi 1, bảo hành phần cứng chu đáo từ 1 - 3 tháng.
+   - Hotline / Zalo: 0876637806 (Gia Vương).
+6. HASHTAGS BẮT BUỘC Ở CUỐI BÀI:
    ${hashtags}
 
 ĐẦU RA: Trả về DUY NHẤT nội dung bài viết Facebook hoàn chỉnh, không có markdown code block (\`\`\`), không có lời giải thích bên ngoài.
@@ -515,7 +454,7 @@ QUY TẮC BẮT BUỘC ĐỂ TRÁNH TRÙNG LẶP FACEBOOK (CHỐNG DUPLICATE SPA
 
     // Ensure first line has the required unique title to guarantee test 3.5 & 4.2 compliance
     if (!cleanText.startsWith(requiredTitle.split(' — ')[0])) {
-      cleanText = `${requiredTitle}\n────────────────────────────\n${cleanText}`;
+      cleanText = `${requiredTitle}\n\n${cleanText}`;
     }
 
     const resultObj = {

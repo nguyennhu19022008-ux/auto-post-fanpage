@@ -172,42 +172,28 @@ function buildPostFromTableItem(item, userSettings = {}) {
   const cpu = item.cpu || 'Intel Core mạnh mẽ';
   const ram = item.ram || '8GB';
   const ssd = item.ssd || '256GB SSD';
-  let screen = item.screen || '14 inch sắc nét, chống chói';
+  let screen = item.screen || '14 inch FHD chống chói';
   if (item.isTouch && !/cảm\s*ứng/i.test(screen)) {
-    screen += ' (Hỗ trợ cảm ứng vuốt chạm)';
+    screen += ' (Cảm ứng)';
   }
   const price = item.price || 'Liên hệ báo giá tốt nhất';
+  const cleanModelTag = machineName.replace(/[^a-zA-Z0-9]/g, '');
+  const hotline = userSettings.hotline || '0876637806';
 
-  const gifts = (userSettings.giftList || [
-    'Tặng túi chống sốc cao cấp cho 2 máy trở lên',
-    'Tặng chuột không dây thời trang',
-    'Sạc zin chuẩn theo máy',
-    'Gói cài win trọn đời'
-  ]).map(g => `• ${g}`).join('\n');
+  return `🔥 [GIÁ TỐT] - MÃ #${machineCode}: ${machineName.toUpperCase()}
+💰 Giá công khai: ${price} (Chuẩn nội địa Nhật zin đẹp)
 
-  const depositLine = userSettings.depositNote 
-    ? `✅ ${userSettings.depositNote}` 
-    : '✅ Cọc 300k cho đơn đầu tiên, hỗ trợ call video check legit!';
+⚡ Cấu hình chi tiết:
+• CPU: ${cpu}
+• RAM: ${ram} | SSD: ${ssd}
+• Màn hình: ${screen}
+• Thiết kế: Vỏ nhôm nguyên khối, mỏng nhẹ, pin tốt
 
-  return `🔥 [SIÊU PHẨM GIÁ TỐT] - MÃ #${machineCode}: ${machineName.toUpperCase()}
-────────────────────────────
-⚡ ĐẶC ĐIỂM & CẤU HÌNH VƯỢT TRỘI:
-🔹 Mã máy: #${machineCode}
-🔹 Vi xử lý: ${cpu} (xử lý đa nhiệm mượt mà Office, lướt web, Photoshop 2D)
-🔹 Bộ nhớ RAM: ${ram} (mở hàng chục tab Chrome làm việc không lo giật lag)
-🔹 Ổ cứng: ${ssd} (khởi động Windows và mở ứng dụng chỉ trong 3 giây)
-🔹 Màn hình: ${screen}
-🔹 Bàn phím gõ êm, phím nảy tốt, thiết kế cứng cáp chuẩn tiêu chuẩn Nhật
-💰 GIÁ ƯU ĐÃI HÔM NAY: ${price} (Giá công khai - Bao giá toàn quốc!)
-────────────────────────────
-🎁 QUÀ TẶNG KÈM THEO:
-${gifts}
-🛡️ CHÍNH SÁCH BẢO HÀNH & HẬU MÃI:
-✅ ${userSettings.warrantyPolicy || 'Bao test 7 ngày lỗi 1 đổi 1. Bảo hành phần cứng 3 tháng cho máy màn không cảm ứng, và 1 tháng cho máy màn cảm ứng, chu đáo.'}
-✅ Kiểm tra máy thoải mái trước khi nhận - Đúng hàng mới thanh toán!
-${depositLine}
-📲 LIÊN HỆ ĐẶT HÀNG NGAY HÔM NAY:
-☎️ Hotline / Zalo: ${userSettings.hotline || '0876637806'}`;
+🎁 Tặng kèm: Sạc zin + Túi chống sốc + Chuột không dây (Cài sẵn Win/Office)
+🛡️ Bảo hành: Bao test 7 ngày 1 đổi 1, bảo hành phần cứng 3 tháng chu đáo
+🚚 Giao hàng toàn quốc - Đồng kiểm kiểm tra máy trước khi thanh toán!
+📞 Hotline / Zalo: ${hotline} (Gia Vương)
+#LaptopVuongGia #${cleanModelTag} #${machineCode}`;
 }
 
 /**

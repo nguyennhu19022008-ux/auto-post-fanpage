@@ -44,45 +44,36 @@ function parseModelName(text, code) {
   return `Laptop #${code}`;
 }
 
-// Generate high-converting Facebook post content
+// Generate high-converting Facebook post content (concise & punchy)
 function formatFacebookContent(code, modelName, rawText, priceDisplay) {
   // Extract key specs
   const cpuMatch = rawText.match(/(?:Intel|AMD|Core|Ryzen|Ultra)\s*[^,\n\r\.\/]+/i) || rawText.match(/i[3579][-\s][0-9A-Za-z]+/i);
   const ramMatch = rawText.match(/(?:RAM|Bộ nhớ)?\s*[:\s]?\s*([0-9]+)\s*GB/i);
-  const ssdMatch = rawText.match(/(?:SSD|Ổ cứng|Lưu trữ)?\s*[:\s]?\s*([0-9]+)\s*(?:GB|TB)\s*(?:SSD|NVMe)?/i);
+  const ssdMatch = rawText.match(/(?:SSD|Ổ cứng|NVMe)\s*[:\s]?\s*([0-9]+)\s*(?:GB|TB)?/i) || 
+                   rawText.match(/([0-9]{3,4})\s*(?:GB|TB)\s*(?:SSD|NVMe)?/i) ||
+                   rawText.match(/([0-9]+)\s*(?:GB|TB)\s*(?:SSD|NVMe)/i);
   const screenMatch = rawText.match(/([0-9.,]+)\s*inch/i);
 
-  const cpu = cpuMatch ? cpuMatch[0].trim() : 'Intel Core mạnh mẽ thế hệ mới';
+  const cpu = cpuMatch ? cpuMatch[0].trim() : 'Intel Core mạnh mẽ';
   const ram = ramMatch ? `${ramMatch[1]}GB` : '16GB';
-  const ssd = ssdMatch ? `${ssdMatch[1]}GB SSD NVMe` : '256GB SSD tốc độ cao';
-  const screen = screenMatch ? `${screenMatch[1]} inch sắc nét chống chói` : '13.3 - 14.0 inch FHD';
+  const ssd = ssdMatch ? `${ssdMatch[1]}GB SSD NVMe` : '256GB SSD NVMe';
+  const screen = screenMatch ? `${screenMatch[1]} inch FHD chống chói` : '13.3 - 14.0 inch FHD';
+  const cleanModelTag = modelName.replace(/[^a-zA-Z0-9]/g, '');
 
-  return `🔥 [SIÊU PHẨM GIÁ TỐT] - MÃ #${code}: ${modelName.toUpperCase()} – CHUẨN NỘI ĐỊA NHẬT BẢN!
-────────────────────────────
-⚡ ĐẶC ĐIỂM & CẤU HÌNH NỔI BẬT:
-• Mã máy định danh: #${code}
-• Vi xử lý (CPU): ${cpu} (xử lý đa nhiệm văn phòng, lướt web, đồ họa mượt mà)
-• Bộ nhớ RAM: ${ram} (mở hàng chục tab Chrome làm việc không lo giật lag)
-• Ổ cứng lưu trữ: ${ssd} (khởi động Windows chỉ trong 3-5 giây)
-• Màn hình: ${screen} (hiển thị tươi sáng, dịu mắt làm việc cả ngày)
-• Ngoại hình: Vỏ nhôm nguyên khối bền đẹp, gọn gàng tiện bỏ balo mang đi cà phê, công tác
-💰 GIÁ CÔNG KHAI HÔM NAY: ${priceDisplay} (Bao giá toàn quốc - Cam kết máy nguyên zin chuẩn Nhật!)
-────────────────────────────
-🎁 BỘ QUÀ TẶNG KÈM THEO MÁY:
-• Tặng túi chống sốc cao cấp 2 ngăn bảo vệ máy
-• Tặng chuột không dây thời trang chống ồn
-• Kèm sạc zin chính hãng chuẩn theo máy
-• Hỗ trợ cài đặt trọn bộ Windows, Office và phần mềm văn phòng miễn phí trọn đời
-────────────────────────────
-🛡️ CHẾ ĐỘ BẢO HÀNH & HẬU MÃI TẬN TÂM:
-• Bao test 7 ngày 1 đổi 1 nếu phát sinh lỗi phần cứng
-• Bảo hành kỹ thuật toàn diện 3 tháng yên tâm sử dụng
-• Miễn phí giao hàng toàn quốc (Kiểm tra máy chuẩn zin mới thanh toán)
-────────────────────────────
-🏪 LAPTOP VƯƠNG GIA – CHUYÊN LAPTOP NỘI ĐỊA NHẬT TUYỂN CHỌN
-📞 Hotline / Zalo tư vấn 24/7: 0876637806
-📍 Hỗ trợ kỹ thuật & Trải nghiệm máy trực tiếp tại cửa hàng
-#LaptopVuongGia #LaptopGiaRe #LaptopNhatBan #LaptopVanPhong #DoanhNhan`;
+  return `🔥 [GIÁ TỐT] - MÃ #${code}: ${modelName.toUpperCase()}
+💰 Giá công khai: ${priceDisplay} (Chuẩn nội địa Nhật zin đẹp)
+
+⚡ Cấu hình chi tiết:
+• CPU: ${cpu}
+• RAM: ${ram} | SSD: ${ssd}
+• Màn hình: ${screen}
+• Thiết kế: Vỏ nhôm nguyên khối, mỏng nhẹ, pin tốt
+
+🎁 Tặng kèm: Sạc zin + Túi chống sốc + Chuột không dây (Cài sẵn Win/Office)
+🛡️ Bảo hành: Bao test 7 ngày 1 đổi 1, bảo hành phần cứng 3 tháng chu đáo
+🚚 Giao hàng toàn quốc - Đồng kiểm kiểm tra máy trước khi thanh toán!
+📞 Hotline / Zalo: 0876637806 (Gia Vương)
+#LaptopVuongGia #${cleanModelTag} #${code}`;
 }
 
 // Calculate 50 sequential golden hour slots (08:30, 11:45, 15:30, 20:00)
