@@ -188,8 +188,20 @@
             (text.includes('bạn đang nghĩ gì') || text.includes("what's on your mind") || text.includes('tạo bài viết') || text.includes('create post')) &&
             !el.closest('div[role="dialog"]') // Không phải trong modal đã mở
           ) {
-            composerTrigger = el;
+            // Quan trọng: Trên Facebook React, event click gắn vào div[role="button"], không phải thẻ span bên trong!
+            composerTrigger = el.closest('div[role="button"]') || el;
             break;
+          }
+        }
+
+        if (!composerTrigger) {
+          // Thử tìm nút [Ảnh/video] ngay cạnh ô "Bạn đang nghĩ gì thế?"
+          const photoTrigger = Array.from(document.querySelectorAll('div[role="button"]')).find(b => {
+            const label = (b.getAttribute('aria-label') || b.innerText || '').toLowerCase();
+            return (label.includes('ảnh/video') || label.includes('photo/video')) && !b.closest('div[role="dialog"]');
+          });
+          if (photoTrigger) {
+            composerTrigger = photoTrigger;
           }
         }
 
@@ -207,6 +219,9 @@
       }
 
       setStepStatus(1, 'success', 'Đã mở khung soạn bài!');
+      composerTrigger.focus();
+      composerTrigger.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+      composerTrigger.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
       composerTrigger.click();
 
       // BƯỚC 2: Chờ Modal soạn bài xuất hiện

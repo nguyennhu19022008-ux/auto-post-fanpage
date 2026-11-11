@@ -793,6 +793,67 @@
     </div>
   </div>
 
+  <!-- Modal: Personal Profile Post Helper & Image Downloader -->
+  <div id="personalPostHelperModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-5" onclick="if(event.target === this) closePersonalPostHelperModal()">
+    <div class="neo-card bg-white max-w-xl w-full p-5 sm:p-6 space-y-4 max-h-[92vh] flex flex-col border-2 border-[#18181B] shadow-[6px_6px_0px_#18181B]">
+      <!-- Header -->
+      <div class="flex justify-between items-center pb-3 border-b-2 border-[#18181B] gap-2">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">👤</span>
+          <div>
+            <h3 class="text-sm sm:text-base font-black text-[#18181B] uppercase" id="personalHelperTitle">Hỗ Trợ Đăng Facebook Cá Nhân</h3>
+            <p class="text-[11px] text-neutral-600 font-medium">Hệ thống đã tự động sao chép chữ & chuẩn bị toàn bộ ảnh</p>
+          </div>
+        </div>
+        <button onclick="closePersonalPostHelperModal()" class="neo-btn neo-btn-white px-2.5 py-1 text-xs font-bold">✕ Đóng</button>
+      </div>
+
+      <!-- Status Badges -->
+      <div class="space-y-2">
+        <div class="p-2.5 bg-emerald-50 border-2 border-emerald-600 rounded-lg flex items-center gap-2 text-xs font-bold text-emerald-800">
+          <span>✅</span>
+          <span>1. Nội dung bài viết đã được sao chép vào bộ nhớ tạm (Bấm Ctrl+V để dán).</span>
+        </div>
+        <div class="p-2.5 bg-sky-50 border-2 border-sky-600 rounded-lg flex items-center justify-between gap-2 text-xs font-bold text-sky-800">
+          <div class="flex items-center gap-2">
+            <span>📥</span>
+            <span>2. Tự động tải bộ ảnh HD về máy (<span id="personalHelperMediaCount">0 ảnh</span>).</span>
+          </div>
+          <button onclick="triggerDownloadCurrentImages()" id="personalHelperDownloadBtn" class="neo-btn bg-white hover:bg-neutral-50 px-2 py-1 text-[11px] font-black border border-sky-700 shadow-[1px_1px_0px_#18181B]">
+            📥 Tải Lại Ảnh
+          </button>
+        </div>
+      </div>
+
+      <!-- Media Preview -->
+      <div class="space-y-1.5">
+        <div class="text-[11px] font-black uppercase text-neutral-600">Hình ảnh đính kèm của máy:</div>
+        <div id="personalHelperMedia" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin"></div>
+      </div>
+
+      <!-- Text Preview -->
+      <div class="flex-1 overflow-y-auto space-y-1.5 min-h-[90px] max-h-[170px]">
+        <div class="text-[11px] font-black uppercase text-neutral-600 flex justify-between items-center">
+          <span>Nội dung bài viết:</span>
+          <button onclick="copyCurrentPersonalText()" id="personalHelperCopyBtn" class="text-indigo-700 font-bold hover:underline text-[11px]">📋 Sao Chép Lại</button>
+        </div>
+        <pre id="personalHelperContent" class="whitespace-pre-wrap font-sans text-xs text-[#18181B] leading-relaxed bg-[#FAF8F5] p-3 rounded-lg border-2 border-[#18181B] select-text"></pre>
+      </div>
+
+      <!-- Action Footer -->
+      <div class="pt-3 border-t-2 border-[#18181B] flex flex-col sm:flex-row items-center justify-between gap-2.5">
+        <div class="text-[11px] text-neutral-500 font-medium">
+          💡 Sang tab Facebook: <strong>Ctrl+V</strong> và kéo ảnh vừa tải vào!
+        </div>
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <button onclick="openFacebookFromHelper()" class="neo-btn bg-[#1877F2] text-white hover:bg-blue-600 flex-1 sm:flex-initial px-4 py-2 text-xs font-black shadow-[2px_2px_0px_#18181B]">
+            🚀 MỞ FACEBOOK ĐĂNG NGAY ➔
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal: PWA Install App Guide -->
   <div id="pwaInstallModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
     <div class="neo-card bg-white max-w-md w-full p-6 space-y-4 shadow-[6px_6px_0px_#18181B] relative">
@@ -1080,6 +1141,6 @@
     </div>
   </div>
 
-  <script src="/js/app.js?v=20261111_v16_dual_personal_robot" defer></script>
+  <script src="/js/app.js?v=20261111_v17_personal_photo_helper" defer></script>
 </body>
 </html>

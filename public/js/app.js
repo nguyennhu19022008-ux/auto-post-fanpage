@@ -990,10 +990,18 @@ async function schedulePost(publishImmediately = false, target = 'fanpage') {
           try { await navigator.clipboard.writeText(content); } catch (e) {}
         }
 
-        const alertMsg = target === 'both'
-          ? `🚀 ĐÃ ĐĂNG LÊN FANPAGE THÀNH CÔNG!\n\n🤖 Đang kích hoạt Robot để đăng lên Facebook Cá Nhân...\n(Nội dung đã được sao chép vào bộ nhớ tạm).`
-          : `👤 Đã lưu bài và chuẩn bị bài viết cho Facebook Cá Nhân!\n\n🤖 Đang kích hoạt Robot...`;
-        alert(alertMsg);
+        // Tự động tải ảnh về máy
+        if (mediaUrls.length > 0) {
+          downloadAllPostMedia(mediaUrls, machineCode);
+        }
+
+        // Mở modal hỗ trợ trực quan
+        openPersonalPostHelperModal({
+          machineCode: machineCode || 'MÁY',
+          content,
+          mediaUrls
+        }, result.data?.facebookPostUrl || result.facebookPostUrl);
+
         window.open('https://www.facebook.com/', '_blank');
       } else {
         alert(publishImmediately ? '🚀 ' + result.message : '📅 ' + result.message);
@@ -1316,12 +1324,15 @@ async function publishPostNow(id, target = 'fanpage') {
         } catch (e) {}
       }
 
-      // C. Alert & trigger Facebook
-      const msg = target === 'both'
-        ? `✅ ĐÃ ĐĂNG LÊN FANPAGE THÀNH CÔNG!\n\n🤖 Đang kích hoạt Robot để đăng lên Facebook Cá Nhân...\n(Nội dung bài viết cũng đã được sao chép vào bộ nhớ tạm).`
-        : `👤 Đã chuẩn bị xong bài viết cho Facebook Cá Nhân!\n\n🤖 Đang kích hoạt Robot đăng bài...\n(Nội dung bài viết đã được sao chép vào bộ nhớ tạm).`;
-      
-      alert(msg);
+      // C. Tự động tải toàn bộ ảnh của máy về máy tính
+      if (postMedia.length > 0) {
+        downloadAllPostMedia(postMedia, post.machineCode);
+      }
+
+      // D. Hiển thị Modal hỗ trợ trực quan kèm nút mở Facebook
+      openPersonalPostHelperModal(post, pageLink);
+
+      // E. Mở tab Facebook
       window.open('https://www.facebook.com/', '_blank');
     }
 
@@ -1329,6 +1340,120 @@ async function publishPostNow(id, target = 'fanpage') {
   } catch (err) {
     alert('Lỗi đăng bài: ' + err.message);
   }
+}
+
+// ======================== PERSONAL PROFILE POST HELPER ========================
+
+async function downloadImageFile(url, filename) {
+  try {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename || 'laptop_image.jpg';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+  } catch (err) {
+    console.warn('Lỗi tải ảnh:', err);
+    window.open(url, '_blank');
+  }
+}
+
+async function downloadAllPostMedia(mediaUrls, machineCode = 'LAPTOP') {
+  if (!mediaUrls || mediaUrls.length === 0) return 0;
+  let count = 0;
+  for (let i = 0; i < mediaUrls.length; i++) {
+    const url = typeof mediaUrls[i] === 'string' ? mediaUrls[i] : (mediaUrls[i].url || '');
+    if (url) {
+      count++;
+      await downloadImageFile(url, `Laptop_VuongGia_${machineCode || 'May'}_Anh_${count}.jpg`);
+      await new Promise(r => setTimeout(r, 400));
+    }
+  }
+  return count;
+}
+
+let currentPersonalPostData = null;
+
+function openPersonalPostHelperModal(post, pageLink = null) {
+  currentPersonalPostData = post;
+  const modal = document.getElementById('personalPostHelperModal');
+  if (!modal) return;
+
+  const contentEl = document.getElementById('personalHelperContent');
+  const mediaContainer = document.getElementById('personalHelperMedia');
+  const mediaCountEl = document.getElementById('personalHelperMediaCount');
+  const titleEl = document.getElementById('personalHelperTitle');
+
+  const postText = post.content || '';
+  const postMedia = post.mediaUrls || (post.mediaFiles ? post.mediaFiles.map(m => typeof m === 'string' ? m : (m.url || m.path || '')) : []);
+
+  if (titleEl) {
+    titleEl.innerText = `MÃ #${post.machineCode || 'LAPTOP'}: ĐĂNG FACEBOOK CÁ NHÂN`;
+  }
+  if (contentEl) {
+    contentEl.innerText = postText;
+  }
+  if (mediaCountEl) {
+    mediaCountEl.innerText = `${postMedia.length} ảnh HD`;
+  }
+
+  if (mediaContainer) {
+    if (postMedia.length > 0) {
+      mediaContainer.innerHTML = postMedia.map((url, idx) => `
+        <div class="relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] bg-black shrink-0">
+          <img src="${url}" class="w-full h-full object-cover">
+          <span class="absolute top-0 right-0 bg-[#FDE047] text-black text-[9px] px-1 font-black border-b border-l border-[#18181B]">#${idx + 1}</span>
+        </div>
+      `).join('');
+      mediaContainer.classList.remove('hidden');
+    } else {
+      mediaContainer.innerHTML = `<span class="text-xs text-neutral-500 italic">Bài viết này không có ảnh đính kèm.</span>`;
+      mediaContainer.classList.remove('hidden');
+    }
+  }
+
+  modal.classList.remove('hidden');
+  document.body.classList.add('overflow-hidden');
+}
+
+function closePersonalPostHelperModal() {
+  const modal = document.getElementById('personalPostHelperModal');
+  if (modal) {
+    modal.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+  }
+}
+
+async function triggerDownloadCurrentImages() {
+  if (!currentPersonalPostData) return;
+  const postMedia = currentPersonalPostData.mediaUrls || (currentPersonalPostData.mediaFiles ? currentPersonalPostData.mediaFiles.map(m => typeof m === 'string' ? m : (m.url || m.path || '')) : []);
+  if (postMedia.length === 0) {
+    alert('Bài viết này không có ảnh đính kèm.');
+    return;
+  }
+  const btn = document.getElementById('personalHelperDownloadBtn');
+  if (btn) btn.innerText = '⏳ Đang tải ảnh...';
+  const downloaded = await downloadAllPostMedia(postMedia, currentPersonalPostData.machineCode);
+  if (btn) btn.innerText = `✅ Đã tải xong (${downloaded} ảnh)`;
+  setTimeout(() => { if (btn) btn.innerText = `📥 Tải Lại Ảnh`; }, 2500);
+}
+
+function copyCurrentPersonalText() {
+  if (!currentPersonalPostData) return;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(currentPersonalPostData.content || '');
+  }
+  const btn = document.getElementById('personalHelperCopyBtn');
+  if (btn) btn.innerText = '✅ ĐÃ CHÉP NỘI DUNG!';
+  setTimeout(() => { if (btn) btn.innerText = '📋 Sao Chép Lại'; }, 2000);
+}
+
+function openFacebookFromHelper() {
+  window.open('https://www.facebook.com/', '_blank');
 }
 
 async function deletePost(id) {
