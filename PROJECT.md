@@ -33,6 +33,10 @@
 | 20 | D8: Slide 0 Pure Monochrome Polish | Đổi `text-amber-400` thành `text-white font-bold`, nút copy feedback đổi sang đen/trắng thuần khiết | M3 | explorer_survey_dashboard |
 | 21 | E2E-01: Bộ Kiểm thử Tự động Toàn diện | Xây dựng và thực thi bộ test E2E 4-tier chứng nhận 100% tính năng hoạt động không lỗi | M4 | ORIGINAL_REQUEST |
 | 22 | CLEAN-01: Lọc Sạch Ảnh Cấm Hàng Đợi | Rà soát và tiêu hủy 50 ảnh cấm (15 avatar Zalo, 4 ảnh nhỏ, 31 bảng Excel & ảnh chụp màn hình tra Google), chuyển 8 bài thiếu ảnh sang `pending_media`, bổ sung `services/mediaFilter.js` và thuật toán Canvas lọc ảnh cấm 2 tầng | M5 | USER_DIRECTIVE |
+| 23 | ROBOT-01: Khóa Chuẩn Xác Hộp Thoại & Thanh Đăng Bài Cá Nhân | Tối ưu `isCreatePostModal` (bắt buộc editor Lexical + nút `Đăng`/`Post` chính xác) và `findFeedComposerTriggers` (nhắm đúng `<div role="button" tabindex="0">` chứa `Bạn đang nghĩ gì?`, loại bỏ nút `Ảnh/video` ngoài feed gây lỗi User Activation) trong `extension/fb_robot.js` (v1.2.5) | M6 | CHECKPOINT_ROBOT_CA_NHAN |
+| 24 | ROBOT-02: Đồng Bộ React Lexical & Tải Album Ảnh HD 30s | Bổ sung chuỗi sự kiện `beforeinput` + `input` + gõ/xóa khoảng trắng kích hoạt nút `Đăng` (`aria-disabled="false"`), nâng thời gian chờ tải album ảnh HD lên 30s và dùng `simulateRealisticClick` | M6 | CHECKPOINT_ROBOT_CA_NHAN |
+| 25 | SYS-OPT-01: Retry Graph API, Cooldown Gemini & Tự Bù Ảnh HD | Thêm `withRetry` (3 lần, phân biệt idempotent) trong `services/facebook.js`, danh sách model Gemini 3.8->3.5 kèm cooldown 429 1 giờ trong `services/gemini.js`, và tự động bù ảnh HD (`smartMatchTemplate`) trong `server.js` & `services/scheduler.js` | M6 | CHECKPOINT_ROBOT_CA_NHAN |
+| 26 | SYS-OPT-02: Cô Lập Sandbox Kiểm Thử E2E (`utils/runtime.js`) | Tạo `utils/runtime.js` (`VG_TEST_MODE=1`, `VG_DATA_DIR`), cô lập hoàn toàn `tests/e2e/test_runner.js` khỏi dữ liệu thật và API ngoài (52/52 PASS trong 2.1s), đồng bộ Service Worker `v20` | M6 | CHECKPOINT_ROBOT_CA_NHAN |
 
 ## Milestones
 | # | Name | Scope | Dependencies | Status |
@@ -42,6 +46,7 @@
 | M3 | Web Dashboard & Client Remediation | Sửa lỗi `public/index.html`, `public/app.html`, `public/js/app.js`, `public/sw.js`, `data/model_templates.json` (D1 đến D8) | M1 | DONE |
 | M4 | Final E2E Automated Verification & Quality Gate Audit | Chạy 100% test suite, Syntax check toàn dự án, HTTP status check, Reviewers, Challengers, Forensic Auditor (Clean pass) | M1, M2, M3 | DONE (Gate PASSED) |
 | M5 | Banned Media Quarantine & Dual-Layer Prevention | Thanh lọc toàn bộ ảnh đại diện Zalo, bảng tính Excel, ảnh chụp màn hình khỏi Database và Storage, tích hợp chặn tự động | M1, M2 | DONE |
+| M6 | **CHECKPOINT HOÀN THÀNH: ROBOT TRANG CÁ NHÂN** | Hoàn thiện Robot tự động đăng bài Facebook Trang Cá Nhân (`extension/fb_robot.js` v1.2.5), tối ưu toàn diện hệ thống (Retry Graph API, Gemini Cooldown, Auto HD Media Replenish, E2E Sandbox Isolation, SW v20) | M1..M5 | **DONE (CHECKPOINT: ROBOT TRANG CÁ NHÂN)** |
 
 ## Interface Contracts
 ### API Endpoint `/api/data-post/trigger-circular`
