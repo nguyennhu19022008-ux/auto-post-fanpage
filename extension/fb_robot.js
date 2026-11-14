@@ -12,6 +12,7 @@
   let hudEl = null;
   let countdownTimer = null;
   let isCancelled = false;
+  let isExecuting = false;
 
   /**
    * Helper: Sleep for ms
@@ -420,6 +421,11 @@
    * MAIN AUTOMATION WORKFLOW
    */
   async function executePersonalPost(payload) {
+    if (isExecuting) {
+      console.warn('[VG FB Robot] Đang có tiến trình đăng bài chạy song song, bỏ qua lệnh trùng lặp.');
+      return;
+    }
+    isExecuting = true;
     const { content, mediaUrls = [], machineCode = '' } = payload;
     isCancelled = false;
 
@@ -530,42 +536,52 @@
       editor.focus();
       await sleep(300);
 
-      // Điền nội dung văn bản chuẩn Lexical & Selection API
+      // Điền nội dung văn bản chuẩn Lexical (chỉ chèn 1 lần duy nhất, giữ nguyên xuống dòng)
       const textToInsert = content || '';
-      try {
-        const sel = window.getSelection();
-        const range = document.createRange();
-        range.selectNodeContents(editor);
-        range.collapse(false);
-        if (sel) {
-          sel.removeAllRanges();
-          sel.addRange(range);
-        }
-        document.execCommand('insertText', false, textToInsert);
-      } catch (e) {
-        console.warn('[VG FB Robot] execCommand insertText fallback:', e);
-      }
-
-      // Fallback: If editor is still empty, dispatch ClipboardEvent paste
-      if (!editor.innerText || editor.innerText.trim().length === 0) {
+      const placeCaretAtEnd = () => {
         try {
+          const sel = window.getSelection();
+          const range = document.createRange();
+          range.selectNodeContents(editor);
+          range.collapse(false);
+          if (sel) {
+            sel.removeAllRanges();
+            sel.addRange(range);
+          }
+        } catch (e) {}
+      };
+
+      const hasInsertedText = () => (editor.innerText || '').trim().length > 0;
+
+      // Ưu tiên 1: ClipboardEvent 'paste' (Lexical giữ nguyên 100% dấu xuống dòng \n và tự bật nút Đăng)
+      if (!hasInsertedText() && textToInsert) {
+        try {
+          placeCaretAtEnd();
+          const dt = new DataTransfer();
+          dt.setData('text/plain', textToInsert);
           const pasteEvent = new ClipboardEvent('paste', {
             bubbles: true,
             cancelable: true,
-            clipboardData: new DataTransfer()
+            clipboardData: dt
           });
-          pasteEvent.clipboardData.setData('text/plain', textToInsert);
           editor.dispatchEvent(pasteEvent);
-        } catch (e) {}
+          await sleep(250);
+        } catch (e) {
+          console.warn('[VG FB Robot] ClipboardEvent paste fallback:', e);
+        }
       }
 
-      // Dispatch event để React Lexical cập nhật State và bật nút Đăng (aria-disabled="false")
-      editor.dispatchEvent(new InputEvent('beforeinput', { bubbles: true, cancelable: true, inputType: 'insertText', data: textToInsert }));
-      editor.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: textToInsert }));
-      try {
-        document.execCommand('insertText', false, ' ');
-        document.execCommand('delete', false, null);
-      } catch (e) {}
+      // Ưu tiên 2 (Fallback duy nhất): Nếu editor vẫn trống thì mới dùng execCommand insertText
+      if (!hasInsertedText() && textToInsert) {
+        try {
+          placeCaretAtEnd();
+          document.execCommand('insertText', false, textToInsert);
+          await sleep(200);
+        } catch (e) {
+          console.warn('[VG FB Robot] execCommand insertText fallback:', e);
+        }
+      }
+
       try {
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(textToInsert).catch(() => {});
@@ -697,6 +713,8 @@
     } catch (err) {
       console.error('[VG FB Robot Lỗi]', err);
       setStepStatus(1, 'active', `❌ Lỗi: ${err.message}`);
+    } finally {
+      isExecuting = false;
     }
   }
 
