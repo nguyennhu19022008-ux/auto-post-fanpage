@@ -28,12 +28,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const checkDueNowBtn = document.getElementById('checkDueNowBtn');
 
   const autoGroupShareToggle = document.getElementById('autoGroupShareToggle');
+  const shareAllGroupsToggle = document.getElementById('shareAllGroupsToggle');
   const groupsPerPostInput = document.getElementById('groupsPerPostInput');
   const groupDelayInput = document.getElementById('groupDelayInput');
   const groupUrlsInput = document.getElementById('groupUrlsInput');
   const groupShareStatus = document.getElementById('groupShareStatus');
   const scanGroupsBtn = document.getElementById('scanGroupsBtn');
   const shareGroupsNowBtn = document.getElementById('shareGroupsNowBtn');
+  const retryFailedGroupsBtn = document.getElementById('retryFailedGroupsBtn');
+  const stopGroupQueueBtn = document.getElementById('stopGroupQueueBtn');
   const quickGroupLabel = document.getElementById('quickGroupLabel');
   const quickGroupActionBtn = document.getElementById('quickGroupActionBtn');
 
@@ -50,17 +53,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function refreshAutoPersonalStatus() {
     if (!autoPersonalStatus) return;
-    chrome.runtime.sendMessage({ action: 'getAutoPersonalStatus' }, (st) => {
+    chrome.runtime.sendMessage({ action: 'getFullExtensionState' }, (st) => {
       if (chrome.runtime.lastError || !st) return;
-      const lastCheck = st.vg_last_alarm_check
-        ? new Date(st.vg_last_alarm_check).toLocaleTimeString('vi-VN')
+      const lastCheck = st.lastAlarmCheck
+        ? new Date(st.lastAlarmCheck).toLocaleTimeString('vi-VN')
         : 'Chưa quét';
-      const dueCount = typeof st.vg_last_due_count === 'number' ? st.vg_last_due_count : 0;
+      const dueCount = typeof st.dueCount === 'number' ? st.dueCount : 0;
       autoPersonalStatus.innerText = `Lần quét gần nhất: ${lastCheck} • Chờ đăng: ${dueCount} bài`;
       const savedCount = parseGroupLines(groupUrlsInput?.value).length;
       const gQueue = typeof st.groupQueueCount === 'number' ? st.groupQueueCount : 0;
+      const logs = Array.isArray(st.groupLogs) ? st.groupLogs : [];
+      const okCount = logs.filter(l => l.success).length;
+      const errCount = logs.filter(l => !l.success).length;
+
       if (groupShareStatus) {
-        groupShareStatus.innerText = `Đã lưu: ${savedCount} Hội Nhóm • Đang chờ chia sẻ: ${gQueue} lượt`;
+        if (st.queuePaused && st.pauseReason) {
+          groupShareStatus.innerText = `⏸ ĐÃ TẠM DỪNG: ${st.pauseReason}`;
+        } else if (st.activeGroupJob) {
+          const slug = (st.activeGroupJob.groupUrl || '').split('/groups/')[1] || 'Group';
+          groupShareStatus.innerText = `🚀 Đang đăng ${slug.replace('/', '')} · Còn chờ: ${gQueue} · Đã đăng: ${okCount}, Lỗi: ${errCount}`;
+        } else if (st.nextGroupAt && st.nextGroupAt > Date.now()) {
+          const secLeft = Math.ceil((st.nextGroupAt - Date.now()) / 1000);
+          groupShareStatus.innerText = `⏳ Đang chờ đủ ${secLeft}s trước nhóm kế tiếp · Còn: ${gQueue} · Đã đăng: ${okCount}, Lỗi: ${errCount}`;
+        } else {
+          groupShareStatus.innerText = `Đã lưu: ${savedCount} nhóm · Chờ: ${gQueue} · Đã đăng: ${okCount} · Lỗi: ${errCount}`;
+        }
       }
       if (quickGroupLabel && quickGroupActionBtn) {
         if (savedCount === 0) {
@@ -68,13 +85,19 @@ document.addEventListener('DOMContentLoaded', () => {
           quickGroupActionBtn.innerText = '🔍 Quét Nhóm';
           quickGroupActionBtn.dataset.mode = 'scan';
         } else {
-          quickGroupLabel.innerText = `📢 Hội Nhóm: ${savedCount} nhóm${gQueue > 0 ? ` (${gQueue} đang chờ)` : ''}`;
+          quickGroupLabel.innerText = st.activeGroupJob
+            ? `🚀 Đang đăng nhóm (${gQueue} đang chờ)`
+            : `📢 Hội Nhóm: ${savedCount} nhóm${gQueue > 0 ? ` (${gQueue} đang chờ)` : ''}`;
           quickGroupActionBtn.innerText = '📢 Chia Sẻ Nhóm';
           quickGroupActionBtn.dataset.mode = 'share';
         }
       }
     });
   }
+
+  setInterval(() => {
+    refreshAutoPersonalStatus();
+  }, 2500);
 
   if (quickGroupActionBtn) {
     quickGroupActionBtn.addEventListener('click', () => {
@@ -102,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 2. Load and Sync Backend URL + Auto-Personal + Group Share Settings
   if (chrome.storage && chrome.storage.sync) {
     chrome.storage.sync.get(
-      ['backendUrl', 'autoPersonalEnabled', 'autoPersonalIncludeFanpage', 'autoGroupShareEnabled', 'targetGroupUrls', 'groupsPerPost', 'groupDelaySeconds'],
+      ['backendUrl', 'autoPersonalEnabled', 'autoPersonalIncludeFanpage', 'autoGroupShareEnabled', 'shareAllGroups', 'targetGroupUrls', 'groupsPerPost', 'groupDelaySeconds'],
       (result) => {
         if (result.backendUrl) {
           currentBackendUrl = result.backendUrl.trim().replace(/\/$/, '');
@@ -111,8 +134,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (autoPersonalToggle) autoPersonalToggle.checked = result.autoPersonalEnabled !== false;
         if (autoFanpageSyncToggle) autoFanpageSyncToggle.checked = result.autoPersonalIncludeFanpage !== false;
         if (autoGroupShareToggle) autoGroupShareToggle.checked = result.autoGroupShareEnabled !== false;
+        if (shareAllGroupsToggle) shareAllGroupsToggle.checked = result.shareAllGroups === true;
         if (groupsPerPostInput && result.groupsPerPost) groupsPerPostInput.value = result.groupsPerPost;
-        if (groupDelayInput) groupDelayInput.value = typeof result.groupDelaySeconds === 'number' ? result.groupDelaySeconds : 0;
+        if (groupsPerPostInput && shareAllGroupsToggle) groupsPerPostInput.disabled = shareAllGroupsToggle.checked;
+        if (groupDelayInput) groupDelayInput.value = typeof result.groupDelaySeconds === 'number' ? result.groupDelaySeconds : 10;
         if (groupUrlsInput && Array.isArray(result.targetGroupUrls)) {
           groupUrlsInput.value = result.targetGroupUrls.join('\n');
         }
@@ -127,13 +152,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const saveAutoFlags = () => {
     if (!chrome.storage || !chrome.storage.sync) return;
     const parsedGroups = parseGroupLines(groupUrlsInput?.value);
-    const perPost = Math.max(1, Math.min(20, parseInt(groupsPerPostInput?.value, 10) || 3));
+    const perPost = Math.max(1, Math.min(50, parseInt(groupsPerPostInput?.value, 10) || 3));
     const parsedDelay = parseInt(groupDelayInput?.value, 10);
-    const delaySec = Number.isFinite(parsedDelay) && parsedDelay >= 0 ? Math.min(parsedDelay, 600) : 0;
+    const delaySec = Number.isFinite(parsedDelay) && parsedDelay >= 0 ? Math.min(parsedDelay, 600) : 10;
+    const shareAll = shareAllGroupsToggle ? shareAllGroupsToggle.checked : false;
+    if (groupsPerPostInput) groupsPerPostInput.disabled = shareAll;
     chrome.storage.sync.set({
       autoPersonalEnabled: autoPersonalToggle ? autoPersonalToggle.checked : true,
       autoPersonalIncludeFanpage: autoFanpageSyncToggle ? autoFanpageSyncToggle.checked : true,
       autoGroupShareEnabled: autoGroupShareToggle ? autoGroupShareToggle.checked : true,
+      shareAllGroups: shareAll,
       groupsPerPost: perPost,
       groupDelaySeconds: delaySec,
       targetGroupUrls: parsedGroups
@@ -142,9 +170,36 @@ document.addEventListener('DOMContentLoaded', () => {
   if (autoPersonalToggle) autoPersonalToggle.addEventListener('change', saveAutoFlags);
   if (autoFanpageSyncToggle) autoFanpageSyncToggle.addEventListener('change', saveAutoFlags);
   if (autoGroupShareToggle) autoGroupShareToggle.addEventListener('change', saveAutoFlags);
+  if (shareAllGroupsToggle) shareAllGroupsToggle.addEventListener('change', saveAutoFlags);
   if (groupsPerPostInput) groupsPerPostInput.addEventListener('change', saveAutoFlags);
   if (groupDelayInput) groupDelayInput.addEventListener('change', saveAutoFlags);
   if (groupUrlsInput) groupUrlsInput.addEventListener('blur', saveAutoFlags);
+
+  if (stopGroupQueueBtn) {
+    stopGroupQueueBtn.addEventListener('click', () => {
+      chrome.runtime.sendMessage({ action: 'stopGroupShareQueue' }, (resp) => {
+        void chrome.runtime.lastError;
+        refreshAutoPersonalStatus();
+        if (groupShareStatus) {
+          groupShareStatus.innerText = `🛑 Đã dừng hàng đợi & đóng ${resp?.clearedTabs || 0} tab.`;
+        }
+      });
+    });
+  }
+
+  if (retryFailedGroupsBtn) {
+    retryFailedGroupsBtn.addEventListener('click', () => {
+      chrome.runtime.sendMessage({ action: 'retryFailedGroupLogs' }, (resp) => {
+        void chrome.runtime.lastError;
+        refreshAutoPersonalStatus();
+        if (groupShareStatus) {
+          groupShareStatus.innerText = resp && resp.success
+            ? `🔄 Đang thử lại ${resp.retriedCount} nhóm lỗi...`
+            : `ℹ️ ${(resp && resp.error) || 'Không có nhóm lỗi.'}`;
+        }
+      });
+    });
+  }
 
   if (scanGroupsBtn) {
     scanGroupsBtn.addEventListener('click', () => {

@@ -211,7 +211,7 @@
     <div class="badge-icon">VG</div>
     <div>
       <div class="title">Laptop Vương Gia</div>
-      <div class="subtitle">Hệ Thống Autopost Cá Nhân + Nhóm v1.5.0</div>
+      <div class="subtitle">Hệ Thống Autopost Tuần Tự 10s • v1.6.0</div>
     </div>
   </div>
 
@@ -274,13 +274,17 @@
         <input type="checkbox" id="autoGroupShareToggle" checked style="width:15px; height:15px;">
         <span>Tự chia sẻ sang Group sau khi đăng Cá Nhân</span>
       </label>
+      <label style="display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:700; margin-bottom:6px; cursor:pointer;">
+        <input type="checkbox" id="shareAllGroupsToggle" style="width:15px; height:15px;">
+        <span>Đăng hết tất cả nhóm đã lưu cho mỗi bài</span>
+      </label>
       <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
         <span style="font-size:11px; font-weight:700; flex:1;">Số nhóm xoay vòng mỗi bài:</span>
-        <input type="number" id="groupsPerPostInput" min="1" max="20" value="3" class="input" style="width:62px; text-align:center; font-weight:800;">
+        <input type="number" id="groupsPerPostInput" min="1" max="50" value="3" class="input" style="width:62px; text-align:center; font-weight:800;">
       </div>
       <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-        <span style="font-size:11px; font-weight:700; flex:1;">Giãn cách giữa các nhóm (giây · 0 = đăng luôn):</span>
-        <input type="number" id="groupDelayInput" min="0" max="600" value="0" class="input" style="width:62px; text-align:center; font-weight:800;">
+        <span style="font-size:11px; font-weight:700; flex:1;">Chờ sau khi đóng tab cũ (giây):</span>
+        <input type="number" id="groupDelayInput" min="0" max="600" value="10" class="input" style="width:62px; text-align:center; font-weight:800;">
       </div>
       <label class="label" style="margin-top:4px;">Danh sách Link Group mục tiêu (mỗi dòng 1 link):</label>
       <textarea id="groupUrlsInput" class="textarea" style="height:68px; font-size:11px;" placeholder="https://www.facebook.com/groups/tennhomlaptop/&#10;https://www.facebook.com/groups/chototlaptop/"></textarea>
@@ -290,6 +294,8 @@
       <div class="btn-grid">
         <button id="scanGroupsBtn" class="btn btn-fanpage">🔍 Quét Nhóm Của Tôi</button>
         <button id="shareGroupsNowBtn" class="btn btn-personal">📢 Chia Sẻ Nhóm Ngay</button>
+        <button id="retryFailedGroupsBtn" class="btn" style="background:#FEF9C3; color:#713F12;">🔄 Thử Lại Nhóm Lỗi</button>
+        <button id="stopGroupQueueBtn" class="btn" style="background:#FEE2E2; color:#991B1B;">🛑 Dừng Hàng Đợi</button>
       </div>
     </div>
 

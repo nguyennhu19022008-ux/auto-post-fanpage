@@ -1048,6 +1048,7 @@ async function loadPosts() {
 
     renderQueueList(queuedPosts);
     renderHistoryList(historyPosts);
+    if (typeof populateGroupPostDropdown === 'function') populateGroupPostDropdown();
   } catch (err) {
     console.error('Error fetching posts:', err);
     if (!Array.isArray(allPosts)) allPosts = [];
@@ -3120,7 +3121,107 @@ function setAppExtMessage(msg, isError = false) {
   el.textContent = msg;
 }
 
+let lastExtStateSnapshot = null;
+let extPollInterval = null;
+
+function onToggleAppShareAllGroups() {
+  const cb = document.getElementById('appShareAllGroups');
+  const perEl = document.getElementById('appGroupsPerPost');
+  if (perEl && cb) perEl.disabled = cb.checked;
+}
+
+function populateGroupPostDropdown() {
+  const sel = document.getElementById('appGroupPostSelect');
+  if (!sel) return;
+  const currentVal = sel.value;
+  const candidates = (allPosts || []).filter(p => p && p.content && (p.mediaFiles?.length > 0 || p.mediaUrls?.length > 0)).slice(0, 25);
+
+  let opts = '<option value="">Tự lấy bài vừa đăng Cá Nhân / Mới nhất</option>';
+  candidates.forEach(p => {
+    const code = p.machineCode || p.code || 'MÁY';
+    const name = (p.machineName || p.content.split('\n')[0] || '').slice(0, 48);
+    const imgCount = (p.mediaFiles || p.mediaUrls || []).length;
+    opts += `<option value="${escapeHtml(p.id)}">#${escapeHtml(code)} · ${escapeHtml(name)} (${imgCount} ảnh)</option>`;
+  });
+  sel.innerHTML = opts;
+  if (currentVal && candidates.some(c => c.id === currentVal)) {
+    sel.value = currentVal;
+  }
+  renderSelectedGroupPostPreview();
+}
+
+function renderSelectedGroupPostPreview() {
+  const sel = document.getElementById('appGroupPostSelect');
+  const preview = document.getElementById('appGroupPostPreview');
+  if (!preview) return;
+  const postId = sel ? sel.value : '';
+  if (postId) {
+    const p = allPosts.find(item => item.id === postId);
+    if (p) {
+      const imgs = (p.mediaFiles || p.mediaUrls || []).length;
+      const snippet = (p.content || '').split('\n').slice(0, 2).join(' · ');
+      preview.innerHTML = `<strong>#${escapeHtml(p.machineCode || 'MÁY')}</strong> (${imgs} ảnh HD): ${escapeHtml(snippet)}`;
+      return;
+    }
+  }
+  const lp = lastExtStateSnapshot?.lastPersonalPost;
+  if (lp && lp.content) {
+    const imgs = (lp.mediaUrls || []).length;
+    const snippet = lp.content.split('\n').slice(0, 2).join(' · ');
+    preview.innerHTML = `<strong>Bài Cá Nhân gần nhất (#${escapeHtml(lp.machineCode || 'MÁY')}</strong>, ${imgs} ảnh): ${escapeHtml(snippet)}`;
+    return;
+  }
+  preview.textContent = 'Mặc định lấy bài vừa xuất bản gần nhất (kèm link Fanpage & ảnh HD).';
+}
+
+function renderGroupShareLogs(logs = []) {
+  const container = document.getElementById('appGroupLogsList');
+  const countEl = document.getElementById('appGroupLogsCount');
+  if (countEl) countEl.textContent = String(logs.length);
+  if (!container) return;
+
+  if (!Array.isArray(logs) || logs.length === 0) {
+    container.innerHTML = '<div class="py-3 text-neutral-500 font-medium">Chưa có lịch sử chia sẻ Hội Nhóm nào.</div>';
+    return;
+  }
+
+  container.innerHTML = logs.map(log => {
+    const timeStr = log.timestamp ? new Date(log.timestamp).toLocaleTimeString('vi-VN') : '--:--';
+    const slug = (log.groupUrl || '').replace(/https?:\/\/(www\.)?facebook\.com\/groups\//i, '').replace(/\/$/, '');
+    let badgeBg = 'bg-[#DCFCE7] text-[#166534]';
+    let badgeText = 'Đã đăng';
+    if (log.status === 'pending_approval') {
+      badgeBg = 'bg-[#FEF9C3] text-[#854D0E]';
+      badgeText = 'Chờ duyệt';
+    } else if (!log.success) {
+      badgeBg = 'bg-[#FEE2E2] text-[#991B1B]';
+      badgeText = log.status === 'skipped_not_member' ? 'Chưa tham gia' : 'Lỗi';
+    }
+
+    return `
+      <div class="py-2 flex flex-wrap items-center justify-between gap-2">
+        <div class="min-w-0 flex-1 space-y-0.5">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="px-2 py-0.5 border border-[#18181B] rounded text-[10px] font-black uppercase ${badgeBg}">${badgeText}</span>
+            <span class="font-mono font-bold text-[#18181B]">#${escapeHtml(log.machineCode || 'MÁY')}</span>
+            <a href="${escapeHtml(log.groupUrl)}" target="_blank" class="font-mono text-blue-700 underline truncate max-w-xs">${escapeHtml(slug || log.groupUrl)}</a>
+            <span class="text-[10px] text-neutral-500 font-mono">${timeStr}</span>
+          </div>
+          <div class="text-[11px] text-neutral-700">${escapeHtml(log.reason || '')}</div>
+        </div>
+        ${!log.success ? `
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button type="button" onclick="retrySingleGroupLog('${escapeHtml(log.id)}')" class="neo-btn neo-btn-yellow px-2 py-1 text-[10px] font-black">Thử lại</button>
+            <button type="button" onclick="removeGroupUrlFromApp('${escapeHtml(log.groupUrl)}')" class="neo-btn bg-[#FEE2E2] text-[#991B1B] px-2 py-1 text-[10px] font-black">Bỏ nhóm</button>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
 function applyExtensionStateToApp(data) {
+  lastExtStateSnapshot = data;
   const badge = document.getElementById('appExtStatusBadge');
   if (badge && data.version) {
     badge.className = 'neo-sticker sticker-green font-mono text-[11px] font-bold';
@@ -3134,15 +3235,19 @@ function applyExtensionStateToApp(data) {
   setChecked('appAutoPersonalEnabled', cfg.autoPersonalEnabled !== false);
   setChecked('appAutoFanpageSync', cfg.autoPersonalIncludeFanpage !== false);
   setChecked('appAutoGroupShareEnabled', cfg.autoGroupShareEnabled !== false);
+  setChecked('appShareAllGroups', cfg.shareAllGroups === true);
 
   const perPostEl = document.getElementById('appGroupsPerPost');
-  if (perPostEl && cfg.groupsPerPost) perPostEl.value = cfg.groupsPerPost;
+  if (perPostEl) {
+    if (cfg.groupsPerPost) perPostEl.value = cfg.groupsPerPost;
+    perPostEl.disabled = cfg.shareAllGroups === true;
+  }
 
   const delayEl = document.getElementById('appGroupDelaySeconds');
   if (delayEl && typeof cfg.groupDelaySeconds === 'number') delayEl.value = cfg.groupDelaySeconds;
 
   const urlsEl = document.getElementById('appTargetGroupUrls');
-  if (urlsEl && Array.isArray(cfg.targetGroupUrls)) {
+  if (urlsEl && Array.isArray(cfg.targetGroupUrls) && document.activeElement !== urlsEl) {
     urlsEl.value = cfg.targetGroupUrls.join('\n');
   }
 
@@ -3151,9 +3256,32 @@ function applyExtensionStateToApp(data) {
     countEl.textContent = String(cfg.targetGroupUrls.length);
   }
 
+  const queueCount = typeof data.groupQueueCount === 'number' ? data.groupQueueCount : 0;
   const queueInfo = document.getElementById('appGroupQueueInfo');
-  if (queueInfo && typeof data.groupQueueCount === 'number') {
-    queueInfo.textContent = `Chờ chia sẻ: ${data.groupQueueCount} lượt`;
+  if (queueInfo) {
+    queueInfo.textContent = `Chờ chia sẻ: ${queueCount} lượt`;
+  }
+
+  const progText = document.getElementById('appActiveGroupProgressText');
+  if (progText) {
+    if (data.queuePaused && data.pauseReason) {
+      progText.textContent = `Đã tạm dừng: ${data.pauseReason}`;
+    } else if (data.activeGroupJob) {
+      const slug = (data.activeGroupJob.groupUrl || '').replace(/https?:\/\/(www\.)?facebook\.com\/groups\//i, '');
+      progText.textContent = `Đang mở tuần tự 1 tab: ${slug} (còn ${queueCount} nhóm chờ sau tab này)...`;
+    } else if (data.nextGroupAt && data.nextGroupAt > Date.now() && queueCount > 0) {
+      const sec = Math.ceil((data.nextGroupAt - Date.now()) / 1000);
+      progText.textContent = `Đã đóng tab trước • Đếm ngược đủ ${sec}s nữa sẽ mở nhóm kế tiếp (còn ${queueCount} nhóm).`;
+    } else if (queueCount > 0) {
+      progText.textContent = `Đang chuẩn bị mở nhóm tiếp theo (${queueCount} lượt chờ)...`;
+    } else {
+      progText.textContent = 'Trạng thái hàng đợi: Đang rảnh (chưa có tab Group nào đang mở).';
+    }
+  }
+
+  populateGroupPostDropdown();
+  if (Array.isArray(data.groupLogs)) {
+    renderGroupShareLogs(data.groupLogs);
   }
 }
 
@@ -3169,7 +3297,7 @@ function initExtensionControlPanel() {
         const badge = document.getElementById('appExtStatusBadge');
         if (badge) {
           badge.className = 'neo-sticker sticker-green font-mono text-[11px] font-bold';
-          badge.textContent = `Extension v${d.version || '1.5.0'} Đã Kết Nối`;
+          badge.textContent = `Extension v${d.version || '1.6.0'} Đã Kết Nối`;
         }
         window.postMessage({ action: 'VG_GET_EXTENSION_CONFIG' }, '*');
       }
@@ -3182,7 +3310,7 @@ function initExtensionControlPanel() {
         const btn = document.getElementById('appSaveExtBtn');
         if (btn) btn.disabled = false;
         if (d.success) {
-          applyExtensionStateToApp(d);
+          window.postMessage({ action: 'VG_GET_EXTENSION_CONFIG' }, '*');
           setAppExtMessage('Đã lưu cấu hình Extension & đồng bộ tức thì!');
         } else {
           setAppExtMessage(d.error || 'Chưa lưu được cấu hình Extension.', true);
@@ -3217,11 +3345,29 @@ function initExtensionControlPanel() {
           btn.textContent = 'Chia Sẻ Hội Nhóm Ngay';
         }
         if (d.success) {
-          setAppExtMessage(`Đang mở Hội Nhóm để chia sẻ (${d.enqueueRes?.enqueued || 1} nhóm, không chờ 3 phút)!`);
+          setAppExtMessage(`Đã đưa ${d.enqueueRes?.enqueued || 1} nhóm vào hàng đợi tuần tự (chạy trong cửa sổ phụ)!`);
           window.postMessage({ action: 'VG_GET_EXTENSION_CONFIG' }, '*');
         } else {
           setAppExtMessage(d.error || 'Không thể chia sẻ lên Hội Nhóm.', true);
         }
+      }
+
+      if (d.action === 'VG_STOP_GROUP_QUEUE_RESULT') {
+        setAppExtMessage(`Đã dừng hàng đợi & đóng ${d.clearedTabs || 0} tab.`);
+        window.postMessage({ action: 'VG_GET_EXTENSION_CONFIG' }, '*');
+      }
+
+      if (d.action === 'VG_RETRY_FAILED_GROUPS_RESULT') {
+        if (d.success) {
+          setAppExtMessage(`Đang chạy lại ${d.retriedCount} nhóm bị lỗi...`);
+        } else {
+          setAppExtMessage(d.error || 'Không có nhóm lỗi nào để thử lại.', true);
+        }
+        window.postMessage({ action: 'VG_GET_EXTENSION_CONFIG' }, '*');
+      }
+
+      if (d.action === 'VG_REMOVE_GROUP_URL_RESULT' || d.action === 'VG_CLEAR_GROUP_LOGS_RESULT') {
+        window.postMessage({ action: 'VG_GET_EXTENSION_CONFIG' }, '*');
       }
 
       if (d.action === 'VG_RUN_DUE_PERSONAL_RESULT') {
@@ -3245,13 +3391,21 @@ function initExtensionControlPanel() {
   setTimeout(() => {
     window.postMessage({ action: 'VG_GET_EXTENSION_CONFIG' }, '*');
   }, 400);
+
+  if (!extPollInterval) {
+    extPollInterval = setInterval(() => {
+      if (!document.hidden) {
+        window.postMessage({ action: 'VG_GET_EXTENSION_CONFIG' }, '*');
+      }
+    }, 3000);
+  }
 }
 
 function saveExtConfigFromApp() {
   const urls = parseAppGroupUrls(document.getElementById('appTargetGroupUrls')?.value);
-  const perPost = Math.max(1, Math.min(20, parseInt(document.getElementById('appGroupsPerPost')?.value, 10) || 3));
+  const perPost = Math.max(1, Math.min(50, parseInt(document.getElementById('appGroupsPerPost')?.value, 10) || 3));
   const rawDelay = parseInt(document.getElementById('appGroupDelaySeconds')?.value, 10);
-  const delaySec = Number.isFinite(rawDelay) && rawDelay >= 0 ? Math.min(rawDelay, 600) : 0;
+  const delaySec = Number.isFinite(rawDelay) && rawDelay >= 0 ? Math.min(rawDelay, 600) : 10;
 
   const btn = document.getElementById('appSaveExtBtn');
   if (btn) btn.disabled = true;
@@ -3262,6 +3416,7 @@ function saveExtConfigFromApp() {
       autoPersonalEnabled: document.getElementById('appAutoPersonalEnabled')?.checked ?? true,
       autoPersonalIncludeFanpage: document.getElementById('appAutoFanpageSync')?.checked ?? true,
       autoGroupShareEnabled: document.getElementById('appAutoGroupShareEnabled')?.checked ?? true,
+      shareAllGroups: document.getElementById('appShareAllGroups')?.checked ?? false,
       groupsPerPost: perPost,
       groupDelaySeconds: delaySec,
       targetGroupUrls: urls
@@ -3289,6 +3444,11 @@ function runDuePersonalFromApp() {
 }
 
 function shareLatestToGroupsFromApp() {
+  const selectedId = document.getElementById('appGroupPostSelect')?.value || '';
+  if (selectedId) {
+    sharePostToGroupsFromApp(selectedId);
+    return;
+  }
   saveExtConfigFromApp();
   const btn = document.getElementById('appShareGroupsNowBtn');
   if (btn) {
@@ -3310,7 +3470,7 @@ function sharePostToGroupsFromApp(postId) {
   saveExtConfigFromApp();
   const mediaUrls = (post.mediaUrls || (post.mediaFiles || []).map(m => typeof m === 'string' ? m : (m.url || m.path || '')))
     .filter(Boolean);
-  setAppExtMessage(`Đang chia sẻ mã #${post.machineCode || 'MÁY'} lên các Hội Nhóm...`);
+  setAppExtMessage(`Đang chia sẻ mã #${post.machineCode || 'MÁY'} lên các Hội Nhóm (cửa sổ chạy nền)...`);
   setTimeout(() => {
     window.postMessage({
       action: 'VG_SHARE_TO_GROUPS_NOW',
@@ -3322,6 +3482,27 @@ function sharePostToGroupsFromApp(postId) {
       }
     }, '*');
   }, 150);
+}
+
+function stopGroupQueueFromApp() {
+  window.postMessage({ action: 'VG_STOP_GROUP_QUEUE' }, '*');
+}
+
+function retryFailedGroupsFromApp() {
+  window.postMessage({ action: 'VG_RETRY_FAILED_GROUPS', logId: null }, '*');
+}
+
+function retrySingleGroupLog(logId) {
+  window.postMessage({ action: 'VG_RETRY_FAILED_GROUPS', logId }, '*');
+}
+
+function removeGroupUrlFromApp(groupUrl) {
+  if (!confirm(`Xóa nhóm ${groupUrl} khỏi danh sách mục tiêu?`)) return;
+  window.postMessage({ action: 'VG_REMOVE_GROUP_URL', groupUrl }, '*');
+}
+
+function clearGroupLogsFromApp() {
+  window.postMessage({ action: 'VG_CLEAR_GROUP_LOGS' }, '*');
 }
 
 

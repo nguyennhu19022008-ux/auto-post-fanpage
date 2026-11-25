@@ -389,6 +389,151 @@
     }
   }
 
+  class VgRobotStatusError extends Error {
+    constructor(status, message) {
+      super(message);
+      this.status = status;
+    }
+  }
+
+  /**
+   * Kiểm tra xem Group đã tham gia chưa, và chuyển sang tab "Thảo luận" nếu đang ở Group Mua bán
+   */
+  async function prepareGroupComposerEnvironment() {
+    // Đợi [role="main"] ổn định tối đa 3s nếu vừa mở trang
+    await waitForElement('[role="main"]', document, 3500);
+    await sleep(300);
+
+    const existingTriggers = findFeedComposerTriggers();
+    if (existingTriggers.length > 0) return;
+
+    const main = document.querySelector('[role="main"]') || document.body;
+
+    // 1. Kiểm tra nếu là Nhóm Mua Bán đang chọn tab "Mua bán" -> bấm chuyển sang tab "Thảo luận"
+    const discussionTab = Array.from(main.querySelectorAll('a[role="tab"], div[role="tab"]')).find((t) => {
+      const txt = (t.innerText || '').trim().toLowerCase();
+      return (txt === 'thảo luận' || txt === 'discussion') && t.getAttribute('aria-selected') !== 'true';
+    });
+    if (discussionTab && isVisible(discussionTab)) {
+      console.log('[VG FB Robot] Phát hiện Group Mua Bán -> chuyển sang tab Thảo luận...');
+      simulateSingleClick(discussionTab);
+      await sleep(1100);
+      if (findFeedComposerTriggers().length > 0) return;
+    }
+
+    // 2. Cuộn nhẹ xuống dưới ảnh bìa Group để hiện thanh viết bài
+    try { window.scrollTo(0, 220); } catch (e) {}
+    await sleep(450);
+    if (findFeedComposerTriggers().length > 0) return;
+
+    // 3. Nếu chỉ thấy nút "Tham gia nhóm" / "Join group" mà không có khung viết -> kết luận sớm
+    const joinBtn = Array.from(main.querySelectorAll('div[role="button"], button')).find((b) => {
+      if (!isVisible(b)) return false;
+      const lbl = (b.innerText || b.getAttribute('aria-label') || '').trim().toLowerCase();
+      return lbl === 'tham gia nhóm' || lbl === 'join group';
+    });
+    if (joinBtn) {
+      await sleep(1500);
+      if (findFeedComposerTriggers().length === 0) {
+        throw new VgRobotStatusError('skipped_not_member', 'Tài khoản chưa tham gia nhóm hoặc nhóm không cho phép người ngoài đăng bài.');
+      }
+    }
+  }
+
+  /**
+   * Theo dõi tối đa 12s sau khi bấm "Đăng" để XÁC NHẬN THẬT bài đã được xuất bản hoặc bị lỗi/chờ duyệt
+   */
+  async function waitForPublishConfirmation(modal) {
+    const startMs = Date.now();
+    const maxConfirmMs = 12000;
+    const blockPhrases = [
+      'bị chặn tạm thời',
+      'temporarily blocked',
+      'tạm thời bị hạn chế',
+      'temporarily restricted',
+      'vượt quá giới hạn',
+      'không thể đăng bài lúc này',
+      'action blocked',
+      'tính năng này tạm thời'
+    ];
+    const errorPhrases = [
+      'có lỗi xảy ra',
+      'something went wrong',
+      'không thể đăng',
+      "couldn't post",
+      'vui lòng thử lại'
+    ];
+
+    while (Date.now() - startMs < maxConfirmMs) {
+      if (isCancelled) {
+        return { ok: false, status: 'cancelled', reason: 'Người dùng đã hủy giữa chừng.' };
+      }
+
+      // A. Kiểm tra hộp thoại vẫn còn hay đã đóng hẳn
+      const currentModal = findCreatePostModal();
+      const bodyLower = (document.body.innerText || '').toLowerCase();
+
+      // B. Kiểm tra cảnh báo chặn spam của Facebook (nếu có -> dừng ngay hàng đợi bảo vệ nick!)
+      const activeDialogsText = Array.from(document.querySelectorAll('div[role="dialog"]:not(#vg-fb-robot-hud), div[role="alert"]'))
+        .map(el => (el.innerText || '').toLowerCase())
+        .join('\n');
+
+      const matchedBlock = blockPhrases.find(p => activeDialogsText.includes(p));
+      if (matchedBlock) {
+        return {
+          ok: false,
+          status: 'blocked_by_facebook',
+          reason: `Facebook cảnh báo giới hạn đăng bài ("${matchedBlock}"). Đã tự dừng hàng đợi để bảo vệ nick.`
+        };
+      }
+
+      if (!currentModal || !document.contains(modal)) {
+        // Modal ĐÃ ĐÓNG THẬT -> Đợi ngắn 350ms để đọc toast thông báo phê duyệt nếu là Group kiểm duyệt
+        await sleep(350);
+        const toastText = Array.from(document.querySelectorAll('[role="alert"], [role="status"], div[data-visualcompletion="ignore-dynamic"]'))
+          .map(el => (el.innerText || '').toLowerCase())
+          .join(' ');
+        if (
+          toastText.includes('phê duyệt') ||
+          toastText.includes('chờ duyệt') ||
+          toastText.includes('approval') ||
+          toastText.includes('submitted') ||
+          toastText.includes('quản trị viên sẽ xem xét')
+        ) {
+          return {
+            ok: true,
+            status: 'pending_approval',
+            reason: 'Đã gửi bài viết thành công (Group yêu cầu Admin phê duyệt).'
+          };
+        }
+        return {
+          ok: true,
+          status: 'posted',
+          reason: 'Đã xác nhận xuất bản thành công (hộp thoại đã đóng).'
+        };
+      }
+
+      // C. Modal vẫn mở: kiểm tra nếu có thông báo lỗi bên trong modal hoặc hộp thoại Mua Bán (nút Tiếp)
+      const modalText = (currentModal.innerText || '').toLowerCase();
+      const matchedErr = errorPhrases.find(p => modalText.includes(p));
+      if (matchedErr) {
+        return {
+          ok: false,
+          status: 'failed_submit',
+          reason: `Facebook báo lỗi khi đăng ("${matchedErr}").`
+        };
+      }
+
+      await sleep(250);
+    }
+
+    return {
+      ok: false,
+      status: 'failed_modal_stuck',
+      reason: 'Đã bấm Đăng nhưng hộp thoại không tự đóng sau 12 giây (có thể Group yêu cầu chọn thêm danh mục hoặc mạng bị treo).'
+    };
+  }
+
   /**
    * Strictly check if a dialog is the REAL Facebook Create Post Modal (Zero False Positives)
    */
@@ -493,6 +638,9 @@
          text.includes('bạn viết gì') ||
          text.includes('viết gì đi') ||
          text.includes('viết gì đó') ||
+         text.includes('hãy viết gì') ||
+         text.includes('bắt đầu thảo luận') ||
+         text.includes('start a discussion') ||
          text.includes('tạo bài viết') ||
          text.includes('create post') ||
          text.includes('create a public post') ||
@@ -620,22 +768,26 @@
     isCancelled = false;
 
     const modeLabel = isGroupPost ? `HỘI NHÓM (${groupUrl || 'Group'})` : 'TRANG CÁ NHÂN';
-    console.log(`[VG FB Robot v1.4.0] Bắt đầu quy trình siêu tốc cho ${modeLabel}:`, machineCode || postId || 'MÁY');
+    console.log(`[VG FB Robot v1.6.0] Bắt đầu quy trình cho ${modeLabel}:`, machineCode || postId || 'MÁY');
     createHud(isGroupPost ? `GROUP • ${machineCode}` : machineCode);
 
     // Tải trước toàn bộ ảnh HD SONG SONG ngay khi vừa mở hộp thoại (tiết kiệm 3-6s)
     const mediaFilesPromise = prefetchMediaFiles(mediaUrls, machineCode);
 
     try {
-      // BƯỚC 1: Tìm và mở ô "Bạn đang nghĩ gì thế?"
-      setStepStatus(1, 'active', 'Đang tìm và mở ô tạo bài viết...');
+      // BƯỚC 1: Chuẩn bị & Mở ô tạo bài viết
+      setStepStatus(1, 'active', isGroupPost ? 'Đang kiểm tra & mở khung bài Group...' : 'Đang tìm và mở ô tạo bài viết...');
       if (window.scrollY > 50) {
         try { window.scrollTo({ top: 0, behavior: 'auto' }); } catch (e) {}
       }
 
+      if (isGroupPost) {
+        await prepareGroupComposerEnvironment();
+      }
+
       let modal = findCreatePostModal();
       const openStartTime = Date.now();
-      const openTimeout = 12000;
+      const openTimeout = isGroupPost ? 9000 : 12000;
 
       // Lắng nghe click thủ công từ người dùng để bắt ngay lập tức nếu người dùng bấm bằng tay
       const manualClickListener = () => {
@@ -685,7 +837,7 @@
       }
 
       if (!modal) {
-        modal = await waitForCreatePostModal(5000);
+        modal = await waitForCreatePostModal(3500);
       }
 
       document.removeEventListener('click', manualClickListener, true);
@@ -697,7 +849,18 @@
       });
 
       if (!modal) {
-        throw new Error('Hộp thoại tạo bài viết không xuất hiện. Hãy thử click bằng tay vào ô đăng bài trên Facebook.');
+        // Kiểm tra nhanh xem có mở nhầm hộp thoại Mua bán có nút "Tiếp"/"Next" không
+        const nextOnlyDialog = Array.from(document.querySelectorAll('div[role="dialog"]:not(#vg-fb-robot-hud)')).find(d => {
+          const btns = Array.from(d.querySelectorAll('div[role="button"]'));
+          return btns.some(b => {
+            const l = (b.innerText || b.getAttribute('aria-label') || '').trim().toLowerCase();
+            return l === 'tiếp' || l === 'next';
+          });
+        });
+        if (nextOnlyDialog && isGroupPost) {
+          throw new VgRobotStatusError('failed_buy_sell_form', 'Group Mua Bán dùng form niêm yết (Tiếp -> Đăng) và không hỗ trợ đăng thảo luận.');
+        }
+        throw new VgRobotStatusError('failed_no_composer', 'Không tìm thấy khung tạo bài viết trong nhóm/trang này.');
       }
 
       setStepStatus(1, 'success', 'Đã mở khung soạn bài!');
@@ -865,14 +1028,55 @@
 
         if (postBtn) {
           simulateSingleClick(postBtn);
-          await clearResidualDraftAfterPublish(finalContent);
-          const doneMsg = isGroupPost
-            ? '✅ ĐÃ ĐĂNG BÀI LÊN HỘI NHÓM THÀNH CÔNG!'
-            : '✅ ĐÃ XUẤT BẢN THÀNH CÔNG LÊN TRANG CÁ NHÂN!';
-          setStepStatus(4, 'success', doneMsg);
-          if (countdownBox) {
-            countdownBox.innerHTML = `<span style="color:#059669; font-weight:900; font-size:14px;">🎉 ${isGroupPost ? 'ĐÃ CHIA SẺ LÊN HỘI NHÓM!' : 'BÀI VIẾT ĐÃ ĐƯỢC ĐĂNG LÊN TRANG CÁ NHÂN!'}</span>`;
+          setStepStatus(4, 'active', '⏳ Đang xác nhận Facebook hoàn tất xuất bản...');
+          const confirmRes = await waitForPublishConfirmation(modal);
+
+          if (confirmRes.ok) {
+            await clearResidualDraftAfterPublish(finalContent);
+            const doneMsg = confirmRes.status === 'pending_approval'
+              ? '✅ ĐÃ GỬI BÀI CHỜ ADMIN NHÓM DUYỆT!'
+              : (isGroupPost ? '✅ ĐÃ XÁC NHẬN ĐĂNG LÊN HỘI NHÓM!' : '✅ ĐÃ XUẤT BẢN THÀNH CÔNG LÊN TRANG CÁ NHÂN!');
+            setStepStatus(4, 'success', doneMsg);
+            if (countdownBox) {
+              countdownBox.innerHTML = `<span style="color:#059669; font-weight:900; font-size:14px;">🎉 ${confirmRes.status === 'pending_approval' ? 'ĐÃ GỬI CHỜ DUYỆT!' : 'ĐÃ XÁC NHẬN ĐĂNG XONG!'}</span>`;
+            }
+            chrome.runtime.sendMessage({
+              action: isGroupPost ? 'groupShareCompleted' : 'personalPostCompleted',
+              postId,
+              machineCode,
+              content: finalContent,
+              mediaUrls,
+              groupUrl,
+              isGroupPost,
+              autoTriggered,
+              success: true,
+              status: confirmRes.status,
+              reason: confirmRes.reason
+            }, () => { void chrome.runtime.lastError; });
+            await sleep(900);
+            if (hudEl) hudEl.remove();
+          } else {
+            setStepStatus(4, 'active', `❌ ${confirmRes.reason}`);
+            chrome.runtime.sendMessage({
+              action: isGroupPost ? 'groupShareCompleted' : 'personalPostCompleted',
+              postId,
+              machineCode,
+              content: finalContent,
+              mediaUrls,
+              groupUrl,
+              isGroupPost,
+              autoTriggered,
+              success: false,
+              status: confirmRes.status,
+              reason: confirmRes.reason,
+              error: confirmRes.reason
+            }, () => { void chrome.runtime.lastError; });
+            await sleep(1000);
+            if (hudEl) hudEl.remove();
           }
+        } else {
+          const noBtnReason = 'Nút Đăng vẫn bị vô hiệu hóa hoặc không tìm thấy sau khi tải ảnh.';
+          setStepStatus(4, 'active', `⚠️ ${noBtnReason}`);
           chrome.runtime.sendMessage({
             action: isGroupPost ? 'groupShareCompleted' : 'personalPostCompleted',
             postId,
@@ -882,21 +1086,10 @@
             groupUrl,
             isGroupPost,
             autoTriggered,
-            success: true
-          }, () => { void chrome.runtime.lastError; });
-          await sleep(1200);
-          if (hudEl) hudEl.remove();
-        } else {
-          setStepStatus(4, 'active', 'Vui lòng bấm nút "Đăng" màu xanh trên Facebook để hoàn tất.');
-          chrome.runtime.sendMessage({
-            action: isGroupPost ? 'groupShareCompleted' : 'personalPostCompleted',
-            postId,
-            machineCode,
-            groupUrl,
-            isGroupPost,
-            autoTriggered,
             success: false,
-            error: 'Không tìm thấy nút Đăng sẵn sàng'
+            status: 'failed_upload',
+            reason: noBtnReason,
+            error: noBtnReason
           }, () => { void chrome.runtime.lastError; });
         }
       }
@@ -927,10 +1120,15 @@
       chrome.runtime.sendMessage({
         action: isGroupPost ? 'groupShareCompleted' : 'personalPostCompleted',
         postId,
+        machineCode,
+        content: finalContent,
+        mediaUrls,
         groupUrl,
         isGroupPost,
         autoTriggered,
         success: false,
+        status: err.status || 'failed_error',
+        reason: err.message,
         error: err.message
       }, () => { void chrome.runtime.lastError; });
     } finally {
