@@ -4,6 +4,28 @@ require('dotenv').config();
 // Danh sách model chính thức hiện hành (theo tài liệu Gemini API).
 // Free Tier tính hạn mức theo TỪNG model, nên nhiều model fallback = nhiều hạn mức hơn.
 const GEMINI_MODELS = ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite'];
+const DEFAULT_FANPAGE_URL = 'https://www.facebook.com/profile.php?id=61590327190720';
+
+/**
+ * Guarantee every post includes the official Fanpage URL before hashtags
+ */
+function ensureFanpageLink(text, fanpageUrl = DEFAULT_FANPAGE_URL) {
+  const link = (fanpageUrl && !String(fanpageUrl).includes('1154184381110692'))
+    ? String(fanpageUrl).trim()
+    : DEFAULT_FANPAGE_URL;
+  const content = String(text || '').trim();
+  if (!content) return `🌐 Fanpage chính thức Laptop Vương Gia: ${link}`;
+  if (content.includes(link) || content.includes('61590327190720')) return content;
+
+  const lines = content.split('\n');
+  const lastLine = lines[lines.length - 1] || '';
+  const fanpageLine = `🌐 Fanpage chính thức: ${link}`;
+  if (lastLine.trim().startsWith('#')) {
+    lines.splice(lines.length - 1, 0, fanpageLine);
+    return lines.join('\n');
+  }
+  return `${content}\n${fanpageLine}`;
+}
 
 // Model đã hết hạn mức ngày (429) được tạm gác lại để không tốn thời gian gọi lại liên tục
 const exhaustedUntil = new Map();
@@ -164,6 +186,9 @@ function fallbackGeneratePost(rawText, userSettings, customPrice) {
   const machineName = (firstLine.length >= 3 && firstLine.length <= 60) ? firstLine : `LAPTOP CHÍNH HÃNG NHẬT BÃI`;
   const cleanModelTag = machineName.replace(/[^a-zA-Z0-9]/g, '');
   const hotline = userSettings.hotline || '0876637806';
+  const fanpageUrl = (userSettings.fanpageUrl && !String(userSettings.fanpageUrl).includes('1154184381110692'))
+    ? userSettings.fanpageUrl
+    : DEFAULT_FANPAGE_URL;
 
   return `🔥 [GIÁ TỐT] - MÃ #${machineCode}: ${machineName.toUpperCase()}
 💰 Giá công khai: ${retailPrice} (Chuẩn nội địa Nhật zin đẹp)
@@ -178,6 +203,7 @@ function fallbackGeneratePost(rawText, userSettings, customPrice) {
 🛡️ Bảo hành: Bao test 7 ngày 1 đổi 1, bảo hành phần cứng 3 tháng chu đáo
 🚚 Giao hàng toàn quốc - Đồng kiểm kiểm tra máy trước khi thanh toán!
 📞 Hotline / Zalo: ${hotline} (Gia Vương)
+🌐 Fanpage chính thức: ${fanpageUrl}
 #LaptopVuongGia #${cleanModelTag} #${machineCode}`;
 }
 
@@ -208,6 +234,7 @@ ${rawText || 'Hãy phân tích hình ảnh bảng danh sách mã laptop đính k
 
 Thông tin cửa hàng của anh Gia Vương:
 - Tên cửa hàng/Fanpage: ${userSettings.fanpageName || 'Laptop Nhật Bãi Giá Rẻ'}
+- Link Fanpage chính thức (BẮT BUỘC GẮN VÀO BÀI): ${(userSettings.fanpageUrl && !String(userSettings.fanpageUrl).includes('1154184381110692')) ? userSettings.fanpageUrl : DEFAULT_FANPAGE_URL}
 - Hotline & Zalo chốt đơn: ${userSettings.hotline || '0876637806'}
 - Chính sách bảo hành: ${userSettings.warrantyPolicy || 'Bao test 7 ngày 1 đổi 1, bảo hành phần cứng 3 tháng chu đáo'}
 - Quà tặng kèm: Sạc zin + Túi chống sốc + Chuột không dây (Cài sẵn Win/Office)
@@ -215,9 +242,9 @@ Thông tin cửa hàng của anh Gia Vương:
 - Giá bán lẻ mong muốn: ${customPrice ? customPrice : 'Hãy lấy giá trong bài thô và định dạng thành giá bán lẻ hấp dẫn'}
 
 YÊU CẦU NGHIÊM NGẶT VỀ ĐỘ DÀI VÀ CẤU TRÚC (TINH GỌN, KHÔNG DÀI DÒNG):
-1. BÀI VIẾT PHẢI TINH GỌN (KHOẢNG 400 - 520 KÝ TỰ, 10-12 DÒNG): Tuyệt đối không viết lan man, không dùng các đường kẻ ngang dài ngoằng (────────────────────────────), không giải thích rườm rà trong ngoặc đơn. Khách hàng lướt Facebook cần nắm bắt Mã máy, Tên máy, Giá và Cấu hình chỉ trong 5 giây!
+1. BÀI VIẾT PHẢI TINH GỌN (KHOẢNG 420 - 560 KÝ TỰ, 11-13 DÒNG): Tuyệt đối không viết lan man, không dùng các đường kẻ ngang dài ngoằng (────────────────────────────), không giải thích rườm rà trong ngoặc đơn. Khách hàng lướt Facebook cần nắm bắt Mã máy, Tên máy, Giá và Cấu hình chỉ trong 5 giây!
 2. TUYỆT ĐỐI XÓA SẠCH từ ngữ nhạy cảm của bên sỉ: "lương 500k", "lương CTV", "hoa hồng", "giá sỉ", "sỉ ib riêng", "win ae tự cài", "chốt", v.v.
-3. BẢO TOÀN SỐ ĐIỆN THOẠI DUY NHẤT: Bắt buộc Hotline/Zalo là 0876637806 (Gia Vương). Tuyệt đối không để lọt số điện thoại của bên sỉ hay số nào khác.
+3. BẢO TOÀN SỐ ĐIỆN THOẠI DUY NHẤT & LINK FANPAGE: Bắt buộc Hotline/Zalo là 0876637806 (Gia Vương) và kèm link Fanpage ${(userSettings.fanpageUrl && !String(userSettings.fanpageUrl).includes('1154184381110692')) ? userSettings.fanpageUrl : DEFAULT_FANPAGE_URL}. Tuyệt đối không để lọt số điện thoại của bên sỉ hay link khác.
 4. ĐỊNH DANH MÃ MÁY CHUẨN XÁC: Mã máy là "${detectedCode}".
 5. TUÂN THỦ CHÍNH XÁC CẤU TRÚC KHUNG BÀI BÁN LẺ TINH GỌN SAU ĐÂY:
 🔥 [GIÁ TỐT] - MÃ #${detectedCode}: [TÊN MÁY VIẾT HOA]
@@ -233,6 +260,7 @@ YÊU CẦU NGHIÊM NGẶT VỀ ĐỘ DÀI VÀ CẤU TRÚC (TINH GỌN, KHÔNG D�
 🛡️ Bảo hành: Bao test 7 ngày 1 đổi 1, bảo hành phần cứng 3 tháng chu đáo
 🚚 Giao hàng toàn quốc - Đồng kiểm kiểm tra máy trước khi thanh toán!
 📞 Hotline / Zalo: 0876637806 (Gia Vương)
+🌐 Fanpage chính thức: ${(userSettings.fanpageUrl && !String(userSettings.fanpageUrl).includes('1154184381110692')) ? userSettings.fanpageUrl : DEFAULT_FANPAGE_URL}
 #LaptopVuongGia #[TenModelVietLien] #${detectedCode}
 
 6. Trả về DUY NHẤT nội dung bài viết hoàn chỉnh, không kèm bất kỳ lời giải thích hay code block ngoài.
@@ -259,7 +287,7 @@ YÊU CẦU NGHIÊM NGẶT VỀ ĐỘ DÀI VÀ CẤU TRÚC (TINH GỌN, KHÔNG D�
     const result = await callGeminiWithFallback(contents, apiKey);
 
     return {
-      content: result.text,
+      content: ensureFanpageLink(result.text, userSettings.fanpageUrl),
       machineCode: detectedCode,
       isAIGenerated: true,
       modelUsed: result.model,
@@ -311,6 +339,7 @@ function fallbackCircularRewrite(template, style = 'featured_review') {
 🛡️ Bao test 7 ngày lỗi 1 đổi 1, bảo hành chu đáo 1 - 3 tháng
 🚚 Đồng kiểm tận tay - Đúng máy chuẩn zin mới thanh toán!
 📞 Hotline / Zalo đặt hàng: 0876637806 (Gia Vương)
+🌐 Fanpage chính thức: ${DEFAULT_FANPAGE_URL}
 #LaptopGiaRe #LaptopVuongGia #${modelTag}`;
   }
 
@@ -328,6 +357,7 @@ function fallbackCircularRewrite(template, style = 'featured_review') {
 🎁 Trọn bộ: Túi thời trang + Chuột quang + Sạc xịn (Tra keo vệ sinh trọn đời)
 🛡️ Cam kết vàng: Bao test 7 ngày 1 đổi 1, bảo hành trách nhiệm 1 - 3 tháng
 📞 Hotline tư vấn trực tiếp: 0876637806 (Gia Vương)
+🌐 Fanpage chính thức: ${DEFAULT_FANPAGE_URL}
 #HangTuyenChon #DoBenChuanNhat #LaptopVuongGia #${modelTag}`;
   }
 
@@ -345,6 +375,7 @@ function fallbackCircularRewrite(template, style = 'featured_review') {
 🛡️ 1 đổi 1 trong 7 ngày nếu lỗi phần cứng, bảo hành chu đáo 1 - 3 tháng
 🚚 Giao hàng toàn quốc - Kiểm tra ưng ý mới thanh toán!
 📞 Hotline / Zalo: 0876637806
+🌐 Fanpage chính thức: ${DEFAULT_FANPAGE_URL}
 #LaptopVanPhong #LaptopDiDong #LaptopVuongGia #${modelTag}`;
   }
 
@@ -362,6 +393,7 @@ function fallbackCircularRewrite(template, style = 'featured_review') {
 🛡️ Bao test 7 ngày lỗi 1 đổi 1, bảo hành phần cứng 1 - 3 tháng
 🚚 Đồng kiểm toàn quốc, cọc 300k gọi video call xem máy thực tế
 📞 Hotline / Zalo: 0876637806 (Gia Vương)
+🌐 Fanpage chính thức: ${DEFAULT_FANPAGE_URL}
 #ReviewLaptop #LaptopDoanhNhan #LaptopVuongGia #${modelTag}`;
 }
 
@@ -455,6 +487,7 @@ QUY TẮC BẮT BUỘC ĐỂ TRÁNH TRÙNG LẶP FACEBOOK (CHỐNG DUPLICATE SPA
    - Quà tặng: Sạc zin + Túi chống sốc + Chuột không dây (Cài sẵn Win/Office trọn đời).
    - Bảo hành: Bao test 7 ngày lỗi 1 đổi 1, bảo hành phần cứng chu đáo từ 1 - 3 tháng.
    - Hotline / Zalo: 0876637806 (Gia Vương).
+   - Fanpage chính thức (BẮT BUỘC KÈM TRONG BÀI): ${DEFAULT_FANPAGE_URL}
 6. HASHTAGS BẮT BUỘC Ở CUỐI BÀI:
    ${hashtags}
 
@@ -475,6 +508,8 @@ QUY TẮC BẮT BUỘC ĐỂ TRÁNH TRÙNG LẶP FACEBOOK (CHỐNG DUPLICATE SPA
     if (!cleanText.startsWith(requiredTitle.split(' — ')[0])) {
       cleanText = `${requiredTitle}\n\n${cleanText}`;
     }
+
+    cleanText = ensureFanpageLink(cleanText, DEFAULT_FANPAGE_URL);
 
     const resultObj = {
       content: cleanText,
@@ -501,6 +536,8 @@ QUY TẮC BẮT BUỘC ĐỂ TRÁNH TRÙNG LẶP FACEBOOK (CHỐNG DUPLICATE SPA
 }
 
 module.exports = {
+  DEFAULT_FANPAGE_URL,
+  ensureFanpageLink,
   sanitizeRawText,
   extractExplicitMachineCode,
   fallbackGeneratePost,

@@ -14,6 +14,22 @@
   let isCancelled = false;
   let isExecuting = false;
 
+  const DEFAULT_FANPAGE_URL = 'https://www.facebook.com/profile.php?id=61590327190720';
+
+  function ensureFanpageLink(rawContent) {
+    const text = String(rawContent || '').trim();
+    if (!text) return `🌐 Fanpage chính thức Laptop Vương Gia: ${DEFAULT_FANPAGE_URL}`;
+    if (text.includes('61590327190720')) return text;
+    const lines = text.split('\n');
+    const lastLine = lines[lines.length - 1] || '';
+    const linkLine = `🌐 Fanpage chính thức: ${DEFAULT_FANPAGE_URL}`;
+    if (lastLine.trim().startsWith('#')) {
+      lines.splice(lines.length - 1, 0, linkLine);
+      return lines.join('\n');
+    }
+    return `${text}\n${linkLine}`;
+  }
+
   /**
    * Helper: Sleep for ms
    */
@@ -289,18 +305,26 @@
     });
     if (!hasPostButton) return false;
 
-    // 6. Must have "Tạo bài viết" / "Create post" title OR editor aria contains "nghĩ gì" / "what's on your mind" / "dòng thời gian"
+    // 6. Must have "Tạo bài viết" / "Create post" title OR editor aria contains "nghĩ gì" / "what's on your mind" / "dòng thời gian" / Group prompt
     const headings = Array.from(d.querySelectorAll('h1, h2, h3, div[role="heading"], span'));
     const hasCreatePostHeading = headings.some(h => {
       const text = (h.innerText || '').trim().toLowerCase();
-      return text === 'tạo bài viết' || text === 'create post' || text === 'tạo bài viết công khai';
+      return (
+        text === 'tạo bài viết' ||
+        text === 'create post' ||
+        text === 'tạo bài viết công khai' ||
+        text === 'create a public post'
+      );
     });
     const hasMindLabel =
       editorAria.includes('nghĩ gì') ||
       editorAria.includes("what's on your mind") ||
       editorAria.includes('dòng thời gian') ||
       editorAria.includes('timeline') ||
-      editorAria.includes('write something');
+      editorAria.includes('write something') ||
+      editorAria.includes('viết gì') ||
+      editorAria.includes('bài viết công khai') ||
+      editorAria.includes('public post');
 
     return hasCreatePostHeading || hasMindLabel;
   }
@@ -317,13 +341,13 @@
   }
 
   /**
-   * Find the EXACT "Bạn đang nghĩ gì?" composer pill on Facebook Desktop Feed & Personal Profile
+   * Find the EXACT "Bạn đang nghĩ gì?" / Group "Bạn viết gì đi..." composer pill
    * NOTE: Strictly DO NOT click "Ảnh/video" here because Chrome blocks untrusted file chooser dialogs
    */
   function findFeedComposerTriggers() {
     const list = [];
 
-    // 1. Target leaf span/div containing "đang nghĩ gì", "what's on your mind", or "dòng thời gian"
+    // 1. Target leaf span/div containing Feed, Profile, or Facebook Group composer labels
     const allTextNodes = Array.from(document.querySelectorAll('span, div'));
     for (const node of allTextNodes) {
       if (node.children.length > 0) continue; // leaf node only
@@ -333,8 +357,13 @@
       if (
         (text.includes('nghĩ gì') ||
          text.includes("what's on your mind") ||
+         text.includes('bạn viết gì') ||
+         text.includes('viết gì đi') ||
+         text.includes('viết gì đó') ||
          text.includes('tạo bài viết') ||
          text.includes('create post') ||
+         text.includes('create a public post') ||
+         text.includes('bài viết công khai') ||
          text.includes('dòng thời gian') ||
          text.includes('write something')) &&
         !text.includes('bình luận') && !text.includes('xem thêm') && !text.includes('tin nhắn') && !text.includes('ảnh/video')
@@ -353,7 +382,7 @@
 
     // 2. Direct query for aria-label or data-pagelet composer button (excluding photo/video)
     const directQuery = Array.from(document.querySelectorAll(
-      'div[aria-label*="nghĩ gì" i][role="button"], div[aria-label*="what\'s on your mind" i][role="button"], div[aria-label*="dòng thời gian" i][role="button"], div[data-pagelet*="Composer"] div[role="button"][tabindex="0"], div[data-pagelet="ProfileComposer"] div[role="button"][tabindex="0"], div[data-pagelet="FeedUnit_0"] div[role="button"][tabindex="0"]'
+      'div[aria-label*="nghĩ gì" i][role="button"], div[aria-label*="what\'s on your mind" i][role="button"], div[aria-label*="viết gì" i][role="button"], div[aria-label*="write something" i][role="button"], div[aria-label*="dòng thời gian" i][role="button"], div[data-pagelet*="Composer"] div[role="button"][tabindex="0"], div[data-pagelet="ProfileComposer"] div[role="button"][tabindex="0"], div[data-pagelet="GroupInlineComposer"] div[role="button"][tabindex="0"], div[data-pagelet="FeedUnit_0"] div[role="button"][tabindex="0"]'
     ));
     for (const el of directQuery) {
       const text = (el.innerText || el.getAttribute('aria-label') || '').toLowerCase();
@@ -444,12 +473,16 @@
       mediaUrls = [],
       machineCode = '',
       postId = null,
-      autoTriggered = false
+      autoTriggered = false,
+      isGroupPost = false,
+      groupUrl = null
     } = payload;
+    const finalContent = ensureFanpageLink(content);
     isCancelled = false;
 
-    console.log('[VG FB Robot v1.3.0] Bắt đầu quy trình siêu tốc cho trang cá nhân:', machineCode || postId || 'MÁY');
-    createHud(machineCode);
+    const modeLabel = isGroupPost ? `HỘI NHÓM (${groupUrl || 'Group'})` : 'TRANG CÁ NHÂN';
+    console.log(`[VG FB Robot v1.4.0] Bắt đầu quy trình siêu tốc cho ${modeLabel}:`, machineCode || postId || 'MÁY');
+    createHud(isGroupPost ? `GROUP • ${machineCode}` : machineCode);
 
     // Tải trước toàn bộ ảnh HD SONG SONG ngay khi vừa mở hộp thoại (tiết kiệm 3-6s)
     const mediaFilesPromise = prefetchMediaFiles(mediaUrls, machineCode);
@@ -551,8 +584,8 @@
       editor.focus();
       await sleep(80);
 
-      // Điền nội dung văn bản chuẩn Lexical (chỉ chèn 1 lần duy nhất, giữ nguyên xuống dòng)
-      const textToInsert = content || '';
+      // Điền nội dung văn bản chuẩn Lexical (chỉ chèn 1 lần duy nhất, giữ nguyên xuống dòng & kèm link Fanpage)
+      const textToInsert = finalContent;
       const placeCaretAtEnd = () => {
         try {
           const sel = window.getSelection();
@@ -686,13 +719,21 @@
 
         if (postBtn) {
           simulateRealisticClick(postBtn);
-          setStepStatus(4, 'success', '✅ ĐÃ XUẤT BẢN THÀNH CÔNG LÊN TRANG CÁ NHÂN!');
+          const doneMsg = isGroupPost
+            ? '✅ ĐÃ ĐĂNG BÀI LÊN HỘI NHÓM THÀNH CÔNG!'
+            : '✅ ĐÃ XUẤT BẢN THÀNH CÔNG LÊN TRANG CÁ NHÂN!';
+          setStepStatus(4, 'success', doneMsg);
           if (countdownBox) {
-            countdownBox.innerHTML = '<span style="color:#059669; font-weight:900; font-size:14px;">🎉 BÀI VIẾT ĐÃ ĐƯỢC ĐĂNG LÊN TRANG CÁ NHÂN!</span>';
+            countdownBox.innerHTML = `<span style="color:#059669; font-weight:900; font-size:14px;">🎉 ${isGroupPost ? 'ĐÃ CHIA SẺ LÊN HỘI NHÓM!' : 'BÀI VIẾT ĐÃ ĐƯỢC ĐĂNG LÊN TRANG CÁ NHÂN!'}</span>`;
           }
           chrome.runtime.sendMessage({
-            action: 'personalPostCompleted',
+            action: isGroupPost ? 'groupShareCompleted' : 'personalPostCompleted',
             postId,
+            machineCode,
+            content: finalContent,
+            mediaUrls,
+            groupUrl,
+            isGroupPost,
             autoTriggered,
             success: true
           }, () => { void chrome.runtime.lastError; });
@@ -701,8 +742,11 @@
         } else {
           setStepStatus(4, 'active', 'Vui lòng bấm nút "Đăng" màu xanh trên Facebook để hoàn tất.');
           chrome.runtime.sendMessage({
-            action: 'personalPostCompleted',
+            action: isGroupPost ? 'groupShareCompleted' : 'personalPostCompleted',
             postId,
+            machineCode,
+            groupUrl,
+            isGroupPost,
             autoTriggered,
             success: false,
             error: 'Không tìm thấy nút Đăng sẵn sàng'
@@ -734,8 +778,10 @@
       console.error('[VG FB Robot Lỗi]', err);
       setStepStatus(1, 'active', `❌ Lỗi: ${err.message}`);
       chrome.runtime.sendMessage({
-        action: 'personalPostCompleted',
+        action: isGroupPost ? 'groupShareCompleted' : 'personalPostCompleted',
         postId,
+        groupUrl,
+        isGroupPost,
         autoTriggered,
         success: false,
         error: err.message
@@ -745,11 +791,50 @@
     }
   }
 
+  /**
+   * Quét danh sách các Group Facebook đã tham gia (trên trang /groups/joins/)
+   */
+  function extractJoinedGroupsFromPage(filterLaptopKeywords = true) {
+    const anchors = Array.from(document.querySelectorAll('a[href*="/groups/"]'));
+    const seen = new Set();
+    const allGroups = [];
+    const matchedGroups = [];
+    const keywords = ['laptop', 'máy tính', 'may tinh', 'công nghệ', 'cong nghe', 'chợ', 'cho ', 'mua bán', 'mua ban', 'thinkpad', 'dell', 'hp', 'sinh viên', 'văn phòng', 'giá rẻ', 'đồ cũ', 'macbook', 'it '];
+
+    for (const a of anchors) {
+      const href = a.getAttribute('href') || '';
+      const m = href.match(/\/groups\/([^/?#]+)/i);
+      if (!m) continue;
+      const slug = m[1];
+      if (['feed', 'discover', 'joins', 'notifications', 'create', 'categories', 'search'].includes(slug.toLowerCase())) continue;
+
+      const cleanUrl = `https://www.facebook.com/groups/${slug}/`;
+      if (seen.has(cleanUrl)) continue;
+      const name = (a.innerText || a.getAttribute('aria-label') || '').trim();
+      if (!name || name.length < 3 || name.toLowerCase() === 'xem nhóm' || name.toLowerCase() === 'view group') continue;
+
+      seen.add(cleanUrl);
+      const item = { name, url: cleanUrl };
+      allGroups.push(item);
+
+      const lower = name.toLowerCase();
+      if (!filterLaptopKeywords || keywords.some(kw => lower.includes(kw))) {
+        matchedGroups.push(item);
+      }
+    }
+
+    return matchedGroups.length > 0 ? matchedGroups : allGroups;
+  }
+
   // Lắng nghe lệnh từ Service Worker hoặc kiểm tra Storage
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'executePersonalPost' && request.payload) {
       executePersonalPost(request.payload);
       sendResponse({ status: 'started' });
+    }
+    if (request.action === 'scanJoinedLaptopGroups') {
+      const groups = extractJoinedGroupsFromPage(true);
+      sendResponse({ success: true, groups });
     }
   });
 

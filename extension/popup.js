@@ -27,9 +27,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const autoPersonalStatus = document.getElementById('autoPersonalStatus');
   const checkDueNowBtn = document.getElementById('checkDueNowBtn');
 
+  const autoGroupShareToggle = document.getElementById('autoGroupShareToggle');
+  const groupsPerPostInput = document.getElementById('groupsPerPostInput');
+  const groupUrlsInput = document.getElementById('groupUrlsInput');
+  const groupShareStatus = document.getElementById('groupShareStatus');
+  const scanGroupsBtn = document.getElementById('scanGroupsBtn');
+  const shareGroupsNowBtn = document.getElementById('shareGroupsNowBtn');
+
   // Local state
   let selectedMediaBase64 = [];
   let currentBackendUrl = 'https://auto-post-fanpage-coral.vercel.app';
+
+  function parseGroupLines(raw) {
+    return String(raw || '')
+      .split(/\r?\n/)
+      .map(s => s.trim())
+      .filter(s => /facebook\.com\/groups\/[^/?#\s]+/i.test(s));
+  }
 
   function refreshAutoPersonalStatus() {
     if (!autoPersonalStatus) return;
@@ -40,6 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
         : 'Chưa quét';
       const dueCount = typeof st.vg_last_due_count === 'number' ? st.vg_last_due_count : 0;
       autoPersonalStatus.innerText = `Lần quét gần nhất: ${lastCheck} • Chờ đăng: ${dueCount} bài`;
+      if (groupShareStatus) {
+        const savedCount = parseGroupLines(groupUrlsInput?.value).length;
+        const gQueue = typeof st.groupQueueCount === 'number' ? st.groupQueueCount : 0;
+        groupShareStatus.innerText = `Đã lưu: ${savedCount} Hội Nhóm • Đang chờ chia sẻ: ${gQueue} lượt`;
+      }
     });
   }
 
@@ -56,31 +75,90 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 2. Load and Sync Backend URL + Auto-Personal Settings
+  // 2. Load and Sync Backend URL + Auto-Personal + Group Share Settings
   if (chrome.storage && chrome.storage.sync) {
-    chrome.storage.sync.get(['backendUrl', 'autoPersonalEnabled', 'autoPersonalIncludeFanpage'], (result) => {
-      if (result.backendUrl) {
-        currentBackendUrl = result.backendUrl.trim().replace(/\/$/, '');
-        backendUrlInput.value = currentBackendUrl;
+    chrome.storage.sync.get(
+      ['backendUrl', 'autoPersonalEnabled', 'autoPersonalIncludeFanpage', 'autoGroupShareEnabled', 'targetGroupUrls', 'groupsPerPost'],
+      (result) => {
+        if (result.backendUrl) {
+          currentBackendUrl = result.backendUrl.trim().replace(/\/$/, '');
+          backendUrlInput.value = currentBackendUrl;
+        }
+        if (autoPersonalToggle) autoPersonalToggle.checked = result.autoPersonalEnabled !== false;
+        if (autoFanpageSyncToggle) autoFanpageSyncToggle.checked = result.autoPersonalIncludeFanpage !== false;
+        if (autoGroupShareToggle) autoGroupShareToggle.checked = result.autoGroupShareEnabled !== false;
+        if (groupsPerPostInput && result.groupsPerPost) groupsPerPostInput.value = result.groupsPerPost;
+        if (groupUrlsInput && Array.isArray(result.targetGroupUrls)) {
+          groupUrlsInput.value = result.targetGroupUrls.join('\n');
+        }
+        checkServerHealth(currentBackendUrl);
+        refreshAutoPersonalStatus();
       }
-      if (autoPersonalToggle) autoPersonalToggle.checked = result.autoPersonalEnabled !== false;
-      if (autoFanpageSyncToggle) autoFanpageSyncToggle.checked = result.autoPersonalIncludeFanpage !== false;
-      checkServerHealth(currentBackendUrl);
-      refreshAutoPersonalStatus();
-    });
+    );
   } else {
     checkServerHealth(currentBackendUrl);
   }
 
   const saveAutoFlags = () => {
     if (!chrome.storage || !chrome.storage.sync) return;
+    const parsedGroups = parseGroupLines(groupUrlsInput?.value);
+    const perPost = Math.max(1, Math.min(10, parseInt(groupsPerPostInput?.value, 10) || 3));
     chrome.storage.sync.set({
       autoPersonalEnabled: autoPersonalToggle ? autoPersonalToggle.checked : true,
-      autoPersonalIncludeFanpage: autoFanpageSyncToggle ? autoFanpageSyncToggle.checked : true
-    });
+      autoPersonalIncludeFanpage: autoFanpageSyncToggle ? autoFanpageSyncToggle.checked : true,
+      autoGroupShareEnabled: autoGroupShareToggle ? autoGroupShareToggle.checked : true,
+      groupsPerPost: perPost,
+      targetGroupUrls: parsedGroups
+    }, refreshAutoPersonalStatus);
   };
   if (autoPersonalToggle) autoPersonalToggle.addEventListener('change', saveAutoFlags);
   if (autoFanpageSyncToggle) autoFanpageSyncToggle.addEventListener('change', saveAutoFlags);
+  if (autoGroupShareToggle) autoGroupShareToggle.addEventListener('change', saveAutoFlags);
+  if (groupsPerPostInput) groupsPerPostInput.addEventListener('change', saveAutoFlags);
+  if (groupUrlsInput) groupUrlsInput.addEventListener('blur', saveAutoFlags);
+
+  if (scanGroupsBtn) {
+    scanGroupsBtn.addEventListener('click', () => {
+      scanGroupsBtn.disabled = true;
+      scanGroupsBtn.innerText = '⏳ Đang quét nhóm...';
+      if (groupShareStatus) groupShareStatus.innerText = 'Đang mở trang Nhóm Facebook đã tham gia để quét tự động...';
+      chrome.runtime.sendMessage({ action: 'scanJoinedGroupsNow' }, (resp) => {
+        scanGroupsBtn.disabled = false;
+        scanGroupsBtn.innerText = '🔍 Quét Nhóm Của Tôi';
+        if (resp && resp.success) {
+          chrome.storage.sync.get(['targetGroupUrls'], (r) => {
+            if (groupUrlsInput && Array.isArray(r.targetGroupUrls)) {
+              groupUrlsInput.value = r.targetGroupUrls.join('\n');
+            }
+            refreshAutoPersonalStatus();
+            if (groupShareStatus) {
+              groupShareStatus.innerText = `✅ Tìm thấy ${resp.foundCount} nhóm! Đã lưu ${resp.totalSaved} nhóm.`;
+            }
+          });
+        } else if (groupShareStatus) {
+          groupShareStatus.innerText = `❌ ${(resp && resp.error) || 'Không quét được danh sách nhóm.'}`;
+        }
+      });
+    });
+  }
+
+  if (shareGroupsNowBtn) {
+    shareGroupsNowBtn.addEventListener('click', () => {
+      saveAutoFlags();
+      shareGroupsNowBtn.disabled = true;
+      shareGroupsNowBtn.innerText = '⏳ Đang chia sẻ...';
+      chrome.runtime.sendMessage({ action: 'shareLatestToGroupsNow' }, (resp) => {
+        shareGroupsNowBtn.disabled = false;
+        shareGroupsNowBtn.innerText = '📢 Chia Sẻ Nhóm Ngay';
+        refreshAutoPersonalStatus();
+        if (resp && resp.success && groupShareStatus) {
+          groupShareStatus.innerText = `🚀 Đang mở Hội Nhóm để chia sẻ (${resp.enqueueRes?.enqueued || 1} nhóm)!`;
+        } else if (groupShareStatus) {
+          groupShareStatus.innerText = `⚠️ ${(resp && resp.error) || 'Chưa thể chia sẻ.'}`;
+        }
+      });
+    });
+  }
 
   if (checkDueNowBtn) {
     checkDueNowBtn.addEventListener('click', () => {
@@ -103,6 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 3. Save Settings
   saveBtn.addEventListener('click', () => {
+    saveAutoFlags();
     const val = backendUrlInput.value.trim().replace(/\/$/, '');
     if (!val) return;
     currentBackendUrl = val;

@@ -95,6 +95,9 @@ async function getSettings() {
   // 3. Fallback to environment variables only if NOT already configured in Supabase / settings
   if (!settings.facebookPageToken && process.env.FB_PAGE_TOKEN) settings.facebookPageToken = process.env.FB_PAGE_TOKEN;
   if (!settings.fanpageId && process.env.FANPAGE_ID) settings.fanpageId = process.env.FANPAGE_ID;
+  if (!settings.fanpageUrl || String(settings.fanpageUrl).includes('1154184381110692')) {
+    settings.fanpageUrl = 'https://www.facebook.com/profile.php?id=61590327190720';
+  }
   if (!settings.geminiApiKey && process.env.GEMINI_API_KEY) settings.geminiApiKey = process.env.GEMINI_API_KEY;
   if (process.env.SMTP_USER) {
     settings.smtpUser = settings.smtpUser || process.env.SMTP_USER;
@@ -135,6 +138,10 @@ async function saveSettings(newSettings) {
  */
 async function executePost(post) {
   const settings = await getSettings();
+  const { ensureFanpageLink } = require('./gemini');
+  if (post && post.content) {
+    post.content = ensureFanpageLink(post.content, settings.fanpageUrl);
+  }
   console.log(`[Scheduler] 🚀 Đang tiến hành đăng bài [${post.id}] - Mã máy: ${post.machineCode || 'N/A'}`);
   
   try {
