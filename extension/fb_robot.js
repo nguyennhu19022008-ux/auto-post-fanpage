@@ -941,8 +941,13 @@
   /**
    * Quét danh sách các Group Facebook đã tham gia (trên trang /groups/joins/)
    */
-  function extractJoinedGroupsFromPage(filterLaptopKeywords = true) {
-    const anchors = Array.from(document.querySelectorAll('a[href*="/groups/"]'));
+  async function extractJoinedGroupsFromPage(filterLaptopKeywords = true) {
+    // Đợi React render danh sách nhóm ngay cả khi tab mở ngầm (active: false)
+    const mainRoot = await waitForElement('[role="main"] a[href*="/groups/"]', document, 5500);
+    const scope = (mainRoot && document.querySelector('[role="main"]')) || document;
+    await sleep(400);
+
+    const anchors = Array.from(scope.querySelectorAll('a[href*="/groups/"]'));
     const seen = new Set();
     const allGroups = [];
     const matchedGroups = [];
@@ -953,19 +958,19 @@
       const m = href.match(/\/groups\/([^/?#]+)/i);
       if (!m) continue;
       const slug = m[1];
-      if (['feed', 'discover', 'joins', 'notifications', 'create', 'categories', 'search'].includes(slug.toLowerCase())) continue;
+      if (['feed', 'discover', 'joins', 'notifications', 'create', 'categories', 'search', 'your_groups'].includes(slug.toLowerCase())) continue;
 
       const cleanUrl = `https://www.facebook.com/groups/${slug}/`;
       if (seen.has(cleanUrl)) continue;
-      const name = (a.innerText || a.getAttribute('aria-label') || '').trim();
-      if (!name || name.length < 3 || name.toLowerCase() === 'xem nhóm' || name.toLowerCase() === 'view group') continue;
+      const rawName = (a.innerText || a.getAttribute('aria-label') || '').split('\n')[0].trim();
+      const nameLower = rawName.toLowerCase();
+      if (!rawName || rawName.length < 3 || nameLower === 'xem nhóm' || nameLower === 'view group' || nameLower.startsWith('nhóm của bạn')) continue;
 
       seen.add(cleanUrl);
-      const item = { name, url: cleanUrl };
+      const item = { name: rawName, url: cleanUrl };
       allGroups.push(item);
 
-      const lower = name.toLowerCase();
-      if (!filterLaptopKeywords || keywords.some(kw => lower.includes(kw))) {
+      if (!filterLaptopKeywords || keywords.some(kw => nameLower.includes(kw))) {
         matchedGroups.push(item);
       }
     }
@@ -980,8 +985,10 @@
       sendResponse({ status: 'started' });
     }
     if (request.action === 'scanJoinedLaptopGroups') {
-      const groups = extractJoinedGroupsFromPage(true);
-      sendResponse({ success: true, groups });
+      extractJoinedGroupsFromPage(true)
+        .then((groups) => sendResponse({ success: true, groups }))
+        .catch((e) => sendResponse({ success: false, error: e.message, groups: [] }));
+      return true;
     }
   });
 

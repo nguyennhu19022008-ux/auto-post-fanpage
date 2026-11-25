@@ -9,6 +9,7 @@ const DEFAULT_BACKEND_URL = 'https://auto-post-fanpage-coral.vercel.app';
 const DEFAULT_FANPAGE_URL = 'https://www.facebook.com/profile.php?id=61590327190720';
 const ALARM_PERSONAL = 'vgAutoPersonalCheck';
 const ALARM_GROUP = 'vgGroupShareTick';
+const ALARM_GROUP_IMMEDIATE = 'vgGroupShareImmediate';
 const MIN_AUTO_POST_GAP_MS = 5 * 60 * 1000; // 5 phút giữa 2 bài Cá Nhân
 const MIN_GROUP_SHARE_GAP_MS = 3 * 60 * 1000; // 3 phút an toàn giữa 2 Hội Nhóm
 
@@ -295,7 +296,8 @@ async function checkAndRunDuePersonalPosts(forceManual = false) {
 
 function scanJoinedFacebookGroups() {
   return new Promise((resolve) => {
-    chrome.tabs.create({ url: 'https://www.facebook.com/groups/joins/', active: true }, (tab) => {
+    // Mở tab ngầm (active: false) để KHÔNG làm đóng cửa sổ Popup Extension đang mở
+    chrome.tabs.create({ url: 'https://www.facebook.com/groups/joins/', active: false }, (tab) => {
       if (!tab || !tab.id) return resolve({ success: false, error: 'Không mở được tab danh sách nhóm.' });
       const targetTabId = tab.id;
       let settled = false;
@@ -332,11 +334,11 @@ function scanJoinedFacebookGroups() {
               });
             });
           });
-        }, 1500);
+        }, 1200);
       };
 
       chrome.tabs.onUpdated.addListener(onUpdated);
-      setTimeout(() => finish({ success: false, error: 'Quá thời gian chờ tải danh sách nhóm Facebook.' }), 15000);
+      setTimeout(() => finish({ success: false, error: 'Quá thời gian chờ tải danh sách nhóm Facebook.' }), 16000);
     });
   });
 }
@@ -360,6 +362,9 @@ if (chrome.alarms) {
     }
     if (alarm.name === ALARM_GROUP) {
       processNextGroupShare(false);
+    }
+    if (alarm.name === ALARM_GROUP_IMMEDIATE) {
+      processNextGroupShare(true);
     }
   });
 }
@@ -420,10 +425,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           }
         }, r));
 
-        // Tự động xếp hàng chia sẻ sang các Hội Nhóm liên quan nếu đã bật
+        // Tự động xếp hàng chia sẻ sang các Hội Nhóm liên quan nếu đã bật (dùng chrome.alarms bền vững cho MV3)
         const enqueueRes = await enqueueGroupSharesForPost(request);
-        if (enqueueRes.enqueued > 0) {
-          setTimeout(() => processNextGroupShare(true), 12000);
+        if (enqueueRes.enqueued > 0 && chrome.alarms) {
+          chrome.alarms.create(ALARM_GROUP_IMMEDIATE, { when: Date.now() + 6000 });
         }
       }
 

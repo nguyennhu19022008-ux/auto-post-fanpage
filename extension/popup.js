@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const groupShareStatus = document.getElementById('groupShareStatus');
   const scanGroupsBtn = document.getElementById('scanGroupsBtn');
   const shareGroupsNowBtn = document.getElementById('shareGroupsNowBtn');
+  const quickGroupLabel = document.getElementById('quickGroupLabel');
+  const quickGroupActionBtn = document.getElementById('quickGroupActionBtn');
 
   // Local state
   let selectedMediaBase64 = [];
@@ -54,10 +56,31 @@ document.addEventListener('DOMContentLoaded', () => {
         : 'Chưa quét';
       const dueCount = typeof st.vg_last_due_count === 'number' ? st.vg_last_due_count : 0;
       autoPersonalStatus.innerText = `Lần quét gần nhất: ${lastCheck} • Chờ đăng: ${dueCount} bài`;
+      const savedCount = parseGroupLines(groupUrlsInput?.value).length;
+      const gQueue = typeof st.groupQueueCount === 'number' ? st.groupQueueCount : 0;
       if (groupShareStatus) {
-        const savedCount = parseGroupLines(groupUrlsInput?.value).length;
-        const gQueue = typeof st.groupQueueCount === 'number' ? st.groupQueueCount : 0;
         groupShareStatus.innerText = `Đã lưu: ${savedCount} Hội Nhóm • Đang chờ chia sẻ: ${gQueue} lượt`;
+      }
+      if (quickGroupLabel && quickGroupActionBtn) {
+        if (savedCount === 0) {
+          quickGroupLabel.innerText = '📢 Hội Nhóm: Chưa có link nhóm';
+          quickGroupActionBtn.innerText = '🔍 Quét Nhóm';
+          quickGroupActionBtn.dataset.mode = 'scan';
+        } else {
+          quickGroupLabel.innerText = `📢 Hội Nhóm: ${savedCount} nhóm${gQueue > 0 ? ` (${gQueue} đang chờ)` : ''}`;
+          quickGroupActionBtn.innerText = '📢 Chia Sẻ Nhóm';
+          quickGroupActionBtn.dataset.mode = 'share';
+        }
+      }
+    });
+  }
+
+  if (quickGroupActionBtn) {
+    quickGroupActionBtn.addEventListener('click', () => {
+      if (quickGroupActionBtn.dataset.mode === 'share') {
+        if (shareGroupsNowBtn) shareGroupsNowBtn.click();
+      } else {
+        if (scanGroupsBtn) scanGroupsBtn.click();
       }
     });
   }
@@ -121,10 +144,13 @@ document.addEventListener('DOMContentLoaded', () => {
     scanGroupsBtn.addEventListener('click', () => {
       scanGroupsBtn.disabled = true;
       scanGroupsBtn.innerText = '⏳ Đang quét nhóm...';
-      if (groupShareStatus) groupShareStatus.innerText = 'Đang mở trang Nhóm Facebook đã tham gia để quét tự động...';
+      if (quickGroupLabel) quickGroupLabel.innerText = '⏳ Đang quét nhóm Facebook...';
+      if (quickGroupActionBtn) quickGroupActionBtn.disabled = true;
+      if (groupShareStatus) groupShareStatus.innerText = 'Đang quét danh sách Nhóm Facebook đã tham gia...';
       chrome.runtime.sendMessage({ action: 'scanJoinedGroupsNow' }, (resp) => {
         scanGroupsBtn.disabled = false;
         scanGroupsBtn.innerText = '🔍 Quét Nhóm Của Tôi';
+        if (quickGroupActionBtn) quickGroupActionBtn.disabled = false;
         if (resp && resp.success) {
           chrome.storage.sync.get(['targetGroupUrls'], (r) => {
             if (groupUrlsInput && Array.isArray(r.targetGroupUrls)) {
@@ -135,8 +161,10 @@ document.addEventListener('DOMContentLoaded', () => {
               groupShareStatus.innerText = `✅ Tìm thấy ${resp.foundCount} nhóm! Đã lưu ${resp.totalSaved} nhóm.`;
             }
           });
-        } else if (groupShareStatus) {
-          groupShareStatus.innerText = `❌ ${(resp && resp.error) || 'Không quét được danh sách nhóm.'}`;
+        } else {
+          const errText = `❌ ${(resp && resp.error) || 'Không quét được danh sách nhóm.'}`;
+          if (groupShareStatus) groupShareStatus.innerText = errText;
+          if (quickGroupLabel) quickGroupLabel.innerText = errText;
         }
       });
     });
