@@ -441,11 +441,14 @@
   }
 
   /**
-   * Theo dõi tối đa 12s sau khi bấm "Đăng" để XÁC NHẬN THẬT bài đã được xuất bản hoặc bị lỗi/chờ duyệt
+   * Theo dõi tối đa 22s sau khi bấm "Đăng" để XÁC NHẬN THẬT bài đã được xuất bản hoặc tự retry nếu cú click đầu bị React nuốt
    */
   async function waitForPublishConfirmation(modal) {
     const startMs = Date.now();
-    const maxConfirmMs = 12000;
+    const maxConfirmMs = 22000;
+    let lastClickAttemptMs = startMs;
+    let retrySubmitCount = 0;
+
     const blockPhrases = [
       'bị chặn tạm thời',
       'temporarily blocked',
@@ -463,6 +466,19 @@
       "couldn't post",
       'vui lòng thử lại'
     ];
+    const publishedToastPhrases = [
+      'bài viết của bạn đã được đăng',
+      'your post has been published',
+      'đã chia sẻ bài viết của bạn'
+    ];
+    const pendingPhrases = [
+      'phê duyệt',
+      'chờ duyệt',
+      'approval',
+      'submitted',
+      'quản trị viên sẽ xem xét',
+      'đã gửi bài viết'
+    ];
 
     while (Date.now() - startMs < maxConfirmMs) {
       if (isCancelled) {
@@ -471,7 +487,6 @@
 
       // A. Kiểm tra hộp thoại vẫn còn hay đã đóng hẳn
       const currentModal = findCreatePostModal();
-      const bodyLower = (document.body.innerText || '').toLowerCase();
 
       // B. Kiểm tra cảnh báo chặn spam của Facebook (nếu có -> dừng ngay hàng đợi bảo vệ nick!)
       const activeDialogsText = Array.from(document.querySelectorAll('div[role="dialog"]:not(#vg-fb-robot-hud), div[role="alert"]'))
@@ -487,19 +502,16 @@
         };
       }
 
-      if (!currentModal || !document.contains(modal)) {
-        // Modal ĐÃ ĐÓNG THẬT -> Đợi ngắn 350ms để đọc toast thông báo phê duyệt nếu là Group kiểm duyệt
-        await sleep(350);
-        const toastText = Array.from(document.querySelectorAll('[role="alert"], [role="status"], div[data-visualcompletion="ignore-dynamic"]'))
+      const toastText = Array.from(document.querySelectorAll('[role="alert"], [role="status"], div[data-visualcompletion="ignore-dynamic"]'))
+        .map(el => (el.innerText || '').toLowerCase())
+        .join(' ');
+
+      if (!currentModal || !document.contains(modal) || publishedToastPhrases.some(p => toastText.includes(p))) {
+        await sleep(400);
+        const postToastText = Array.from(document.querySelectorAll('[role="alert"], [role="status"], div[data-visualcompletion="ignore-dynamic"]'))
           .map(el => (el.innerText || '').toLowerCase())
           .join(' ');
-        if (
-          toastText.includes('phê duyệt') ||
-          toastText.includes('chờ duyệt') ||
-          toastText.includes('approval') ||
-          toastText.includes('submitted') ||
-          toastText.includes('quản trị viên sẽ xem xét')
-        ) {
+        if (pendingPhrases.some(p => postToastText.includes(p))) {
           return {
             ok: true,
             status: 'pending_approval',
@@ -513,8 +525,9 @@
         };
       }
 
-      // C. Modal vẫn mở: kiểm tra nếu có thông báo lỗi bên trong modal hoặc hộp thoại Mua Bán (nút Tiếp)
       const modalText = (currentModal.innerText || '').toLowerCase();
+
+      // C. Kiểm tra thông báo lỗi rõ ràng bên trong modal
       const matchedErr = errorPhrases.find(p => modalText.includes(p));
       if (matchedErr) {
         return {
@@ -524,13 +537,53 @@
         };
       }
 
+      // D. Nhận diện nhanh nếu Group bật hộp thoại phụ yêu cầu chọn danh mục / bấm "Tiếp"
+      const modalButtons = Array.from(currentModal.querySelectorAll('div[role="button"]'));
+      const hasPostButton = modalButtons.some(b => {
+        const l = (b.getAttribute('aria-label') || b.innerText || '').trim().toLowerCase();
+        return l === 'đăng' || l === 'post';
+      });
+      const hasNextButton = modalButtons.some(b => {
+        const l = (b.getAttribute('aria-label') || b.innerText || '').trim().toLowerCase();
+        return (l === 'tiếp' || l === 'next') && isVisible(b);
+      });
+      if (!hasPostButton && hasNextButton) {
+        return {
+          ok: false,
+          status: 'failed_group_requires_input',
+          reason: 'Group bật bước trung gian ("Tiếp") yêu cầu chọn danh mục hoặc điền form bán hàng.'
+        };
+      }
+
+      // E. Tự kiểm tra: Nếu không ở trạng thái "Đang đăng" / loading mà nút Đăng vẫn còn sáng sau 2.6s -> click lại tối đa 2 lần phòng trường hợp React vừa re-render làm trượt click đầu
+      const isSubmitting = Boolean(
+        currentModal.querySelector('div[role="progressbar"], [aria-valuemin], .sp_progress, div[data-visualcompletion="loading-state"]')
+      ) || modalText.includes('đang đăng') || modalText.includes('posting');
+
+      if (!isSubmitting && retrySubmitCount < 2 && (Date.now() - lastClickAttemptMs >= 2600)) {
+        const freshPostBtn = modalButtons.find(b => {
+          const label = (b.getAttribute('aria-label') || b.innerText || '').trim().toLowerCase();
+          return (label === 'đăng' || label === 'post') &&
+                 isVisible(b) &&
+                 b.getAttribute('aria-disabled') !== 'true' &&
+                 !b.classList.contains('disabled');
+        });
+        if (freshPostBtn) {
+          retrySubmitCount += 1;
+          lastClickAttemptMs = Date.now();
+          console.log(`[VG FB Robot] Nút Đăng vẫn mở sau 2.6s -> thử bấm lại lần ${retrySubmitCount}...`);
+          try { freshPostBtn.focus(); } catch (e) {}
+          simulateSingleClick(freshPostBtn);
+        }
+      }
+
       await sleep(250);
     }
 
     return {
       ok: false,
       status: 'failed_modal_stuck',
-      reason: 'Đã bấm Đăng nhưng hộp thoại không tự đóng sau 12 giây (có thể Group yêu cầu chọn thêm danh mục hoặc mạng bị treo).'
+      reason: 'Đã bấm Đăng nhưng hộp thoại không tự đóng sau 22 giây (có thể Group yêu cầu chọn thêm danh mục hoặc mạng bị treo).'
     };
   }
 
@@ -1027,8 +1080,9 @@
         });
 
         if (postBtn) {
+          try { postBtn.focus(); } catch (e) {}
           simulateSingleClick(postBtn);
-          setStepStatus(4, 'active', '⏳ Đang xác nhận Facebook hoàn tất xuất bản...');
+          setStepStatus(4, 'active', 'Đang xác nhận Facebook hoàn tất xuất bản...');
           const confirmRes = await waitForPublishConfirmation(modal);
 
           if (confirmRes.ok) {

@@ -14,9 +14,16 @@ const ALARM_GROUP = 'vgGroupShareTick';
 const ALARM_GROUP_IMMEDIATE = 'vgGroupShareImmediate';
 const ALARM_GROUP_WATCHDOG = 'vgGroupWatchdog';
 const MIN_AUTO_POST_GAP_MS = 15 * 1000;
-const JOB_WATCHDOG_MS = 65 * 1000; // Tối đa 65s cho 1 tab Group (bao gồm mở trang + upload 30s + xác nhận 12s)
+const JOB_WATCHDOG_MS = 75 * 1000; // Tối đa 75s cho 1 tab Group (bao gồm mở trang + upload 30s + xác nhận 22s)
 
 let isTickRunning = false;
+const closingManagedTabIds = new Set();
+
+function markTabClosingByBot(tabId) {
+  if (!tabId) return;
+  closingManagedTabIds.add(tabId);
+  setTimeout(() => closingManagedTabIds.delete(tabId), 8000);
+}
 
 function ensureFanpageLink(rawContent) {
   const text = String(rawContent || '').trim();
@@ -140,6 +147,7 @@ async function trackManagedTabId(tabId) {
 
 async function closeTabAndConfirm(tabId) {
   if (!tabId) return;
+  markTabClosingByBot(tabId);
   const st = await storageGet('local', ['vg_auto_opened_tab_ids']);
   const ids = Array.isArray(st.vg_auto_opened_tab_ids) ? st.vg_auto_opened_tab_ids : [];
   const nextIds = ids.filter((id) => id !== tabId);
@@ -391,8 +399,13 @@ async function processNextGroupShare(forceImmediate = false) {
         };
       }
 
-      // Quá hạn Watchdog 65s mà tab không phản hồi -> ép đóng tab treo & nhả lock + đếm 10s
-      console.warn(`[VG Group Watchdog] ⏰ Tab ${activeJob.groupUrl} quá 65s không phản hồi. Đang đóng tab cũ...`);
+      // Quá hạn Watchdog 75s mà tab không phản hồi -> nhả khóa & đánh dấu đóng tab TRƯỚC khi remove để tránh onRemoved ghi trùng log
+      console.warn(`[VG Group Watchdog] ⏰ Tab ${activeJob.groupUrl} quá 75s không phản hồi. Đang đóng tab cũ...`);
+      const delayMs = config.groupDelaySeconds * 1000;
+      await storageSet('local', {
+        vg_active_group_job: null,
+        vg_next_group_at: now + delayMs + 2000
+      });
       await appendGroupLog({
         postId: activeJob.postId,
         machineCode: activeJob.machineCode,
@@ -401,13 +414,13 @@ async function processNextGroupShare(forceImmediate = false) {
         mediaUrls: activeJob.mediaUrls,
         status: 'failed_timeout',
         success: false,
-        reason: 'Quá 65 giây không nhận được xác nhận đăng bài (mạng chậm hoặc hộp thoại bị treo).'
+        reason: 'Quá 75 giây không nhận được xác nhận đăng bài (mạng chậm hoặc hộp thoại bị treo).'
       });
       await closeTabAndConfirm(activeJob.tabId);
-      const delayMs = config.groupDelaySeconds * 1000;
+      const afterCloseAt = Date.now() + delayMs;
       await storageSet('local', {
         vg_active_group_job: null,
-        vg_next_group_at: now + delayMs
+        vg_next_group_at: afterCloseAt
       });
 
       const qAfter = (await storageGet('local', ['vg_group_share_queue'])).vg_group_share_queue || [];
@@ -484,7 +497,7 @@ async function processNextGroupShare(forceImmediate = false) {
     );
 
     if (chrome.alarms) {
-      chrome.alarms.create(ALARM_GROUP_WATCHDOG, { delayInMinutes: 1.15 });
+      chrome.alarms.create(ALARM_GROUP_WATCHDOG, { delayInMinutes: 1.3 });
     }
 
     return { dispatched: true, groupUrl: nextTask.groupUrl, remaining: queue.length };
@@ -606,15 +619,27 @@ function scanJoinedFacebookGroups() {
 }
 
 // Theo dõi nếu người dùng đóng thủ công tab đang chạy của Robot -> nhả khóa an toàn
+// (Bỏ qua nếu chính Extension đang đóng tab qua closingManagedTabIds để tránh ghi đúp log!)
 chrome.tabs.onRemoved.addListener(async (closedTabId) => {
+  const isClosedByBot = closingManagedTabIds.has(closedTabId);
   const st = await storageGet('local', ['vg_active_group_job', 'vg_auto_opened_tab_ids', 'vg_group_share_queue', 'vg_worker_window_id']);
   const ids = Array.isArray(st.vg_auto_opened_tab_ids) ? st.vg_auto_opened_tab_ids : [];
   if (ids.includes(closedTabId)) {
     await storageSet('local', { vg_auto_opened_tab_ids: ids.filter(id => id !== closedTabId) });
   }
 
+  if (isClosedByBot) {
+    return;
+  }
+
   if (st.vg_active_group_job && st.vg_active_group_job.tabId === closedTabId) {
     const job = st.vg_active_group_job;
+    const config = await getExtensionConfig();
+    const delayMs = config.groupDelaySeconds * 1000;
+    await storageSet('local', {
+      vg_active_group_job: null,
+      vg_next_group_at: Date.now() + delayMs
+    });
     await appendGroupLog({
       postId: job.postId,
       machineCode: job.machineCode,
@@ -624,12 +649,6 @@ chrome.tabs.onRemoved.addListener(async (closedTabId) => {
       status: 'cancelled_by_user',
       success: false,
       reason: 'Tab nhóm đã bị đóng trước khi xác nhận đăng xong.'
-    });
-    const config = await getExtensionConfig();
-    const delayMs = config.groupDelaySeconds * 1000;
-    await storageSet('local', {
-      vg_active_group_job: null,
-      vg_next_group_at: Date.now() + delayMs
     });
     const remaining = Array.isArray(st.vg_group_share_queue) ? st.vg_group_share_queue : [];
     if (remaining.length > 0) {
@@ -760,8 +779,27 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       const activeJob = st.vg_active_group_job || null;
       const tabIdToClose = (sender && sender.tab && sender.tab.id) || (activeJob ? activeJob.tabId : null);
 
+      // Chống xử lý trùng nếu tab đó đã vừa được đóng/hoàn tất bởi Robot
+      if (!activeJob && tabIdToClose && closingManagedTabIds.has(tabIdToClose)) {
+        return sendResponse({ ok: true, deduplicated: true });
+      }
+
       const finalStatus = request.status || (request.success ? 'posted' : 'failed_submit');
       const finalReason = request.reason || request.error || (request.success ? 'Đã xác nhận xuất bản thành công.' : 'Không đăng được bài.');
+      const delayMs = config.groupDelaySeconds * 1000;
+
+      // 1. Đánh dấu tab đang đóng & giải phóng khóa vg_active_group_job TRƯỚC khi đóng tab để tabs.onRemoved không bao giờ ghi đúp log lỗi!
+      if (tabIdToClose) markTabClosingByBot(tabIdToClose);
+      const isBlocked = finalStatus === 'blocked_by_facebook';
+      const preUpdates = { vg_active_group_job: null };
+      if (isBlocked) {
+        preUpdates.vg_group_queue_paused = true;
+        preUpdates.vg_group_pause_reason = finalReason || 'Facebook tạm giới hạn tính năng đăng nhóm — hệ thống đã tự tạm dừng để bảo vệ tài khoản.';
+        preUpdates.vg_next_group_at = 0;
+      } else {
+        preUpdates.vg_next_group_at = Date.now() + delayMs + 2000;
+      }
+      await storageSet('local', preUpdates);
 
       await appendGroupLog({
         postId: request.postId || activeJob?.postId || null,
@@ -774,34 +812,24 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         reason: finalReason
       });
 
-      // 1. Luôn đóng dứt điểm tab vừa làm xong trước khi mở tab khác
+      // 2. Luôn đóng dứt điểm tab vừa làm xong trước khi bắt đầu đếm ngược mở tab kế tiếp
       if (tabIdToClose) {
-        await new Promise(r => setTimeout(r, 500));
+        await new Promise(r => setTimeout(r, 450));
         await closeTabAndConfirm(tabIdToClose);
       }
 
-      // 2. Xóa khóa vg_active_group_job sau khi đóng tab xong
-      const updates = { vg_active_group_job: null };
-
-      if (finalStatus === 'blocked_by_facebook') {
-        updates.vg_group_queue_paused = true;
-        updates.vg_group_pause_reason = finalReason || 'Facebook tạm giới hạn tính năng đăng nhóm — hệ thống đã tự tạm dừng để bảo vệ tài khoản.';
-        updates.vg_next_group_at = 0;
-        await storageSet('local', updates);
+      if (isBlocked) {
         await closeWorkerWindowIfIdle();
-        return sendResponse({ ok: true, paused: true, reason: updates.vg_group_pause_reason });
+        return sendResponse({ ok: true, paused: true, reason: preUpdates.vg_group_pause_reason });
       }
 
       const remainingQueue = Array.isArray(st.vg_group_share_queue) ? st.vg_group_share_queue : [];
       if (remainingQueue.length > 0 && config.autoGroupShareEnabled) {
-        // 3. Bắt đầu đếm đủ N giây (mặc định 10s) TÍNH TỪ LÚC TAB CŨ ĐÃ ĐÓNG
-        const delayMs = config.groupDelaySeconds * 1000;
-        updates.vg_next_group_at = Date.now() + delayMs;
-        await storageSet('local', updates);
+        // 3. Bắt đầu đếm đủ N giây (mặc định 10s) TÍNH TỪ LÚC TAB CŨ ĐÃ ĐÓNG HOÀN TOÀN
+        await storageSet('local', { vg_next_group_at: Date.now() + delayMs });
         scheduleNextGroupCheck(delayMs);
       } else {
-        updates.vg_next_group_at = 0;
-        await storageSet('local', updates);
+        await storageSet('local', { vg_next_group_at: 0 });
         await closeWorkerWindowIfIdle();
       }
 
