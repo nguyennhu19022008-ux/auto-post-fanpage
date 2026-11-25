@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function refreshAutoPersonalStatus() {
     if (!autoPersonalStatus) return;
     chrome.runtime.sendMessage({ action: 'getAutoPersonalStatus' }, (st) => {
-      if (!st) return;
+      if (chrome.runtime.lastError || !st) return;
       const lastCheck = st.vg_last_alarm_check
         ? new Date(st.vg_last_alarm_check).toLocaleTimeString('vi-VN')
         : 'Chưa quét';

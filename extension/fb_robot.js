@@ -922,7 +922,7 @@
       }, 1000);
 
     } catch (err) {
-      console.error('[VG FB Robot Lỗi]', err);
+      console.warn('[VG FB Robot Cảnh báo]', err);
       setStepStatus(1, 'active', `❌ Lỗi: ${err.message}`);
       chrome.runtime.sendMessage({
         action: isGroupPost ? 'groupShareCompleted' : 'personalPostCompleted',

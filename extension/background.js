@@ -384,7 +384,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse({ success: res.ok && json.success, data: json });
       })
       .catch((err) => {
-        console.error('[VG Extension SW] Lỗi fetch:', err);
+        console.warn('[VG Extension SW] Lỗi fetch:', err);
         sendResponse({ success: false, error: err.message });
       });
 
@@ -425,10 +425,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           }
         }, r));
 
-        // Tự động xếp hàng chia sẻ sang các Hội Nhóm liên quan nếu đã bật (dùng chrome.alarms bền vững cho MV3)
+        // Tự động xếp hàng chia sẻ sang các Hội Nhóm liên quan nếu đã bật (MV3 alarm tối thiểu 0.5 phút = 30s)
         const enqueueRes = await enqueueGroupSharesForPost(request);
         if (enqueueRes.enqueued > 0 && chrome.alarms) {
-          chrome.alarms.create(ALARM_GROUP_IMMEDIATE, { when: Date.now() + 6000 });
+          chrome.alarms.create(ALARM_GROUP_IMMEDIATE, { delayInMinutes: 0.5 });
         }
       }
 
