@@ -2370,9 +2370,9 @@ function renderModelCards(templates) {
           </div>
         </div>
 
-        <div class="flex items-baseline justify-between gap-2">
+        <div class="space-y-1">
           <h3 class="font-bold text-base text-[#0F172A] leading-snug line-clamp-2">${escapeHtml(t.model_name)}</h3>
-          <span class="font-mono-num font-bold text-sm text-[#059669] shrink-0">${escapeHtml(priceText)}</span>
+          <div class="font-mono-num font-bold text-sm text-[#059669]">${escapeHtml(priceText)}</div>
         </div>
 
         ${specsLine ? `<p class="text-xs text-[#475569] leading-relaxed line-clamp-2">${escapeHtml(specsLine)}</p>` : ''}
