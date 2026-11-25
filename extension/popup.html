@@ -211,7 +211,7 @@
     <div class="badge-icon">VG</div>
     <div>
       <div class="title">Laptop Vương Gia</div>
-      <div class="subtitle">Hệ Thống Autopost Đa Kênh 2.5</div>
+      <div class="subtitle">Hệ Thống Autopost Siêu Tốc v1.3.0</div>
     </div>
   </div>
 
@@ -247,6 +247,22 @@
 
   <!-- TAB 2: CÀI ĐẶT -->
   <div id="tab-settings" class="tab-pane">
+    <div class="card">
+      <label class="label">🤖 Tự động Trang Cá Nhân (khi mở Chrome):</label>
+      <label style="display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:700; margin-bottom:6px; cursor:pointer;">
+        <input type="checkbox" id="autoPersonalToggle" checked style="width:15px; height:15px;">
+        <span>Tự quét & đăng bài đến giờ mỗi 1 phút</span>
+      </label>
+      <label style="display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:600; margin-bottom:8px; cursor:pointer; color:#3F3F46;">
+        <input type="checkbox" id="autoFanpageSyncToggle" checked style="width:15px; height:15px;">
+        <span>Tự đăng đồng bộ bài Fanpage mới sang Cá Nhân</span>
+      </label>
+      <div id="autoPersonalStatus" style="font-size:10.5px; color:#52525B; font-weight:600; background:#F4F4F5; padding:6px 8px; border-radius:6px; border:1px solid #D4D4D8;">
+        Đang tải trạng thái lịch hẹn...
+      </div>
+      <button id="checkDueNowBtn" class="btn btn-personal" style="margin-top:8px;">⚡ Quét & Đăng Ngay Bài Đến Giờ</button>
+    </div>
+
     <div class="card">
       <label class="label">Địa chỉ máy chủ (Backend):</label>
       <input type="text" id="backendUrlInput" class="input" value="https://auto-post-fanpage-coral.vercel.app">

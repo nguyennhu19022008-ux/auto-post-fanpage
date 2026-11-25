@@ -22,9 +22,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const connectionStatus = document.getElementById('connectionStatus');
   const saveBtn = document.getElementById('saveBtn');
 
+  const autoPersonalToggle = document.getElementById('autoPersonalToggle');
+  const autoFanpageSyncToggle = document.getElementById('autoFanpageSyncToggle');
+  const autoPersonalStatus = document.getElementById('autoPersonalStatus');
+  const checkDueNowBtn = document.getElementById('checkDueNowBtn');
+
   // Local state
   let selectedMediaBase64 = [];
   let currentBackendUrl = 'https://auto-post-fanpage-coral.vercel.app';
+
+  function refreshAutoPersonalStatus() {
+    if (!autoPersonalStatus) return;
+    chrome.runtime.sendMessage({ action: 'getAutoPersonalStatus' }, (st) => {
+      if (!st) return;
+      const lastCheck = st.vg_last_alarm_check
+        ? new Date(st.vg_last_alarm_check).toLocaleTimeString('vi-VN')
+        : 'Chưa quét';
+      const dueCount = typeof st.vg_last_due_count === 'number' ? st.vg_last_due_count : 0;
+      autoPersonalStatus.innerText = `Lần quét gần nhất: ${lastCheck} • Chờ đăng: ${dueCount} bài`;
+    });
+  }
 
   // 1. Tab Switching
   tabBtns.forEach(btn => {
@@ -39,17 +56,49 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 2. Load and Sync Backend URL
+  // 2. Load and Sync Backend URL + Auto-Personal Settings
   if (chrome.storage && chrome.storage.sync) {
-    chrome.storage.sync.get(['backendUrl'], (result) => {
+    chrome.storage.sync.get(['backendUrl', 'autoPersonalEnabled', 'autoPersonalIncludeFanpage'], (result) => {
       if (result.backendUrl) {
         currentBackendUrl = result.backendUrl.trim().replace(/\/$/, '');
         backendUrlInput.value = currentBackendUrl;
       }
+      if (autoPersonalToggle) autoPersonalToggle.checked = result.autoPersonalEnabled !== false;
+      if (autoFanpageSyncToggle) autoFanpageSyncToggle.checked = result.autoPersonalIncludeFanpage !== false;
       checkServerHealth(currentBackendUrl);
+      refreshAutoPersonalStatus();
     });
   } else {
     checkServerHealth(currentBackendUrl);
+  }
+
+  const saveAutoFlags = () => {
+    if (!chrome.storage || !chrome.storage.sync) return;
+    chrome.storage.sync.set({
+      autoPersonalEnabled: autoPersonalToggle ? autoPersonalToggle.checked : true,
+      autoPersonalIncludeFanpage: autoFanpageSyncToggle ? autoFanpageSyncToggle.checked : true
+    });
+  };
+  if (autoPersonalToggle) autoPersonalToggle.addEventListener('change', saveAutoFlags);
+  if (autoFanpageSyncToggle) autoFanpageSyncToggle.addEventListener('change', saveAutoFlags);
+
+  if (checkDueNowBtn) {
+    checkDueNowBtn.addEventListener('click', () => {
+      checkDueNowBtn.disabled = true;
+      checkDueNowBtn.innerText = '⏳ Đang kiểm tra lịch...';
+      chrome.runtime.sendMessage({ action: 'runAutoPersonalCheckNow' }, (resp) => {
+        checkDueNowBtn.disabled = false;
+        checkDueNowBtn.innerText = '⚡ Quét & Đăng Ngay Bài Đến Giờ';
+        refreshAutoPersonalStatus();
+        if (resp && resp.dispatched && autoPersonalStatus) {
+          autoPersonalStatus.innerText = `🚀 Đang tự mở Facebook để đăng bài ${resp.postId}!`;
+        } else if (resp && resp.dueCount === 0 && autoPersonalStatus) {
+          autoPersonalStatus.innerText = '✅ Hiện không có bài Cá Nhân nào đang chờ đến giờ.';
+        } else if (resp && resp.error && autoPersonalStatus) {
+          autoPersonalStatus.innerText = `❌ Lỗi kiểm tra: ${resp.error}`;
+        }
+      });
+    });
   }
 
   // 3. Save Settings

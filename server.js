@@ -817,6 +817,105 @@ app.post('/api/extension/push-post', async (req, res) => {
   }
 });
 
+// 8b. Extension Auto-Scheduler: Lấy các bài đã đến giờ (hoặc vừa đăng Fanpage trong 24h) để Robot tự đăng Trang Cá Nhân
+app.get('/api/extension/due-personal-posts', async (req, res) => {
+  try {
+    const includeFanpage = req.query.includeFanpage !== '0';
+    const posts = await getPosts();
+    const now = Date.now();
+    const maxLookbackMs = 24 * 60 * 60 * 1000;
+
+    const duePosts = [];
+    for (const post of posts) {
+      if (!post || !post.id) continue;
+      if ((post.lastMessage || '').includes('[PERSONAL_DONE]')) continue;
+
+      const mediaFiles = Array.isArray(post.mediaFiles) ? post.mediaFiles : [];
+      const mediaUrls = mediaFiles
+        .map(m => (typeof m === 'string' ? m : (m.url || m.path || '')))
+        .filter(u => u && u.startsWith('http'));
+
+      if (mediaUrls.length === 0) continue;
+
+      const isPersonalDraft = post.status === 'personal_draft';
+      const isRecentFanpagePosted = includeFanpage && post.status === 'posted';
+      if (!isPersonalDraft && !isRecentFanpagePosted) continue;
+
+      const refTimeStr = isPersonalDraft
+        ? (post.scheduledTime || post.createdAt)
+        : (post.postedAt || post.scheduledTime);
+
+      if (refTimeStr) {
+        const refMs = new Date(refTimeStr).getTime();
+        if (!Number.isNaN(refMs)) {
+          if (refMs > now) continue; // Chưa đến giờ hẹn
+          if (now - refMs > maxLookbackMs) continue; // Quá cũ (> 24h)
+        }
+      }
+
+      duePosts.push({
+        id: post.id,
+        machineCode: post.machineCode || '',
+        machineName: post.machineName || '',
+        content: post.content || '',
+        mediaUrls,
+        scheduledTime: post.scheduledTime || null,
+        postedAt: post.postedAt || null,
+        status: post.status
+      });
+    }
+
+    // Ưu tiên bài cũ nhất đến giờ trước (FIFO)
+    duePosts.sort((a, b) => new Date(a.scheduledTime || a.postedAt || 0) - new Date(b.scheduledTime || b.postedAt || 0));
+
+    res.json({
+      success: true,
+      count: duePosts.length,
+      posts: duePosts
+    });
+  } catch (error) {
+    console.error('[Extension Due Personal Posts Error]', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 8c. Extension Auto-Scheduler: Đánh dấu bài đã được Robot đăng xong lên Trang Cá Nhân
+app.post('/api/extension/personal-posted', async (req, res) => {
+  try {
+    const { postId, success = true, errorMessage = '' } = req.body || {};
+    if (!postId) {
+      return res.status(400).json({ success: false, error: 'Thiếu postId.' });
+    }
+
+    const posts = await getPosts();
+    const post = posts.find(p => p.id === postId);
+    if (!post) {
+      return res.status(404).json({ success: false, error: 'Không tìm thấy bài viết.' });
+    }
+
+    if (success) {
+      if (post.status === 'personal_draft') {
+        post.status = 'posted';
+        post.postedAt = post.postedAt || new Date().toISOString();
+      }
+      const marker = '[PERSONAL_DONE]';
+      if (!(post.lastMessage || '').includes(marker)) {
+        post.lastMessage = `${post.lastMessage || 'Đã xuất bản.'} ${marker}`.trim();
+      }
+    } else if (errorMessage) {
+      post.lastMessage = `Lỗi Robot Cá Nhân: ${errorMessage}`;
+    }
+
+    await savePosts(posts);
+    await upsertPostToDb(post);
+
+    res.json({ success: true, post });
+  } catch (error) {
+    console.error('[Extension Personal Posted Error]', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // 9. Trigger Post Immediately
 app.post('/api/posts/:id/publish-now', async (req, res) => {
   try {

@@ -418,7 +418,20 @@
   }
 
   /**
-   * MAIN AUTOMATION WORKFLOW
+   * Prefetch & convert all media URLs to File objects IN PARALLEL
+   */
+  async function prefetchMediaFiles(urls, machineCode) {
+    if (!Array.isArray(urls) || urls.length === 0) return [];
+    const results = await Promise.all(
+      urls.map((url, idx) =>
+        urlToFile(url, `laptop_vuonggia_${machineCode}_${idx + 1}.jpg`).catch(() => null)
+      )
+    );
+    return results.filter(Boolean);
+  }
+
+  /**
+   * MAIN AUTOMATION WORKFLOW (v1.3.0 High-Speed)
    */
   async function executePersonalPost(payload) {
     if (isExecuting) {
@@ -426,29 +439,38 @@
       return;
     }
     isExecuting = true;
-    const { content, mediaUrls = [], machineCode = '' } = payload;
+    const {
+      content,
+      mediaUrls = [],
+      machineCode = '',
+      postId = null,
+      autoTriggered = false
+    } = payload;
     isCancelled = false;
 
-    console.log('[VG FB Robot] Bắt đầu quy trình tự động đăng bài lên trang cá nhân:', machineCode);
+    console.log('[VG FB Robot v1.3.0] Bắt đầu quy trình siêu tốc cho trang cá nhân:', machineCode || postId || 'MÁY');
     createHud(machineCode);
+
+    // Tải trước toàn bộ ảnh HD SONG SONG ngay khi vừa mở hộp thoại (tiết kiệm 3-6s)
+    const mediaFilesPromise = prefetchMediaFiles(mediaUrls, machineCode);
 
     try {
       // BƯỚC 1: Tìm và mở ô "Bạn đang nghĩ gì thế?"
       setStepStatus(1, 'active', 'Đang tìm và mở ô tạo bài viết...');
-      try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {}
-      await sleep(1000); // Chờ Facebook render các element
+      if (window.scrollY > 50) {
+        try { window.scrollTo({ top: 0, behavior: 'auto' }); } catch (e) {}
+      }
 
       let modal = findCreatePostModal();
-      console.log('[VG FB Robot] Trạng thái modal ban đầu:', modal);
       const openStartTime = Date.now();
-      const openTimeout = 15000; // Thử tự động trong 15s
+      const openTimeout = 12000;
 
       // Lắng nghe click thủ công từ người dùng để bắt ngay lập tức nếu người dùng bấm bằng tay
       const manualClickListener = () => {
         setTimeout(() => {
           const m = findCreatePostModal();
           if (m) modal = m;
-        }, 300);
+        }, 120);
       };
       document.addEventListener('click', manualClickListener, { capture: true, passive: true });
 
@@ -462,45 +484,40 @@
         if (modal) break;
 
         const triggers = findFeedComposerTriggers();
-        console.log('[VG FB Robot] Tìm thấy', triggers.length, 'phần tử kích hoạt bài viết.');
-
-        // Thử click từng phần tử kích hoạt
         for (const target of triggers) {
           simulateRealisticClick(target);
           if (target.firstElementChild) {
             simulateRealisticClick(target.firstElementChild);
           }
-          await sleep(350);
-          modal = findCreatePostModal();
+          // Đợi bằng MutationObserver ngắn (tối đa 450ms) để bắt dialog ngay tích tắc vừa render
+          modal = await waitForCreatePostModal(450);
           if (modal) break;
         }
 
         if (modal) break;
 
-        // Nếu sau 1.5 giây mà Facebook chưa mở, làm nổi bật viền vàng nhấp nháy để hướng dẫn người dùng
-        if (Date.now() - openStartTime > 1500 && !modal) {
+        if (Date.now() - openStartTime > 1200 && !modal) {
           setStepStatus(1, 'active', '👉 Vui lòng click vào ô "Bạn đang nghĩ gì thế?" (viền vàng)...');
           triggers.forEach(c => {
             if (c.style && !c.dataset.vgStyled) {
               c.dataset.vgStyled = 'true';
               c.style.outline = '4px solid #EAB308';
               c.style.boxShadow = '0 0 16px rgba(234, 179, 8, 0.8)';
-              c.style.transition = 'all 0.3s ease';
+              c.style.transition = 'all 0.2s ease';
               c.style.cursor = 'pointer';
             }
           });
         }
 
-        await sleep(500);
+        await sleep(180);
       }
 
       if (!modal) {
-        modal = await waitForCreatePostModal(8000);
+        modal = await waitForCreatePostModal(5000);
       }
 
       document.removeEventListener('click', manualClickListener, true);
 
-      // Xóa viền vàng làm nổi bật nếu có
       document.querySelectorAll('[data-vg-styled]').forEach(el => {
         el.style.outline = '';
         el.style.boxShadow = '';
@@ -513,16 +530,14 @@
 
       setStepStatus(1, 'success', 'Đã mở khung soạn bài!');
 
-      // BƯỚC 2: Chờ Modal soạn bài ổn định và điền nội dung vào Editor
-      await sleep(600);
+      // BƯỚC 2: Tìm ngay Editor bằng MutationObserver (không sleep cố định)
       setStepStatus(2, 'active', 'Đang nhập nội dung bài viết...');
       let editor = await waitForElement(
         'div[role="textbox"][contenteditable="true"], div[data-lexical-editor="true"], div[contenteditable="true"], div[aria-label*="nghĩ gì" i], div[aria-label*="what\'s on your mind" i]',
         modal,
-        6000
+        5000
       );
 
-      // Fallback search across active modal and document
       if (!editor) {
         editor = modal.querySelector('div[role="textbox"][contenteditable="true"]') ||
                  modal.querySelector('[contenteditable="true"]') ||
@@ -534,7 +549,7 @@
       }
 
       editor.focus();
-      await sleep(300);
+      await sleep(80);
 
       // Điền nội dung văn bản chuẩn Lexical (chỉ chèn 1 lần duy nhất, giữ nguyên xuống dòng)
       const textToInsert = content || '';
@@ -565,7 +580,7 @@
             clipboardData: dt
           });
           editor.dispatchEvent(pasteEvent);
-          await sleep(250);
+          await sleep(120);
         } catch (e) {
           console.warn('[VG FB Robot] ClipboardEvent paste fallback:', e);
         }
@@ -576,7 +591,7 @@
         try {
           placeCaretAtEnd();
           document.execCommand('insertText', false, textToInsert);
-          await sleep(200);
+          await sleep(100);
         } catch (e) {
           console.warn('[VG FB Robot] execCommand insertText fallback:', e);
         }
@@ -588,14 +603,12 @@
         }
       } catch (e) {}
       setStepStatus(2, 'success', 'Đã điền xong cấu hình máy!');
-      await sleep(800);
 
-      // BƯỚC 3: Đính kèm hình ảnh
-      setStepStatus(3, 'active', `Đang tải lên ${mediaUrls.length} ảnh HD...`);
+      // BƯỚC 3: Đính kèm hình ảnh (đã được prefetch song song từ đầu)
+      setStepStatus(3, 'active', `Đang gắn ${mediaUrls.length} ảnh HD...`);
       if (mediaUrls.length > 0) {
         let fileInput = modal.querySelector('input[type="file"][accept*="image"]') || document.querySelector('input[type="file"][accept*="image"]');
-        
-        // Nếu input file chưa có sẵn trong DOM, bấm nút "Ảnh/video" để kích hoạt
+
         if (!fileInput) {
           const photoBtn = Array.from(modal.querySelectorAll('div[role="button"], div[aria-label*="Ảnh/video"], div[aria-label*="Photo/video"], img[src*="photo"]')).find(b => {
             const label = (b.getAttribute('aria-label') || b.innerText || '').toLowerCase();
@@ -603,26 +616,19 @@
           });
           if (photoBtn) {
             simulateRealisticClick(photoBtn);
-            await sleep(800);
           }
-          fileInput = await waitForElement('input[type="file"][accept*="image"]', modal, 5000) || document.querySelector('input[type="file"][accept*="image"]');
+          fileInput = await waitForElement('input[type="file"][accept*="image"]', modal, 4000) || document.querySelector('input[type="file"][accept*="image"]');
         }
 
         if (fileInput) {
-          const fileObjects = [];
-          for (let i = 0; i < mediaUrls.length; i++) {
-            const url = mediaUrls[i];
-            const fileObj = await urlToFile(url, `laptop_vuonggia_${machineCode}_${i + 1}.jpg`);
-            if (fileObj) fileObjects.push(fileObj);
-          }
-
+          const fileObjects = await mediaFilesPromise;
           if (fileObjects.length > 0) {
             const dataTransfer = new DataTransfer();
             fileObjects.forEach(f => dataTransfer.items.add(f));
             fileInput.files = dataTransfer.files;
             fileInput.dispatchEvent(new Event('change', { bubbles: true }));
             fileInput.dispatchEvent(new Event('input', { bubbles: true }));
-            setStepStatus(3, 'success', `Đã gắn thành công ${fileObjects.length} ảnh HD!`);
+            setStepStatus(3, 'success', `Đã gắn siêu tốc ${fileObjects.length} ảnh HD!`);
           } else {
             setStepStatus(3, 'success', 'Bỏ qua đính kèm ảnh (ảnh rỗng).');
           }
@@ -633,23 +639,25 @@
         setStepStatus(3, 'success', 'Bài đăng không có ảnh.');
       }
 
-      await sleep(1500); // Chờ Facebook xử lý ảnh đính kèm
+      await sleep(250); // Nhường 1 nhịp micro-render cho Facebook bắt đầu upload ảnh
 
-      // BƯỚC 5: Đếm ngược và Tự động Bấm "ĐĂNG"
+      // BƯỚC 4: Đếm ngược nhanh 1s và Tự động Bấm "ĐĂNG"
       setStepStatus(4, 'active', 'Chuẩn bị xuất bản...');
       const countdownBox = document.getElementById('vg-hud-countdown-area');
       if (countdownBox) countdownBox.style.display = 'block';
 
-      let remaining = 3;
+      let remaining = 1;
       const countdownLabel = document.getElementById('vg-countdown-label');
+      if (countdownLabel) {
+        countdownLabel.innerText = `Tự động bấm 'Đăng' sau ${remaining}s...`;
+      }
 
       async function triggerSubmit() {
         if (isCancelled) return;
-        setStepStatus(4, 'active', '⚡ Đang kiểm tra tiến trình tải ảnh & chuẩn bị đăng...');
+        setStepStatus(4, 'active', '⚡ Đang chờ ảnh tải xong & chuẩn bị bấm ĐĂNG...');
 
-        // Chờ tiến trình upload ảnh hoàn tất (Facebook hiển thị progress bar hoặc nút Đăng có aria-disabled="true")
         let uploadWaitTime = 0;
-        const maxUploadWait = 30000; // Chờ tối đa 30s cho album ảnh HD tải lên hoàn tất
+        const maxUploadWait = 30000;
         while (uploadWaitTime < maxUploadWait) {
           if (isCancelled) return;
           const isUploading = modal.querySelector('div[role="progressbar"], [aria-valuemin], .sp_progress, div[data-visualcompletion="loading-state"]');
@@ -663,13 +671,12 @@
           if (!isUploading && readyBtn) {
             break;
           }
-          await sleep(500);
-          uploadWaitTime += 500;
+          await sleep(150);
+          uploadWaitTime += 150;
         }
 
         setStepStatus(4, 'active', '⚡ Đang bấm nút ĐĂNG...');
 
-        // Tìm nút "Đăng" (Post)
         const postBtn = Array.from(modal.querySelectorAll('div[role="button"]')).find(b => {
           const label = (b.getAttribute('aria-label') || b.innerText || '').trim().toLowerCase();
           return (label === 'đăng' || label === 'post') &&
@@ -683,10 +690,23 @@
           if (countdownBox) {
             countdownBox.innerHTML = '<span style="color:#059669; font-weight:900; font-size:14px;">🎉 BÀI VIẾT ĐÃ ĐƯỢC ĐĂNG LÊN TRANG CÁ NHÂN!</span>';
           }
-          await sleep(3500);
+          chrome.runtime.sendMessage({
+            action: 'personalPostCompleted',
+            postId,
+            autoTriggered,
+            success: true
+          }, () => { void chrome.runtime.lastError; });
+          await sleep(1500);
           if (hudEl) hudEl.remove();
         } else {
           setStepStatus(4, 'active', 'Vui lòng bấm nút "Đăng" màu xanh trên Facebook để hoàn tất.');
+          chrome.runtime.sendMessage({
+            action: 'personalPostCompleted',
+            postId,
+            autoTriggered,
+            success: false,
+            error: 'Không tìm thấy nút Đăng sẵn sàng'
+          }, () => { void chrome.runtime.lastError; });
         }
       }
 
@@ -713,6 +733,13 @@
     } catch (err) {
       console.error('[VG FB Robot Lỗi]', err);
       setStepStatus(1, 'active', `❌ Lỗi: ${err.message}`);
+      chrome.runtime.sendMessage({
+        action: 'personalPostCompleted',
+        postId,
+        autoTriggered,
+        success: false,
+        error: err.message
+      }, () => { void chrome.runtime.lastError; });
     } finally {
       isExecuting = false;
     }
@@ -726,12 +753,12 @@
     }
   });
 
-  // Tự động kiểm tra Storage nếu tab vừa được mở mới
+  // Tự động kiểm tra Storage nếu tab vừa được mở mới (giảm delay từ 1200ms -> 250ms)
   chrome.storage.local.get(['vg_pending_personal_post'], (res) => {
     if (res.vg_pending_personal_post) {
       const payload = res.vg_pending_personal_post;
       chrome.storage.local.remove(['vg_pending_personal_post'], () => {
-        setTimeout(() => executePersonalPost(payload), 1200);
+        setTimeout(() => executePersonalPost(payload), 250);
       });
     }
   });
