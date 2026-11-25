@@ -257,6 +257,139 @@
   }
 
   /**
+   * Clean single-click helper for Submit / Close / Discard buttons (never double-fires)
+   */
+  function simulateSingleClick(el) {
+    if (!el || typeof el.getBoundingClientRect !== 'function') return false;
+    try {
+      const rect = el.getBoundingClientRect();
+      const clientX = Math.round(rect.left + rect.width / 2);
+      const clientY = Math.round(rect.top + rect.height / 2);
+      const base = { bubbles: true, cancelable: true, view: window, clientX, clientY };
+      try { el.dispatchEvent(new PointerEvent('pointerdown', { ...base, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse' })); } catch (e) {}
+      try { el.dispatchEvent(new MouseEvent('mousedown', { ...base, button: 0, buttons: 1 })); } catch (e) {}
+      try { el.dispatchEvent(new PointerEvent('pointerup', { ...base, button: 0, buttons: 0, pointerId: 1, pointerType: 'mouse' })); } catch (e) {}
+      try { el.dispatchEvent(new MouseEvent('mouseup', { ...base, button: 0, buttons: 0 })); } catch (e) {}
+      if (typeof el.click === 'function') {
+        el.click();
+      } else {
+        el.dispatchEvent(new MouseEvent('click', { ...base, button: 0, buttons: 0 }));
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /**
+   * Clear all text inside Facebook Lexical editor cleanly
+   */
+  async function clearEditorContents(editor) {
+    if (!editor) return;
+    try {
+      editor.focus();
+      const sel = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(editor);
+      if (sel) {
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+      document.execCommand('selectAll', false, null);
+      document.execCommand('delete', false, null);
+      await sleep(80);
+      if ((editor.innerText || '').trim().length > 0) {
+        editor.dispatchEvent(new InputEvent('beforeinput', { bubbles: true, cancelable: true, inputType: 'deleteContentBackward' }));
+        document.execCommand('selectAll', false, null);
+        document.execCommand('delete', false, null);
+        await sleep(80);
+      }
+    } catch (e) {}
+  }
+
+  /**
+   * Detect if Facebook's Feed/Group Composer Pill retained stale draft text after publishing, and reset it
+   */
+  function findResidualDraftPill(textSnippet) {
+    const snippet = (textSnippet || '').trim().slice(0, 24).toLowerCase();
+    const candidates = Array.from(document.querySelectorAll(
+      'div[data-pagelet*="Composer"] div[role="button"][tabindex="0"], div[data-pagelet="ProfileComposer"] div[role="button"][tabindex="0"], div[data-pagelet="GroupInlineComposer"] div[role="button"][tabindex="0"], div[role="button"][tabindex="0"]'
+    ));
+
+    for (const el of candidates) {
+      if (el.closest('div[role="dialog"]') || el.closest('#vg-fb-robot-hud') || !isVisible(el)) continue;
+      const txt = (el.innerText || '').trim().toLowerCase();
+      if (!txt || txt.includes('ảnh/video') || txt.includes('photo/video') || txt.includes('video trực tiếp')) continue;
+      const isPlaceholder =
+        txt.includes('nghĩ gì') ||
+        txt.includes("what's on your mind") ||
+        txt.includes('bạn viết gì') ||
+        txt.includes('write something');
+      if (isPlaceholder) continue;
+
+      if ((snippet && txt.includes(snippet)) || txt.includes('[giá tốt]') || txt.includes('mã #') || txt.includes('laptop vương gia')) {
+        return el;
+      }
+    }
+    return null;
+  }
+
+  async function clearResidualDraftAfterPublish(textSnippet) {
+    // 1. Đợi modal vừa đăng đóng hẳn
+    const waitStart = Date.now();
+    while (findCreatePostModal() && Date.now() - waitStart < 4000) {
+      await sleep(150);
+    }
+    await sleep(450);
+
+    const stalePill = findResidualDraftPill(textSnippet);
+    if (!stalePill) return; // Facebook đã tự xóa sạch
+
+    console.log('[VG FB Robot] Phát hiện chữ nháp còn đọng trên thanh đăng bài, đang tự động dọn sạch...');
+    simulateSingleClick(stalePill);
+
+    const draftModal = await waitForCreatePostModal(2500);
+    if (!draftModal) return;
+
+    const editor = draftModal.querySelector('div[role="textbox"][contenteditable="true"], div[data-lexical-editor="true"]');
+    if (editor) {
+      await clearEditorContents(editor);
+    }
+
+    // Xóa ảnh còn sót nếu có nút Xóa/Gỡ trên preview
+    const removeMediaBtns = Array.from(draftModal.querySelectorAll('div[role="button"][aria-label*="Xóa" i], div[role="button"][aria-label*="Gỡ" i], div[role="button"][aria-label*="Remove" i]'));
+    for (const rmBtn of removeMediaBtns) {
+      if (isVisible(rmBtn)) simulateSingleClick(rmBtn);
+    }
+    await sleep(100);
+
+    // Đóng hộp thoại đã xóa sạch
+    const closeBtn = Array.from(draftModal.querySelectorAll('div[role="button"]')).find(b => {
+      const a = (b.getAttribute('aria-label') || '').trim().toLowerCase();
+      return a === 'đóng' || a === 'close';
+    });
+    if (closeBtn) {
+      simulateSingleClick(closeBtn);
+    } else {
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27, bubbles: true }));
+    }
+
+    // Nếu Facebook hiện hộp thoại xác nhận "Bỏ bài viết?", tự bấm "Bỏ" / "Discard"
+    await sleep(250);
+    const confirmDialogs = Array.from(document.querySelectorAll('div[role="dialog"]')).filter(d => !d.closest('#vg-fb-robot-hud') && isVisible(d));
+    for (const cd of confirmDialogs) {
+      const discardBtn = Array.from(cd.querySelectorAll('div[role="button"]')).find(b => {
+        const lbl = (b.innerText || b.getAttribute('aria-label') || '').trim().toLowerCase();
+        return lbl === 'bỏ' || lbl === 'discard' || lbl === 'bỏ bài viết' || lbl === 'rời khỏi';
+      });
+      if (discardBtn) {
+        simulateSingleClick(discardBtn);
+        break;
+      }
+    }
+  }
+
+  /**
    * Strictly check if a dialog is the REAL Facebook Create Post Modal (Zero False Positives)
    */
   function isCreatePostModal(d) {
@@ -390,6 +523,12 @@
       if (!el.closest('div[role="dialog"]') && !el.closest('#vg-fb-robot-hud') && isVisible(el)) {
         list.push(el);
       }
+    }
+
+    // 3. Fallback: Nếu thanh đăng bài đang giữ chữ nháp cũ từ phiên trước
+    const residualPill = findResidualDraftPill('');
+    if (residualPill) {
+      list.push(residualPill);
     }
 
     // Deduplicate
@@ -584,6 +723,11 @@
       editor.focus();
       await sleep(80);
 
+      // Xóa sạch text nháp cũ nếu Facebook tự khôi phục từ phiên trước
+      if ((editor.innerText || '').trim().length > 0) {
+        await clearEditorContents(editor);
+      }
+
       // Điền nội dung văn bản chuẩn Lexical (chỉ chèn 1 lần duy nhất, giữ nguyên xuống dòng & kèm link Fanpage)
       const textToInsert = finalContent;
       const placeCaretAtEnd = () => {
@@ -680,13 +824,15 @@
       if (countdownBox) countdownBox.style.display = 'block';
 
       let remaining = 1;
+      let hasSubmitted = false;
       const countdownLabel = document.getElementById('vg-countdown-label');
       if (countdownLabel) {
         countdownLabel.innerText = `Tự động bấm 'Đăng' sau ${remaining}s...`;
       }
 
       async function triggerSubmit() {
-        if (isCancelled) return;
+        if (isCancelled || hasSubmitted) return;
+        hasSubmitted = true;
         setStepStatus(4, 'active', '⚡ Đang chờ ảnh tải xong & chuẩn bị bấm ĐĂNG...');
 
         let uploadWaitTime = 0;
@@ -718,7 +864,8 @@
         });
 
         if (postBtn) {
-          simulateRealisticClick(postBtn);
+          simulateSingleClick(postBtn);
+          await clearResidualDraftAfterPublish(finalContent);
           const doneMsg = isGroupPost
             ? '✅ ĐÃ ĐĂNG BÀI LÊN HỘI NHÓM THÀNH CÔNG!'
             : '✅ ĐÃ XUẤT BẢN THÀNH CÔNG LÊN TRANG CÁ NHÂN!';
@@ -737,7 +884,7 @@
             autoTriggered,
             success: true
           }, () => { void chrome.runtime.lastError; });
-          await sleep(1500);
+          await sleep(1200);
           if (hudEl) hudEl.remove();
         } else {
           setStepStatus(4, 'active', 'Vui lòng bấm nút "Đăng" màu xanh trên Facebook để hoàn tất.');
