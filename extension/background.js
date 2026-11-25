@@ -1,8 +1,9 @@
 /**
- * LAPTOP VƯƠNG GIA // EXTENSION BACKGROUND SERVICE WORKER (MV3 v1.4.0)
+ * LAPTOP VƯƠNG GIA // EXTENSION BACKGROUND SERVICE WORKER (MV3 v1.5.0)
  * - Bypass Zalo Web CSP for API pushes
  * - Auto-Schedule Personal Profile Alarm Runner
- * - Auto-Share to Related Facebook Groups from Personal Profile (Safe Rotating Queue)
+ * - Auto-Share to Related Facebook Groups (Instant / Configurable Delay, No Forced 3-Min Wait)
+ * - Two-way state sync with Web App Dashboard (/app)
  */
 
 const DEFAULT_BACKEND_URL = 'https://auto-post-fanpage-coral.vercel.app';
@@ -10,8 +11,9 @@ const DEFAULT_FANPAGE_URL = 'https://www.facebook.com/profile.php?id=61590327190
 const ALARM_PERSONAL = 'vgAutoPersonalCheck';
 const ALARM_GROUP = 'vgGroupShareTick';
 const ALARM_GROUP_IMMEDIATE = 'vgGroupShareImmediate';
-const MIN_AUTO_POST_GAP_MS = 5 * 60 * 1000; // 5 phút giữa 2 bài Cá Nhân
-const MIN_GROUP_SHARE_GAP_MS = 3 * 60 * 1000; // 3 phút an toàn giữa 2 Hội Nhóm
+const MIN_AUTO_POST_GAP_MS = 15 * 1000; // 15s an toàn giữa 2 bài Cá Nhân
+
+let isProcessingGroupShare = false;
 
 function ensureFanpageLink(rawContent) {
   const text = String(rawContent || '').trim();
@@ -75,17 +77,21 @@ async function getExtensionConfig() {
         'autoPersonalIncludeFanpage',
         'autoGroupShareEnabled',
         'targetGroupUrls',
-        'groupsPerPost'
+        'groupsPerPost',
+        'groupDelaySeconds'
       ],
       (res) => {
         const parsedPerPost = parseInt(res.groupsPerPost, 10);
+        const parsedDelay = parseInt(res.groupDelaySeconds, 10);
         resolve({
           backendUrl: (res.backendUrl || DEFAULT_BACKEND_URL).trim().replace(/\/$/, ''),
           autoPersonalEnabled: res.autoPersonalEnabled !== false,
           autoPersonalIncludeFanpage: res.autoPersonalIncludeFanpage !== false,
           autoGroupShareEnabled: res.autoGroupShareEnabled !== false,
           targetGroupUrls: normalizeGroupUrls(res.targetGroupUrls || []),
-          groupsPerPost: Number.isFinite(parsedPerPost) && parsedPerPost > 0 ? Math.min(parsedPerPost, 10) : 3
+          groupsPerPost: Number.isFinite(parsedPerPost) && parsedPerPost > 0 ? Math.min(parsedPerPost, 20) : 3,
+          // Mặc định 0 giây = đăng liên tục sang nhóm tiếp theo ngay, không bắt chờ 3 phút
+          groupDelaySeconds: Number.isFinite(parsedDelay) && parsedDelay >= 0 ? Math.min(parsedDelay, 600) : 0
         });
       }
     );
@@ -189,43 +195,68 @@ async function enqueueGroupSharesForPost(postPayload) {
   return { enqueued: added, queueLength: queue.length };
 }
 
-async function processNextGroupShare(forceImmediate = false) {
-  const config = await getExtensionConfig();
-  if (!config.autoGroupShareEnabled && !forceImmediate) return { skipped: true };
-
-  const localState = await new Promise((resolve) => {
-    chrome.storage.local.get(['vg_group_share_queue', 'vg_last_group_share_at'], resolve);
-  });
-
-  const queue = Array.isArray(localState.vg_group_share_queue) ? localState.vg_group_share_queue : [];
-  if (queue.length === 0) return { empty: true };
-
-  const lastGroupAt = localState.vg_last_group_share_at || 0;
-  const now = Date.now();
-  if (!forceImmediate && now - lastGroupAt < MIN_GROUP_SHARE_GAP_MS) {
-    return { skipped: true, reason: 'group_cooldown_3m' };
+function scheduleNextGroupShare(delaySeconds) {
+  const sec = Math.max(0, Number(delaySeconds) || 0);
+  if (sec <= 20) {
+    const waitMs = Math.max(1500, sec * 1000);
+    setTimeout(() => processNextGroupShare(true), waitMs);
+    if (chrome.alarms) {
+      chrome.alarms.create(ALARM_GROUP_IMMEDIATE, { delayInMinutes: 0.5 });
+    }
+  } else if (chrome.alarms) {
+    chrome.alarms.create(ALARM_GROUP_IMMEDIATE, { delayInMinutes: Math.max(0.5, sec / 60) });
   }
+}
 
-  const nextTask = queue.shift();
-  await new Promise((resolve) => {
-    chrome.storage.local.set({
-      vg_group_share_queue: queue,
-      vg_last_group_share_at: now
-    }, resolve);
-  });
+async function processNextGroupShare(forceImmediate = false) {
+  if (isProcessingGroupShare) {
+    return { skipped: true, reason: 'already_processing' };
+  }
+  isProcessingGroupShare = true;
 
-  console.log(`[VG Group Share] 🚀 Đang tự động đăng lên Hội Nhóm: ${nextTask.groupUrl}`);
-  return await new Promise((resolve) => {
-    dispatchToFacebookTab({
-      postId: nextTask.postId,
-      machineCode: nextTask.machineCode,
-      content: nextTask.content,
-      mediaUrls: nextTask.mediaUrls,
-      groupUrl: nextTask.groupUrl,
-      isGroupPost: true,
-      autoTriggered: true
-    }, (res) => resolve({ dispatched: true, groupUrl: nextTask.groupUrl, remaining: queue.length, res }));
-  });
+  try {
+    const config = await getExtensionConfig();
+    if (!config.autoGroupShareEnabled && !forceImmediate) return { skipped: true };
+
+    const localState = await new Promise((resolve) => {
+      chrome.storage.local.get(['vg_group_share_queue', 'vg_last_group_share_at'], resolve);
+    });
+
+    const queue = Array.isArray(localState.vg_group_share_queue) ? localState.vg_group_share_queue : [];
+    if (queue.length === 0) return { empty: true };
+
+    const lastGroupAt = localState.vg_last_group_share_at || 0;
+    const now = Date.now();
+    const minGapMs = Math.max(0, config.groupDelaySeconds) * 1000;
+    if (!forceImmediate && minGapMs > 0 && now - lastGroupAt < minGapMs) {
+      return { skipped: true, reason: 'group_cooldown' };
+    }
+
+    const nextTask = queue.shift();
+    await new Promise((resolve) => {
+      chrome.storage.local.set({
+        vg_group_share_queue: queue,
+        vg_last_group_share_at: now
+      }, resolve);
+    });
+
+    console.log(`[VG Group Share] 🚀 Đang tự động đăng lên Hội Nhóm: ${nextTask.groupUrl}`);
+    return await new Promise((resolve) => {
+      dispatchToFacebookTab({
+        postId: nextTask.postId,
+        machineCode: nextTask.machineCode,
+        content: nextTask.content,
+        mediaUrls: nextTask.mediaUrls,
+        groupUrl: nextTask.groupUrl,
+        isGroupPost: true,
+        autoTriggered: true
+      }, (res) => resolve({ dispatched: true, groupUrl: nextTask.groupUrl, remaining: queue.length, res }));
+    });
+  } finally {
+    setTimeout(() => {
+      isProcessingGroupShare = false;
+    }, 2000);
+  }
 }
 
 async function checkAndRunDuePersonalPosts(forceManual = false) {
@@ -296,7 +327,6 @@ async function checkAndRunDuePersonalPosts(forceManual = false) {
 
 function scanJoinedFacebookGroups() {
   return new Promise((resolve) => {
-    // Mở tab ngầm (active: false) để KHÔNG làm đóng cửa sổ Popup Extension đang mở
     chrome.tabs.create({ url: 'https://www.facebook.com/groups/joins/', active: false }, (tab) => {
       if (!tab || !tab.id) return resolve({ success: false, error: 'Không mở được tab danh sách nhóm.' });
       const targetTabId = tab.id;
@@ -330,7 +360,8 @@ function scanJoinedFacebookGroups() {
                 success: true,
                 foundCount: foundGroups.length,
                 totalSaved: merged.length,
-                groups: foundGroups
+                groups: foundGroups,
+                targetGroupUrls: merged
               });
             });
           });
@@ -344,7 +375,7 @@ function scanJoinedFacebookGroups() {
 }
 
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('[VG Zalo Extension v1.4.0] Background service worker đã khởi động!');
+  console.log('[VG Zalo Extension v1.5.0] Background service worker đã khởi động!');
   ensureAlarmsConfigured();
 });
 
@@ -425,10 +456,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           }
         }, r));
 
-        // Tự động xếp hàng chia sẻ sang các Hội Nhóm liên quan nếu đã bật (MV3 alarm tối thiểu 0.5 phút = 30s)
         const enqueueRes = await enqueueGroupSharesForPost(request);
-        if (enqueueRes.enqueued > 0 && chrome.alarms) {
-          chrome.alarms.create(ALARM_GROUP_IMMEDIATE, { delayInMinutes: 0.5 });
+        if (enqueueRes.enqueued > 0) {
+          scheduleNextGroupShare(Math.max(3, config.groupDelaySeconds));
         }
       }
 
@@ -438,7 +468,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             chrome.storage.local.remove(['vg_auto_opened_tab_id']);
             setTimeout(() => {
               chrome.tabs.remove(sender.tab.id, () => { void chrome.runtime.lastError; });
-            }, 2500);
+            }, 2200);
           }
         });
       }
@@ -456,11 +486,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             chrome.storage.local.remove(['vg_auto_opened_tab_id']);
             setTimeout(() => {
               chrome.tabs.remove(tabId, () => { void chrome.runtime.lastError; });
-            }, 2500);
+            }, 2200);
           }
         });
       }
-      sendResponse({ ok: true });
+
+      // Tự động chuyển tiếp sang Hội Nhóm tiếp theo trong hàng đợi (không phải chờ 3 phút nếu delay = 0)
+      const config = await getExtensionConfig();
+      const localState = await new Promise((r) => chrome.storage.local.get(['vg_group_share_queue'], r));
+      const remainingQueue = Array.isArray(localState.vg_group_share_queue) ? localState.vg_group_share_queue : [];
+      if (remainingQueue.length > 0 && config.autoGroupShareEnabled) {
+        scheduleNextGroupShare(config.groupDelaySeconds);
+      }
+
+      sendResponse({ ok: true, remaining: remainingQueue.length });
     })();
     return true;
   }
@@ -475,10 +514,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
-  if (request.action === 'shareLatestToGroupsNow') {
+  if (request.action === 'shareLatestToGroupsNow' || request.action === 'shareSpecificPostToGroups') {
     (async () => {
-      const localState = await new Promise((r) => chrome.storage.local.get(['vg_last_personal_post_payload'], r));
-      let postPayload = localState.vg_last_personal_post_payload;
+      let postPayload = request.payload && request.payload.content ? {
+        postId: request.payload.postId || request.payload.id || `p_${Date.now()}`,
+        machineCode: request.payload.machineCode || 'MÁY',
+        content: ensureFanpageLink(request.payload.content),
+        mediaUrls: request.payload.mediaUrls || []
+      } : null;
+
+      if (!postPayload) {
+        const localState = await new Promise((r) => chrome.storage.local.get(['vg_last_personal_post_payload'], r));
+        postPayload = localState.vg_last_personal_post_payload;
+      }
 
       if (!postPayload) {
         const config = await getExtensionConfig();
@@ -520,6 +568,44 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         });
       }
     );
+    return true;
+  }
+
+  if (request.action === 'getFullExtensionState') {
+    (async () => {
+      const config = await getExtensionConfig();
+      const st = await new Promise((r) => chrome.storage.local.get(
+        ['vg_last_alarm_check', 'vg_last_due_count', 'vg_group_share_queue'],
+        r
+      ));
+      sendResponse({
+        success: true,
+        version: chrome.runtime.getManifest().version,
+        config,
+        lastAlarmCheck: st?.vg_last_alarm_check || null,
+        dueCount: typeof st?.vg_last_due_count === 'number' ? st.vg_last_due_count : 0,
+        groupQueueCount: Array.isArray(st?.vg_group_share_queue) ? st.vg_group_share_queue.length : 0
+      });
+    })();
+    return true;
+  }
+
+  if (request.action === 'saveExtensionConfig') {
+    const incoming = request.config || {};
+    const parsedPerPost = parseInt(incoming.groupsPerPost, 10);
+    const parsedDelay = parseInt(incoming.groupDelaySeconds, 10);
+    const toSave = {};
+    if (typeof incoming.autoPersonalEnabled === 'boolean') toSave.autoPersonalEnabled = incoming.autoPersonalEnabled;
+    if (typeof incoming.autoPersonalIncludeFanpage === 'boolean') toSave.autoPersonalIncludeFanpage = incoming.autoPersonalIncludeFanpage;
+    if (typeof incoming.autoGroupShareEnabled === 'boolean') toSave.autoGroupShareEnabled = incoming.autoGroupShareEnabled;
+    if (Array.isArray(incoming.targetGroupUrls)) toSave.targetGroupUrls = normalizeGroupUrls(incoming.targetGroupUrls);
+    if (Number.isFinite(parsedPerPost) && parsedPerPost > 0) toSave.groupsPerPost = Math.min(parsedPerPost, 20);
+    if (Number.isFinite(parsedDelay) && parsedDelay >= 0) toSave.groupDelaySeconds = Math.min(parsedDelay, 600);
+
+    chrome.storage.sync.set(toSave, async () => {
+      const updated = await getExtensionConfig();
+      sendResponse({ success: true, config: updated });
+    });
     return true;
   }
 });

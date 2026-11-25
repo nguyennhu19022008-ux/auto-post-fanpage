@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const autoGroupShareToggle = document.getElementById('autoGroupShareToggle');
   const groupsPerPostInput = document.getElementById('groupsPerPostInput');
+  const groupDelayInput = document.getElementById('groupDelayInput');
   const groupUrlsInput = document.getElementById('groupUrlsInput');
   const groupShareStatus = document.getElementById('groupShareStatus');
   const scanGroupsBtn = document.getElementById('scanGroupsBtn');
@@ -101,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 2. Load and Sync Backend URL + Auto-Personal + Group Share Settings
   if (chrome.storage && chrome.storage.sync) {
     chrome.storage.sync.get(
-      ['backendUrl', 'autoPersonalEnabled', 'autoPersonalIncludeFanpage', 'autoGroupShareEnabled', 'targetGroupUrls', 'groupsPerPost'],
+      ['backendUrl', 'autoPersonalEnabled', 'autoPersonalIncludeFanpage', 'autoGroupShareEnabled', 'targetGroupUrls', 'groupsPerPost', 'groupDelaySeconds'],
       (result) => {
         if (result.backendUrl) {
           currentBackendUrl = result.backendUrl.trim().replace(/\/$/, '');
@@ -111,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (autoFanpageSyncToggle) autoFanpageSyncToggle.checked = result.autoPersonalIncludeFanpage !== false;
         if (autoGroupShareToggle) autoGroupShareToggle.checked = result.autoGroupShareEnabled !== false;
         if (groupsPerPostInput && result.groupsPerPost) groupsPerPostInput.value = result.groupsPerPost;
+        if (groupDelayInput) groupDelayInput.value = typeof result.groupDelaySeconds === 'number' ? result.groupDelaySeconds : 0;
         if (groupUrlsInput && Array.isArray(result.targetGroupUrls)) {
           groupUrlsInput.value = result.targetGroupUrls.join('\n');
         }
@@ -125,12 +127,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const saveAutoFlags = () => {
     if (!chrome.storage || !chrome.storage.sync) return;
     const parsedGroups = parseGroupLines(groupUrlsInput?.value);
-    const perPost = Math.max(1, Math.min(10, parseInt(groupsPerPostInput?.value, 10) || 3));
+    const perPost = Math.max(1, Math.min(20, parseInt(groupsPerPostInput?.value, 10) || 3));
+    const parsedDelay = parseInt(groupDelayInput?.value, 10);
+    const delaySec = Number.isFinite(parsedDelay) && parsedDelay >= 0 ? Math.min(parsedDelay, 600) : 0;
     chrome.storage.sync.set({
       autoPersonalEnabled: autoPersonalToggle ? autoPersonalToggle.checked : true,
       autoPersonalIncludeFanpage: autoFanpageSyncToggle ? autoFanpageSyncToggle.checked : true,
       autoGroupShareEnabled: autoGroupShareToggle ? autoGroupShareToggle.checked : true,
       groupsPerPost: perPost,
+      groupDelaySeconds: delaySec,
       targetGroupUrls: parsedGroups
     }, refreshAutoPersonalStatus);
   };
@@ -138,6 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (autoFanpageSyncToggle) autoFanpageSyncToggle.addEventListener('change', saveAutoFlags);
   if (autoGroupShareToggle) autoGroupShareToggle.addEventListener('change', saveAutoFlags);
   if (groupsPerPostInput) groupsPerPostInput.addEventListener('change', saveAutoFlags);
+  if (groupDelayInput) groupDelayInput.addEventListener('change', saveAutoFlags);
   if (groupUrlsInput) groupUrlsInput.addEventListener('blur', saveAutoFlags);
 
   if (scanGroupsBtn) {

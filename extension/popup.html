@@ -211,7 +211,7 @@
     <div class="badge-icon">VG</div>
     <div>
       <div class="title">Laptop Vương Gia</div>
-      <div class="subtitle">Hệ Thống Autopost Cá Nhân + Nhóm v1.4.3</div>
+      <div class="subtitle">Hệ Thống Autopost Cá Nhân + Nhóm v1.5.0</div>
     </div>
   </div>
 
@@ -274,9 +274,13 @@
         <input type="checkbox" id="autoGroupShareToggle" checked style="width:15px; height:15px;">
         <span>Tự chia sẻ sang Group sau khi đăng Cá Nhân</span>
       </label>
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+        <span style="font-size:11px; font-weight:700; flex:1;">Số nhóm xoay vòng mỗi bài:</span>
+        <input type="number" id="groupsPerPostInput" min="1" max="20" value="3" class="input" style="width:62px; text-align:center; font-weight:800;">
+      </div>
       <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-        <span style="font-size:11px; font-weight:700; flex:1;">Số nhóm xoay vòng mỗi bài (giãn 3 phút/nhóm):</span>
-        <input type="number" id="groupsPerPostInput" min="1" max="10" value="3" class="input" style="width:62px; text-align:center; font-weight:800;">
+        <span style="font-size:11px; font-weight:700; flex:1;">Giãn cách giữa các nhóm (giây · 0 = đăng luôn):</span>
+        <input type="number" id="groupDelayInput" min="0" max="600" value="0" class="input" style="width:62px; text-align:center; font-weight:800;">
       </div>
       <label class="label" style="margin-top:4px;">Danh sách Link Group mục tiêu (mỗi dòng 1 link):</label>
       <textarea id="groupUrlsInput" class="textarea" style="height:68px; font-size:11px;" placeholder="https://www.facebook.com/groups/tennhomlaptop/&#10;https://www.facebook.com/groups/chototlaptop/"></textarea>

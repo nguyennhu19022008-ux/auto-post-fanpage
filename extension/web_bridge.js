@@ -1,50 +1,92 @@
 /**
- * LAPTOP VƯƠNG GIA // WEB APP EXTENSION BRIDGE (web_bridge.js)
- * Cầu nối giữa Web App Dashboard (/app) và Chrome Extension
- * Chạy trên http://localhost:3000/* và https://auto-post-fanpage-coral.vercel.app/*
+ * LAPTOP VƯƠNG GIA // WEB APP EXTENSION BRIDGE (web_bridge.js v1.5.0)
+ * Cầu nối hai chiều giữa Web App Dashboard (/app) và Chrome Extension
  */
 
 (function () {
   'use strict';
 
-  // Mark the page that the extension is installed and ready
   window.sessionStorage.setItem('vg_extension_installed', 'true');
   document.documentElement.setAttribute('data-vg-extension', 'active');
 
-  console.log('[VG Bridge] Web App Extension Bridge đã sẵn sàng kết nối!');
+  console.log('[VG Bridge v1.5.0] Web App Extension Bridge đã sẵn sàng kết nối!');
 
-  // Listen to messages from Web App
+  function replyToPage(action, data) {
+    window.postMessage({ action, ...data }, '*');
+  }
+
   window.addEventListener('message', (event) => {
-    // Only accept messages from same origin
     if (event.source !== window) return;
 
     const data = event.data;
     if (!data || !data.action) return;
 
     if (data.action === 'VG_TRIGGER_PERSONAL_POST') {
-      console.log('[VG Bridge] Nhận yêu cầu đăng bài cá nhân từ Web App:', data.payload);
-      
       chrome.runtime.sendMessage({
         action: 'triggerPersonalRobot',
         payload: data.payload
-      }, (response) => {
-        console.log('[VG Bridge] Phản hồi từ Background Robot:', response);
-      });
+      }, () => { void chrome.runtime.lastError; });
     }
 
     if (data.action === 'VG_CHECK_EXTENSION') {
-      window.postMessage({
-        action: 'VG_EXTENSION_RESPONSE',
+      replyToPage('VG_EXTENSION_RESPONSE', {
         installed: true,
         version: chrome.runtime.getManifest().version
-      }, '*');
+      });
+    }
+
+    if (data.action === 'VG_GET_EXTENSION_CONFIG') {
+      chrome.runtime.sendMessage({ action: 'getFullExtensionState' }, (resp) => {
+        if (chrome.runtime.lastError || !resp) return;
+        replyToPage('VG_EXTENSION_CONFIG_DATA', resp);
+      });
+    }
+
+    if (data.action === 'VG_SAVE_EXTENSION_CONFIG') {
+      chrome.runtime.sendMessage({
+        action: 'saveExtensionConfig',
+        config: data.config || {}
+      }, (resp) => {
+        if (chrome.runtime.lastError || !resp) {
+          return replyToPage('VG_EXTENSION_CONFIG_SAVED', { success: false, error: 'Extension không phản hồi' });
+        }
+        replyToPage('VG_EXTENSION_CONFIG_SAVED', resp);
+      });
+    }
+
+    if (data.action === 'VG_SCAN_JOINED_GROUPS') {
+      chrome.runtime.sendMessage({ action: 'scanJoinedGroupsNow' }, (resp) => {
+        if (chrome.runtime.lastError || !resp) {
+          return replyToPage('VG_SCAN_JOINED_GROUPS_RESULT', { success: false, error: 'Không quét được danh sách nhóm' });
+        }
+        replyToPage('VG_SCAN_JOINED_GROUPS_RESULT', resp);
+      });
+    }
+
+    if (data.action === 'VG_SHARE_TO_GROUPS_NOW') {
+      chrome.runtime.sendMessage({
+        action: data.payload ? 'shareSpecificPostToGroups' : 'shareLatestToGroupsNow',
+        payload: data.payload || null
+      }, (resp) => {
+        if (chrome.runtime.lastError || !resp) {
+          return replyToPage('VG_SHARE_TO_GROUPS_RESULT', { success: false, error: 'Không kích hoạt được chia sẻ nhóm' });
+        }
+        replyToPage('VG_SHARE_TO_GROUPS_RESULT', resp);
+      });
+    }
+
+    if (data.action === 'VG_RUN_DUE_PERSONAL_NOW') {
+      chrome.runtime.sendMessage({ action: 'runAutoPersonalCheckNow' }, (resp) => {
+        if (chrome.runtime.lastError || !resp) {
+          return replyToPage('VG_RUN_DUE_PERSONAL_RESULT', { success: false, error: 'Extension không phản hồi' });
+        }
+        replyToPage('VG_RUN_DUE_PERSONAL_RESULT', resp);
+      });
     }
   });
 
-  // Announce presence to Web App
-  window.postMessage({
-    action: 'VG_EXTENSION_RESPONSE',
+  replyToPage('VG_EXTENSION_RESPONSE', {
     installed: true,
     version: chrome.runtime.getManifest().version
-  }, '*');
+  });
 })();

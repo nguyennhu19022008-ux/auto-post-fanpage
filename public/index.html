@@ -20,7 +20,7 @@
   <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
   <link rel="apple-touch-icon" href="/icons/icon.svg" />
 
-  <link rel="stylesheet" href="/css/style.css?v=20261112_v20_system_optimization">
+  <link rel="stylesheet" href="/css/style.css?v=20261125_v21_group_share_instant">
 </head>
 <body class="bg-[#FDFBF7] text-[#18181B] min-h-screen">
 
@@ -297,6 +297,73 @@
 
           <div id="cockpitTimelineList" class="divide-y divide-[#18181B]/20">
             <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Extension Personal Profile & Group Auto-Share Panel -->
+        <div id="cockpitExtensionPanel" class="neo-card p-5 bg-white space-y-4 border-2 border-[#18181B] shadow-[3.5px_3.5px_0px_#18181B]">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b-2 border-[#18181B] pb-3">
+            <div>
+              <h3 class="text-sm font-black uppercase tracking-wider text-[#18181B] flex items-center gap-2">
+                <svg class="w-4 h-4 text-[#18181B]" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                <span>TỰ ĐỘNG TRANG CÁ NHÂN &amp; HỘI NHÓM FACEBOOK (EXTENSION)</span>
+              </h3>
+              <p class="text-xs text-neutral-600 font-medium">Đồng bộ hai chiều với Extension Chrome — hỗ trợ quét nhóm, chia sẻ không cần chờ 3 phút và tự động gắn link Fanpage.</p>
+            </div>
+            <span id="appExtStatusBadge" class="neo-sticker sticker-yellow font-mono text-[11px] font-bold">Đang kiểm tra Extension...</span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <div class="lg:col-span-5 space-y-2.5 text-xs">
+              <label class="flex items-center gap-2 font-bold text-[#18181B] cursor-pointer">
+                <input type="checkbox" id="appAutoPersonalEnabled" checked class="w-4 h-4 accent-[#18181B]">
+                <span>Tự động đăng Trang Cá Nhân khi mở Chrome</span>
+              </label>
+              <label class="flex items-center gap-2 font-semibold text-neutral-700 cursor-pointer">
+                <input type="checkbox" id="appAutoFanpageSync" checked class="w-4 h-4 accent-[#18181B]">
+                <span>Tự đồng bộ bài Fanpage mới sang Trang Cá Nhân</span>
+              </label>
+              <label class="flex items-center gap-2 font-bold text-[#18181B] cursor-pointer">
+                <input type="checkbox" id="appAutoGroupShareEnabled" checked class="w-4 h-4 accent-[#18181B]">
+                <span>Tự động chia sẻ sang Hội Nhóm sau khi đăng Cá Nhân</span>
+              </label>
+
+              <div class="grid grid-cols-2 gap-2.5 pt-1">
+                <div>
+                  <label class="block text-[11px] font-black uppercase text-[#18181B] mb-1">Số nhóm / bài</label>
+                  <input type="number" id="appGroupsPerPost" min="1" max="20" value="3" class="neo-input w-full px-2.5 py-1.5 text-xs font-mono font-bold">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-black uppercase text-[#18181B] mb-1">Chờ giữa nhóm (giây)</label>
+                  <input type="number" id="appGroupDelaySeconds" min="0" max="600" value="0" class="neo-input w-full px-2.5 py-1.5 text-xs font-mono font-bold" title="0 = đăng liên tục ngay không cần chờ 3 phút">
+                </div>
+              </div>
+              <p class="text-[11px] text-neutral-600 font-medium">Đặt <strong>0 giây</strong> để Robot đăng liên tục ngay sang nhóm kế tiếp mà không phải chờ 3 phút.</p>
+            </div>
+
+            <div class="lg:col-span-7 space-y-2">
+              <div class="flex items-center justify-between gap-2">
+                <label class="text-xs font-black uppercase text-[#18181B]">Danh sách Link Group Facebook mục tiêu (<span id="appGroupCountLabel">0</span> nhóm)</label>
+                <span id="appGroupQueueInfo" class="text-[11px] font-mono font-bold text-neutral-600">Chờ chia sẻ: 0 lượt</span>
+              </div>
+              <textarea id="appTargetGroupUrls" rows="4" placeholder="https://www.facebook.com/groups/tennhomlaptop/&#10;Hoặc bấm Quét Nhóm Của Tôi để tự động gom danh sách từ Facebook..." class="neo-input w-full p-2.5 text-xs font-mono"></textarea>
+
+              <div class="flex flex-wrap gap-2 pt-1">
+                <button type="button" onclick="scanGroupsFromApp()" id="appScanGroupsBtn" class="neo-btn neo-btn-yellow px-3 py-2 text-xs font-black">
+                  Quét Nhóm Đã Tham Gia
+                </button>
+                <button type="button" onclick="saveExtConfigFromApp()" id="appSaveExtBtn" class="neo-btn neo-btn-green px-3 py-2 text-xs font-black">
+                  Lưu Cấu Hình Extension
+                </button>
+                <button type="button" onclick="runDuePersonalFromApp()" id="appRunDuePersonalBtn" class="neo-btn neo-btn-white px-3 py-2 text-xs font-black">
+                  Đăng Cá Nhân Đến Giờ
+                </button>
+                <button type="button" onclick="shareLatestToGroupsFromApp()" id="appShareGroupsNowBtn" class="neo-btn bg-[#38BDF8] text-[#082F49] px-3 py-2 text-xs font-black">
+                  Chia Sẻ Hội Nhóm Ngay
+                </button>
+              </div>
+              <div id="appExtActionMsg" class="text-xs font-bold text-[#18181B] min-h-[16px]"></div>
+            </div>
           </div>
         </div>
       </section>
@@ -1131,6 +1198,6 @@
     </div>
   </div>
 
-  <script src="/js/app.js?v=20261112_v20_system_optimization" defer></script>
+  <script src="/js/app.js?v=20261125_v21_group_share_instant" defer></script>
 </body>
 </html>
