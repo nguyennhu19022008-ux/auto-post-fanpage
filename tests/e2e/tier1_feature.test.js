@@ -221,9 +221,9 @@ async function run(baseUrl) {
     assert.ok(htmlContent.includes('tabBtn-studio') || htmlContent.includes('tabBtn-datapost'), 'Nav tabs must be present');
   });
 
-  await test('1.16: HTML Structure - Main application container and Neo-Brutalist cards', async () => {
+  await test('1.16: HTML Structure - Main application container and Clean Daylight surfaces', async () => {
     assert.ok(htmlContent.includes('id="mainApp"'), 'Must contain #mainApp');
-    assert.ok(htmlContent.includes('neo-card') || htmlContent.includes('border-2'), 'Must use Neo-Brutalist border styling');
+    assert.ok(htmlContent.includes('vg-surface'), 'Must use Clean Daylight vg-surface containers');
   });
 
   await test('1.17: HTML Structure - Mobile navigation dock', async () => {

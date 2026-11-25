@@ -125,11 +125,9 @@ function switchTab(tabName) {
       if (t === tabName) {
         section.classList.remove('hidden');
         btn.classList.add('nav-tab-active');
-        btn.classList.remove('text-slate-400');
       } else {
         section.classList.add('hidden');
         btn.classList.remove('nav-tab-active');
-        btn.classList.add('text-slate-400');
       }
     }
   });
@@ -157,36 +155,32 @@ function switchTab(tabName) {
   }
 }
 
-// Sub-Tab switcher inside Tab 4 (Settings & History)
+// Sub-Tab switcher inside Tab 4 (Tự động & Cài đặt)
 function switchSettingsSubTab(sub) {
+  const autoView = document.getElementById('settingsAutomationView');
   const historyView = document.getElementById('settingsHistoryView');
   const configView = document.getElementById('settingsConfigView');
+  const btnAuto = document.getElementById('settingsSubTabBtn-automation');
   const btnHistory = document.getElementById('settingsSubTabBtn-history');
   const btnConfig = document.getElementById('settingsSubTabBtn-config');
 
-  if (sub === 'history') {
-    if (historyView) historyView.classList.remove('hidden');
-    if (configView) configView.classList.add('hidden');
-    if (btnHistory) {
-      btnHistory.classList.add('neo-btn-yellow');
-      btnHistory.classList.remove('neo-btn-white');
+  const views = { automation: autoView, history: historyView, config: configView };
+  const btns = { automation: btnAuto, history: btnHistory, config: btnConfig };
+  const activeKey = views[sub] ? sub : 'automation';
+
+  Object.keys(views).forEach(k => {
+    if (views[k]) {
+      if (k === activeKey) views[k].classList.remove('hidden');
+      else views[k].classList.add('hidden');
     }
-    if (btnConfig) {
-      btnConfig.classList.add('neo-btn-white');
-      btnConfig.classList.remove('neo-btn-yellow');
+    if (btns[k]) {
+      if (k === activeKey) btns[k].classList.add('active');
+      else btns[k].classList.remove('active');
     }
+  });
+
+  if (activeKey === 'history') {
     loadPosts();
-  } else {
-    if (historyView) historyView.classList.add('hidden');
-    if (configView) configView.classList.remove('hidden');
-    if (btnConfig) {
-      btnConfig.classList.add('neo-btn-yellow');
-      btnConfig.classList.remove('neo-btn-white');
-    }
-    if (btnHistory) {
-      btnHistory.classList.add('neo-btn-white');
-      btnHistory.classList.remove('neo-btn-yellow');
-    }
   }
 }
 
@@ -261,10 +255,10 @@ async function loadCockpitStatus() {
         const hours = Math.floor(diffMins / 60);
         const mins = diffMins % 60;
         if (countdownEl) {
-          countdownEl.innerText = hours > 0 ? `⏳ Còn ~${hours}h ${mins}m` : `⏳ Còn ~${mins} phút`;
+          countdownEl.innerText = hours > 0 ? `Còn ~${hours}h ${mins}m` : `Còn ~${mins} phút`;
         }
       } else {
-        if (countdownEl) countdownEl.innerText = `⏳ Đã đến giờ đăng!`;
+        if (countdownEl) countdownEl.innerText = 'Đã đến giờ đăng';
       }
 
       const publishBtn = document.getElementById('cockpitPublishNowBtn');
@@ -313,7 +307,7 @@ function renderCockpitTimeline(posts) {
   if (!container) return;
 
   if (posts.length === 0) {
-    container.innerHTML = `<div class="py-6 text-center text-xs text-neutral-500 font-medium">Hiện chưa có bài đăng nào sắp diễn ra. Bấm nút tuần hoàn để nạp bài ngay!</div>`;
+    container.innerHTML = `<div class="py-8 text-center text-sm text-[#475569]">Chưa có bài đăng nào sắp diễn ra. Bấm “Tuần hoàn kho máy” để nạp bài.</div>`;
     return;
   }
 
@@ -326,32 +320,32 @@ function renderCockpitTimeline(posts) {
     const price = post.price || '';
 
     return `
-      <div class="py-3 flex flex-wrap items-center justify-between gap-3 hover:bg-[#FDFBF7] transition px-2 rounded-lg">
-        <div class="flex items-center gap-3">
-          <span class="font-mono text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-1 rounded">
-            ⏰ ${escapeHtml(formattedDate)}
+      <div class="py-3.5 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-start sm:items-center gap-3 min-w-0">
+          <span class="font-mono-num text-xs font-semibold text-[#1E40AF] bg-[#EFF6FF] border border-[#BFDBFE] px-2.5 py-1 rounded-md shrink-0">
+            ${escapeHtml(formattedDate)}
           </span>
-          <div>
-            <div class="text-xs font-black text-[#18181B] flex items-center gap-2">
-              <span class="neo-sticker sticker-blue text-[10px]">#${escapeHtml(code)}</span>
-              <span>${escapeHtml(name)}</span>
+          <div class="min-w-0">
+            <div class="text-sm font-semibold text-[#0F172A] flex items-center gap-2 flex-wrap">
+              <span class="vg-pill font-mono-num text-xs">#${escapeHtml(code)}</span>
+              <span class="truncate">${escapeHtml(name)}</span>
             </div>
-            <div class="text-[11px] text-neutral-500 font-medium flex items-center gap-2 mt-0.5">
-              <span>📁 ${pCount} ảnh/video</span>
-              ${price ? `<span>·</span><span class="font-bold text-emerald-700">${escapeHtml(price)}</span>` : ''}
+            <div class="text-xs text-[#475569] flex items-center gap-2 mt-1">
+              <span>${pCount} ảnh/video</span>
+              ${price ? `<span>·</span><span class="font-semibold text-[#065F46]">${escapeHtml(price)}</span>` : ''}
             </div>
           </div>
         </div>
 
-        <div class="flex items-center gap-1.5">
-          <button onclick="openPostPreviewModal('${post.id}')" class="neo-btn neo-btn-white px-2 py-1 text-xs font-bold" title="Xem chi tiết">
-            👁️ Xem
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <button onclick="openPostPreviewModal('${post.id}')" class="vg-btn vg-btn-secondary vg-btn-sm" title="Xem chi tiết">
+            Xem
           </button>
-          <button onclick="sharePostToGroupsFromApp('${post.id}')" class="neo-btn bg-[#38BDF8] text-[#082F49] px-2.5 py-1 text-xs font-black" title="Chia sẻ bài này lên Hội Nhóm Facebook">
-            Chia sẻ Nhóm
+          <button onclick="sharePostToGroupsFromApp('${post.id}')" class="vg-btn vg-btn-soft-primary vg-btn-sm" title="Chia sẻ bài này lên Hội Nhóm Facebook">
+            Chia sẻ nhóm
           </button>
-          <button onclick="publishPostNow('${post.id}', 'both')" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 px-3 py-1 text-xs font-black shadow-[1.5px_1.5px_0px_#18181B]" title="Đăng ngay cả Fanpage + Facebook Cá Nhân">
-            🚀 ĐĂNG NGAY (CẢ HAI)
+          <button onclick="publishPostNow('${post.id}', 'both')" class="vg-btn vg-btn-primary vg-btn-sm" title="Đăng ngay cả Fanpage và Facebook Cá Nhân">
+            Đăng ngay
           </button>
         </div>
       </div>
@@ -422,10 +416,10 @@ async function loadSettings() {
       }
     }
 
-    // Update top header badge
+    // Update top header badge (High-contrast Emerald Ink — fixes white-on-mint legibility)
     const topBadge = document.getElementById('topFanpageBadge');
     if (topBadge && appSettings.fanpageId) {
-      topBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>Fanpage: <strong class="text-white">${appSettings.fanpageName || 'Laptop Vương Gia'}</strong> (<span class="font-mono text-[11px]">${appSettings.fanpageId}</span>)</span>`;
+      topBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#059669]"></span><span class="text-[#065F46]">Fanpage: <strong class="font-semibold text-[#065F46]">${escapeHtml(appSettings.fanpageName || 'Laptop Vương Gia')}</strong> (<span class="font-mono-num text-xs">${escapeHtml(appSettings.fanpageId)}</span>)</span>`;
     }
 
     // Update preview page name
@@ -473,7 +467,7 @@ async function saveSettingsForm() {
 
 async function testFacebookConnection() {
   const resultDiv = document.getElementById('fbTestResult');
-  resultDiv.innerHTML = '<span class="text-blue-400">⏳ Đang kết nối tới Facebook...</span>';
+  resultDiv.innerHTML = '<span class="text-[#2563EB] font-medium">Đang kết nối tới Facebook...</span>';
 
   const fanpageId = document.getElementById('settingFanpageId').value.trim();
   const token = document.getElementById('settingPageToken').value.trim();
@@ -487,18 +481,18 @@ async function testFacebookConnection() {
     const data = await res.json();
 
     if (data.valid) {
-      resultDiv.innerHTML = `<span class="text-emerald-700 font-bold">✅ Kết nối thành công tới Trang: <strong>${data.pageInfo.name}</strong> (ID: ${data.pageInfo.id})</span>`;
+      resultDiv.innerHTML = `<span class="text-[#065F46] font-semibold">Kết nối thành công tới Trang: <strong>${escapeHtml(data.pageInfo.name)}</strong> (ID: ${escapeHtml(data.pageInfo.id)})</span>`;
     } else {
-      resultDiv.innerHTML = `<span class="text-red-600 font-bold">❌ ${data.error}</span>`;
+      resultDiv.innerHTML = `<span class="text-[#DC2626] font-semibold">${escapeHtml(data.error)}</span>`;
     }
   } catch (err) {
-    resultDiv.innerHTML = `<span class="text-red-600 font-bold">❌ Lỗi: ${err.message}</span>`;
+    resultDiv.innerHTML = `<span class="text-[#DC2626] font-semibold">Lỗi: ${escapeHtml(err.message)}</span>`;
   }
 }
 
 async function testEmailConnection() {
   const resultDiv = document.getElementById('emailTestResult');
-  resultDiv.innerHTML = '<span class="text-blue-700 font-bold">⏳ Đang gửi email kiểm thử...</span>';
+  resultDiv.innerHTML = '<span class="text-[#2563EB] font-semibold">Đang gửi email kiểm thử...</span>';
 
   const notificationEmail = document.getElementById('settingNotificationEmail').value.trim();
   const smtpUser = document.getElementById('settingSmtpUser').value.trim();
@@ -513,12 +507,12 @@ async function testEmailConnection() {
     const data = await res.json();
 
     if (data.success) {
-      resultDiv.innerHTML = `<span class="text-emerald-700 font-bold">✅ Đã gửi email kiểm thử thành công tới <strong>${notificationEmail}</strong>! Hãy kiểm tra hòm thư của bạn.</span>`;
+      resultDiv.innerHTML = `<span class="text-[#065F46] font-semibold">Đã gửi email kiểm thử thành công tới <strong>${escapeHtml(notificationEmail)}</strong>.</span>`;
     } else {
-      resultDiv.innerHTML = `<span class="text-red-600 font-bold">❌ ${data.error}</span>`;
+      resultDiv.innerHTML = `<span class="text-[#DC2626] font-semibold">${escapeHtml(data.error)}</span>`;
     }
   } catch (err) {
-    resultDiv.innerHTML = `<span class="text-red-600 font-bold">❌ Lỗi: ${err.message}</span>`;
+    resultDiv.innerHTML = `<span class="text-[#DC2626] font-semibold">Lỗi: ${escapeHtml(err.message)}</span>`;
   }
 }
 
@@ -530,7 +524,7 @@ async function setupTelegramWebhook() {
     return;
   }
 
-  resultDiv.innerHTML = '<span class="text-indigo-700 font-bold">⏳ Đang kết nối Webhook tới Telegram...</span>';
+  resultDiv.innerHTML = '<span class="text-[#2563EB] font-semibold">Đang kết nối Webhook tới Telegram...</span>';
   try {
     const res = await fetch('/api/telegram/setup-webhook', {
       method: 'POST',
@@ -539,13 +533,13 @@ async function setupTelegramWebhook() {
     });
     const data = await res.json();
     if (data.success) {
-      resultDiv.innerHTML = `<span class="text-emerald-700 font-bold">✅ ${data.message}</span>`;
+      resultDiv.innerHTML = `<span class="text-[#065F46] font-semibold">${escapeHtml(data.message)}</span>`;
       await saveSettingsForm();
     } else {
-      resultDiv.innerHTML = `<span class="text-red-600 font-bold">❌ Lỗi: ${data.error}</span>`;
+      resultDiv.innerHTML = `<span class="text-[#DC2626] font-semibold">Lỗi: ${escapeHtml(data.error)}</span>`;
     }
   } catch (err) {
-    resultDiv.innerHTML = `<span class="text-red-600 font-bold">❌ Lỗi kết nối: ${err.message}</span>`;
+    resultDiv.innerHTML = `<span class="text-[#DC2626] font-semibold">Lỗi kết nối: ${escapeHtml(err.message)}</span>`;
   }
 }
 
@@ -559,7 +553,7 @@ async function testTelegramMessage() {
     return;
   }
 
-  resultDiv.innerHTML = '<span class="text-indigo-700 font-bold">⏳ Đang gửi tin nhắn thử nghiệm tới Telegram...</span>';
+  resultDiv.innerHTML = '<span class="text-[#2563EB] font-semibold">Đang gửi tin nhắn thử nghiệm tới Telegram...</span>';
   try {
     const res = await fetch('/api/telegram/test-message', {
       method: 'POST',
@@ -568,12 +562,12 @@ async function testTelegramMessage() {
     });
     const data = await res.json();
     if (data.success) {
-      resultDiv.innerHTML = `<span class="text-emerald-700 font-bold">✅ ${data.message} (Hãy kiểm tra app Telegram của anh!)</span>`;
+      resultDiv.innerHTML = `<span class="text-[#065F46] font-semibold">${escapeHtml(data.message)}</span>`;
     } else {
-      resultDiv.innerHTML = `<span class="text-red-600 font-bold">❌ Lỗi: ${data.error}</span>`;
+      resultDiv.innerHTML = `<span class="text-[#DC2626] font-semibold">Lỗi: ${escapeHtml(data.error)}</span>`;
     }
   } catch (err) {
-    resultDiv.innerHTML = `<span class="text-red-600 font-bold">❌ Lỗi: ${err.message}</span>`;
+    resultDiv.innerHTML = `<span class="text-[#DC2626] font-semibold">Lỗi: ${escapeHtml(err.message)}</span>`;
   }
 }
 
@@ -684,7 +678,7 @@ function setupDragAndDrop() {
     dropZone.addEventListener(eventName, (e) => {
       e.preventDefault();
       e.stopPropagation();
-      dropZone.classList.add('border-blue-500', 'bg-blue-950/20');
+      dropZone.classList.add('border-[#2563EB]', 'bg-[#EFF6FF]');
     }, false);
   });
 
@@ -692,7 +686,7 @@ function setupDragAndDrop() {
     dropZone.addEventListener(eventName, (e) => {
       e.preventDefault();
       e.stopPropagation();
-      dropZone.classList.remove('border-blue-500', 'bg-blue-950/20');
+      dropZone.classList.remove('border-[#2563EB]', 'bg-[#EFF6FF]');
     }, false);
   });
 
@@ -755,7 +749,7 @@ function fallbackCopyText(text, successMessage) {
 function copyPostText(postId) {
   const post = allPosts.find(p => p.id === postId);
   if (!post || !post.content) return;
-  copyTextToClipboard(post.content, `📋 Đã sao chép nội dung Mã #${post.machineCode || 'N/A'}!`);
+  copyTextToClipboard(post.content, `Đã sao chép nội dung Mã #${post.machineCode || 'N/A'}`);
 }
 
 function togglePostAccordion(postId) {
@@ -764,10 +758,10 @@ function togglePostAccordion(postId) {
   if (!el) return;
   if (el.classList.contains('hidden')) {
     el.classList.remove('hidden');
-    if (btn) btn.innerHTML = '▲ Thu gọn nội dung text';
+    if (btn) btn.innerHTML = 'Thu gọn nội dung';
   } else {
     el.classList.add('hidden');
-    if (btn) btn.innerHTML = '▶ Xem nhanh nội dung & thông số text';
+    if (btn) btn.innerHTML = 'Xem nhanh nội dung';
   }
 }
 
@@ -836,36 +830,36 @@ function renderMediaPreviews() {
   currentMediaFiles.forEach((file, index) => {
     const isVideo = isVideoFile(file);
     const item = document.createElement('div');
-    item.className = 'relative group rounded-lg overflow-hidden border-2 border-[#18181B] bg-black aspect-video flex items-center justify-center shadow-[2px_2px_0px_#18181B]';
+    item.className = 'relative group rounded-lg overflow-hidden border border-[#E2E8F0] bg-[#0F172A] aspect-video flex items-center justify-center';
 
     if (isVideo) {
       item.innerHTML = `
         <video src="${file.url}" class="w-full h-full object-cover" preload="metadata" muted playsinline></video>
-        <div class="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-none">
-          <span class="bg-[#F43F5E] text-white text-[10px] font-black font-mono px-2 py-0.5 rounded shadow">▶ VIDEO</span>
+        <div class="absolute inset-0 flex items-center justify-center bg-[#0F172A]/40 pointer-events-none">
+          <span class="bg-[#DC2626] text-white text-[11px] font-semibold font-mono-num px-2 py-0.5 rounded">VIDEO</span>
         </div>
-        <span class="absolute bottom-1 left-1 bg-black/80 text-white text-[9px] px-1 font-mono rounded">#${index + 1}</span>
-        <button onclick="removeMediaItem(${index})" class="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-90 hover:opacity-100 transition shadow">✕</button>
+        <span class="absolute bottom-1 left-1 bg-[#0F172A]/80 text-white text-[10px] px-1.5 py-0.5 font-mono-num rounded">#${index + 1}</span>
+        <button onclick="removeMediaItem(${index})" class="absolute top-1 right-1 bg-[#DC2626] hover:bg-[#B91C1C] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs transition" aria-label="Xóa tệp">×</button>
       `;
     } else {
       item.innerHTML = `
-        <img src="${file.url}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'w-full h-full bg-[#FAF5EE] flex items-center justify-center text-[10px] font-mono text-neutral-400 font-bold\\\'>Ảnh lỗi</div>';" class="w-full h-full object-cover">
-        <span class="absolute bottom-1 left-1 bg-black/80 text-white text-[9px] px-1 font-mono rounded">#${index + 1}</span>
-        <button onclick="removeMediaItem(${index})" class="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-90 hover:opacity-100 transition shadow">✕</button>
+        <img src="${file.url}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'w-full h-full bg-[#F1F5F9] flex items-center justify-center text-xs font-mono-num text-[#475569]\\\'>Ảnh lỗi</div>';" class="w-full h-full object-cover">
+        <span class="absolute bottom-1 left-1 bg-[#0F172A]/80 text-white text-[10px] px-1.5 py-0.5 font-mono-num rounded">#${index + 1}</span>
+        <button onclick="removeMediaItem(${index})" class="absolute top-1 right-1 bg-[#DC2626] hover:bg-[#B91C1C] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs transition" aria-label="Xóa ảnh">×</button>
       `;
     }
 
     container.appendChild(item);
   });
 
-  // If there are already files uploaded, render a "+ Thêm ảnh/video" tile in the gallery
+  // Render "+ Thêm tệp" tile in gallery
   if (currentMediaFiles.length > 0) {
     const addMoreTile = document.createElement('div');
-    addMoreTile.className = 'border-2 border-dashed border-[#18181B] bg-white hover:bg-[#FEF08A]/50 rounded-lg aspect-video flex flex-col items-center justify-center cursor-pointer transition shadow-[2px_2px_0px_#18181B] text-center p-2';
+    addMoreTile.className = 'border border-dashed border-[#94A3B8] bg-white hover:border-[#2563EB] hover:bg-[#EFF6FF]/40 rounded-lg aspect-video flex flex-col items-center justify-center cursor-pointer transition text-center p-2';
     addMoreTile.onclick = () => document.getElementById('fileInput').click();
     addMoreTile.innerHTML = `
-      <span class="text-2xl font-bold text-[#18181B] leading-none">+</span>
-      <span class="text-[10px] font-black uppercase text-[#18181B] mt-1">Thêm tệp</span>
+      <span class="text-xl font-semibold text-[#0F172A] leading-none">+</span>
+      <span class="text-xs font-medium text-[#475569] mt-1">Thêm tệp</span>
     `;
     container.appendChild(addMoreTile);
   }
@@ -919,13 +913,13 @@ function updateFacebookPreview() {
 
       if (isVideo) {
         return `
-          <div class="relative w-full h-full min-h-[140px] bg-black overflow-hidden flex items-center justify-center rounded">
+          <div class="relative w-full h-full min-h-[140px] bg-[#0F172A] overflow-hidden flex items-center justify-center rounded-lg">
             <video src="${f.url}" class="w-full h-full object-cover" controls preload="metadata" playsinline></video>
-            <span class="absolute top-2 left-2 bg-[#F43F5E] text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow pointer-events-none">▶ VIDEO</span>
+            <span class="absolute top-2 left-2 bg-[#DC2626] text-white text-[10px] font-semibold px-1.5 py-0.5 rounded pointer-events-none">VIDEO</span>
           </div>
         `;
       } else {
-        return `<img src="${f.url}" class="fb-media-item" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'w-full h-full min-h-[140px] bg-[#FAF5EE] flex items-center justify-center text-xs font-mono text-neutral-400 font-bold\\\'>Ảnh máy</div>';">`;
+        return `<img src="${f.url}" class="fb-media-item" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'w-full h-full min-h-[140px] bg-[#F1F5F9] flex items-center justify-center text-xs font-mono-num text-[#475569]\\\'>Ảnh máy</div>';">`;
       }
     }).join('');
   }
@@ -1059,10 +1053,9 @@ function renderQueueList(posts) {
   const container = document.getElementById('queueListContainer');
   if (posts.length === 0) {
     container.innerHTML = `
-      <div class="neo-card p-8 text-center text-neutral-600 space-y-2 bg-white">
-        <div class="text-4xl">📭</div>
-        <div class="text-sm font-black text-[#18181B] uppercase">Chưa có bài viết nào trong hàng đợi</div>
-        <p class="text-xs text-neutral-500 font-medium">Hãy qua mục <strong>1. AI Studio & Soạn bài</strong> để dán bài Zalo và lên lịch đăng bài.</p>
+      <div class="vg-surface p-10 text-center space-y-2">
+        <div class="text-base font-bold text-[#0F172A]">Hàng đợi hiện đang trống</div>
+        <p class="text-sm text-[#475569]">Bấm “Soạn bài mới” ở góc trên hoặc kích hoạt tuần hoàn từ Kho máy để lên lịch đăng.</p>
       </div>
     `;
     return;
@@ -1079,83 +1072,85 @@ function renderQueueList(posts) {
 
     let mediaThumbHtml = '';
     if (mCount === 0) {
-      mediaThumbHtml = `<div class="w-16 h-16 rounded-lg bg-[#FAF5EE] border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] flex items-center justify-center text-[10px] text-neutral-400 font-bold font-mono text-center p-1 shrink-0">Chưa có media</div>`;
+      mediaThumbHtml = `<div class="w-16 h-16 rounded-lg bg-[#F1F5F9] border border-[#E2E8F0] flex items-center justify-center text-[11px] text-[#475569] font-medium text-center p-1 shrink-0">Thiếu ảnh</div>`;
     } else {
       const firstMedia = mFiles[0];
       const isFirstVideo = isVideoFile(firstMedia);
       mediaThumbHtml = `
-        <div class="relative w-16 h-16 rounded-lg overflow-hidden border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] bg-black flex items-center justify-center shrink-0">
-          ${isFirstVideo 
+        <div class="relative w-16 h-16 rounded-lg overflow-hidden border border-[#E2E8F0] bg-[#0F172A] flex items-center justify-center shrink-0">
+          ${isFirstVideo
             ? `<video src="${firstMedia.url}" class="w-full h-full object-cover" preload="metadata" muted playsinline></video>
-               <span class="absolute inset-0 flex items-center justify-center bg-black/40 text-white text-[12px] font-bold">▶</span>`
-            : `<img src="${firstMedia.url}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'w-16 h-16 rounded-lg bg-[#FAF5EE] border-2 border-[#18181B] flex items-center justify-center text-[9px] font-mono font-bold text-neutral-500 text-center\\\'>#${escapeHtml(post.machineCode)}</div>';" class="w-full h-full object-cover">`
+               <span class="absolute inset-0 flex items-center justify-center bg-[#0F172A]/45 text-white text-[11px] font-semibold">VIDEO</span>`
+            : `<img src="${firstMedia.url}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'w-16 h-16 rounded-lg bg-[#F1F5F9] flex items-center justify-center text-[11px] font-mono-num font-semibold text-[#475569]\\\'>#${escapeHtml(post.machineCode)}</div>';" class="w-full h-full object-cover">`
           }
-          ${mCount > 1 ? `<span class="absolute bottom-0 right-0 bg-[#FDE047] text-black text-[9px] px-1 font-black border-t border-l border-[#18181B]">+${mCount}</span>` : ''}
-          ${vCount > 0 ? `<span class="absolute top-0 left-0 bg-[#F43F5E] text-white text-[8px] font-black px-1 border-b border-r border-[#18181B]">🎬</span>` : ''}
+          ${mCount > 1 ? `<span class="absolute bottom-1 right-1 bg-[#0F172A]/85 text-white text-[10px] px-1.5 rounded font-mono-num">+${mCount}</span>` : ''}
         </div>
       `;
     }
 
     const firstLine = (post.content || '').split('\n')[0] || post.machineName || 'Laptop';
+    let statusBadge = '';
+    if (post.status === 'pending_media') {
+      statusBadge = `<span class="vg-pill vg-pill-warning">Chờ nạp ảnh</span>`;
+    } else if (post.status === 'queued') {
+      statusBadge = `<span class="vg-pill vg-pill-success">Sẵn sàng đăng</span>`;
+    } else if (post.status === 'skipped_no_media') {
+      statusBadge = `<span class="vg-pill vg-pill-danger">Bỏ qua (thiếu ảnh)</span>`;
+    } else if (post.status === 'processing') {
+      statusBadge = `<span class="vg-pill vg-pill-primary">Đang xuất bản</span>`;
+    }
+
+    const uploadBtnClass = mCount === 0 ? 'vg-btn vg-btn-soft-primary vg-btn-sm' : 'vg-btn vg-btn-secondary vg-btn-sm';
 
     return `
-      <div class="neo-card p-4 sm:p-5 flex flex-col gap-3.5 bg-white shadow-[3px_3px_0px_#18181B]">
+      <div class="vg-surface p-4 sm:p-5 space-y-3">
         <div class="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-          <div class="flex gap-3.5 items-start sm:items-center">
+          <div class="flex gap-3.5 items-start sm:items-center min-w-0">
             ${mediaThumbHtml}
-            <div>
+            <div class="min-w-0 space-y-1">
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="neo-sticker sticker-lavender font-mono font-bold">#${escapeHtml(post.machineCode)}</span>
-                ${post.price ? `<span class="neo-sticker sticker-yellow font-bold">${escapeHtml(post.price)}</span>` : ''}
-                ${vCount > 0 ? `<span class="neo-sticker bg-[#F43F5E] text-white text-[10px] font-black">🎬 ${vCount} Video</span>` : ''}
-                ${post.status === 'pending_media' ? `<span class="neo-sticker sticker-yellow text-[11px] font-bold">📬 Chờ media (nhắc trước 20p)</span>` : ''}
-                ${post.status === 'queued' ? `<span class="neo-sticker sticker-green text-[11px] font-bold">⏳ Sẵn sàng (${vCount > 0 ? `${vCount} video · ` : ''}${pCount} ảnh)</span>` : ''}
-                ${post.status === 'skipped_no_media' ? `<span class="neo-sticker sticker-coral text-[11px] font-bold">⚠️ Bỏ qua (thiếu media)</span>` : ''}
-                ${post.status === 'processing' ? `<span class="neo-sticker sticker-lavender text-[11px] font-bold">⚙️ Đang đăng</span>` : ''}
+                <span class="vg-pill font-mono-num">#${escapeHtml(post.machineCode)}</span>
+                ${post.price ? `<span class="text-xs font-bold text-[#059669]">${escapeHtml(post.price)}</span>` : ''}
+                ${statusBadge}
               </div>
-              <div class="text-xs text-[#18181B] font-bold mt-1.5 line-clamp-1 max-w-lg cursor-pointer hover:text-indigo-600 transition-colors" onclick="viewQueuedPostContent('${post.id}')" title="Bấm để xem toàn bộ nội dung">
-                <span>${escapeHtml(firstLine)}</span>
+              <div class="text-sm sm:text-base font-semibold text-[#0F172A] line-clamp-1 cursor-pointer hover:text-[#2563EB] transition-colors" onclick="viewQueuedPostContent('${post.id}')" title="Xem toàn bộ nội dung">
+                ${escapeHtml(firstLine)}
               </div>
-              <div class="text-xs text-neutral-500 font-medium mt-1 flex items-center gap-2 flex-wrap">
-                <span>⏰ Giờ hẹn: <strong class="text-emerald-700 font-mono">${scheduledDate}</strong></span>
+              <div class="text-xs text-[#475569] flex items-center gap-2 flex-wrap">
+                <span>Giờ hẹn: <strong class="text-[#0F172A] font-mono-num">${scheduledDate}</strong></span>
                 <span>·</span>
-                <span>📁 <strong class="text-indigo-700">${vCount > 0 ? `${vCount} video · ` : ''}${pCount} ảnh</strong></span>
+                <span>${vCount > 0 ? `${vCount} video · ` : ''}${pCount} ảnh</span>
               </div>
             </div>
           </div>
 
-          <div class="flex items-center gap-1.5 w-full md:w-auto justify-end flex-wrap pt-2 md:pt-0 border-t md:border-t-0 border-neutral-100">
-            <button onclick="viewQueuedPostContent('${post.id}')" class="neo-btn neo-btn-white px-2.5 py-1.5 text-xs font-black text-indigo-700 hover:bg-indigo-50 border-2 border-[#18181B]" title="Xem nội dung bài viết và thông số">
-              <span>👁️ Xem</span>
+          <div class="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap pt-2 md:pt-0 border-t md:border-t-0 border-[#E2E8F0]">
+            <button onclick="viewQueuedPostContent('${post.id}')" class="vg-btn vg-btn-secondary vg-btn-sm" title="Xem chi tiết">
+              Xem
             </button>
-            <a href="/quick-upload?id=${post.id}" target="_blank" class="neo-btn neo-btn-lavender px-2.5 py-1.5 text-xs font-black" title="Xem hoặc thêm ảnh/video">
-              <span>🎬 ${mCount > 0 ? `Media (${mCount})` : 'Nạp'}</span>
+            <a href="/quick-upload?id=${post.id}" target="_blank" class="${uploadBtnClass}" title="Nạp hoặc xem ảnh/video">
+              ${mCount > 0 ? `Media (${mCount})` : 'Nạp ảnh'}
             </a>
-            <button onclick="publishPostNow('${post.id}', 'both')" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 px-3.5 py-1.5 text-xs font-black shadow-[2px_2px_0px_#18181B]" title="Đăng ngay lên cả Fanpage và Facebook Cá Nhân">
-              <span>🚀 ĐĂNG NGAY (CẢ HAI)</span>
+            <button onclick="publishPostNow('${post.id}', 'both')" class="vg-btn vg-btn-primary vg-btn-sm" title="Đăng ngay lên cả Fanpage và Cá Nhân">
+              Đăng ngay
             </button>
-            <button onclick="deletePost('${post.id}')" class="neo-btn neo-btn-white px-2 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50" title="Xóa khỏi hàng đợi">
-              <span>Xóa</span>
+            <button onclick="deletePost('${post.id}')" class="vg-btn vg-btn-danger-ghost vg-btn-sm" title="Xóa khỏi hàng đợi">
+              Xóa
             </button>
           </div>
         </div>
 
-        <!-- Inline Accordion Quick Expand (Toggleable) -->
-        <div class="pt-2 border-t border-neutral-200">
+        <div class="pt-2.5 border-t border-[#E2E8F0]">
           <div class="flex items-center justify-between">
-            <button type="button" onclick="togglePostAccordion('${post.id}')" class="text-[11px] font-black text-neutral-700 hover:text-black flex items-center gap-1.5 py-0.5">
-              <span id="chevron-${post.id}">▶ Xem nhanh nội dung & thông số text</span>
+            <button type="button" onclick="togglePostAccordion('${post.id}')" class="text-xs font-semibold text-[#475569] hover:text-[#0F172A] py-0.5">
+              <span id="chevron-${post.id}">Xem nhanh nội dung</span>
             </button>
-            <button type="button" onclick="copyPostText('${post.id}')" class="text-[11px] font-bold text-indigo-700 hover:underline">
-              📋 Sao chép text
+            <button type="button" onclick="copyPostText('${post.id}')" class="text-xs font-semibold text-[#2563EB] hover:underline">
+              Sao chép text
             </button>
           </div>
-          <div id="accordion-${post.id}" class="hidden mt-2 p-3 bg-[#FAF8F5] border-2 border-[#18181B] rounded-lg text-xs text-[#18181B] leading-relaxed select-text shadow-[2px_2px_0px_#18181B]">
-            <pre class="whitespace-pre-wrap font-sans text-xs text-[#18181B] leading-relaxed">${escapeHtml(post.content || 'Chưa có nội dung.')}</pre>
-            <div class="mt-2.5 pt-2 border-t border-neutral-300 flex justify-end gap-2">
-              <button type="button" onclick="copyPostText('${post.id}')" class="neo-btn neo-btn-yellow px-2.5 py-1 text-[11px] font-bold">📋 Sao chép nội dung</button>
-              <button type="button" onclick="viewQueuedPostContent('${post.id}')" class="neo-btn neo-btn-lavender px-2.5 py-1 text-[11px] font-bold">🔍 Chi tiết đầy đủ</button>
-            </div>
+          <div id="accordion-${post.id}" class="hidden mt-2.5 p-3.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg text-sm text-[#0F172A] leading-relaxed select-text">
+            <pre class="whitespace-pre-wrap font-sans text-xs sm:text-sm text-[#0F172A] leading-relaxed">${escapeHtml(post.content || 'Chưa có nội dung.')}</pre>
           </div>
         </div>
       </div>
@@ -1167,9 +1162,8 @@ function renderHistoryList(posts) {
   const container = document.getElementById('historyListContainer');
   if (posts.length === 0) {
     container.innerHTML = `
-      <div class="neo-card p-8 text-center text-neutral-600 space-y-2 bg-white">
-        <div class="text-4xl">📝</div>
-        <div class="text-sm font-black text-[#18181B] uppercase">Chưa có bài viết nào được đăng</div>
+      <div class="vg-surface p-10 text-center text-sm text-[#475569]">
+        Chưa có bài viết nào được xuất bản.
       </div>
     `;
     return;
@@ -1185,21 +1179,20 @@ function renderHistoryList(posts) {
 
     let historyThumbHtml = '';
     if (!firstMedia) {
-      historyThumbHtml = `<div class="w-16 h-16 rounded-lg bg-[#FAF5EE] border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] flex items-center justify-center text-xs text-neutral-500 font-bold font-mono shrink-0">No Media</div>`;
+      historyThumbHtml = `<div class="w-16 h-16 rounded-lg bg-[#F1F5F9] border border-[#E2E8F0] flex items-center justify-center text-xs text-[#475569] font-medium shrink-0">Không ảnh</div>`;
     } else if (isFirstVideo) {
       historyThumbHtml = `
-        <div class="relative w-16 h-16 rounded-lg overflow-hidden border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] bg-black flex items-center justify-center shrink-0">
+        <div class="relative w-16 h-16 rounded-lg overflow-hidden border border-[#E2E8F0] bg-[#0F172A] flex items-center justify-center shrink-0">
           <video src="${firstMedia.url}" class="w-full h-full object-cover" preload="metadata" muted playsinline></video>
-          <span class="absolute inset-0 flex items-center justify-center bg-black/40 text-white text-[12px] font-bold">▶</span>
-          ${mCount > 1 ? `<span class="absolute bottom-0 right-0 bg-[#FDE047] text-black text-[9px] px-1 font-black border-t border-l border-[#18181B]">+${mCount}</span>` : ''}
-          <span class="absolute top-0 left-0 bg-[#F43F5E] text-white text-[8px] font-black px-1 border-b border-r border-[#18181B]">🎬</span>
+          <span class="absolute inset-0 flex items-center justify-center bg-[#0F172A]/45 text-white text-[11px] font-semibold">VIDEO</span>
+          ${mCount > 1 ? `<span class="absolute bottom-1 right-1 bg-[#0F172A]/85 text-white text-[10px] px-1.5 rounded font-mono-num">+${mCount}</span>` : ''}
         </div>
       `;
     } else {
       historyThumbHtml = `
-        <div class="relative w-16 h-16 rounded-lg overflow-hidden border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] bg-neutral-100 flex items-center justify-center shrink-0">
-          <img src="${firstMedia.url}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'w-16 h-16 rounded-lg bg-[#FAF5EE] border-2 border-[#18181B] flex items-center justify-center text-[9px] font-mono font-bold text-neutral-500 text-center\\\'>#${escapeHtml(post.machineCode)}</div>';" class="w-full h-full object-cover">
-          ${mCount > 1 ? `<span class="absolute bottom-0 right-0 bg-[#FDE047] text-black text-[9px] px-1 font-black border-t border-l border-[#18181B]">+${mCount}</span>` : ''}
+        <div class="relative w-16 h-16 rounded-lg overflow-hidden border border-[#E2E8F0] bg-[#F1F5F9] flex items-center justify-center shrink-0">
+          <img src="${firstMedia.url}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\\'w-16 h-16 rounded-lg bg-[#F1F5F9] flex items-center justify-center text-[11px] font-mono-num font-semibold text-[#475569]\\\'>#${escapeHtml(post.machineCode)}</div>';" class="w-full h-full object-cover">
+          ${mCount > 1 ? `<span class="absolute bottom-1 right-1 bg-[#0F172A]/85 text-white text-[10px] px-1.5 rounded font-mono-num">+${mCount}</span>` : ''}
         </div>
       `;
     }
@@ -1207,59 +1200,54 @@ function renderHistoryList(posts) {
     const firstLine = (post.content || '').split('\n')[0] || post.machineName || 'Laptop';
 
     return `
-      <div class="neo-card p-4 sm:p-5 flex flex-col gap-3.5 bg-white shadow-[3px_3px_0px_#18181B]">
+      <div class="vg-surface p-4 sm:p-5 space-y-3">
         <div class="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-          <div class="flex gap-3.5 items-start sm:items-center">
+          <div class="flex gap-3.5 items-start sm:items-center min-w-0">
             ${historyThumbHtml}
-            <div>
+            <div class="min-w-0 space-y-1">
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="neo-sticker ${isSuccess ? 'sticker-green' : 'sticker-coral'}">
-                  ${isSuccess ? '✅ Đã đăng thành công' : '❌ Thất bại'}
+                <span class="vg-pill ${isSuccess ? 'vg-pill-success' : 'vg-pill-danger'}">
+                  ${isSuccess ? 'Đã đăng' : 'Thất bại'}
                 </span>
-                <span class="neo-sticker sticker-lavender font-mono">#${escapeHtml(post.machineCode)}</span>
-                ${post.isSimulation ? `<span class="neo-sticker sticker-yellow text-[10px]">Mô phỏng (Test)</span>` : ''}
+                <span class="vg-pill font-mono-num">#${escapeHtml(post.machineCode)}</span>
+                ${post.isSimulation ? `<span class="vg-pill vg-pill-warning">Thử nghiệm</span>` : ''}
               </div>
-              <div class="text-xs text-[#18181B] font-bold mt-1.5 line-clamp-1 max-w-lg cursor-pointer hover:text-indigo-600 transition-colors" onclick="viewQueuedPostContent('${post.id}')" title="Bấm để xem lại bài đăng">
-                <span>${escapeHtml(firstLine)}</span>
+              <div class="text-sm sm:text-base font-semibold text-[#0F172A] line-clamp-1 cursor-pointer hover:text-[#2563EB] transition-colors" onclick="viewQueuedPostContent('${post.id}')" title="Xem lại nội dung bài đăng">
+                ${escapeHtml(firstLine)}
               </div>
-              <div class="text-xs text-neutral-500 font-medium mt-1">
-                <span>Đăng lúc: <strong>${postDate}</strong></span>
-                ${post.errorMessage ? `<span class="text-red-600 ml-2">(${escapeHtml(post.errorMessage)})</span>` : ''}
+              <div class="text-xs text-[#475569]">
+                <span>Đăng lúc: <strong class="text-[#0F172A] font-mono-num">${postDate}</strong></span>
+                ${post.errorMessage ? `<span class="text-[#DC2626] ml-2">(${escapeHtml(post.errorMessage)})</span>` : ''}
               </div>
             </div>
           </div>
 
-          <div class="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap pt-2 md:pt-0 border-t md:border-t-0 border-neutral-100">
-            <button onclick="viewQueuedPostContent('${post.id}')" class="neo-btn neo-btn-white px-2.5 py-1.5 text-xs font-black text-neutral-800 hover:bg-neutral-100 border-2 border-[#18181B]" title="Xem lại toàn bộ nội dung bài viết">
-              <span>👁️ Xem bài viết</span>
+          <div class="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap pt-2 md:pt-0 border-t md:border-t-0 border-[#E2E8F0]">
+            <button onclick="viewQueuedPostContent('${post.id}')" class="vg-btn vg-btn-secondary vg-btn-sm">
+              Xem bài viết
             </button>
             ${post.fbPostUrl ? `
-              <a href="${post.fbPostUrl}" target="_blank" class="neo-btn neo-btn-lavender px-3 py-1.5 text-xs font-black">
-                <span>Xem trên FB ↗</span>
+              <a href="${post.fbPostUrl}" target="_blank" class="vg-btn vg-btn-soft-primary vg-btn-sm">
+                Xem trên FB ↗
               </a>
             ` : ''}
-            <button onclick="deletePost('${post.id}')" class="neo-btn neo-btn-white px-2.5 py-1.5 text-xs font-bold text-neutral-500 hover:text-red-600">
-              <span>Xóa</span>
+            <button onclick="deletePost('${post.id}')" class="vg-btn vg-btn-danger-ghost vg-btn-sm">
+              Xóa
             </button>
           </div>
         </div>
 
-        <!-- Inline Accordion Quick Expand (Toggleable) -->
-        <div class="pt-2 border-t border-neutral-200">
+        <div class="pt-2.5 border-t border-[#E2E8F0]">
           <div class="flex items-center justify-between">
-            <button type="button" onclick="togglePostAccordion('${post.id}')" class="text-[11px] font-black text-neutral-700 hover:text-black flex items-center gap-1.5 py-0.5">
-              <span id="chevron-${post.id}">▶ Xem nhanh nội dung & thông số text</span>
+            <button type="button" onclick="togglePostAccordion('${post.id}')" class="text-xs font-semibold text-[#475569] hover:text-[#0F172A] py-0.5">
+              <span id="chevron-${post.id}">Xem nhanh nội dung</span>
             </button>
-            <button type="button" onclick="copyPostText('${post.id}')" class="text-[11px] font-bold text-indigo-700 hover:underline">
-              📋 Sao chép text
+            <button type="button" onclick="copyPostText('${post.id}')" class="text-xs font-semibold text-[#2563EB] hover:underline">
+              Sao chép text
             </button>
           </div>
-          <div id="accordion-${post.id}" class="hidden mt-2 p-3 bg-[#FAF8F5] border-2 border-[#18181B] rounded-lg text-xs text-[#18181B] leading-relaxed select-text shadow-[2px_2px_0px_#18181B]">
-            <pre class="whitespace-pre-wrap font-sans text-xs text-[#18181B] leading-relaxed">${escapeHtml(post.content || 'Chưa có nội dung.')}</pre>
-            <div class="mt-2.5 pt-2 border-t border-neutral-300 flex justify-end gap-2">
-              <button type="button" onclick="copyPostText('${post.id}')" class="neo-btn neo-btn-yellow px-2.5 py-1 text-[11px] font-bold">📋 Sao chép nội dung</button>
-              <button type="button" onclick="viewQueuedPostContent('${post.id}')" class="neo-btn neo-btn-lavender px-2.5 py-1 text-[11px] font-bold">🔍 Chi tiết đầy đủ</button>
-            </div>
+          <div id="accordion-${post.id}" class="hidden mt-2.5 p-3.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg text-sm text-[#0F172A] leading-relaxed select-text">
+            <pre class="whitespace-pre-wrap font-sans text-xs sm:text-sm text-[#0F172A] leading-relaxed">${escapeHtml(post.content || 'Chưa có nội dung.')}</pre>
           </div>
         </div>
       </div>
@@ -1399,14 +1387,14 @@ function openPersonalPostHelperModal(post, pageLink = null) {
   if (mediaContainer) {
     if (postMedia.length > 0) {
       mediaContainer.innerHTML = postMedia.map((url, idx) => `
-        <div class="relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] bg-black shrink-0">
+        <div class="relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border border-[#E2E8F0] bg-[#0F172A] shrink-0">
           <img src="${url}" class="w-full h-full object-cover">
-          <span class="absolute top-0 right-0 bg-[#FDE047] text-black text-[9px] px-1 font-black border-b border-l border-[#18181B]">#${idx + 1}</span>
+          <span class="absolute top-1 right-1 bg-[#0F172A]/80 text-white text-[10px] px-1.5 rounded font-mono-num">#${idx + 1}</span>
         </div>
       `).join('');
       mediaContainer.classList.remove('hidden');
     } else {
-      mediaContainer.innerHTML = `<span class="text-xs text-neutral-500 italic">Bài viết này không có ảnh đính kèm.</span>`;
+      mediaContainer.innerHTML = `<span class="text-xs text-[#475569] italic">Bài viết này chưa có ảnh đính kèm.</span>`;
       mediaContainer.classList.remove('hidden');
     }
   }
@@ -1431,10 +1419,10 @@ async function triggerDownloadCurrentImages() {
     return;
   }
   const btn = document.getElementById('personalHelperDownloadBtn');
-  if (btn) btn.innerText = '⏳ Đang tải ảnh...';
+  if (btn) btn.innerText = 'Đang tải ảnh...';
   const downloaded = await downloadAllPostMedia(postMedia, currentPersonalPostData.machineCode);
-  if (btn) btn.innerText = `✅ Đã tải xong (${downloaded} ảnh)`;
-  setTimeout(() => { if (btn) btn.innerText = `📥 Tải Lại Ảnh`; }, 2500);
+  if (btn) btn.innerText = `Đã tải (${downloaded} ảnh)`;
+  setTimeout(() => { if (btn) btn.innerText = 'Tải lại ảnh'; }, 2500);
 }
 
 function copyCurrentPersonalText() {
@@ -1443,8 +1431,8 @@ function copyCurrentPersonalText() {
     navigator.clipboard.writeText(currentPersonalPostData.content || '');
   }
   const btn = document.getElementById('personalHelperCopyBtn');
-  if (btn) btn.innerText = '✅ ĐÃ CHÉP NỘI DUNG!';
-  setTimeout(() => { if (btn) btn.innerText = '📋 Sao Chép Lại'; }, 2000);
+  if (btn) btn.innerText = 'Đã chép nội dung!';
+  setTimeout(() => { if (btn) btn.innerText = 'Sao chép lại'; }, 2000);
 }
 
 function openFacebookFromHelper() {
@@ -1554,7 +1542,7 @@ function setupTableDragAndDrop() {
     dropZone.addEventListener(eventName, (e) => {
       e.preventDefault();
       e.stopPropagation();
-      dropZone.classList.add('bg-[#E0E7FF]/40', 'border-indigo-600');
+      dropZone.classList.add('bg-[#EFF6FF]', 'border-[#2563EB]');
     }, false);
   });
 
@@ -1562,7 +1550,7 @@ function setupTableDragAndDrop() {
     dropZone.addEventListener(eventName, (e) => {
       e.preventDefault();
       e.stopPropagation();
-      dropZone.classList.remove('bg-[#E0E7FF]/40', 'border-indigo-600');
+      dropZone.classList.remove('bg-[#EFF6FF]', 'border-[#2563EB]');
     }, false);
   });
 
@@ -1731,45 +1719,45 @@ function renderParsedTable(items) {
     const specsDisplay = item.cpu ? `${item.cpu} · ${item.ram} · ${item.ssd}` : (item.rawSpecs || 'Đang cập nhật cấu hình');
 
     return `
-      <tr class="hover:bg-[#FAF8F5] transition-colors border-b border-neutral-200">
+      <tr class="hover:bg-[#F8FAFC] transition-colors border-b border-[#E2E8F0]">
         <td class="p-3 text-center">
-          <input type="checkbox" 
-                 class="item-checkbox w-4 h-4 accent-[#18181B] rounded cursor-pointer" 
-                 data-index="${idx}" 
-                 ${item.selected ? 'checked' : ''} 
+          <input type="checkbox"
+                 class="item-checkbox w-4 h-4 accent-[#2563EB] rounded cursor-pointer"
+                 data-index="${idx}"
+                 ${item.selected ? 'checked' : ''}
                  onchange="toggleRowSelection(${idx}, this.checked)" />
         </td>
         <td class="p-3">
-          <span class="neo-sticker sticker-lavender font-mono font-bold text-xs">#${item.machineCode}</span>
+          <span class="vg-pill font-mono-num">#${escapeHtml(item.machineCode)}</span>
         </td>
-        <td class="p-3 font-bold text-[#18181B]">
-          ${item.machineName}
+        <td class="p-3 font-semibold text-[#0F172A]">
+          ${escapeHtml(item.machineName)}
         </td>
-        <td class="p-3 text-neutral-700">
-          <div>${specsDisplay}</div>
-          ${item.screen ? `<div class="text-[11px] text-neutral-500 font-mono mt-0.5">🖥️ ${item.screen}</div>` : ''}
+        <td class="p-3 text-[#334155]">
+          <div>${escapeHtml(specsDisplay)}</div>
+          ${item.screen ? `<div class="text-xs text-[#475569] font-mono-num mt-0.5">${escapeHtml(item.screen)}</div>` : ''}
         </td>
         <td class="p-3 text-center">
-          ${item.isTouch ? 
-            `<span class="neo-sticker sticker-green text-[10px] font-bold">✓ Cảm ứng</span>` : 
-            `<span class="neo-sticker sticker-white text-[10px] text-neutral-500">Không</span>`
+          ${item.isTouch ?
+            `<span class="vg-pill vg-pill-success">Cảm ứng</span>` :
+            `<span class="vg-pill">Không</span>`
           }
         </td>
         <td class="p-3">
-          <input type="text" 
-                 class="neo-input px-2 py-1 text-xs font-bold w-28 text-emerald-800" 
-                 value="${item.price || ''}" 
+          <input type="text"
+                 class="vg-input py-1 px-2 text-xs font-semibold w-28 text-[#065F46]"
+                 value="${escapeHtml(item.price || '')}"
                  placeholder="VD: 5.5 triệu"
                  onchange="updateItemPrice(${idx}, this.value)" />
         </td>
         <td class="p-3">
-          <span class="neo-sticker sticker-yellow font-mono text-[11px] font-bold">
-            ⏰ ${slotLabel}
+          <span class="vg-pill vg-pill-primary font-mono-num">
+            ${escapeHtml(slotLabel)}
           </span>
         </td>
         <td class="p-3 text-center">
-          <button onclick="previewPostItem(${idx})" class="neo-btn neo-btn-white px-2.5 py-1 text-[11px] font-bold" title="Xem trước bài viết hoàn chỉnh">
-            <span>👁️ Xem bài</span>
+          <button onclick="previewPostItem(${idx})" class="vg-btn vg-btn-secondary vg-btn-sm" title="Xem trước bài viết hoàn chỉnh">
+            Xem bài
           </button>
         </td>
       </tr>
@@ -1840,13 +1828,13 @@ function previewPostItem(index) {
   const content = document.getElementById('previewModalContent');
   const extraActions = document.getElementById('previewModalExtraActions');
 
-  if (title) title.innerText = `BÀI ĐĂNG FACEBOOK · MÃ #${item.machineCode || 'N/A'}: ${item.machineName || ''}`;
-  
+  if (title) title.innerText = `Bài đăng Facebook · Mã #${item.machineCode || 'N/A'}: ${item.machineName || ''}`;
+
   if (meta) {
     meta.innerHTML = `
-      <span class="neo-sticker sticker-lavender font-mono font-bold">#${escapeHtml(item.machineCode)}</span>
-      ${item.price ? `<span class="neo-sticker sticker-yellow font-bold">${escapeHtml(item.price)}</span>` : ''}
-      <span class="neo-sticker sticker-green text-[11px] font-bold">Bản xem trước AI</span>
+      <span class="vg-pill font-mono-num">#${escapeHtml(item.machineCode)}</span>
+      ${item.price ? `<span class="vg-pill vg-pill-success">${escapeHtml(item.price)}</span>` : ''}
+      <span class="vg-pill vg-pill-primary">Bản xem trước AI</span>
     `;
     meta.classList.remove('hidden');
   }
@@ -1857,11 +1845,11 @@ function previewPostItem(index) {
   }
 
   if (content) content.innerText = item.postContent || 'Chưa có nội dung.';
-  
+
   if (extraActions) {
     extraActions.innerHTML = `
-      <button onclick="closePostPreviewModal()" class="neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold">
-        <span>Đóng lại</span>
+      <button onclick="closePostPreviewModal()" class="vg-btn vg-btn-secondary vg-btn-sm">
+        Đóng lại
       </button>
     `;
   }
@@ -1883,7 +1871,7 @@ function viewQueuedPostContent(postId) {
   const content = document.getElementById('previewModalContent');
   const extraActions = document.getElementById('previewModalExtraActions');
 
-  const scheduledDate = post.scheduledTime 
+  const scheduledDate = post.scheduledTime
     ? new Date(post.scheduledTime).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' })
     : 'Chưa đặt lịch';
   const mFiles = post.mediaFiles || [];
@@ -1891,19 +1879,19 @@ function viewQueuedPostContent(postId) {
   const pCount = mFiles.length - vCount;
 
   if (title) {
-    title.innerText = `MÃ #${post.machineCode || 'N/A'}: ${post.machineName || 'Laptop'}`;
+    title.innerText = `Mã #${post.machineCode || 'N/A'}: ${post.machineName || 'Laptop'}`;
   }
 
   if (meta) {
     meta.innerHTML = `
-      <span class="neo-sticker sticker-lavender font-mono font-bold">#${escapeHtml(post.machineCode)}</span>
-      ${post.price ? `<span class="neo-sticker sticker-yellow font-bold">${escapeHtml(post.price)}</span>` : ''}
-      <span class="neo-sticker font-mono text-[11px]">⏰ ${escapeHtml(scheduledDate)}</span>
-      <span class="neo-sticker font-bold text-[11px] text-indigo-700 bg-indigo-50 border border-indigo-200">📁 ${vCount > 0 ? `${vCount} video · ` : ''}${pCount} ảnh</span>
-      ${post.status === 'queued' ? `<span class="neo-sticker sticker-green text-[11px] font-bold">⏳ Trong hàng đợi</span>` : ''}
-      ${post.status === 'pending_media' ? `<span class="neo-sticker sticker-yellow text-[11px] font-bold">📬 Chờ media</span>` : ''}
-      ${post.status === 'posted' ? `<span class="neo-sticker sticker-green text-[11px] font-bold">✅ Đã đăng Facebook</span>` : ''}
-      ${post.status === 'failed' ? `<span class="neo-sticker sticker-coral text-[11px] font-bold">❌ Đăng thất bại</span>` : ''}
+      <span class="vg-pill font-mono-num">#${escapeHtml(post.machineCode)}</span>
+      ${post.price ? `<span class="vg-pill vg-pill-success">${escapeHtml(post.price)}</span>` : ''}
+      <span class="vg-pill font-mono-num">${escapeHtml(scheduledDate)}</span>
+      <span class="vg-pill vg-pill-primary">${vCount > 0 ? `${vCount} video · ` : ''}${pCount} ảnh</span>
+      ${post.status === 'queued' ? `<span class="vg-pill vg-pill-success">Trong hàng đợi</span>` : ''}
+      ${post.status === 'pending_media' ? `<span class="vg-pill vg-pill-warning">Chờ media</span>` : ''}
+      ${post.status === 'posted' ? `<span class="vg-pill vg-pill-success">Đã đăng Facebook</span>` : ''}
+      ${post.status === 'failed' ? `<span class="vg-pill vg-pill-danger">Đăng thất bại</span>` : ''}
     `;
     meta.classList.remove('hidden');
   }
@@ -1911,17 +1899,17 @@ function viewQueuedPostContent(postId) {
   if (mediaContainer) {
     if (mFiles.length > 0) {
       mediaContainer.innerHTML = `
-        <div class="text-[11px] font-bold text-neutral-500 uppercase tracking-wide mb-1.5">Ảnh / Video đính kèm (${mFiles.length}):</div>
-        <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
+        <div class="text-xs font-semibold text-[#475569] mb-1.5">Ảnh / Video đính kèm (${mFiles.length})</div>
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar">
           ${mFiles.map((m, idx) => {
             const isVid = isVideoFile(m);
             return `
-              <div class="relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] bg-black shrink-0">
-                ${isVid 
-                  ? `<video src="${m.url}" class="w-full h-full object-cover" muted preload="metadata"></video><span class="absolute inset-0 flex items-center justify-center bg-black/40 text-white text-xs font-bold">▶</span>`
-                  : `<a href="${m.url}" target="_blank" title="Bấm mở ảnh gốc HD"><img src="${m.url}" class="w-full h-full object-cover"></a>`
+              <div class="relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border border-[#E2E8F0] bg-[#0F172A] shrink-0">
+                ${isVid
+                  ? `<video src="${m.url}" class="w-full h-full object-cover" muted preload="metadata"></video><span class="absolute inset-0 flex items-center justify-center bg-[#0F172A]/45 text-white text-[11px] font-semibold">VIDEO</span>`
+                  : `<a href="${m.url}" target="_blank" title="Mở ảnh gốc HD"><img src="${m.url}" class="w-full h-full object-cover"></a>`
                 }
-                <span class="absolute top-0 right-0 bg-[#FDE047] text-black text-[9px] px-1 font-black border-b border-l border-[#18181B]">#${idx + 1}</span>
+                <span class="absolute top-1 right-1 bg-[#0F172A]/80 text-white text-[10px] px-1.5 rounded font-mono-num">#${idx + 1}</span>
               </div>
             `;
           }).join('')}
@@ -1930,9 +1918,9 @@ function viewQueuedPostContent(postId) {
       mediaContainer.classList.remove('hidden');
     } else {
       mediaContainer.innerHTML = `
-        <div class="p-2.5 bg-[#FAF5EE] border-2 border-dashed border-neutral-400 rounded-lg text-xs text-neutral-500 font-medium flex items-center justify-between">
-          <span>⚠️ Chưa có ảnh/video đính kèm cho máy này.</span>
-          <a href="/quick-upload?id=${post.id}" target="_blank" class="neo-btn neo-btn-lavender px-2 py-1 text-[11px] font-bold shrink-0">🎬 Nạp ảnh ngay</a>
+        <div class="p-3 bg-[#FFFBEB] border border-[#FDE68A] rounded-lg text-xs text-[#92400E] flex items-center justify-between gap-2">
+          <span>Chưa có ảnh/video đính kèm cho máy này.</span>
+          <a href="/quick-upload?id=${post.id}" target="_blank" class="vg-btn vg-btn-soft-primary vg-btn-sm shrink-0">Nạp ảnh ngay</a>
         </div>
       `;
       mediaContainer.classList.remove('hidden');
@@ -1945,21 +1933,21 @@ function viewQueuedPostContent(postId) {
 
   if (extraActions) {
     extraActions.innerHTML = `
-      <a href="/quick-upload?id=${post.id}" target="_blank" class="neo-btn neo-btn-lavender px-3 py-1.5 text-xs font-black">
-        <span>🎬 Media (${mFiles.length})</span>
+      <a href="/quick-upload?id=${post.id}" target="_blank" class="vg-btn vg-btn-secondary vg-btn-sm">
+        Media (${mFiles.length})
       </a>
       ${post.status === 'queued' || post.status === 'pending_media' ? `
-        <button onclick="publishPostNow('${post.id}', 'both'); closePostPreviewModal();" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 px-3.5 py-1.5 text-xs font-black shadow-[2px_2px_0px_#18181B]" title="Đăng lên cả Fanpage và Facebook Cá Nhân">
-          <span>🚀 ĐĂNG NGAY (CẢ HAI)</span>
+        <button onclick="publishPostNow('${post.id}', 'both'); closePostPreviewModal();" class="vg-btn vg-btn-primary vg-btn-sm" title="Đăng lên cả Fanpage và Facebook Cá Nhân">
+          Đăng ngay (Fanpage + Cá nhân)
         </button>
       ` : ''}
       ${post.fbPostUrl ? `
-        <a href="${post.fbPostUrl}" target="_blank" class="neo-btn neo-btn-lavender px-3 py-1.5 text-xs font-black">
-          <span>Xem trên FB ↗</span>
+        <a href="${post.fbPostUrl}" target="_blank" class="vg-btn vg-btn-soft-primary vg-btn-sm">
+          Xem trên FB ↗
         </a>
       ` : ''}
-      <button onclick="closePostPreviewModal()" class="neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold">
-        <span>Đóng lại</span>
+      <button onclick="closePostPreviewModal()" class="vg-btn vg-btn-secondary vg-btn-sm">
+        Đóng lại
       </button>
     `;
   }
@@ -2228,12 +2216,11 @@ async function fetchModelTemplates(showLoading = true) {
     console.error('Error fetching model templates:', err);
     if (container) {
       container.innerHTML = `
-        <div class="col-span-full py-12 text-center text-red-600 neo-card bg-red-50 p-6">
-          <div class="text-3xl mb-2">⚠️</div>
-          <div class="text-sm font-black">Lỗi kết nối khi nạp danh sách Model Template</div>
-          <p class="text-xs text-neutral-600 mt-1">${escapeHtml(err.message)}</p>
-          <button onclick="fetchModelTemplates()" class="mt-3 neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold">
-            🔄 Thử lại
+        <div class="col-span-full vg-surface p-8 text-center space-y-2 border-[#FECACA] bg-[#FEF2F2]">
+          <div class="text-sm font-bold text-[#991B1B]">Lỗi kết nối khi tải danh sách mẫu máy</div>
+          <p class="text-xs text-[#475569]">${escapeHtml(err.message)}</p>
+          <button onclick="fetchModelTemplates()" class="mt-2 vg-btn vg-btn-secondary vg-btn-sm">
+            Thử lại
           </button>
         </div>`;
     }
@@ -2316,25 +2303,25 @@ function renderModelCards(templates) {
 
   templates.forEach(t => {
     const card = document.createElement('div');
-    card.className = 'neo-card p-4 sm:p-5 bg-white flex flex-col justify-between gap-3.5 shadow-[3px_3px_0px_#18181B] hover:shadow-[5px_5px_0px_#18181B] transition-all';
+    card.className = 'vg-surface-interactive p-4 sm:p-5 flex flex-col justify-between gap-4';
 
-    const brand = t.brand || 'LAPTOP';
+    const brand = t.brand || 'Laptop';
     const isCircularActive = (t.status || 'active') === 'active';
     const postCount = t.post_count || 0;
     const lastPosted = t.last_posted_at ? new Date(t.last_posted_at).toLocaleDateString('vi-VN') : 'Chưa đăng';
     const mediaFiles = Array.isArray(t.media_files) ? t.media_files : [];
 
-    // Mini Gallery HTML (up to 4 thumbnails)
+    // Mini Gallery HTML (up to 4 clean thumbnails without dark outer frames)
     let galleryHtml = '';
     if (mediaFiles.length > 0) {
       const thumbs = mediaFiles.slice(0, 4).map((f, idx) => {
         const isMore = idx === 3 && mediaFiles.length > 4;
-        const moreBadge = isMore ? `<div class="gallery-more-overlay">+${mediaFiles.length - 3} HD ➔</div>` : '';
+        const moreBadge = isMore ? `<div class="gallery-more-overlay">+${mediaFiles.length - 3} ảnh</div>` : '';
         const isVideo = isVideoFile(f);
-        const videoBadge = isVideo ? `<span class="absolute top-1 left-1 bg-rose-600 text-white text-[9px] font-black px-1 rounded z-10">🎬</span>` : '';
+        const videoBadge = isVideo ? `<span class="absolute top-1 left-1 bg-[#DC2626] text-white text-[10px] font-semibold px-1.5 rounded z-10">Video</span>` : '';
 
         return `
-          <div class="gallery-thumb-box" onclick="openMediaManagerModal('${t.id}')" title="Xem kho ảnh HD">
+          <div class="gallery-thumb-box" onclick="openMediaManagerModal('${t.id}')" title="Mở kho ảnh HD">
             <img src="${escapeHtml(f.url)}" alt="${escapeHtml(t.model_name)}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='/icons/icon.svg';" />
             ${videoBadge}
             ${moreBadge}
@@ -2342,79 +2329,75 @@ function renderModelCards(templates) {
         `;
       }).join('');
 
-      galleryHtml = `<div class="grid grid-cols-4 gap-2 pt-1">${thumbs}</div>`;
+      galleryHtml = `<div class="grid grid-cols-4 gap-2">${thumbs}</div>`;
     } else {
       galleryHtml = `
-        <div onclick="openMediaManagerModal('${t.id}')" class="border-2 border-dashed border-[#18181B] bg-[#FAF5EE] rounded-lg p-3 text-center cursor-pointer hover:bg-yellow-50 text-xs font-bold text-neutral-600">
-          🖼️ Bấm để nạp album ảnh HD Supabase
+        <div onclick="openMediaManagerModal('${t.id}')" class="border border-dashed border-[#CBD5E1] bg-[#F8FAFC] rounded-lg p-3.5 text-center cursor-pointer hover:border-[#2563EB] hover:bg-[#EFF6FF]/40 text-xs font-medium text-[#475569] transition">
+          Chưa có ảnh · Bấm để nạp ảnh HD
         </div>
       `;
     }
 
-    // Hardware Specs Pills
+    // Concise 1-line specs summary (replaces 4 nested black boxes)
     const specsItems = [];
-    if (t.cpu) specsItems.push(`CPU: ${t.cpu}`);
-    if (t.ram) specsItems.push(`RAM: ${t.ram}`);
-    if (t.ssd) specsItems.push(`SSD: ${t.ssd}`);
-    if (t.screen) specsItems.push(`Màn: ${t.screen}`);
-
-    const specsPills = specsItems.map(s => `<span class="model-spec-tag">${escapeHtml(s)}</span>`).join(' ');
+    if (t.cpu) specsItems.push(t.cpu);
+    if (t.ram) specsItems.push(t.ram);
+    if (t.ssd) specsItems.push(t.ssd);
+    if (t.screen) specsItems.push(t.screen);
+    if (t.is_touchscreen) specsItems.push('Cảm ứng');
+    const specsLine = specsItems.join(' · ');
 
     const priceText = t.price_display || (t.price_min ? `${(t.price_min / 1000000).toFixed(1)} triệu` : 'Liên hệ');
 
     card.innerHTML = `
-      <!-- Top Meta Bar -->
-      <div>
-        <div class="flex items-center justify-between gap-2 mb-2">
-          <span class="neo-sticker sticker-lavender font-mono font-black text-[11px]">${escapeHtml(brand.toUpperCase())}</span>
-          <div class="flex items-center gap-1.5">
+      <div class="space-y-2.5">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="text-xs font-bold text-[#475569] uppercase tracking-wide">${escapeHtml(brand)}</span>
+            <span class="text-[#CBD5E1]">·</span>
             ${isCircularActive
-              ? `<span class="neo-sticker sticker-green text-[10px] font-bold"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span> Tuần hoàn: BẬT</span>`
-              : `<span class="neo-sticker sticker-peach text-[10px] font-bold">⏸️ Tạm dừng</span>`
+              ? `<span class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#065F46]"><span class="w-1.5 h-1.5 rounded-full bg-[#059669]"></span>Tuần hoàn</span>`
+              : `<span class="text-xs font-medium text-[#64748B]">Tạm dừng</span>`
             }
-            <button onclick="openModelTemplateModal('${t.id}')" title="Chỉnh sửa model" class="neo-btn neo-btn-white px-2 py-0.5 text-xs font-black">✏️</button>
-            <button onclick="deleteModelTemplate('${t.id}')" title="Xóa model" class="neo-btn neo-btn-white px-2 py-0.5 text-xs font-black text-red-600 hover:bg-red-50">🗑️</button>
+          </div>
+          <div class="flex items-center gap-1 shrink-0">
+            <button onclick="openModelTemplateModal('${t.id}')" title="Chỉnh sửa mẫu" class="vg-btn vg-btn-ghost w-7 h-7 p-0" aria-label="Chỉnh sửa">
+              <svg class="w-4 h-4 text-[#475569]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            </button>
+            <button onclick="deleteModelTemplate('${t.id}')" title="Xóa mẫu" class="vg-btn vg-btn-danger-ghost w-7 h-7 p-0" aria-label="Xóa">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
           </div>
         </div>
 
-        <!-- Model Title & Price -->
-        <div class="flex items-start justify-between gap-2">
-          <h3 class="font-black text-base text-[#18181B] uppercase tracking-tight line-clamp-2">${escapeHtml(t.model_name)}</h3>
-          <div class="font-mono font-black text-xs text-emerald-800 bg-[#DCFCE7] px-2 py-0.5 rounded border border-[#18181B] shadow-[1px_1px_0px_#18181B] shrink-0">
-            ${escapeHtml(priceText)}
-          </div>
+        <div class="flex items-baseline justify-between gap-2">
+          <h3 class="font-bold text-base text-[#0F172A] leading-snug line-clamp-2">${escapeHtml(t.model_name)}</h3>
+          <span class="font-mono-num font-bold text-sm text-[#059669] shrink-0">${escapeHtml(priceText)}</span>
         </div>
 
-        <!-- Specs pills -->
-        <div class="flex flex-wrap gap-1.5 mt-2.5">
-          ${specsPills}
-          ${t.is_touchscreen ? `<span class="model-spec-tag bg-yellow-100">Cảm ứng</span>` : ''}
-        </div>
+        ${specsLine ? `<p class="text-xs text-[#475569] leading-relaxed line-clamp-2">${escapeHtml(specsLine)}</p>` : ''}
       </div>
 
-      <!-- Center: Mini Photo Gallery Preview -->
-      <div class="my-1">
+      <div>
         ${galleryHtml}
       </div>
 
-      <!-- Bottom Stats & Action Buttons -->
-      <div class="space-y-2.5 pt-2 border-t border-neutral-200">
-        <div class="flex items-center justify-between text-[11px] text-neutral-600 font-medium">
-          <span>📊 Đã đăng: <strong class="font-mono text-indigo-700">${postCount} lần</strong></span>
-          <span>📅 Gần nhất: <strong class="font-mono text-neutral-800">${escapeHtml(lastPosted)}</strong></span>
+      <div class="space-y-2.5 pt-3 border-t border-[#E2E8F0]">
+        <div class="flex items-center justify-between text-xs text-[#475569]">
+          <span>Đã đăng <strong class="font-mono-num text-[#0F172A]">${postCount}</strong> lần</span>
+          <span>Gần nhất: <strong class="font-mono-num text-[#0F172A]">${escapeHtml(lastPosted)}</strong></span>
         </div>
 
-        <!-- Action Buttons -->
         <div class="space-y-2">
-          <button onclick="createPostFromTemplate('${t.id}')" class="neo-btn neo-btn-yellow w-full py-2.5 text-xs font-black shadow-[2.5px_2.5px_0px_#18181B]">
-            ⚡ TẠO BÀI MỚI TỪ MẪU
+          <button onclick="createPostFromTemplate('${t.id}')" class="vg-btn vg-btn-primary vg-btn-sm w-full">
+            Tạo bài mới từ mẫu
           </button>
           <div class="flex gap-2">
-            <button onclick="enqueueCircularPost('${t.id}')" class="neo-btn neo-btn-green py-1.5 px-2 text-[11px] font-black shadow-[2px_2px_0px_#18181B] flex-1">
-              🔄 Tuần hoàn
+            <button onclick="enqueueCircularPost('${t.id}')" class="vg-btn vg-btn-secondary vg-btn-sm flex-1">
+              Tuần hoàn
             </button>
-            <button onclick="openMediaManagerModal('${t.id}')" class="neo-btn neo-btn-white py-1.5 px-2 text-[11px] font-black shadow-[2px_2px_0px_#18181B] flex-1">
-              🖼️ Kho ảnh (${mediaFiles.length})
+            <button onclick="openMediaManagerModal('${t.id}')" class="vg-btn vg-btn-secondary vg-btn-sm flex-1">
+              Kho ảnh (${mediaFiles.length})
             </button>
           </div>
         </div>
@@ -2530,11 +2513,9 @@ function setBrandFilter(brand) {
   dataPostFilters.brand = brand;
   document.querySelectorAll('.brand-filter-chip').forEach(btn => {
     if (btn.dataset.brand === brand) {
-      btn.classList.add('neo-btn-yellow', 'active');
-      btn.classList.remove('neo-btn-white', 'text-neutral-700');
+      btn.classList.add('active');
     } else {
-      btn.classList.remove('neo-btn-yellow', 'active');
-      btn.classList.add('neo-btn-white', 'text-neutral-700');
+      btn.classList.remove('active');
     }
   });
   fetchModelTemplates();
@@ -2544,11 +2525,9 @@ function setPriceFilter(range) {
   dataPostFilters.price_range = range;
   document.querySelectorAll('.price-filter-chip').forEach(btn => {
     if (btn.dataset.price === range) {
-      btn.classList.add('neo-btn-yellow', 'active');
-      btn.classList.remove('neo-btn-white', 'text-neutral-700');
+      btn.classList.add('active');
     } else {
-      btn.classList.remove('neo-btn-yellow', 'active');
-      btn.classList.add('neo-btn-white', 'text-neutral-700');
+      btn.classList.remove('active');
     }
   });
   fetchModelTemplates();
@@ -2558,11 +2537,9 @@ function setStatusFilter(status) {
   dataPostFilters.status = status;
   document.querySelectorAll('.status-filter-chip').forEach(btn => {
     if (btn.dataset.status === status) {
-      btn.classList.add('neo-btn-yellow', 'active');
-      btn.classList.remove('neo-btn-white', 'text-neutral-700');
+      btn.classList.add('active');
     } else {
-      btn.classList.remove('neo-btn-yellow', 'active');
-      btn.classList.add('neo-btn-white', 'text-neutral-700');
+      btn.classList.remove('active');
     }
   });
   fetchModelTemplates();
@@ -2702,7 +2679,7 @@ function renderTemplateFormMediaPreview(files) {
   preview.innerHTML = '';
   files.forEach(f => {
     const box = document.createElement('div');
-    box.className = 'w-14 h-14 rounded border border-[#18181B] overflow-hidden shrink-0 bg-black relative';
+    box.className = 'w-14 h-14 rounded-lg border border-[#E2E8F0] overflow-hidden shrink-0 bg-[#F1F5F9] relative';
     box.innerHTML = `<img src="${f.url}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='/icons/icon.svg';" />`;
     preview.appendChild(box);
   });
@@ -2860,22 +2837,22 @@ function renderMediaManagerGrid(mediaFiles) {
   mediaFiles.forEach((file, index) => {
     const isVideo = isVideoFile(file);
     const box = document.createElement('div');
-    box.className = 'neo-card p-2 bg-white flex flex-col gap-2 relative shadow-[2px_2px_0px_#18181B]';
+    box.className = 'vg-surface p-2 flex flex-col gap-2 relative';
 
     box.innerHTML = `
-      <div class="aspect-square rounded-md overflow-hidden bg-black relative border border-[#18181B]">
+      <div class="aspect-square rounded-md overflow-hidden bg-[#0F172A] relative border border-[#E2E8F0]">
         ${isVideo
-          ? `<video src="${file.url}" class="w-full h-full object-cover" muted></video><span class="absolute top-1 left-1 bg-rose-600 text-white text-[9px] font-black px-1 rounded">▶ VIDEO</span>`
+          ? `<video src="${file.url}" class="w-full h-full object-cover" muted></video><span class="absolute top-1 left-1 bg-[#DC2626] text-white text-[10px] font-semibold px-1.5 rounded">VIDEO</span>`
           : `<img src="${file.url}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='/icons/icon.svg';" />`
         }
-        <span class="absolute bottom-1 left-1 bg-black/80 text-white text-[9px] font-mono px-1 rounded">#${index + 1}</span>
+        <span class="absolute bottom-1 left-1 bg-[#0F172A]/80 text-white text-[10px] font-mono-num px-1.5 rounded">#${index + 1}</span>
       </div>
-      <div class="flex items-center justify-between gap-1">
-        <button onclick="copyTextToClipboard('${escapeHtml(file.url)}', '📋 Đã sao chép link ảnh công khai!')" class="neo-btn neo-btn-white px-2 py-1 text-[10px] font-bold flex-1" title="Sao chép link">
-          📋 Link
+      <div class="flex items-center justify-between gap-1.5">
+        <button onclick="copyTextToClipboard('${escapeHtml(file.url)}', 'Đã sao chép link ảnh công khai!')" class="vg-btn vg-btn-secondary vg-btn-sm flex-1" title="Sao chép link">
+          Link
         </button>
-        <button onclick="deleteMediaManagerPhoto(${index})" class="neo-btn neo-btn-white px-2 py-1 text-[10px] font-bold text-red-600 hover:bg-red-50" title="Xóa ảnh này">
-          🗑️ Xóa
+        <button onclick="deleteMediaManagerPhoto(${index})" class="vg-btn vg-btn-danger-ghost vg-btn-sm" title="Xóa ảnh này">
+          Xóa
         </button>
       </div>
     `;
@@ -3038,26 +3015,23 @@ async function fetchCircularQueue() {
     queue.forEach(item => {
       const scheduledDate = item.scheduled_time ? new Date(item.scheduled_time).toLocaleString('vi-VN') : 'Sớm nhất';
       const el = document.createElement('div');
-      el.className = 'p-3.5 bg-white border-2 border-[#18181B] rounded-xl flex flex-wrap items-center justify-between gap-3 shadow-[2.5px_2.5px_0px_#18181B]';
+      el.className = 'vg-surface p-3.5 flex flex-wrap items-center justify-between gap-3';
       el.innerHTML = `
-        <div class="flex items-center gap-3">
-          <span class="text-xl">⏰</span>
-          <div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="font-black text-sm text-[#18181B]">${escapeHtml(item.model_name || item.template_id || 'Model Template')}</span>
-              <span class="neo-sticker sticker-lavender text-[10px] font-mono">${escapeHtml(item.rewrite_style || 'AI Rewrite')}</span>
-            </div>
-            <div class="text-xs text-neutral-600 mt-0.5">
-              Thời gian xuất bản: <strong>${scheduledDate}</strong>
-            </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="font-bold text-sm text-[#0F172A]">${escapeHtml(item.model_name || item.template_id || 'Mẫu máy')}</span>
+            <span class="vg-pill vg-pill-primary font-mono-num">${escapeHtml(item.rewrite_style || 'AI Rewrite')}</span>
+          </div>
+          <div class="text-xs text-[#475569] mt-1">
+            Thời gian dự kiến: <strong class="font-mono-num text-[#0F172A]">${scheduledDate}</strong>
           </div>
         </div>
-        <div class="flex items-center gap-2">
-          <button onclick="triggerCircularPostNow('${item.id}')" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-black shadow-[2px_2px_0px_#18181B]">
-            ⚡ Đăng ngay
+        <div class="flex items-center gap-2 shrink-0">
+          <button onclick="triggerCircularPostNow('${item.id}')" class="vg-btn vg-btn-primary vg-btn-sm">
+            Đăng ngay
           </button>
-          <button onclick="deleteCircularQueueItem('${item.id}')" class="neo-btn neo-btn-white px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50" title="Xóa khỏi hàng đợi">
-            🗑️
+          <button onclick="deleteCircularQueueItem('${item.id}')" class="vg-btn vg-btn-danger-ghost vg-btn-sm" title="Xóa khỏi hàng đợi">
+            Xóa
           </button>
         </div>
       `;
@@ -3117,7 +3091,7 @@ function parseAppGroupUrls(raw) {
 function setAppExtMessage(msg, isError = false) {
   const el = document.getElementById('appExtActionMsg');
   if (!el) return;
-  el.className = `text-xs font-bold min-h-[16px] ${isError ? 'text-red-700' : 'text-emerald-700'}`;
+  el.className = `text-sm font-medium min-h-[20px] ${isError ? 'text-[#DC2626]' : 'text-[#065F46]'}`;
   el.textContent = msg;
 }
 
@@ -3181,38 +3155,38 @@ function renderGroupShareLogs(logs = []) {
   if (!container) return;
 
   if (!Array.isArray(logs) || logs.length === 0) {
-    container.innerHTML = '<div class="py-3 text-neutral-500 font-medium">Chưa có lịch sử chia sẻ Hội Nhóm nào.</div>';
+    container.innerHTML = '<div class="py-4 text-[#475569]">Chưa có lịch sử chia sẻ Hội Nhóm nào.</div>';
     return;
   }
 
   container.innerHTML = logs.map(log => {
     const timeStr = log.timestamp ? new Date(log.timestamp).toLocaleTimeString('vi-VN') : '--:--';
     const slug = (log.groupUrl || '').replace(/https?:\/\/(www\.)?facebook\.com\/groups\//i, '').replace(/\/$/, '');
-    let badgeBg = 'bg-[#DCFCE7] text-[#166534]';
+    let badgeClass = 'vg-pill vg-pill-success';
     let badgeText = 'Đã đăng';
     if (log.status === 'pending_approval') {
-      badgeBg = 'bg-[#FEF9C3] text-[#854D0E]';
+      badgeClass = 'vg-pill vg-pill-warning';
       badgeText = 'Chờ duyệt';
     } else if (!log.success) {
-      badgeBg = 'bg-[#FEE2E2] text-[#991B1B]';
+      badgeClass = 'vg-pill vg-pill-danger';
       badgeText = log.status === 'skipped_not_member' ? 'Chưa tham gia' : 'Lỗi';
     }
 
     return `
-      <div class="py-2 flex flex-wrap items-center justify-between gap-2">
-        <div class="min-w-0 flex-1 space-y-0.5">
+      <div class="py-2.5 flex flex-wrap items-center justify-between gap-2">
+        <div class="min-w-0 flex-1 space-y-1">
           <div class="flex items-center gap-2 flex-wrap">
-            <span class="px-2 py-0.5 border border-[#18181B] rounded text-[10px] font-black uppercase ${badgeBg}">${badgeText}</span>
-            <span class="font-mono font-bold text-[#18181B]">#${escapeHtml(log.machineCode || 'MÁY')}</span>
-            <a href="${escapeHtml(log.groupUrl)}" target="_blank" class="font-mono text-blue-700 underline truncate max-w-xs">${escapeHtml(slug || log.groupUrl)}</a>
-            <span class="text-[10px] text-neutral-500 font-mono">${timeStr}</span>
+            <span class="${badgeClass}">${badgeText}</span>
+            <span class="font-mono-num font-semibold text-[#0F172A]">#${escapeHtml(log.machineCode || 'MÁY')}</span>
+            <a href="${escapeHtml(log.groupUrl)}" target="_blank" class="font-mono-num text-xs text-[#2563EB] hover:underline truncate max-w-xs">${escapeHtml(slug || log.groupUrl)}</a>
+            <span class="text-xs text-[#475569] font-mono-num">${timeStr}</span>
           </div>
-          <div class="text-[11px] text-neutral-700">${escapeHtml(log.reason || '')}</div>
+          ${log.reason ? `<div class="text-xs text-[#475569]">${escapeHtml(log.reason)}</div>` : ''}
         </div>
         ${!log.success ? `
           <div class="flex items-center gap-1.5 shrink-0">
-            <button type="button" onclick="retrySingleGroupLog('${escapeHtml(log.id)}')" class="neo-btn neo-btn-yellow px-2 py-1 text-[10px] font-black">Thử lại</button>
-            <button type="button" onclick="removeGroupUrlFromApp('${escapeHtml(log.groupUrl)}')" class="neo-btn bg-[#FEE2E2] text-[#991B1B] px-2 py-1 text-[10px] font-black">Bỏ nhóm</button>
+            <button type="button" onclick="retrySingleGroupLog('${escapeHtml(log.id)}')" class="vg-btn vg-btn-secondary vg-btn-sm">Thử lại</button>
+            <button type="button" onclick="removeGroupUrlFromApp('${escapeHtml(log.groupUrl)}')" class="vg-btn vg-btn-danger-soft vg-btn-sm">Bỏ nhóm</button>
           </div>
         ` : ''}
       </div>
@@ -3224,9 +3198,11 @@ function applyExtensionStateToApp(data) {
   lastExtStateSnapshot = data;
   const badge = document.getElementById('appExtStatusBadge');
   if (badge && data.version) {
-    badge.className = 'neo-sticker sticker-green font-mono text-[11px] font-bold';
-    badge.textContent = `Extension v${data.version} Đã Kết Nối`;
+    badge.className = 'vg-pill vg-pill-success font-mono-num';
+    badge.textContent = `Extension v${data.version} · Đã kết nối`;
   }
+  const cockpitBadge = document.getElementById('cockpitExtSummaryBadge');
+  const cockpitText = document.getElementById('cockpitExtSummaryText');
   const cfg = data.config || {};
   const setChecked = (id, val) => {
     const el = document.getElementById(id);
@@ -3251,15 +3227,34 @@ function applyExtensionStateToApp(data) {
     urlsEl.value = cfg.targetGroupUrls.join('\n');
   }
 
+  const savedGroupsCount = Array.isArray(cfg.targetGroupUrls) ? cfg.targetGroupUrls.length : 0;
   const countEl = document.getElementById('appGroupCountLabel');
-  if (countEl && Array.isArray(cfg.targetGroupUrls)) {
-    countEl.textContent = String(cfg.targetGroupUrls.length);
+  if (countEl) {
+    countEl.textContent = String(savedGroupsCount);
   }
 
   const queueCount = typeof data.groupQueueCount === 'number' ? data.groupQueueCount : 0;
   const queueInfo = document.getElementById('appGroupQueueInfo');
   if (queueInfo) {
     queueInfo.textContent = `Chờ chia sẻ: ${queueCount} lượt`;
+  }
+
+  if (cockpitBadge) {
+    if (data.activeGroupJob) {
+      cockpitBadge.className = 'vg-pill vg-pill-primary font-mono-num';
+      cockpitBadge.textContent = `Đang chia sẻ nhóm (còn ${queueCount})`;
+    } else if (data.queuePaused) {
+      cockpitBadge.className = 'vg-pill vg-pill-warning';
+      cockpitBadge.textContent = 'Hàng đợi nhóm đang tạm dừng';
+    } else if (data.version) {
+      cockpitBadge.className = 'vg-pill vg-pill-success font-mono-num';
+      cockpitBadge.textContent = `Sẵn sàng (v${data.version}) · ${savedGroupsCount} nhóm`;
+    }
+  }
+  if (cockpitText) {
+    cockpitText.textContent = data.activeGroupJob
+      ? 'Extension đang chạy tuần tự trong cửa sổ phụ.'
+      : `Đã lưu ${savedGroupsCount} nhóm mục tiêu · Chờ ${queueCount} lượt.`;
   }
 
   const progText = document.getElementById('appActiveGroupProgressText');
@@ -3271,7 +3266,7 @@ function applyExtensionStateToApp(data) {
       progText.textContent = `Đang mở tuần tự 1 tab: ${slug} (còn ${queueCount} nhóm chờ sau tab này)...`;
     } else if (data.nextGroupAt && data.nextGroupAt > Date.now() && queueCount > 0) {
       const sec = Math.ceil((data.nextGroupAt - Date.now()) / 1000);
-      progText.textContent = `Đã đóng tab trước • Đếm ngược đủ ${sec}s nữa sẽ mở nhóm kế tiếp (còn ${queueCount} nhóm).`;
+      progText.textContent = `Đã đóng tab trước · Chờ đủ ${sec}s sẽ mở nhóm kế tiếp (còn ${queueCount} nhóm).`;
     } else if (queueCount > 0) {
       progText.textContent = `Đang chuẩn bị mở nhóm tiếp theo (${queueCount} lượt chờ)...`;
     } else {
@@ -3296,8 +3291,13 @@ function initExtensionControlPanel() {
       if (d.action === 'VG_EXTENSION_RESPONSE' && d.installed) {
         const badge = document.getElementById('appExtStatusBadge');
         if (badge) {
-          badge.className = 'neo-sticker sticker-green font-mono text-[11px] font-bold';
-          badge.textContent = `Extension v${d.version || '1.6.0'} Đã Kết Nối`;
+          badge.className = 'vg-pill vg-pill-success font-mono-num';
+          badge.textContent = `Extension v${d.version || '1.6.0'} · Đã kết nối`;
+        }
+        const cockpitBadge = document.getElementById('cockpitExtSummaryBadge');
+        if (cockpitBadge) {
+          cockpitBadge.className = 'vg-pill vg-pill-success font-mono-num';
+          cockpitBadge.textContent = `Đã kết nối v${d.version || '1.6.0'}`;
         }
         window.postMessage({ action: 'VG_GET_EXTENSION_CONFIG' }, '*');
       }

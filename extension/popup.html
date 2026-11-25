@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Laptop Vương Gia // Autopost App</title>
+  <title>Laptop Vương Gia — Autopost</title>
   <style>
     * {
       box-sizing: border-box;
@@ -10,66 +10,74 @@
       padding: 0;
     }
     body {
-      width: 350px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #FDFBF7;
-      color: #18181B;
+      width: 380px;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #F8FAFC;
+      color: #0F172A;
       padding: 14px;
+      font-size: 13px;
+      line-height: 1.45;
     }
     .header {
       display: flex;
       align-items: center;
       gap: 10px;
-      border-bottom: 2px solid #18181B;
-      padding-bottom: 10px;
-      margin-bottom: 10px;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #E2E8F0;
     }
     .badge-icon {
-      background: #FDE047;
-      width: 36px;
-      height: 36px;
-      border: 2px solid #18181B;
+      background: #0F172A;
+      color: #FFFFFF;
+      width: 34px;
+      height: 34px;
       border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 900;
-      font-size: 15px;
-      box-shadow: 2px 2px 0px #18181B;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.4px;
+      flex-shrink: 0;
     }
     .title {
-      font-size: 13px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #0F172A;
     }
     .subtitle {
-      font-size: 11px;
-      color: #71717A;
-      font-weight: 600;
+      font-size: 12px;
+      color: #475569;
     }
     .tabs-nav {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      background: #F1F5F9;
+      border: 1px solid #E2E8F0;
+      padding: 3px;
+      border-radius: 9px;
+      margin-bottom: 12px;
     }
     .tab-btn {
-      flex: 1;
-      padding: 6px;
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      border: 2px solid #18181B;
-      border-radius: 6px;
-      background: #FFFFFF;
+      padding: 7px 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      border: none;
+      border-radius: 7px;
+      background: transparent;
+      color: #475569;
       cursor: pointer;
-      box-shadow: 2px 2px 0px #18181B;
-      transition: all 0.1s ease;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .tab-btn:hover {
+      color: #0F172A;
     }
     .tab-btn.active {
-      background: #FDE047;
-      transform: translate(1px, 1px);
-      box-shadow: 1px 1px 0px #18181B;
+      background: #FFFFFF;
+      color: #0F172A;
+      font-weight: 700;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
     }
     .tab-pane {
       display: none;
@@ -79,127 +87,202 @@
     }
     .card {
       background: #FFFFFF;
-      border: 2px solid #18181B;
-      border-radius: 8px;
-      padding: 12px;
-      box-shadow: 3px 3px 0px #18181B;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 13px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
       margin-bottom: 10px;
     }
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0F172A;
+      margin-bottom: 8px;
+      display: block;
+    }
     .label {
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #0F172A;
       margin-bottom: 5px;
       display: block;
     }
     .textarea {
       width: 100%;
-      height: 90px;
-      padding: 8px;
-      border: 2px solid #18181B;
-      border-radius: 6px;
-      font-size: 12px;
+      height: 88px;
+      padding: 8px 10px;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      font-size: 12.5px;
       font-family: inherit;
+      color: #0F172A;
       outline: none;
-      background: #FAF8F5;
+      background: #FFFFFF;
       resize: vertical;
     }
-    .textarea:focus {
-      background: #FFFFFF;
-      border-color: #4F46E5;
+    .textarea:focus, .input:focus {
+      border-color: #2563EB;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
     }
     .input {
       width: 100%;
       padding: 7px 10px;
-      border: 2px solid #18181B;
-      border-radius: 6px;
-      font-size: 11.5px;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      font-size: 12.5px;
+      color: #0F172A;
       outline: none;
-      background: #FAF8F5;
+      background: #FFFFFF;
+    }
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: #0F172A;
+      margin-bottom: 7px;
+      cursor: pointer;
+    }
+    .check-row input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: #2563EB;
+      flex-shrink: 0;
+    }
+    .num-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 7px;
+      font-size: 12.5px;
+      color: #334155;
+      font-weight: 500;
+    }
+    .num-input {
+      width: 68px;
+      text-align: center;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
     }
     .btn-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-top: 8px;
+      gap: 8px;
+      margin-top: 10px;
     }
     .btn {
       width: 100%;
-      border: 2px solid #18181B;
-      border-radius: 6px;
-      padding: 8px 6px;
-      font-size: 11px;
-      font-weight: 900;
-      text-transform: uppercase;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 8px 10px;
+      min-height: 36px;
+      font-size: 12.5px;
+      font-weight: 600;
       cursor: pointer;
-      box-shadow: 2px 2px 0px #18181B;
-      transition: transform 0.1s;
+      transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 6px;
       text-align: center;
     }
     .btn:active {
-      transform: translate(1px, 1px);
-      box-shadow: 1px 1px 0px #18181B;
+      transform: scale(0.985);
     }
     .btn-dual {
-      background: #FB923C;
-      color: #431407;
+      background: #2563EB;
+      color: #FFFFFF;
       grid-column: span 2;
-      padding: 9px;
-      font-size: 12px;
+      min-height: 40px;
+      font-size: 13px;
     }
-    .btn-fanpage {
-      background: #FDE047;
-      color: #18181B;
-    }
-    .btn-personal {
-      background: #38BDF8;
-      color: #082F49;
+    .btn-dual:hover {
+      background: #1D4ED8;
     }
     .btn-schedule {
-      background: #EEF2FF;
-      color: #312E81;
+      background: #FFFFFF;
+      color: #0F172A;
+      border-color: #CBD5E1;
       grid-column: span 2;
     }
-    .status-msg {
-      font-size: 11px;
-      font-weight: 700;
+    .btn-schedule:hover {
+      background: #F1F5F9;
+    }
+    .btn-fanpage {
+      background: #FFFFFF;
+      color: #0F172A;
+      border-color: #CBD5E1;
+    }
+    .btn-fanpage:hover {
+      background: #F1F5F9;
+    }
+    .btn-personal {
+      background: #EFF6FF;
+      color: #1E40AF;
+      border-color: #BFDBFE;
+    }
+    .btn-personal:hover {
+      background: #DBEAFE;
+    }
+    .btn-danger-soft {
+      background: #FEF2F2;
+      color: #991B1B;
+      border-color: #FECACA;
+    }
+    .btn-danger-soft:hover {
+      background: #FEE2E2;
+    }
+    .status-box {
+      font-size: 12px;
+      color: #334155;
+      font-weight: 500;
+      background: #F8FAFC;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #E2E8F0;
       margin-top: 8px;
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: 1.5px solid #18181B;
+    }
+    .status-msg {
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid transparent;
       display: none;
     }
     .status-msg.loading {
       display: block;
-      background: #FEF08A;
-      color: #854D0E;
+      background: #EFF6FF;
+      border-color: #BFDBFE;
+      color: #1E40AF;
     }
     .status-msg.success {
       display: block;
-      background: #DCFCE7;
-      color: #166534;
+      background: #ECFDF5;
+      border-color: #A7F3D0;
+      color: #065F46;
     }
     .status-msg.error {
       display: block;
-      background: #FEE2E2;
+      background: #FEF2F2;
+      border-color: #FECACA;
       color: #991B1B;
     }
     .media-preview {
       display: flex;
       gap: 6px;
       overflow-x: auto;
-      margin-top: 6px;
-      padding-bottom: 4px;
+      margin-top: 8px;
+      padding-bottom: 2px;
     }
     .media-thumb {
-      width: 44px;
-      height: 44px;
-      border: 1.5px solid #18181B;
-      border-radius: 4px;
+      width: 48px;
+      height: 48px;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
       object-fit: cover;
       flex-shrink: 0;
     }
@@ -211,103 +294,103 @@
     <div class="badge-icon">VG</div>
     <div>
       <div class="title">Laptop Vương Gia</div>
-      <div class="subtitle">Hệ Thống Autopost Tuần Tự 10s • v1.6.0</div>
+      <div class="subtitle">Autopost tuần tự 10s · v1.6.0</div>
     </div>
   </div>
 
   <div class="tabs-nav">
-    <button class="tab-btn active" data-tab="tab-compose">⚡ Soạn & Đăng</button>
-    <button class="tab-btn" data-tab="tab-settings">⚙️ Cài Đặt</button>
+    <button class="tab-btn active" data-tab="tab-compose">Soạn &amp; Đăng</button>
+    <button class="tab-btn" data-tab="tab-settings">Tự động &amp; Cài đặt</button>
   </div>
 
   <!-- TAB 1: SOẠN & ĐĂNG BÀI NHANH -->
   <div id="tab-compose" class="tab-pane active">
     <div class="card">
-      <label class="label">Nội dung cấu hình từ Zalo / Kho:</label>
+      <label for="rawTextInput" class="label">Nội dung cấu hình từ Zalo / Kho</label>
       <textarea id="rawTextInput" class="textarea" placeholder="Ví dụ: Mã 09: HP Probook 430 G8 i5-11Th/16/256/13.3 vỏ nhôm. Giá 7.x tr..."></textarea>
-      
-      <div style="margin-top: 8px;">
-        <label class="label">Đính kèm ảnh máy HD:</label>
-        <input type="file" id="mediaFileInput" multiple accept="image/*" class="input" style="padding: 4px 6px;">
+
+      <div style="margin-top: 10px;">
+        <label for="mediaFileInput" class="label">Đính kèm ảnh máy HD</label>
+        <input type="file" id="mediaFileInput" multiple accept="image/*" class="input" style="padding: 5px 8px;">
         <div id="mediaPreview" class="media-preview"></div>
       </div>
 
       <div class="btn-grid" style="grid-template-columns: 1fr; gap: 8px;">
-        <button id="btnDualPost" class="btn btn-dual">🚀 ĐĂNG NGAY (FANPAGE + CÁ NHÂN)</button>
-        <button id="btnSchedulePost" class="btn btn-schedule">⏳ LÊN LỊCH HÀNG ĐỢI (CẢ HAI)</button>
+        <button id="btnDualPost" class="btn btn-dual">Đăng ngay (Fanpage + Cá nhân)</button>
+        <button id="btnSchedulePost" class="btn btn-schedule">Lên lịch hàng đợi</button>
       </div>
 
       <div id="statusMsg" class="status-msg"></div>
     </div>
 
-    <div id="quickGroupBar" style="background:#FFFFFF; border:2px solid #18181B; border-radius:8px; padding:8px 10px; margin-bottom:10px; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:space-between; gap:8px;">
-      <span id="quickGroupLabel">📢 Hội Nhóm: Đang kiểm tra...</span>
-      <button id="quickGroupActionBtn" class="btn btn-fanpage" style="width:auto; padding:4px 8px; font-size:10px;">🔍 Quét Nhóm</button>
+    <div id="quickGroupBar" class="card" style="padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+      <span id="quickGroupLabel" style="font-size: 12px; font-weight: 600; color: #334155;">Hội Nhóm: Đang kiểm tra...</span>
+      <button id="quickGroupActionBtn" class="btn btn-personal" style="width: auto; min-height: 30px; padding: 4px 10px; font-size: 12px;">Quét nhóm</button>
     </div>
 
-    <button id="openFullAppBtn" class="btn" style="background: #FFFFFF; width: 100%;">
-      🌐 Mở Web App Dashboard (/app) ➔
+    <button id="openFullAppBtn" class="btn btn-fanpage">
+      Mở bảng điều khiển Web App
     </button>
   </div>
 
-  <!-- TAB 2: CÀI ĐẶT -->
+  <!-- TAB 2: TỰ ĐỘNG & CÀI ĐẶT -->
   <div id="tab-settings" class="tab-pane">
     <div class="card">
-      <label class="label">🤖 Tự động Trang Cá Nhân (khi mở Chrome):</label>
-      <label style="display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:700; margin-bottom:6px; cursor:pointer;">
-        <input type="checkbox" id="autoPersonalToggle" checked style="width:15px; height:15px;">
-        <span>Tự quét & đăng bài đến giờ mỗi 1 phút</span>
+      <span class="card-title">Tự động Trang Cá Nhân (khi mở Chrome)</span>
+      <label class="check-row">
+        <input type="checkbox" id="autoPersonalToggle" checked>
+        <span>Tự quét &amp; đăng bài đến giờ mỗi phút</span>
       </label>
-      <label style="display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:600; margin-bottom:8px; cursor:pointer; color:#3F3F46;">
-        <input type="checkbox" id="autoFanpageSyncToggle" checked style="width:15px; height:15px;">
-        <span>Tự đăng đồng bộ bài Fanpage mới sang Cá Nhân</span>
+      <label class="check-row" style="color: #475569;">
+        <input type="checkbox" id="autoFanpageSyncToggle" checked>
+        <span>Tự đồng bộ bài Fanpage mới sang Cá Nhân</span>
       </label>
-      <div id="autoPersonalStatus" style="font-size:10.5px; color:#52525B; font-weight:600; background:#F4F4F5; padding:6px 8px; border-radius:6px; border:1px solid #D4D4D8;">
+      <div id="autoPersonalStatus" class="status-box">
         Đang tải trạng thái lịch hẹn...
       </div>
-      <button id="checkDueNowBtn" class="btn btn-personal" style="margin-top:8px;">⚡ Quét & Đăng Ngay Bài Đến Giờ</button>
+      <button id="checkDueNowBtn" class="btn btn-personal" style="margin-top: 8px;">Quét &amp; đăng bài đến giờ</button>
     </div>
 
     <div class="card">
-      <label class="label">📢 Tự động chia sẻ Hội Nhóm Facebook:</label>
-      <label style="display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:700; margin-bottom:6px; cursor:pointer;">
-        <input type="checkbox" id="autoGroupShareToggle" checked style="width:15px; height:15px;">
+      <span class="card-title">Tự động chia sẻ Hội Nhóm Facebook</span>
+      <label class="check-row">
+        <input type="checkbox" id="autoGroupShareToggle" checked>
         <span>Tự chia sẻ sang Group sau khi đăng Cá Nhân</span>
       </label>
-      <label style="display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:700; margin-bottom:6px; cursor:pointer;">
-        <input type="checkbox" id="shareAllGroupsToggle" style="width:15px; height:15px;">
+      <label class="check-row">
+        <input type="checkbox" id="shareAllGroupsToggle">
         <span>Đăng hết tất cả nhóm đã lưu cho mỗi bài</span>
       </label>
-      <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-        <span style="font-size:11px; font-weight:700; flex:1;">Số nhóm xoay vòng mỗi bài:</span>
-        <input type="number" id="groupsPerPostInput" min="1" max="50" value="3" class="input" style="width:62px; text-align:center; font-weight:800;">
+      <div class="num-row">
+        <span>Số nhóm đăng mỗi bài:</span>
+        <input type="number" id="groupsPerPostInput" min="1" max="50" value="3" class="input num-input">
       </div>
-      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-        <span style="font-size:11px; font-weight:700; flex:1;">Chờ sau khi đóng tab cũ (giây):</span>
-        <input type="number" id="groupDelayInput" min="0" max="600" value="10" class="input" style="width:62px; text-align:center; font-weight:800;">
+      <div class="num-row">
+        <span>Chờ sau khi đóng tab cũ (giây):</span>
+        <input type="number" id="groupDelayInput" min="0" max="600" value="10" class="input num-input">
       </div>
-      <label class="label" style="margin-top:4px;">Danh sách Link Group mục tiêu (mỗi dòng 1 link):</label>
-      <textarea id="groupUrlsInput" class="textarea" style="height:68px; font-size:11px;" placeholder="https://www.facebook.com/groups/tennhomlaptop/&#10;https://www.facebook.com/groups/chototlaptop/"></textarea>
-      <div id="groupShareStatus" style="font-size:10.5px; color:#52525B; font-weight:600; background:#F4F4F5; padding:6px 8px; border-radius:6px; border:1px solid #D4D4D8; margin-top:6px;">
-        Chưa có nhóm được cấu hình (bấm Quét Nhóm hoặc dán link).
+      <label for="groupUrlsInput" class="label" style="margin-top: 6px;">Link Group mục tiêu (mỗi dòng 1 link)</label>
+      <textarea id="groupUrlsInput" class="textarea" style="height: 68px; font-size: 11.5px; font-family: monospace;" placeholder="https://www.facebook.com/groups/tennhomlaptop/&#10;https://www.facebook.com/groups/chototlaptop/"></textarea>
+      <div id="groupShareStatus" class="status-box">
+        Chưa có nhóm được cấu hình (bấm Quét nhóm hoặc dán link).
       </div>
       <div class="btn-grid">
-        <button id="scanGroupsBtn" class="btn btn-fanpage">🔍 Quét Nhóm Của Tôi</button>
-        <button id="shareGroupsNowBtn" class="btn btn-personal">📢 Chia Sẻ Nhóm Ngay</button>
-        <button id="retryFailedGroupsBtn" class="btn" style="background:#FEF9C3; color:#713F12;">🔄 Thử Lại Nhóm Lỗi</button>
-        <button id="stopGroupQueueBtn" class="btn" style="background:#FEE2E2; color:#991B1B;">🛑 Dừng Hàng Đợi</button>
+        <button id="scanGroupsBtn" class="btn btn-fanpage">Quét nhóm</button>
+        <button id="shareGroupsNowBtn" class="btn btn-personal">Chia sẻ ngay</button>
+        <button id="retryFailedGroupsBtn" class="btn btn-fanpage">Thử lại nhóm lỗi</button>
+        <button id="stopGroupQueueBtn" class="btn btn-danger-soft">Dừng hàng đợi</button>
       </div>
     </div>
 
     <div class="card">
-      <label class="label">Địa chỉ máy chủ (Backend):</label>
+      <label for="backendUrlInput" class="label">Địa chỉ máy chủ (Backend)</label>
       <input type="text" id="backendUrlInput" class="input" value="https://auto-post-fanpage-coral.vercel.app">
-      
-      <div id="connectionStatus" style="font-size: 11px; font-weight: 800; margin-top: 8px; color: #166534;">
-        ● Đang kiểm tra kết nối...
+
+      <div id="connectionStatus" style="font-size: 12px; font-weight: 600; margin-top: 8px; color: #065F46;">
+        Đang kiểm tra kết nối...
       </div>
 
-      <button id="saveBtn" class="btn btn-fanpage" style="margin-top: 10px;">💾 Lưu Cấu Hình</button>
+      <button id="saveBtn" class="btn btn-dual" style="margin-top: 10px; grid-column: auto;">Lưu cấu hình</button>
     </div>
   </div>
 

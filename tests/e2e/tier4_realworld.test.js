@@ -110,7 +110,7 @@ async function run(baseUrl) {
   });
 
   // 4.3: Zero Blind Trust Production Verification: Slide 0 & Aesthetic Rules
-  await test('4.3: Zero Blind Trust Production Audit: Slide 0 pure monochrome & Neo-Brutalist design tokens', async () => {
+  await test('4.3: Zero Blind Trust Production Audit: Slide 0 pure monochrome & Clean Daylight design tokens', async () => {
     const htmlPath = path.join(__dirname, '..', '..', 'public', 'index.html');
     const htmlContent = fs.existsSync(htmlPath) ? fs.readFileSync(htmlPath, 'utf8') : '';
 
@@ -125,12 +125,13 @@ async function run(baseUrl) {
     // 2. Check for banned aesthetic patterns across public directory
     assert.ok(slide0Inspection.checks.hasNoPurpleGradients, 'Must not contain purple/violet gradient slop');
 
-    // 3. Confirm Neo-Brutalist Solid Ink Tokens & Hard Drop Shadows
+    // 3. Confirm Solid Ink Tokens & Hairline Borders
     const cssPath = path.join(__dirname, '..', '..', 'public', 'css', 'style.css');
     const cssContent = fs.existsSync(cssPath) ? fs.readFileSync(cssPath, 'utf8') : '';
     if (cssContent) {
-      assert.ok(cssContent.includes('#18181B') || cssContent.includes('border'), 'CSS must define solid ink borders');
+      assert.ok(cssContent.includes('#0F172A') && cssContent.includes('--border-hairline'), 'CSS must define solid ink & hairline border tokens');
       assert.ok(!cssContent.includes('bg-gradient-to-r from-purple'), 'CSS must not define purple text gradients');
+      assert.ok(!cssContent.includes('#6366F1') && !cssContent.includes('#E0E7FF'), 'CSS must not contain forbidden violet/lavender hex tokens');
     }
   });
 

@@ -3,26 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Laptop Vương Gia - Hệ Thống Đăng Bài Fanpage Neo-Brutalist</title>
+  <title>Laptop Vương Gia — Quản lý &amp; Tự động Đăng bài</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Plus Jakarta Sans, Caveat, Space Mono, Anton -->
+  <!-- Google Fonts: Plus Jakarta Sans, JetBrains Mono (+ Anton & Space Mono for Slide 0) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <!-- PWA & Mobile App Meta Tags -->
-  <meta name="theme-color" content="#FDE047" />
+  <meta name="theme-color" content="#F8FAFC" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Laptop Vương Gia" />
   <link rel="manifest" href="/manifest.json" />
   <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
   <link rel="apple-touch-icon" href="/icons/icon.svg" />
 
-  <link rel="stylesheet" href="/css/style.css?v=20261125_v22_verified_group_queue">
+  <link rel="stylesheet" href="/css/style.css?v=20261125_v23_clean_daylight">
 </head>
-<body class="bg-[#FDFBF7] text-[#18181B] min-h-screen">
+<body class="bg-[#F8FAFC] text-[#0F172A] min-h-screen">
 
   <!-- ======================== PAGE 0 / SLIDE 0: DESIGN BY VUONGGIA ======================== -->
   <div id="slide0Modal" class="fixed inset-0 bg-[#000000] text-[#FFFFFF] z-[9999] flex flex-col justify-center items-center overflow-hidden transition-opacity duration-300">
@@ -114,357 +114,276 @@
 
   <!-- ======================== MAIN DASHBOARD ======================== -->
   <div id="mainApp" class="min-h-screen flex flex-col">
-    
-    <!-- Top Sticky Header -->
-    <header class="border-b-2 border-[#18181B] bg-[#FFFFFF] sticky top-0 z-40 px-4 lg:px-8 py-3.5 shadow-[0_2px_0px_#18181B]">
-      <div class="w-full max-w-[1720px] mx-auto flex flex-wrap items-center justify-between gap-4">
-        
-        <!-- Left: Logo & Brand -->
-        <div class="flex items-center gap-3.5">
-          <button onclick="openSlide0Modal()" class="w-11 h-11 rounded-lg bg-[#FDE047] border-2 border-[#18181B] shadow-[2.5px_2.5px_0px_#18181B] flex items-center justify-center font-black text-xl text-[#18181B] transform -rotate-1 cursor-pointer hover:scale-105 transition" title="Bản quyền & Giấy chứng nhận DESIGN BY VUONGGIA">
+
+    <!-- Unified Clean Header (64px Desktop, Single-Row Compact on Mobile) -->
+    <header class="bg-white/95 backdrop-blur-md border-b border-[#E2E8F0] sticky top-0 z-40 px-4 lg:px-8">
+      <div class="w-full max-w-[1440px] mx-auto h-16 flex items-center justify-between gap-3">
+
+        <!-- Left: Logo & Title -->
+        <div class="flex items-center gap-3 min-w-0">
+          <button onclick="openSlide0Modal()" class="w-9 h-9 rounded-lg bg-[#0F172A] text-white flex items-center justify-center font-bold text-xs tracking-wider shrink-0 hover:bg-[#1E293B] transition-colors cursor-pointer" title="Xem chứng nhận bản quyền DESIGN BY VUONGGIA">
             VG
           </button>
-          <div>
-            <div class="flex items-center gap-2">
-              <h1 class="text-lg font-black tracking-tight text-[#18181B]">LAPTOP VƯƠNG GIA // AUTOPOST</h1>
-              <span class="neo-sticker sticker-yellow tilt-right">PRO CRAFT</span>
-            </div>
-            <p class="text-xs text-neutral-600 font-medium">Bảng tin tự động · Biên tập từ Zalo & Đăng bài lên Facebook Fanpage</p>
+          <div class="min-w-0">
+            <h1 class="text-sm sm:text-base font-bold text-[#0F172A] truncate">Laptop Vương Gia</h1>
+            <p class="hidden sm:block text-xs text-[#475569] truncate">Quản lý đăng bài Fanpage, Cá nhân &amp; Hội nhóm</p>
           </div>
         </div>
 
-        <!-- Right: Status Stickers & Shortcuts -->
-        <div class="flex items-center gap-2.5 flex-wrap text-xs">
-          <div id="topFanpageBadge" class="neo-sticker sticker-green tilt-left cursor-default">
-            <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
-            <span>Fanpage: <strong>Laptop Vương Gia</strong> (<span class="font-mono text-[11px]">1154184381110692</span>)</span>
+        <!-- Center: Desktop Navigation Tabs (Hidden on < 1024px to prevent mobile clipping & double nav) -->
+        <nav class="hidden lg:flex items-center gap-1" aria-label="Điều hướng chính">
+          <button onclick="switchTab('cockpit')" id="tabBtn-cockpit" class="vg-nav-tab nav-tab-active">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            <span>Tổng quan</span>
+          </button>
+
+          <button onclick="switchTab('queue')" id="tabBtn-queue" class="vg-nav-tab">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>Hàng đợi</span>
+            <span id="queueCount" class="ml-0.5 px-1.5 py-0.5 text-xs font-mono-num font-semibold rounded-full bg-[#F1F5F9] text-[#334155]">0</span>
+          </button>
+
+          <button onclick="switchTab('datapost')" id="tabBtn-datapost" class="vg-nav-tab">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            <span>Kho máy</span>
+            <span id="modelTemplateCountBadge" class="ml-0.5 px-1.5 py-0.5 text-xs font-mono-num font-semibold rounded-full bg-[#F1F5F9] text-[#334155]">0</span>
+          </button>
+
+          <button onclick="switchTab('settings')" id="tabBtn-settings" class="vg-nav-tab">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <span>Tự động &amp; Cài đặt</span>
+          </button>
+        </nav>
+
+        <!-- Right: Status Pill & Primary CTA -->
+        <div class="flex items-center gap-2 shrink-0">
+          <div id="topFanpageBadge" class="hidden md:inline-flex vg-pill vg-pill-success" title="Fanpage đang kết nối">
+            <span class="w-2 h-2 rounded-full bg-[#059669]"></span>
+            <span class="text-[#065F46]">Fanpage: <strong class="font-semibold text-[#065F46]">Laptop Vương Gia</strong></span>
           </div>
 
-          <div id="topSchedulerBadge" class="neo-sticker sticker-lavender tilt-right cursor-default hidden sm:inline-flex">
-            <span>⏰ Khung giờ: <strong>08:30, 11:45, 15:30, 20:00</strong></span>
-          </div>
+          <button onclick="showPwaInstallModal()" id="pwaInstallHeaderBtn" class="vg-btn vg-btn-secondary vg-btn-sm" title="Cài đặt ứng dụng về điện thoại">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            <span class="hidden sm:inline">Cài App</span>
+          </button>
 
-          <button onclick="showPwaInstallModal()" id="pwaInstallHeaderBtn" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-black shadow-[2.5px_2.5px_0px_#18181B]" title="Cài đặt ứng dụng về màn hình điện thoại">
-            <span>📲 Cài App</span>
+          <button onclick="openManualPostModal()" class="vg-btn vg-btn-primary vg-btn-sm" title="Soạn và đăng nhanh bài viết mới">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+            <span>Soạn bài mới</span>
           </button>
         </div>
+
       </div>
     </header>
 
-    <!-- Navigation Tabs (Folder Style - Streamlined 4 Tabs) -->
-    <div class="border-b-2 border-[#18181B] bg-[#F4EFEA] pt-3 px-4 lg:px-8">
-      <div class="w-full max-w-[1720px] mx-auto flex space-x-2 sm:space-x-3 overflow-x-auto">
-        <button onclick="switchTab('cockpit')" id="tabBtn-cockpit" class="neo-nav-tab nav-tab-active whitespace-nowrap">
-          <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-          1. ⚡ Bảng Điều Hành Tự Động
-        </button>
-        <button onclick="switchTab('queue')" id="tabBtn-queue" class="neo-nav-tab whitespace-nowrap">
-          <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          2. ⏰ Hàng đợi lên lịch (<span id="queueCount" class="font-mono">0</span>)
-        </button>
-        <button onclick="switchTab('datapost')" id="tabBtn-datapost" class="neo-nav-tab whitespace-nowrap">
-          <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-          3. 🗄️ DATA POST (<span id="modelTemplateCountBadge" class="font-mono">0</span>)
-        </button>
-        <button onclick="switchTab('settings')" id="tabBtn-settings" class="neo-nav-tab whitespace-nowrap">
-          <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-          4. ⚙️ Quản trị & Lịch sử
-        </button>
-      </div>
-    </div>
+    <!-- Main Workspace Area -->
+    <main class="flex-1 w-full max-w-[1440px] mx-auto px-4 lg:px-8 py-6 lg:py-8">
 
-    <!-- Main Content Area (Fluid Edge-to-Edge) -->
-    <main class="flex-1 w-full max-w-[1720px] mx-auto p-4 lg:p-7">
-
-      <!-- ==================== TAB 1: COCKPIT (BẢNG ĐIỀU HÀNH TỰ ĐỘNG) ==================== -->
+      <!-- ==================== TAB 1: TỔNG QUAN ==================== -->
       <section id="section-cockpit" class="space-y-6">
-        
-        <!-- System Status Banner -->
-        <div class="neo-card p-5 bg-[#FFFBEB] flex flex-wrap items-center justify-between gap-4 washi-top">
-          <div class="flex items-center gap-3.5">
-            <div class="w-12 h-12 rounded-lg bg-[#22C55E] text-white border-2 border-[#18181B] shadow-[2.5px_2.5px_0px_#18181B] flex items-center justify-center text-2xl font-black shrink-0">
-              ⚡
-            </div>
-            <div>
-              <div class="flex items-center gap-2 flex-wrap">
-                <h2 class="text-base sm:text-lg font-black text-[#18181B] uppercase tracking-wide">BẢNG ĐIỀU HÀNH TỰ ĐỘNG // LAPTOP VƯƠNG GIA</h2>
-                <span class="neo-sticker sticker-green tilt-left text-[11px] font-bold">HỆ THỐNG HOẠT ĐỘNG TỐT</span>
-              </div>
-              <p class="text-xs text-neutral-700 mt-1 max-w-3xl">
-                Tự động hóa hoàn toàn: Bóc tách bài đăng từ Zalo CTV, tối ưu bài viết Facebook với AI solid-ink, nạp ảnh HD lên Supabase Cloud và xuất bản đều đặn vào 4 khung giờ vàng (08:30, 11:45, 15:30, 20:00).
-              </p>
-            </div>
+
+        <!-- Page Heading & Secondary Utilities -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-[#0F172A] tracking-tight">Tổng quan lịch đăng bài</h2>
+            <p class="text-sm text-[#475569] mt-0.5">Theo dõi bài sắp xuất bản và trạng thái đồng bộ tự động.</p>
           </div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <button onclick="triggerCircularFill()" class="neo-btn neo-btn-yellow px-4 py-2 text-xs font-black shadow-[2.5px_2.5px_0px_#18181B]">
-              🔄 Tuần hoàn DATA POST
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <button onclick="triggerCircularFill()" class="vg-btn vg-btn-secondary">
+              <svg class="w-4 h-4 shrink-0 text-[#475569]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span>Tuần hoàn kho máy</span>
             </button>
-            <button onclick="openManualPostModal()" class="neo-btn neo-btn-white px-4 py-2 text-xs font-black shadow-[2.5px_2.5px_0px_#18181B]">
-              ➕ Soạn bài lẻ thủ công
+            <button onclick="openManualPostModal()" class="vg-btn vg-btn-soft-primary">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              <span>Soạn bài lẻ</span>
             </button>
           </div>
         </div>
 
-        <!-- Hero Metrics Grid (3 Big Neo-Brutalist Cards) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <!-- Metric 1: Next Post -->
-          <div class="neo-card p-5 bg-white space-y-3 border-2 border-[#18181B] shadow-[3.5px_3.5px_0px_#18181B]">
-            <div class="flex justify-between items-center border-b-2 border-[#18181B] pb-2">
-              <span class="text-xs font-black uppercase tracking-wider text-[#18181B] flex items-center gap-1.5">
-                <span>⏰</span> BÀI ĐĂNG KẾ TIẾP
-              </span>
-              <span id="cockpitNextSlotBadge" class="neo-sticker sticker-lavender font-mono text-[11px] font-bold">--:--</span>
+        <!-- Cardless Status Strip (1 clean container divided by hairlines) -->
+        <div class="vg-surface grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-[#E2E8F0]">
+          <!-- Metric 1: Queue -->
+          <div class="p-5 flex flex-col justify-between gap-2">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-semibold text-[#475569]">Bài đang chờ đăng</span>
+              <button onclick="switchTab('queue')" class="text-xs font-semibold text-[#2563EB] hover:underline">Xem tất cả</button>
             </div>
-            <div id="cockpitNextPostDetails" class="space-y-2">
-              <div class="text-sm font-black text-[#18181B] line-clamp-2" id="cockpitNextPostTitle">Đang kiểm tra hàng đợi...</div>
-              <div class="flex items-center justify-between text-xs">
-                <span id="cockpitNextPostPrice" class="neo-sticker sticker-yellow font-bold">---</span>
-                <span id="cockpitCountdown" class="text-neutral-500 font-mono text-[11px]">Đang đếm ngược...</span>
-              </div>
+            <div class="flex items-baseline gap-2">
+              <span id="cockpitQueueTotal" class="text-3xl font-bold font-mono-num text-[#0F172A]">0</span>
+              <span class="text-sm text-[#475569]">bài</span>
             </div>
-            <div class="pt-2 flex gap-2">
-              <button id="cockpitPublishNowBtn" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 flex-1 py-2.5 text-xs font-black uppercase shadow-[2.5px_2.5px_0px_#18181B]" title="Đăng ngay lên cả Fanpage và Facebook Cá Nhân">
-                🚀 ĐĂNG NGAY (FANPAGE + CÁ NHÂN)
-              </button>
-              <button id="cockpitViewNextBtn" class="neo-btn neo-btn-white px-3.5 py-2.5 text-xs font-bold" title="Xem chi tiết">
-                👁️ Xem
-              </button>
-            </div>
+            <p id="cockpitCoverageText" class="text-xs text-[#475569] leading-relaxed">Đang tải dữ liệu hàng đợi...</p>
           </div>
 
-          <!-- Metric 2: Queue Capacity & Coverage -->
-          <div class="neo-card p-5 bg-white space-y-3 border-2 border-[#18181B] shadow-[3.5px_3.5px_0px_#18181B]">
-            <div class="flex justify-between items-center border-b-2 border-[#18181B] pb-2">
-              <span class="text-xs font-black uppercase tracking-wider text-[#18181B] flex items-center gap-1.5">
-                <span>📦</span> HÀNG ĐỢI TỰ ĐỘNG
-              </span>
-              <span class="neo-sticker sticker-green font-mono text-[11px] font-bold">4 KHUNG GIỜ VÀNG</span>
+          <!-- Metric 2: Library Models -->
+          <div class="p-5 flex flex-col justify-between gap-2">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-semibold text-[#475569]">Kho mẫu Laptop</span>
+              <button onclick="switchTab('datapost')" class="text-xs font-semibold text-[#2563EB] hover:underline">Mở kho máy</button>
             </div>
-            <div class="space-y-1">
-              <div class="flex items-baseline gap-2">
-                <span id="cockpitQueueTotal" class="text-4xl font-black font-mono text-[#18181B]">0</span>
-                <span class="text-xs font-bold text-neutral-600">bài sẵn sàng</span>
-              </div>
-              <p id="cockpitCoverageText" class="text-xs text-neutral-700 font-medium">
-                Đang quét dữ liệu hàng đợi...
-              </p>
+            <div class="flex items-baseline gap-2">
+              <span id="cockpitTemplateTotal" class="text-3xl font-bold font-mono-num text-[#0F172A]">0</span>
+              <span class="text-sm text-[#475569]">mẫu máy</span>
             </div>
-            <div class="pt-2">
-              <button onclick="switchTab('queue')" class="neo-btn neo-btn-white w-full py-2 text-xs font-black">
-                👉 Quản lý các bài trong Hàng đợi ➔
-              </button>
-            </div>
+            <p class="text-xs text-[#475569] leading-relaxed">Tự động xoay vòng khi kho Zalo chưa có bài mới.</p>
           </div>
 
-          <!-- Metric 3: DATA POST Model Templates -->
-          <div class="neo-card p-5 bg-white space-y-3 border-2 border-[#18181B] shadow-[3.5px_3.5px_0px_#18181B]">
-            <div class="flex justify-between items-center border-b-2 border-[#18181B] pb-2">
-              <span class="text-xs font-black uppercase tracking-wider text-[#18181B] flex items-center gap-1.5">
-                <span>🗄️</span> KHO MẪU DATA POST
-              </span>
-              <span class="neo-sticker sticker-peach font-mono text-[11px] font-bold">TUẦN HOÀN</span>
+          <!-- Metric 3: Schedule Times -->
+          <div class="p-5 flex flex-col justify-between gap-2">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-semibold text-[#475569]">Khung giờ tự động</span>
+              <button onclick="switchTab('settings'); switchSettingsSubTab('config');" class="text-xs font-semibold text-[#2563EB] hover:underline">Chỉnh giờ</button>
             </div>
-            <div class="space-y-1">
-              <div class="flex items-baseline gap-2">
-                <span id="cockpitTemplateTotal" class="text-4xl font-black font-mono text-[#18181B]">0</span>
-                <span class="text-xs font-bold text-neutral-600">mẫu máy chuẩn</span>
-              </div>
-              <p class="text-xs text-neutral-700 font-medium">
-                Tự động lấp đầy khung giờ trống khi kho Zalo tạm thời chưa có máy mới.
-              </p>
+            <div id="topSchedulerBadge" class="text-lg font-bold font-mono-num text-[#0F172A]">
+              08:30 · 11:45 · 15:30 · 20:00
             </div>
-            <div class="pt-2">
-              <button onclick="switchTab('datapost')" class="neo-btn neo-btn-white w-full py-2 text-xs font-black">
-                🗄️ Mở Kho Thư Viện Model ➔
-              </button>
+            <p class="text-xs text-[#475569] leading-relaxed">Hệ thống tự động kiểm tra và đăng đúng khung giờ mỗi ngày.</p>
+          </div>
+
+          <!-- Metric 4: Extension & Group Summary Shortcut -->
+          <div class="p-5 flex flex-col justify-between gap-2">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-semibold text-[#475569]">Extension &amp; Hội nhóm</span>
+              <button onclick="switchTab('settings'); switchSettingsSubTab('automation');" class="text-xs font-semibold text-[#2563EB] hover:underline">Cài đặt Auto</button>
             </div>
+            <div>
+              <span id="cockpitExtSummaryBadge" class="vg-pill vg-pill-warning">Đang kiểm tra kết nối...</span>
+            </div>
+            <p id="cockpitExtSummaryText" class="text-xs text-[#475569] leading-relaxed">Quản lý đăng Trang Cá Nhân và chia sẻ Hội Nhóm tuần tự.</p>
           </div>
         </div>
 
-        <!-- Recent Schedule Timeline Preview (6 upcoming items) -->
-        <div class="neo-card p-5 bg-white space-y-4 border-2 border-[#18181B] shadow-[3.5px_3.5px_0px_#18181B]">
-          <div class="flex flex-wrap items-center justify-between gap-3 border-b-2 border-[#18181B] pb-3">
-            <div>
-              <h3 class="text-sm font-black uppercase tracking-wider text-[#18181B] flex items-center gap-2">
-                <span>📅</span> LỊCH XUẤT BẢN CÁC BÀI GẦN NHẤT
-              </h3>
-              <p class="text-xs text-neutral-600 font-medium">Danh sách các bài viết sắp được tự động xuất bản lên Fanpage theo đúng giờ hẹn</p>
+        <!-- 2-Column Workspace Focus: Left = Next Post Spotlight, Right = Upcoming Schedule List -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+          <!-- Left Column: Next Post Spotlight (5 cols) -->
+          <div class="lg:col-span-5 vg-surface p-6 space-y-5">
+            <div class="flex items-center justify-between gap-2 pb-3 border-b border-[#E2E8F0]">
+              <h3 class="text-base font-bold text-[#0F172A]">Bài đăng kế tiếp</h3>
+              <span id="cockpitNextSlotBadge" class="vg-pill vg-pill-primary font-mono-num">--:--</span>
             </div>
-            <button onclick="loadCockpitStatus()" class="neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold">
-              🔄 Làm mới
-            </button>
-          </div>
 
-          <div id="cockpitTimelineList" class="divide-y divide-[#18181B]/20">
-            <!-- Populated by JS -->
-          </div>
-        </div>
-
-        <!-- Extension Personal Profile & Group Auto-Share Panel -->
-        <div id="cockpitExtensionPanel" class="neo-card p-5 bg-white space-y-4 border-2 border-[#18181B] shadow-[3.5px_3.5px_0px_#18181B]">
-          <div class="flex flex-wrap items-center justify-between gap-3 border-b-2 border-[#18181B] pb-3">
-            <div>
-              <h3 class="text-sm font-black uppercase tracking-wider text-[#18181B] flex items-center gap-2">
-                <svg class="w-4 h-4 text-[#18181B]" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
-                <span>TỰ ĐỘNG TRANG CÁ NHÂN &amp; HỘI NHÓM FACEBOOK (TUẦN TỰ &amp; XÁC NHẬN ĐĂNG)</span>
-              </h3>
-              <p class="text-xs text-neutral-600 font-medium">Chạy trong cửa sổ phụ chạy nền, xác nhận đăng xong mới đóng tab và chờ đủ số giây trước khi mở nhóm tiếp theo.</p>
-            </div>
-            <span id="appExtStatusBadge" class="neo-sticker sticker-yellow font-mono text-[11px] font-bold">Đang kiểm tra Extension...</span>
-          </div>
-
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            <div class="lg:col-span-5 space-y-2.5 text-xs">
-              <label class="flex items-center gap-2 font-bold text-[#18181B] cursor-pointer">
-                <input type="checkbox" id="appAutoPersonalEnabled" checked class="w-4 h-4 accent-[#18181B]">
-                <span>Tự động đăng Trang Cá Nhân khi mở Chrome</span>
-              </label>
-              <label class="flex items-center gap-2 font-semibold text-neutral-700 cursor-pointer">
-                <input type="checkbox" id="appAutoFanpageSync" checked class="w-4 h-4 accent-[#18181B]">
-                <span>Tự đồng bộ bài Fanpage mới sang Trang Cá Nhân</span>
-              </label>
-              <label class="flex items-center gap-2 font-bold text-[#18181B] cursor-pointer">
-                <input type="checkbox" id="appAutoGroupShareEnabled" checked class="w-4 h-4 accent-[#18181B]">
-                <span>Tự động chia sẻ sang Hội Nhóm sau khi đăng Cá Nhân</span>
-              </label>
-              <label class="flex items-center gap-2 font-bold text-[#18181B] cursor-pointer">
-                <input type="checkbox" id="appShareAllGroups" onchange="onToggleAppShareAllGroups()" class="w-4 h-4 accent-[#18181B]">
-                <span>Đăng hết tất cả nhóm đã lưu cho mỗi bài</span>
-              </label>
-
-              <div class="grid grid-cols-2 gap-2.5 pt-1">
-                <div>
-                  <label class="block text-[11px] font-black uppercase text-[#18181B] mb-1">Số nhóm / bài</label>
-                  <input type="number" id="appGroupsPerPost" min="1" max="50" value="3" class="neo-input w-full px-2.5 py-1.5 text-xs font-mono font-bold">
-                </div>
-                <div>
-                  <label class="block text-[11px] font-black uppercase text-[#18181B] mb-1">Chờ sau đóng tab (giây)</label>
-                  <input type="number" id="appGroupDelaySeconds" min="0" max="600" value="10" class="neo-input w-full px-2.5 py-1.5 text-xs font-mono font-bold" title="Thời gian chờ từ lúc đóng tab nhóm cũ tới lúc mở tab nhóm mới">
-                </div>
+            <div id="cockpitNextPostDetails" class="space-y-2.5">
+              <div class="text-lg font-bold text-[#0F172A] leading-snug" id="cockpitNextPostTitle">
+                Đang kiểm tra hàng đợi...
               </div>
-
-              <!-- Preview bài đang chọn chia sẻ nhóm -->
-              <div class="p-2.5 bg-[#FAF8F5] border-2 border-[#18181B] rounded-lg space-y-1.5">
-                <div class="flex items-center justify-between gap-2">
-                  <span class="text-[11px] font-black uppercase text-[#18181B]">Bài dùng để chia sẻ Nhóm:</span>
-                </div>
-                <select id="appGroupPostSelect" onchange="renderSelectedGroupPostPreview()" class="neo-input w-full px-2 py-1 text-xs font-bold bg-white">
-                  <option value="">Tự lấy bài vừa đăng Cá Nhân / Mới nhất</option>
-                </select>
-                <div id="appGroupPostPreview" class="text-[11px] text-neutral-700 font-medium line-clamp-2">
-                  Mặc định lấy bài vừa xuất bản gần nhất (kèm link Fanpage &amp; ảnh HD).
-                </div>
+              <div class="flex items-center justify-between gap-2 flex-wrap pt-1">
+                <span id="cockpitNextPostPrice" class="text-base font-bold text-[#059669]">---</span>
+                <span id="cockpitCountdown" class="text-sm font-mono-num font-medium text-[#475569]">Đang đếm ngược...</span>
               </div>
             </div>
 
-            <div class="lg:col-span-7 space-y-2.5">
-              <div class="flex items-center justify-between gap-2">
-                <label class="text-xs font-black uppercase text-[#18181B]">Danh sách Link Group Facebook mục tiêu (<span id="appGroupCountLabel">0</span> nhóm)</label>
-                <span id="appGroupQueueInfo" class="text-[11px] font-mono font-bold text-neutral-600">Chờ chia sẻ: 0 lượt</span>
-              </div>
-              <textarea id="appTargetGroupUrls" rows="4" placeholder="https://www.facebook.com/groups/tennhomlaptop/&#10;Hoặc bấm Quét Nhóm Đã Tham Gia để tự động gom danh sách từ Facebook..." class="neo-input w-full p-2.5 text-xs font-mono"></textarea>
-
-              <!-- Live Queue Progress Banner -->
-              <div id="appActiveGroupProgress" class="p-2.5 bg-[#FDFBF7] border-2 border-[#18181B] rounded-lg text-xs font-bold text-[#18181B] flex flex-wrap items-center justify-between gap-2">
-                <span id="appActiveGroupProgressText">Trạng thái hàng đợi: Đang rảnh.</span>
-                <button type="button" onclick="stopGroupQueueFromApp()" id="appStopGroupQueueBtn" class="neo-btn bg-[#FEE2E2] text-[#991B1B] px-2.5 py-1 text-[11px] font-black">
-                  Dừng Hàng Đợi
+            <div class="pt-2 space-y-2.5">
+              <button id="cockpitPublishNowBtn" class="vg-btn vg-btn-primary w-full py-2.5" title="Xuất bản ngay lên cả Fanpage và Facebook Cá Nhân">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                <span>Đăng ngay (Fanpage + Cá nhân)</span>
+              </button>
+              <div class="grid grid-cols-2 gap-2.5">
+                <button id="cockpitViewNextBtn" class="vg-btn vg-btn-secondary w-full">
+                  <svg class="w-4 h-4 shrink-0 text-[#475569]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  <span>Xem chi tiết</span>
+                </button>
+                <button onclick="switchTab('settings'); switchSettingsSubTab('automation');" class="vg-btn vg-btn-secondary w-full">
+                  <svg class="w-4 h-4 shrink-0 text-[#475569]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <span>Mở Tự động Nhóm</span>
                 </button>
               </div>
-
-              <div class="flex flex-wrap gap-2 pt-0.5">
-                <button type="button" onclick="scanGroupsFromApp()" id="appScanGroupsBtn" class="neo-btn neo-btn-yellow px-3 py-2 text-xs font-black">
-                  Quét Nhóm Đã Tham Gia
-                </button>
-                <button type="button" onclick="saveExtConfigFromApp()" id="appSaveExtBtn" class="neo-btn neo-btn-green px-3 py-2 text-xs font-black">
-                  Lưu Cấu Hình Extension
-                </button>
-                <button type="button" onclick="runDuePersonalFromApp()" id="appRunDuePersonalBtn" class="neo-btn neo-btn-white px-3 py-2 text-xs font-black">
-                  Đăng Cá Nhân Đến Giờ
-                </button>
-                <button type="button" onclick="shareLatestToGroupsFromApp()" id="appShareGroupsNowBtn" class="neo-btn bg-[#38BDF8] text-[#082F49] px-3 py-2 text-xs font-black">
-                  Chia Sẻ Hội Nhóm Ngay
-                </button>
-              </div>
-              <div id="appExtActionMsg" class="text-xs font-bold text-[#18181B] min-h-[16px]"></div>
             </div>
           </div>
 
-          <!-- Per-Group Execution Logs -->
-          <div class="border-t-2 border-[#18181B] pt-3 space-y-2">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <h4 class="text-xs font-black uppercase tracking-wider text-[#18181B]">Nhật ký chia sẻ từng Hội Nhóm (<span id="appGroupLogsCount">0</span>)</h4>
-              <div class="flex items-center gap-2">
-                <button type="button" onclick="retryFailedGroupsFromApp()" id="appRetryFailedGroupsBtn" class="neo-btn neo-btn-yellow px-2.5 py-1 text-[11px] font-black">
-                  Thử Lại Các Nhóm Lỗi
-                </button>
-                <button type="button" onclick="clearGroupLogsFromApp()" class="neo-btn neo-btn-white px-2.5 py-1 text-[11px] font-bold">
-                  Xóa Nhật Ký
-                </button>
+          <!-- Right Column: Upcoming Timeline List (7 cols) -->
+          <div class="lg:col-span-7 vg-surface overflow-hidden">
+            <div class="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between gap-3">
+              <div>
+                <h3 class="text-base font-bold text-[#0F172A]">Lịch xuất bản sắp tới</h3>
+                <p class="text-xs text-[#475569] mt-0.5">Các bài viết tiếp theo sẽ tự động lên sóng theo giờ hẹn.</p>
               </div>
+              <button onclick="loadCockpitStatus()" class="vg-btn vg-btn-secondary vg-btn-sm">
+                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                <span>Làm mới</span>
+              </button>
             </div>
-            <div id="appGroupLogsList" class="divide-y divide-[#18181B]/15 max-h-56 overflow-y-auto text-xs">
-              <div class="py-3 text-neutral-500 font-medium">Chưa có lịch sử chia sẻ Hội Nhóm nào.</div>
+
+            <div id="cockpitTimelineList" class="divide-y divide-[#E2E8F0] px-4 sm:px-6">
+              <!-- Populated by JS -->
             </div>
           </div>
+
         </div>
       </section>
 
-
-
-      <!-- ==================== TAB: DATA POST ==================== -->
-      <section id="section-datapost" class="hidden space-y-6">
-
-        <!-- Header Bar: Title, Badges & Actions -->
-        <div class="neo-card p-5 bg-[#FFFBEB] flex flex-wrap items-center justify-between gap-4 washi-top">
-          <div class="flex items-center gap-3.5">
-            <div class="w-12 h-12 rounded-lg bg-[#FDE047] border-2 border-[#18181B] shadow-[2.5px_2.5px_0px_#18181B] flex items-center justify-center text-2xl font-black shrink-0">
-              🗄️
-            </div>
-            <div>
-              <div class="flex items-center gap-2 flex-wrap">
-                <h2 class="text-base sm:text-lg font-black text-[#18181B] uppercase tracking-wide">KHO DỮ LIỆU &amp; MODEL MẪU // TUẦN HOÀN BÁN LẺ</h2>
-                <span class="neo-sticker sticker-green tilt-left text-[11px]">BẢN QUYỀN CHUẨN MẪU</span>
-              </div>
-              <p class="text-xs text-neutral-700 mt-1 max-w-3xl">Lưu trữ phôi cấu hình chuẩn, album ảnh HD dùng chung &amp; quản lý hàng đợi đăng bài tự động đảo văn phong AI khi kho Zalo chưa có bài mới.</p>
-            </div>
+      <!-- ==================== TAB 2: HÀNG ĐỢI LÊN LỊCH ==================== -->
+      <section id="section-queue" class="hidden space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-[#0F172A] tracking-tight">Hàng đợi lên lịch</h2>
+            <p class="text-sm text-[#475569] mt-0.5">Hệ thống tự động kiểm tra mỗi phút và đăng đúng giờ hẹn. Bấm “Nạp ảnh” nếu bài còn thiếu media.</p>
           </div>
-
-          <!-- Badges & Action Buttons -->
-          <div class="flex flex-wrap items-center gap-2.5">
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="neo-sticker sticker-lavender font-mono text-xs">📦 <strong id="statTotalModels">0</strong> Models</span>
-              <span class="neo-sticker sticker-green font-mono text-xs">🔄 <strong id="statActiveCircular">0</strong> Đang tuần hoàn</span>
-              <span class="neo-sticker sticker-yellow font-mono text-xs">🖼️ <strong id="statTotalHdPhotos">0</strong> Kho ảnh HD</span>
-            </div>
-
-            <div class="flex items-center gap-2 flex-wrap mt-1 sm:mt-0">
-              <button onclick="openModelTemplateModal(null)" class="neo-btn neo-btn-yellow px-3.5 py-2 text-xs font-black shadow-[3px_3px_0px_#18181B]">
-                <span>➕ Thêm Model Mới</span>
-              </button>
-              <button onclick="openCircularQueueModal()" class="neo-btn neo-btn-white px-3 py-2 text-xs font-black shadow-[2.5px_2.5px_0px_#18181B]">
-                <span>📊 Hàng Đợi Tuần Hoàn</span>
-              </button>
-              <button onclick="fetchModelTemplates()" class="neo-btn neo-btn-white px-3 py-2 text-xs font-black shadow-[2.5px_2.5px_0px_#18181B]" title="Đồng bộ danh sách từ máy chủ">
-                <span>🔄 Đồng Bộ</span>
-              </button>
-            </div>
+          <div class="flex items-center gap-2">
+            <button onclick="openManualPostModal()" class="vg-btn vg-btn-soft-primary">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              <span>Thêm bài mới</span>
+            </button>
+            <button onclick="loadPosts()" class="vg-btn vg-btn-secondary">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span>Làm mới</span>
+            </button>
           </div>
         </div>
 
-        <!-- Filter & Search Bar -->
-        <div class="neo-card p-4 sm:p-5 bg-white space-y-4 shadow-[3px_3px_0px_#18181B]">
-          
-          <!-- Row 1: Instant Search & Sort -->
-          <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-            <div class="relative flex-1">
-              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-500 text-sm">🔍</span>
-              <input type="text" id="dataPostSearchInput" placeholder="Nhập tên máy (ThinkPad T480s, Dell 5350...), CPU (i5, Ultra 5), RAM (8GB, 16GB)..." class="neo-input w-full pl-9 pr-9 py-2.5 text-xs sm:text-sm font-medium" />
-              <button id="dataPostClearSearchBtn" onclick="clearDataPostSearch()" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-400 hover:text-neutral-900 font-black text-sm">✕</button>
+        <div id="queueListContainer" class="space-y-3">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- ==================== TAB 3: KHO MÁY (DATA POST) ==================== -->
+      <section id="section-datapost" class="hidden space-y-6">
+
+        <!-- Clean Page Title, Inline KPI Summary & Actions -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-3 flex-wrap">
+              <h2 class="text-xl sm:text-2xl font-bold text-[#0F172A] tracking-tight">Kho mẫu Laptop</h2>
+              <div class="flex items-center gap-2 text-xs font-medium text-[#475569]">
+                <span class="vg-pill"><strong id="statTotalModels" class="text-[#0F172A] font-mono-num">0</strong> mẫu</span>
+                <span class="vg-pill vg-pill-success"><strong id="statActiveCircular" class="font-mono-num">0</strong> đang tuần hoàn</span>
+                <span class="vg-pill"><strong id="statTotalHdPhotos" class="text-[#0F172A] font-mono-num">0</strong> ảnh HD</span>
+              </div>
             </div>
-            <div class="flex items-center gap-2 shrink-0">
-              <label for="dataPostSortSelect" class="text-xs font-bold text-neutral-600 whitespace-nowrap">Sắp xếp:</label>
-              <select id="dataPostSortSelect" onchange="onDataPostSortChange(this.value)" class="neo-input px-3 py-2 text-xs font-bold">
+            <p class="text-sm text-[#475569] mt-1">Lưu phôi cấu hình và ảnh chụp HD dùng chung để tự động tạo bài không trùng lặp.</p>
+          </div>
+
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <button onclick="openModelTemplateModal(null)" class="vg-btn vg-btn-primary">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              <span>Thêm mẫu mới</span>
+            </button>
+            <button onclick="openCircularQueueModal()" class="vg-btn vg-btn-secondary">
+              <svg class="w-4 h-4 shrink-0 text-[#475569]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span>Hàng đợi tuần hoàn</span>
+            </button>
+            <button onclick="fetchModelTemplates()" class="vg-btn vg-btn-secondary" title="Đồng bộ danh sách từ máy chủ">
+              <svg class="w-4 h-4 shrink-0 text-[#475569]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
+              <span>Đồng bộ</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Unified Search & Filter Surface -->
+        <div class="vg-surface p-4 sm:p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <div class="relative flex-1">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#64748B]">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              </span>
+              <input type="text" id="dataPostSearchInput" placeholder="Tìm theo tên máy (ThinkPad T480s, Dell 5350...), CPU, RAM..." class="vg-input pl-9 pr-9" />
+              <button id="dataPostClearSearchBtn" onclick="clearDataPostSearch()" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-[#64748B] hover:text-[#0F172A]" aria-label="Xóa từ khóa tìm kiếm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+            </div>
+            <div class="flex items-center gap-2 shrink-0 sm:w-52">
+              <label for="dataPostSortSelect" class="text-xs font-semibold text-[#475569] whitespace-nowrap">Sắp xếp:</label>
+              <select id="dataPostSortSelect" onchange="onDataPostSortChange(this.value)" class="vg-select">
                 <option value="newest">Mới nhất</option>
                 <option value="most_posted">Đăng nhiều nhất</option>
                 <option value="last_posted">Đăng gần nhất</option>
@@ -474,222 +393,324 @@
             </div>
           </div>
 
-          <!-- Row 2: Brand Filter Chips -->
-          <div>
-            <div class="text-[11px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Lọc theo Hãng:</div>
-            <div id="brandFilterContainer" class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-              <button type="button" onclick="setBrandFilter('all')" class="brand-filter-chip neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-black shadow-[2px_2px_0px_#18181B]" data-brand="all">Tất cả</button>
-              <button type="button" onclick="setBrandFilter('Dell')" class="brand-filter-chip neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold text-neutral-700" data-brand="Dell">Dell</button>
-              <button type="button" onclick="setBrandFilter('HP')" class="brand-filter-chip neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold text-neutral-700" data-brand="HP">HP</button>
-              <button type="button" onclick="setBrandFilter('ThinkPad')" class="brand-filter-chip neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold text-neutral-700" data-brand="ThinkPad">ThinkPad</button>
-              <button type="button" onclick="setBrandFilter('Sony VAIO')" class="brand-filter-chip neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold text-neutral-700" data-brand="Sony VAIO">Sony VAIO</button>
-              <button type="button" onclick="setBrandFilter('Panasonic')" class="brand-filter-chip neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold text-neutral-700" data-brand="Panasonic">Panasonic</button>
-              <button type="button" onclick="setBrandFilter('Fujitsu')" class="brand-filter-chip neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold text-neutral-700" data-brand="Fujitsu">Fujitsu</button>
-              <button type="button" onclick="setBrandFilter('Dynabook')" class="brand-filter-chip neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold text-neutral-700" data-brand="Dynabook">Dynabook</button>
-            </div>
-          </div>
-
-          <!-- Row 3: Price Range & Status Chips -->
-          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-2 border-t border-neutral-200">
-            <!-- Price Range -->
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="text-[11px] font-bold text-neutral-500 uppercase tracking-wider mr-1">Tầm giá:</span>
-              <button type="button" onclick="setPriceFilter('all')" class="price-filter-chip neo-btn neo-btn-yellow px-2.5 py-1 text-xs font-black shadow-[2px_2px_0px_#18181B]" data-price="all">Tất cả</button>
-              <button type="button" onclick="setPriceFilter('under_5m')" class="price-filter-chip neo-btn neo-btn-white px-2.5 py-1 text-xs font-bold text-neutral-700" data-price="under_5m">Dưới 5Tr</button>
-              <button type="button" onclick="setPriceFilter('5m_8m')" class="price-filter-chip neo-btn neo-btn-white px-2.5 py-1 text-xs font-bold text-neutral-700" data-price="5m_8m">5Tr - 8Tr</button>
-              <button type="button" onclick="setPriceFilter('8m_12m')" class="price-filter-chip neo-btn neo-btn-white px-2.5 py-1 text-xs font-bold text-neutral-700" data-price="8m_12m">8Tr - 12Tr</button>
-              <button type="button" onclick="setPriceFilter('above_12m')" class="price-filter-chip neo-btn neo-btn-white px-2.5 py-1 text-xs font-bold text-neutral-700" data-price="above_12m">Trên 12Tr</button>
+          <!-- Clean Pill Filter Rows -->
+          <div class="space-y-2.5 pt-2 border-t border-[#E2E8F0]">
+            <div id="brandFilterContainer" class="flex items-center gap-1.5 overflow-x-auto pb-1">
+              <span class="text-xs font-semibold text-[#475569] mr-1 shrink-0">Hãng:</span>
+              <button type="button" onclick="setBrandFilter('all')" class="brand-filter-chip vg-filter-chip active" data-brand="all">Tất cả</button>
+              <button type="button" onclick="setBrandFilter('Dell')" class="brand-filter-chip vg-filter-chip" data-brand="Dell">Dell</button>
+              <button type="button" onclick="setBrandFilter('HP')" class="brand-filter-chip vg-filter-chip" data-brand="HP">HP</button>
+              <button type="button" onclick="setBrandFilter('ThinkPad')" class="brand-filter-chip vg-filter-chip" data-brand="ThinkPad">ThinkPad</button>
+              <button type="button" onclick="setBrandFilter('Sony VAIO')" class="brand-filter-chip vg-filter-chip" data-brand="Sony VAIO">Sony VAIO</button>
+              <button type="button" onclick="setBrandFilter('Panasonic')" class="brand-filter-chip vg-filter-chip" data-brand="Panasonic">Panasonic</button>
+              <button type="button" onclick="setBrandFilter('Fujitsu')" class="brand-filter-chip vg-filter-chip" data-brand="Fujitsu">Fujitsu</button>
+              <button type="button" onclick="setBrandFilter('Dynabook')" class="brand-filter-chip vg-filter-chip" data-brand="Dynabook">Dynabook</button>
             </div>
 
-            <!-- Status Chips -->
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="text-[11px] font-bold text-neutral-500 uppercase tracking-wider mr-1">Trạng thái:</span>
-              <button type="button" onclick="setStatusFilter('all')" class="status-filter-chip neo-btn neo-btn-yellow px-2.5 py-1 text-xs font-black shadow-[2px_2px_0px_#18181B]" data-status="all">Tất cả</button>
-              <button type="button" onclick="setStatusFilter('active')" class="status-filter-chip neo-btn neo-btn-white px-2.5 py-1 text-xs font-bold text-neutral-700" data-status="active">🔄 Đang tuần hoàn</button>
-              <button type="button" onclick="setStatusFilter('paused')" class="status-filter-chip neo-btn neo-btn-white px-2.5 py-1 text-xs font-bold text-neutral-700" data-status="paused">⏸️ Tạm dừng</button>
-              <button type="button" onclick="setStatusFilter('never_posted')" class="status-filter-chip neo-btn neo-btn-white px-2.5 py-1 text-xs font-bold text-neutral-700" data-status="never_posted">⏳ Chưa đăng</button>
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-xs font-semibold text-[#475569] mr-1">Tầm giá:</span>
+                <button type="button" onclick="setPriceFilter('all')" class="price-filter-chip vg-filter-chip active" data-price="all">Tất cả</button>
+                <button type="button" onclick="setPriceFilter('under_5m')" class="price-filter-chip vg-filter-chip" data-price="under_5m">Dưới 5Tr</button>
+                <button type="button" onclick="setPriceFilter('5m_8m')" class="price-filter-chip vg-filter-chip" data-price="5m_8m">5Tr - 8Tr</button>
+                <button type="button" onclick="setPriceFilter('8m_12m')" class="price-filter-chip vg-filter-chip" data-price="8m_12m">8Tr - 12Tr</button>
+                <button type="button" onclick="setPriceFilter('above_12m')" class="price-filter-chip vg-filter-chip" data-price="above_12m">Trên 12Tr</button>
+              </div>
+
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-xs font-semibold text-[#475569] mr-1">Trạng thái:</span>
+                <button type="button" onclick="setStatusFilter('all')" class="status-filter-chip vg-filter-chip active" data-status="all">Tất cả</button>
+                <button type="button" onclick="setStatusFilter('active')" class="status-filter-chip vg-filter-chip" data-status="active">Đang tuần hoàn</button>
+                <button type="button" onclick="setStatusFilter('paused')" class="status-filter-chip vg-filter-chip" data-status="paused">Tạm dừng</button>
+                <button type="button" onclick="setStatusFilter('never_posted')" class="status-filter-chip vg-filter-chip" data-status="never_posted">Chưa đăng</button>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Model Cards Grid Container -->
+        <!-- Model Cards Grid -->
         <div id="modelTemplatesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           <!-- Dynamically populated by renderModelCards -->
         </div>
 
-        <!-- Loading State Indicator -->
-        <div id="dataPostLoadingState" class="hidden py-16 text-center text-neutral-500 space-y-3">
-          <div class="text-4xl">🌀</div>
-          <div class="text-sm font-bold text-[#18181B]">Đang tải kho Model Template từ Supabase...</div>
+        <!-- Loading State -->
+        <div id="dataPostLoadingState" class="hidden py-16 text-center text-[#475569] space-y-2">
+          <div class="inline-block w-7 h-7 border-2 border-[#CBD5E1] border-t-[#2563EB] rounded-full animate-spin"></div>
+          <div class="text-sm font-semibold text-[#0F172A]">Đang tải kho mẫu laptop...</div>
         </div>
 
-        <!-- Empty State Indicator -->
-        <div id="dataPostEmptyState" class="hidden py-16 text-center text-neutral-500 space-y-3 neo-card bg-white p-8">
-          <div class="text-5xl">📭</div>
-          <div class="text-base font-black text-[#18181B]">Không tìm thấy Model nào trong kho</div>
-          <p class="text-xs text-neutral-600 max-w-md mx-auto">Không có kết quả phù hợp với bộ lọc hoặc từ khóa tìm kiếm của bạn. Hãy thử đổi từ khóa hoặc đặt lại bộ lọc.</p>
-          <div class="pt-2 flex justify-center gap-3">
-            <button onclick="resetDataPostFilters()" class="neo-btn neo-btn-yellow px-4 py-2 text-xs font-black shadow-[2px_2px_0px_#18181B]">
-              🔄 Đặt lại bộ lọc
-            </button>
-            <button onclick="openModelTemplateModal(null)" class="neo-btn neo-btn-white px-4 py-2 text-xs font-bold">
-              ➕ Thêm Model Mới
-            </button>
+        <!-- Empty State -->
+        <div id="dataPostEmptyState" class="hidden py-16 text-center vg-surface p-8 space-y-3">
+          <div class="w-12 h-12 rounded-full bg-[#F1F5F9] text-[#475569] flex items-center justify-center mx-auto">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <div class="text-base font-bold text-[#0F172A]">Không tìm thấy mẫu laptop nào</div>
+          <p class="text-sm text-[#475569] max-w-md mx-auto">Không có kết quả khớp với bộ lọc hiện tại. Hãy thử đổi từ khóa hoặc đặt lại bộ lọc.</p>
+          <div class="pt-2 flex justify-center gap-3 flex-wrap">
+            <button onclick="resetDataPostFilters()" class="vg-btn vg-btn-primary">Đặt lại bộ lọc</button>
+            <button onclick="openModelTemplateModal(null)" class="vg-btn vg-btn-secondary">Thêm mẫu mới</button>
           </div>
         </div>
 
       </section>
 
-      <!-- ==================== TAB 4: QUEUE ==================== -->
-      <section id="section-queue" class="hidden space-y-5">
-        <div class="neo-card p-4 bg-white flex justify-between items-center">
-          <div>
-            <h2 class="text-base font-black text-[#18181B] uppercase">Hàng Đợi Lên Lịch Đăng Bài</h2>
-            <p class="text-xs text-neutral-600 font-medium">Hệ thống quét tự động mỗi phút và xuất bản bài lên Fanpage theo đúng giờ hẹn</p>
-          </div>
-          <button onclick="loadPosts()" class="neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold">
-            🔄 Làm mới danh sách
-          </button>
-        </div>
-
-        <div id="queueListContainer" class="space-y-4">
-          <!-- Populated by JS -->
-        </div>
-      </section>
-
-      <!-- Legacy fallback anchor for backward compatibility -->
+      <!-- Legacy fallback anchor -->
       <div id="section-history" class="hidden"></div>
 
-      <!-- ==================== TAB 4: SETTINGS & HISTORY ==================== -->
+      <!-- ==================== TAB 4: TỰ ĐỘNG & CÀI ĐẶT ==================== -->
       <section id="section-settings" class="hidden space-y-6">
-        
-        <!-- Top Sub-Tab Navigation: Lịch sử đã đăng & Cấu hình -->
-        <div class="flex items-center gap-3 border-b-2 border-[#18181B] pb-3">
-          <button type="button" onclick="switchSettingsSubTab('history')" id="settingsSubTabBtn-history" class="neo-btn neo-btn-yellow px-4 py-2 text-xs font-black">
-            📜 Bài đã đăng (<span id="historyCount" class="font-mono">0</span>)
-          </button>
-          <button type="button" onclick="switchSettingsSubTab('config')" id="settingsSubTabBtn-config" class="neo-btn neo-btn-white px-4 py-2 text-xs font-black">
-            ⚙️ Cấu hình Fanpage &amp; AI
-          </button>
+
+        <!-- Clean Sub-Tab Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-[#0F172A] tracking-tight">Tự động hóa &amp; Cài đặt</h2>
+            <p class="text-sm text-[#475569] mt-0.5">Điều khiển Extension đăng Trang Cá Nhân, chia sẻ Hội Nhóm, xem lịch sử và cấu hình Fanpage.</p>
+          </div>
+
+          <div class="vg-subtab-group" role="tablist">
+            <button type="button" onclick="switchSettingsSubTab('automation')" id="settingsSubTabBtn-automation" class="vg-subtab-btn active">
+              Tự động &amp; Nhóm
+            </button>
+            <button type="button" onclick="switchSettingsSubTab('history')" id="settingsSubTabBtn-history" class="vg-subtab-btn">
+              Bài đã đăng (<span id="historyCount" class="font-mono-num">0</span>)
+            </button>
+            <button type="button" onclick="switchSettingsSubTab('config')" id="settingsSubTabBtn-config" class="vg-subtab-btn">
+              Fanpage &amp; AI
+            </button>
+          </div>
         </div>
 
-        <!-- Sub-View 1: Published History -->
-        <div id="settingsHistoryView" class="space-y-4">
-          <div class="neo-card p-4 bg-white flex justify-between items-center">
-            <div>
-              <h2 class="text-base font-black text-[#18181B] uppercase">Lịch Sử Bài Viết Đã Đăng</h2>
-              <p class="text-xs text-neutral-600 font-medium">Các bài viết đã được xuất bản thành công lên Fanpage Facebook</p>
+        <!-- Sub-View 1 (Default): Extension Personal Profile & Group Auto-Share -->
+        <div id="settingsAutomationView" class="space-y-6">
+          <div id="cockpitExtensionPanel" class="vg-surface p-5 sm:p-6 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#E2E8F0]">
+              <div>
+                <h3 class="text-base sm:text-lg font-bold text-[#0F172A]">Tự động Trang Cá Nhân &amp; Chia sẻ Hội Nhóm</h3>
+                <p class="text-sm text-[#475569] mt-0.5">Chạy tuần tự trong cửa sổ nền riêng: xác nhận đăng xong mới đóng tab và chờ đủ số giây trước khi mở nhóm kế tiếp.</p>
+              </div>
+              <span id="appExtStatusBadge" class="vg-pill vg-pill-warning font-mono-num">Đang kiểm tra Extension...</span>
             </div>
-            <button onclick="loadPosts()" class="neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold">
-              🔄 Làm mới danh sách
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <!-- Left: Switches, Numeric Rules & Selected Post (5 cols) -->
+              <div class="lg:col-span-5 space-y-4">
+                <div class="vg-panel-soft p-2 space-y-0.5">
+                  <label class="vg-toggle-row">
+                    <span class="text-sm font-medium text-[#0F172A]">Tự động đăng Trang Cá Nhân khi mở Chrome</span>
+                    <span class="vg-switch">
+                      <input type="checkbox" id="appAutoPersonalEnabled" checked>
+                      <span class="vg-switch-slider"></span>
+                    </span>
+                  </label>
+                  <label class="vg-toggle-row">
+                    <span class="text-sm font-medium text-[#0F172A]">Tự đồng bộ bài Fanpage mới sang Cá Nhân</span>
+                    <span class="vg-switch">
+                      <input type="checkbox" id="appAutoFanpageSync" checked>
+                      <span class="vg-switch-slider"></span>
+                    </span>
+                  </label>
+                  <label class="vg-toggle-row">
+                    <span class="text-sm font-medium text-[#0F172A]">Tự chia sẻ Hội Nhóm sau khi đăng Cá Nhân</span>
+                    <span class="vg-switch">
+                      <input type="checkbox" id="appAutoGroupShareEnabled" checked>
+                      <span class="vg-switch-slider"></span>
+                    </span>
+                  </label>
+                  <label class="vg-toggle-row">
+                    <span class="text-sm font-medium text-[#0F172A]">Đăng hết tất cả nhóm đã lưu mỗi bài</span>
+                    <span class="vg-switch">
+                      <input type="checkbox" id="appShareAllGroups" onchange="onToggleAppShareAllGroups()">
+                      <span class="vg-switch-slider"></span>
+                    </span>
+                  </label>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label for="appGroupsPerPost" class="block text-sm font-semibold text-[#0F172A] mb-1.5">Số nhóm mỗi bài</label>
+                    <input type="number" id="appGroupsPerPost" min="1" max="50" value="3" class="vg-input font-mono-num font-semibold">
+                  </div>
+                  <div>
+                    <label for="appGroupDelaySeconds" class="block text-sm font-semibold text-[#0F172A] mb-1.5">Chờ sau đóng tab (giây)</label>
+                    <input type="number" id="appGroupDelaySeconds" min="0" max="600" value="10" class="vg-input font-mono-num font-semibold" title="Thời gian chờ từ lúc đóng tab nhóm cũ tới lúc mở tab nhóm mới">
+                  </div>
+                </div>
+
+                <div class="vg-panel-soft p-3.5 space-y-2">
+                  <label for="appGroupPostSelect" class="block text-sm font-semibold text-[#0F172A]">Bài dùng để chia sẻ nhóm</label>
+                  <select id="appGroupPostSelect" onchange="renderSelectedGroupPostPreview()" class="vg-select">
+                    <option value="">Tự lấy bài vừa đăng Cá Nhân / Mới nhất</option>
+                  </select>
+                  <div id="appGroupPostPreview" class="text-xs text-[#475569] leading-relaxed line-clamp-2">
+                    Mặc định lấy bài vừa xuất bản gần nhất (kèm link Fanpage &amp; ảnh HD).
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: Group URLs, Progress & Action Buttons (7 cols) -->
+              <div class="lg:col-span-7 space-y-4">
+                <div>
+                  <div class="flex items-center justify-between gap-2 mb-1.5">
+                    <label for="appTargetGroupUrls" class="text-sm font-semibold text-[#0F172A]">
+                      Danh sách Link Group mục tiêu (<span id="appGroupCountLabel" class="font-mono-num">0</span> nhóm)
+                    </label>
+                    <span id="appGroupQueueInfo" class="text-xs font-mono-num font-semibold text-[#475569]">Chờ chia sẻ: 0 lượt</span>
+                  </div>
+                  <textarea id="appTargetGroupUrls" rows="6" placeholder="https://www.facebook.com/groups/tennhomlaptop/&#10;Hoặc bấm “Quét nhóm đã tham gia” để tự động lấy từ Facebook..." class="vg-textarea font-mono-num text-xs"></textarea>
+                </div>
+
+                <!-- Live Queue Progress Bar -->
+                <div id="appActiveGroupProgress" class="vg-panel-soft px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+                  <span id="appActiveGroupProgressText" class="text-sm font-medium text-[#0F172A]">Trạng thái hàng đợi: Đang rảnh.</span>
+                  <button type="button" onclick="stopGroupQueueFromApp()" id="appStopGroupQueueBtn" class="vg-btn vg-btn-danger-soft vg-btn-sm">
+                    Dừng hàng đợi
+                  </button>
+                </div>
+
+                <!-- Clear Actions Hierarchy -->
+                <div class="flex flex-wrap items-center gap-2.5">
+                  <button type="button" onclick="saveExtConfigFromApp()" id="appSaveExtBtn" class="vg-btn vg-btn-primary">
+                    Lưu cấu hình Extension
+                  </button>
+                  <button type="button" onclick="shareLatestToGroupsFromApp()" id="appShareGroupsNowBtn" class="vg-btn vg-btn-soft-primary">
+                    Chia sẻ Hội Nhóm ngay
+                  </button>
+                  <button type="button" onclick="scanGroupsFromApp()" id="appScanGroupsBtn" class="vg-btn vg-btn-secondary">
+                    Quét nhóm đã tham gia
+                  </button>
+                  <button type="button" onclick="runDuePersonalFromApp()" id="appRunDuePersonalBtn" class="vg-btn vg-btn-secondary">
+                    Đăng Cá Nhân đến giờ
+                  </button>
+                </div>
+                <div id="appExtActionMsg" class="text-sm font-medium text-[#065F46] min-h-[20px]"></div>
+              </div>
+            </div>
+
+            <!-- Per-Group Execution Logs -->
+            <div class="border-t border-[#E2E8F0] pt-5 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h4 class="text-sm font-bold text-[#0F172A]">Nhật ký chia sẻ từng Hội Nhóm (<span id="appGroupLogsCount" class="font-mono-num">0</span>)</h4>
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="retryFailedGroupsFromApp()" id="appRetryFailedGroupsBtn" class="vg-btn vg-btn-secondary vg-btn-sm">
+                    Thử lại các nhóm lỗi
+                  </button>
+                  <button type="button" onclick="clearGroupLogsFromApp()" class="vg-btn vg-btn-ghost vg-btn-sm">
+                    Xóa nhật ký
+                  </button>
+                </div>
+              </div>
+              <div id="appGroupLogsList" class="divide-y divide-[#E2E8F0] max-h-64 overflow-y-auto custom-scrollbar text-sm">
+                <div class="py-4 text-[#475569]">Chưa có lịch sử chia sẻ Hội Nhóm nào.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub-View 2: Published History -->
+        <div id="settingsHistoryView" class="hidden space-y-4">
+          <div class="flex justify-between items-center gap-3">
+            <p class="text-sm text-[#475569]">Các bài viết đã được xuất bản lên Fanpage Facebook.</p>
+            <button onclick="loadPosts()" class="vg-btn vg-btn-secondary vg-btn-sm">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span>Làm mới</span>
             </button>
           </div>
 
-          <div id="historyListContainer" class="space-y-4">
+          <div id="historyListContainer" class="space-y-3">
             <!-- Populated by JS -->
           </div>
         </div>
 
-        <!-- Sub-View 2: Configuration Settings -->
+        <!-- Sub-View 3: Fanpage & AI Configuration -->
         <div id="settingsConfigView" class="hidden">
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
             <!-- Left: Settings Form (7 cols) -->
-            <div class="lg:col-span-7 space-y-5">
-              <div class="neo-card p-6 space-y-4">
-                <h3 class="text-sm font-black uppercase tracking-wider text-[#18181B] border-b-2 border-[#18181B] pb-3 flex items-center gap-2">
-                  <span>⚙️</span> Cấu hình Facebook Fanpage &amp; Gemini AI
-                </h3>
+            <div class="lg:col-span-7 vg-surface p-6 space-y-6">
+              <div class="space-y-4">
+                <h3 class="text-base font-bold text-[#0F172A] border-b border-[#E2E8F0] pb-3">Kết nối Facebook Fanpage &amp; Gemini AI</h3>
 
-                <div class="space-y-3.5">
-                  <div>
-                    <label class="text-xs font-bold text-[#18181B] block mb-1">Fanpage ID:</label>
-                    <input type="text" id="settingFanpageId" class="neo-input w-full px-3 py-2 text-sm font-mono font-bold text-blue-700">
-                    <span class="text-[11px] text-neutral-500 font-medium">ID Fanpage hiện tại của bạn: 1154184381110692</span>
-                  </div>
-
-                  <div>
-                    <div class="flex justify-between items-center mb-1">
-                      <label class="text-xs font-bold text-[#18181B]">Facebook Page Access Token:</label>
-                      <button onclick="testFacebookConnection()" class="text-xs font-bold text-blue-700 hover:underline">Kiểm tra kết nối</button>
-                    </div>
-                    <input type="password" id="settingPageToken" placeholder="Nhập mã Page Access Token (EAAG...)" class="neo-input w-full px-3 py-2 text-sm font-mono">
-                    <div id="fbTestResult" class="text-xs mt-1.5"></div>
-                  </div>
-
-                  <div>
-                    <div class="flex justify-between items-center mb-1">
-                      <label class="text-xs font-bold text-[#18181B]">Google Gemini API Key:</label>
-                      <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs font-bold text-blue-700 hover:underline">Lấy Key miễn phí ↗</a>
-                    </div>
-                    <input type="password" id="settingGeminiKey" placeholder="Nhập Gemini API Key (AIzaSy...)" class="neo-input w-full px-3 py-2 text-sm font-mono">
-                    <span class="text-[11px] text-neutral-500 font-medium">Gói Free của Google hoàn toàn miễn phí trọn đời.</span>
-                  </div>
+                <div>
+                  <label for="settingFanpageId" class="block text-sm font-semibold text-[#0F172A] mb-1.5">Fanpage ID</label>
+                  <input type="text" id="settingFanpageId" class="vg-input font-mono-num font-semibold">
+                  <span class="block text-xs text-[#475569] mt-1">ID Fanpage hiện tại: 1154184381110692</span>
                 </div>
 
-                <h3 class="text-sm font-black uppercase tracking-wider text-[#18181B] border-b-2 border-[#18181B] pb-3 pt-3 flex items-center gap-2">
-                  <span>📞</span> Thông tin liên hệ &amp; Thương hiệu
-                </h3>
+                <div>
+                  <div class="flex justify-between items-center mb-1.5">
+                    <label for="settingPageToken" class="text-sm font-semibold text-[#0F172A]">Facebook Page Access Token</label>
+                    <button type="button" onclick="testFacebookConnection()" class="text-xs font-semibold text-[#2563EB] hover:underline">Kiểm tra kết nối</button>
+                  </div>
+                  <input type="password" id="settingPageToken" placeholder="Nhập mã Page Access Token (EAAG...)" class="vg-input font-mono-num">
+                  <div id="fbTestResult" class="text-xs mt-1.5"></div>
+                </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <div class="flex justify-between items-center mb-1.5">
+                    <label for="settingGeminiKey" class="text-sm font-semibold text-[#0F172A]">Google Gemini API Key</label>
+                    <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs font-semibold text-[#2563EB] hover:underline">Lấy Key miễn phí ↗</a>
+                  </div>
+                  <input type="password" id="settingGeminiKey" placeholder="Nhập Gemini API Key (AIzaSy...)" class="vg-input font-mono-num">
+                  <span class="block text-xs text-[#475569] mt-1">Gói Free của Google sử dụng miễn phí.</span>
+                </div>
+              </div>
+
+              <div class="space-y-4 pt-2 border-t border-[#E2E8F0]">
+                <h3 class="text-base font-bold text-[#0F172A]">Thông tin cửa hàng &amp; Lịch hẹn</h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label class="text-xs font-bold text-[#18181B] block mb-1">Tên Fanpage hiển thị:</label>
-                    <input type="text" id="settingFanpageName" class="neo-input w-full px-3 py-2 text-sm font-bold">
+                    <label for="settingFanpageName" class="block text-sm font-semibold text-[#0F172A] mb-1.5">Tên Fanpage hiển thị</label>
+                    <input type="text" id="settingFanpageName" class="vg-input font-semibold">
                   </div>
                   <div>
-                    <label class="text-xs font-bold text-[#18181B] block mb-1">Số điện thoại / Zalo:</label>
-                    <input type="text" id="settingHotline" class="neo-input w-full px-3 py-2 text-sm font-mono font-bold">
+                    <label for="settingHotline" class="block text-sm font-semibold text-[#0F172A] mb-1.5">Số điện thoại / Zalo</label>
+                    <input type="text" id="settingHotline" class="vg-input font-mono-num font-semibold">
                   </div>
                 </div>
 
                 <div>
-                  <label class="text-xs font-bold text-[#18181B] block mb-1">Chính sách bảo hành cam kết:</label>
-                  <textarea id="settingWarranty" rows="2" class="neo-input w-full p-2.5 text-xs"></textarea>
+                  <label for="settingWarranty" class="block text-sm font-semibold text-[#0F172A] mb-1.5">Chính sách bảo hành cam kết</label>
+                  <textarea id="settingWarranty" rows="2" class="vg-textarea"></textarea>
                 </div>
 
                 <div>
-                  <label class="text-xs font-bold text-[#18181B] block mb-1">Địa chỉ / Chính sách giao hàng:</label>
-                  <input type="text" id="settingAddress" class="neo-input w-full px-3 py-2 text-sm">
+                  <label for="settingAddress" class="block text-sm font-semibold text-[#0F172A] mb-1.5">Địa chỉ / Chính sách giao hàng</label>
+                  <input type="text" id="settingAddress" class="vg-input">
                 </div>
 
                 <div>
-                  <label class="text-xs font-bold text-[#18181B] block mb-1">Các khung giờ tự động đăng bài (cách nhau bằng dấu phẩy):</label>
-                  <input type="text" id="settingScheduleTimes" placeholder="08:30, 11:45, 15:30, 20:00" class="neo-input w-full px-3 py-2 text-sm font-mono">
+                  <label for="settingScheduleTimes" class="block text-sm font-semibold text-[#0F172A] mb-1.5">Khung giờ tự động đăng (cách nhau bằng dấu phẩy)</label>
+                  <input type="text" id="settingScheduleTimes" placeholder="08:30, 11:45, 15:30, 20:00" class="vg-input font-mono-num">
                 </div>
 
                 <div class="pt-2">
-                  <button onclick="saveSettingsForm()" class="neo-btn neo-btn-green w-full py-3 text-sm font-black shadow-[3px_3px_0px_#18181B] uppercase tracking-wide">
-                    💾 LƯU CẤU HÌNH HỆ THỐNG
+                  <button onclick="saveSettingsForm()" class="vg-btn vg-btn-success w-full py-2.5">
+                    Lưu cấu hình hệ thống
                   </button>
                 </div>
               </div>
             </div>
 
-            <!-- Right: Guide (5 cols) -->
-            <div class="lg:col-span-5 space-y-4">
-              <div class="neo-card p-5 bg-[#FAF5EE] space-y-4 text-xs leading-relaxed text-[#18181B]">
-                <h3 class="text-sm font-black uppercase tracking-wider text-[#18181B] border-b-2 border-[#18181B] pb-2 flex items-center gap-2">
-                  <span>📖</span> Hướng dẫn lấy Token Facebook vĩnh viễn (02 phút)
-                </h3>
+            <!-- Right: Clean Token Guide (5 cols) -->
+            <div class="lg:col-span-5 vg-surface p-6 space-y-4 text-sm text-[#334155] leading-relaxed">
+              <h3 class="text-base font-bold text-[#0F172A] border-b border-[#E2E8F0] pb-3">Hướng dẫn lấy Token Facebook</h3>
+              <ol class="list-decimal list-inside space-y-2.5">
+                <li>Truy cập <a href="https://developers.facebook.com/tools/explorer/" target="_blank" class="text-[#2563EB] underline font-semibold">Facebook Graph API Explorer</a>.</li>
+                <li>Tại mục <strong>Meta App</strong>: chọn App loại <em>Business / Doanh nghiệp</em>.</li>
+                <li>Tại mục <strong>User or Page</strong>: chọn đúng Trang <strong>Laptop Vương Gia</strong>.</li>
+                <li>Cấp đủ 3 quyền sau:
+                  <ul class="list-disc list-inside ml-4 mt-1 text-xs font-mono-num text-[#0F172A] space-y-1">
+                    <li>pages_show_list</li>
+                    <li>pages_read_engagement</li>
+                    <li>pages_manage_posts</li>
+                  </ul>
+                </li>
+                <li>Bấm <strong>Generate Access Token</strong>, sao chép và dán vào ô bên trái.</li>
+              </ol>
 
-                <ol class="list-decimal list-inside space-y-2 text-neutral-800 font-medium">
-                  <li>Vào <a href="https://developers.facebook.com/tools/explorer/" target="_blank" class="text-blue-700 underline font-bold">Facebook Graph API Explorer</a>.</li>
-                  <li>Tại mục <strong>Meta App</strong>: Chọn một App của bạn (hoặc tạo nhanh app loại <em>Business / Doanh nghiệp</em>).</li>
-                  <li>Tại mục <strong>User or Page</strong>: Chọn đúng Trang Fanpage của bạn: <strong class="text-black">Laptop Vương Gia</strong>.</li>
-                  <li>Thêm 3 quyền (Permissions) sau:
-                    <ul class="list-disc list-inside ml-4 mt-1 text-neutral-700 space-y-0.5">
-                      <li><code class="font-bold text-emerald-700">pages_show_list</code></li>
-                      <li><code class="font-bold text-emerald-700">pages_read_engagement</code></li>
-                      <li><code class="font-bold text-emerald-700">pages_manage_posts</code></li>
-                    </ul>
-                  </li>
-                  <li>Bấm <strong>Generate Access Token</strong> và cấp quyền.</li>
-                  <li>Copy mã Token đó dán vào ô bên trái là xong!</li>
-                </ol>
-
-                <div class="neo-card-sm p-3 bg-white text-neutral-700 font-medium">
-                  <strong class="text-black">💡 Chế độ sẵn sàng:</strong> Hiện tại mã Token Fanpage <strong>Laptop Vương Gia</strong> của bạn đã được kết nối và kiểm thử thành công, hệ thống tự động đăng bài theo đúng 4 khung giờ vàng!
-                </div>
+              <div class="vg-panel-soft p-3.5 text-xs text-[#334155]">
+                <strong class="text-[#0F172A]">Trạng thái hiện tại:</strong> Sau khi lưu, hệ thống tự động đăng theo đúng các khung giờ vàng đã cấu hình.
               </div>
             </div>
 
@@ -701,151 +722,136 @@
     </main>
 
     <!-- Footer -->
-    <footer class="border-t-2 border-[#18181B] bg-white py-4 px-6 text-center text-xs text-neutral-700 font-bold">
-      <div>DESIGN BY VUONGGIA /// HOTLINE / ZALO: 0876637806 /// EMAIL: nguyennhu19022008@gmail.com</div>
-      <div class="text-[11px] text-neutral-500 font-medium mt-1">Hệ thống hỗ trợ bán lẻ Laptop xách tay Nhật Bản bản quyền 2026 · Phong cách Warm Neo-Brutalist / Student Craft</div>
+    <footer class="border-t border-[#E2E8F0] bg-white py-4 px-6 text-center text-xs text-[#475569]">
+      <div class="font-semibold text-[#0F172A]">DESIGN BY VUONGGIA · Hotline / Zalo: 0876637806 · Email: nguyennhu19022008@gmail.com</div>
     </footer>
 
-    <!-- Mobile Bottom App Dock (Sticky on mobile screens < 1024px) -->
-    <nav class="mobile-app-dock" id="mobileAppDock" aria-label="Mobile Navigation">
+    <!-- Mobile Bottom App Dock (Sticky ONLY on < 1024px) -->
+    <nav class="mobile-app-dock" id="mobileAppDock" aria-label="Điều hướng di động">
       <button onclick="switchTab('cockpit')" id="mobileDockBtn-cockpit" class="mobile-dock-btn active">
-        <span class="text-base">⚡</span>
-        <span>Điều hành</span>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        <span>Tổng quan</span>
       </button>
       <button onclick="switchTab('queue')" id="mobileDockBtn-queue" class="mobile-dock-btn">
-        <span class="text-base">⏰</span>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         <span>Hàng đợi</span>
         <span id="mobileQueueBadge" class="mobile-dock-badge hidden">0</span>
       </button>
       <button onclick="switchTab('datapost')" id="mobileDockBtn-datapost" class="mobile-dock-btn">
-        <span class="text-base">🗄️</span>
-        <span>Kho mẫu</span>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <span>Kho máy</span>
         <span id="mobileDataPostBadge" class="mobile-dock-badge hidden">0</span>
       </button>
       <button onclick="switchTab('settings')" id="mobileDockBtn-settings" class="mobile-dock-btn">
-        <span class="text-base">⚙️</span>
-        <span>Quản trị</span>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <span>Tự động</span>
       </button>
     </nav>
 
   </div>
 
-  <!-- Modal: Manual Single Post Wizard (Dự phòng khi có máy lẻ đột xuất) -->
-  <div id="manualPostModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-5 overflow-y-auto" onclick="if(event.target === this) closeManualPostModal()">
-    <div class="neo-card bg-white max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden border-2 border-[#18181B] shadow-[6px_6px_0px_#18181B]">
-      <!-- Modal Header -->
-      <div class="p-4 bg-[#FDE047] border-b-2 border-[#18181B] flex justify-between items-center shrink-0">
-        <div class="flex items-center gap-2.5">
-          <span class="text-xl">✍️</span>
-          <div>
-            <h3 class="text-sm sm:text-base font-black text-[#18181B] uppercase">Soạn Bài Viết Lẻ Thủ Công</h3>
-            <p class="text-[11px] text-neutral-700 font-medium">Dành cho trường hợp có máy lẻ đột xuất cần đăng nhanh lên Fanpage</p>
-          </div>
+  <!-- ==================== MODAL 1: SOẠN BÀI VIẾT MỚI ==================== -->
+  <div id="manualPostModal" class="fixed inset-0 bg-[#0F172A]/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-5 overflow-y-auto" onclick="if(event.target === this) closeManualPostModal()">
+    <div class="vg-modal max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden">
+      <div class="px-5 py-4 border-b border-[#E2E8F0] flex justify-between items-center shrink-0 bg-white">
+        <div>
+          <h3 class="text-base sm:text-lg font-bold text-[#0F172A]">Soạn bài viết mới</h3>
+          <p class="text-xs text-[#475569] mt-0.5">Dán thông tin máy lẻ từ Zalo để AI biên tập, nạp ảnh và đăng hoặc lên lịch.</p>
         </div>
-        <button type="button" onclick="closeManualPostModal()" class="w-8 h-8 rounded-lg border-2 border-[#18181B] bg-white hover:bg-neutral-100 flex items-center justify-center font-black text-sm">
-          ✕
+        <button type="button" onclick="closeManualPostModal()" class="vg-btn vg-btn-ghost w-9 h-9 p-0" aria-label="Đóng cửa sổ">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
 
-      <!-- Modal Body (Scrollable) -->
-      <div class="p-5 overflow-y-auto space-y-5 flex-1 custom-scrollbar bg-[#FAF8F5]">
-        <!-- 1. Raw Text & Smart Match -->
-        <div class="neo-card p-4 sm:p-5 bg-white space-y-4">
-          <div class="flex justify-between items-center border-b-2 border-[#18181B] pb-2">
-            <label class="text-xs font-black uppercase text-[#18181B]">
-              1. Dán nội dung thô từ Zalo
-            </label>
-            <button onclick="clearRawInput()" class="neo-btn neo-btn-white px-2.5 py-1 text-[11px] font-bold text-red-600 hover:bg-red-50">
-              Xóa trắng
-            </button>
+      <div class="p-5 overflow-y-auto space-y-5 flex-1 custom-scrollbar bg-[#F8FAFC]">
+        <!-- Step 1 -->
+        <div class="vg-surface p-4 sm:p-5 space-y-4">
+          <div class="flex justify-between items-center">
+            <label for="rawTextInput" class="text-sm font-bold text-[#0F172A]">1. Nội dung thô từ Zalo</label>
+            <button type="button" onclick="clearRawInput()" class="text-xs font-semibold text-[#DC2626] hover:underline">Xóa trắng</button>
           </div>
 
-          <textarea id="rawTextInput" rows="4" placeholder="Dán bài viết từ nhóm Zalo vào đây... (Ví dụ: Mã 046: DELL LATITUDE 3410... Giá 5.5 tr...)" class="neo-input w-full p-3 text-xs placeholder-neutral-400 font-mono leading-relaxed"></textarea>
+          <textarea id="rawTextInput" rows="4" placeholder="Dán bài viết từ nhóm Zalo... (Ví dụ: Mã 046: DELL LATITUDE 3410... Giá 5.5 tr...)" class="vg-textarea font-mono-num text-xs"></textarea>
 
-          <!-- Smart Match Banner -->
-          <div id="smartMatchBanner" class="hidden p-3 bg-[#DCFCE7] border-2 border-[#18181B] rounded-lg flex flex-wrap items-center justify-between gap-2 text-xs">
-            <div>
-              <span class="font-black text-[#18181B]">✨ MODEL TRÙNG KHỚP:</span> <span id="smartMatchModelName" class="font-mono text-emerald-800 font-bold"></span>
-              <span class="text-neutral-600">(Có sẵn <span id="smartMatchPhotoCount" class="font-bold">0</span> ảnh HD trên Supabase Cloud)</span>
+          <div id="smartMatchBanner" class="hidden p-3 bg-[#ECFDF5] border border-[#A7F3D0] rounded-lg flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div class="text-[#065F46]">
+              <strong>Khớp mẫu trong kho:</strong> <span id="smartMatchModelName" class="font-mono-num font-bold"></span>
+              <span>(Có sẵn <span id="smartMatchPhotoCount" class="font-bold">0</span> ảnh HD)</span>
             </div>
-            <button type="button" onclick="applySmartMatchMedia()" class="neo-btn neo-btn-green px-3 py-1 text-xs font-black">
-              ⚡ Nạp ảnh có sẵn
-            </button>
+            <button type="button" onclick="applySmartMatchMedia()" class="vg-btn vg-btn-success vg-btn-sm">Nạp ảnh có sẵn</button>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
-              <label class="text-xs font-bold text-[#18181B] block mb-1">Mã máy nhận diện:</label>
-              <input type="text" id="machineCodeInput" placeholder="Ví dụ: 046 hoặc HP-712" class="neo-input w-full px-3 py-2 text-xs font-mono font-bold text-blue-700">
+              <label for="machineCodeInput" class="block text-xs font-semibold text-[#0F172A] mb-1">Mã máy</label>
+              <input type="text" id="machineCodeInput" placeholder="Ví dụ: 046 hoặc HP-712" class="vg-input font-mono-num font-semibold">
             </div>
             <div>
-              <label class="text-xs font-bold text-[#18181B] block mb-1">Giá bán lẻ niêm yết:</label>
-              <input type="text" id="customPriceInput" placeholder="Ví dụ: 5.5 triệu hoặc 5.900.000đ" class="neo-input w-full px-3 py-2 text-xs font-bold text-emerald-700">
+              <label for="customPriceInput" class="block text-xs font-semibold text-[#0F172A] mb-1">Giá bán niêm yết</label>
+              <input type="text" id="customPriceInput" placeholder="Ví dụ: 5.5 triệu hoặc 5.900.000đ" class="vg-input font-semibold text-[#065F46]">
             </div>
           </div>
 
-          <button id="generateBtn" onclick="generateAiContent()" class="neo-btn neo-btn-yellow w-full py-2.5 text-xs font-black uppercase tracking-wide flex items-center justify-center gap-2">
-            <span id="generateSpinner" class="hidden animate-spin">🌀</span>
-            <span>🚀 AI TẠO BÀI VIẾT BÁN LẺ (SOLID INK)</span>
+          <button id="generateBtn" onclick="generateAiContent()" class="vg-btn vg-btn-soft-primary w-full">
+            <span id="generateSpinner" class="hidden inline-block w-4 h-4 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin"></span>
+            <span>AI tạo bài viết bán hàng</span>
           </button>
         </div>
 
-        <!-- 2. Media Upload Card -->
-        <div class="neo-card p-4 sm:p-5 bg-white space-y-3">
-          <div class="flex justify-between items-center border-b-2 border-[#18181B] pb-2">
-            <label class="text-xs font-black uppercase text-[#18181B]">
-              2. Tải Album ảnh &amp; Video máy thực tế
-            </label>
-            <span class="neo-sticker sticker-lavender text-[11px] font-mono" id="mediaCountText">0 tệp đã chọn</span>
+        <!-- Step 2 -->
+        <div class="vg-surface p-4 sm:p-5 space-y-3.5">
+          <div class="flex justify-between items-center">
+            <label class="text-sm font-bold text-[#0F172A]">2. Ảnh &amp; Video máy thực tế</label>
+            <span class="vg-pill font-mono-num" id="mediaCountText">0 tệp đã chọn</span>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
-            <button type="button" onclick="document.getElementById('studioVideoFile').click()" class="neo-btn bg-[#818CF8] hover:bg-indigo-600 text-white py-2 px-3 text-xs font-black flex items-center justify-center gap-1.5">
-              <span>🎬 Thêm video</span>
+            <button type="button" onclick="document.getElementById('studioVideoFile').click()" class="vg-btn vg-btn-secondary">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              <span>Thêm video</span>
             </button>
             <input type="file" id="studioVideoFile" multiple accept="video/*" class="hidden" onchange="handleFileSelect(event)">
 
-            <button type="button" onclick="document.getElementById('fileInput').click()" class="neo-btn bg-white hover:bg-neutral-100 py-2 px-3 text-xs font-black flex items-center justify-center gap-1.5">
-              <span>📁 Chọn ảnh</span>
+            <button type="button" onclick="document.getElementById('fileInput').click()" class="vg-btn vg-btn-secondary">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <span>Chọn ảnh</span>
             </button>
           </div>
 
-          <div id="dropZone" onclick="document.getElementById('fileInput').click()" class="border-2 border-dashed border-[#18181B] hover:bg-[#FEF08A]/30 rounded-lg p-4 text-center cursor-pointer transition bg-[#FAF5EE]">
+          <div id="dropZone" onclick="document.getElementById('fileInput').click()" class="border border-dashed border-[#94A3B8] hover:border-[#2563EB] hover:bg-[#EFF6FF]/40 rounded-lg p-4 text-center cursor-pointer transition bg-[#F8FAFC]">
             <input type="file" id="fileInput" multiple accept="image/*,video/*" class="hidden" onchange="handleFileSelect(event)">
-            <div class="text-xs font-bold text-[#18181B]">Kéo thả ảnh/video vào đây, hoặc <span class="text-blue-600 underline">bấm để chọn</span></div>
+            <div class="text-sm font-medium text-[#334155]">Kéo thả ảnh hoặc video vào đây, hoặc <span class="text-[#2563EB] font-semibold underline">bấm để chọn tệp</span></div>
           </div>
 
-          <div id="mediaPreviews" class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-36 overflow-y-auto custom-scrollbar"></div>
+          <div id="mediaPreviews" class="grid grid-cols-3 sm:grid-cols-4 gap-2.5 max-h-40 overflow-y-auto custom-scrollbar"></div>
         </div>
 
-        <!-- 3. Final Content Editor -->
-        <div class="neo-card p-4 sm:p-5 bg-white space-y-2">
-          <div class="flex justify-between items-center border-b-2 border-[#18181B] pb-2">
-            <label class="text-xs font-black uppercase text-[#18181B]">
-              3. Nội dung bài viết sẵn sàng đăng (Chỉnh sửa tùy ý)
-            </label>
-            <span id="contentLengthBadge" class="neo-sticker sticker-peach text-[11px] font-mono">0 ký tự</span>
+        <!-- Step 3 -->
+        <div class="vg-surface p-4 sm:p-5 space-y-2.5">
+          <div class="flex justify-between items-center">
+            <label for="finalContentInput" class="text-sm font-bold text-[#0F172A]">3. Nội dung sẵn sàng đăng</label>
+            <span id="contentLengthBadge" class="vg-pill font-mono-num">0 ký tự</span>
           </div>
-          <textarea id="finalContentInput" rows="7" class="neo-input w-full p-3 text-xs font-sans leading-relaxed text-[#18181B] placeholder-neutral-400" oninput="updateFacebookPreview()"></textarea>
+          <textarea id="finalContentInput" rows="7" class="vg-textarea text-sm leading-relaxed" oninput="updateFacebookPreview()"></textarea>
         </div>
 
-        <!-- 4. Schedule & Publish Action -->
-        <div class="neo-card p-4 bg-[#FFF9E6] space-y-3">
-          <div class="flex items-center justify-between border-b-2 border-[#18181B] pb-2">
-            <span class="text-xs font-black uppercase text-[#18181B]">Khung giờ đề xuất tiếp theo:</span>
-            <span class="text-xs font-black text-emerald-700 font-mono" id="suggestedSlotText">Đang tính toán...</span>
+        <!-- Step 4 -->
+        <div class="vg-surface p-4 sm:p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-semibold text-[#475569]">Khung giờ đề xuất kế tiếp</span>
+            <span class="text-sm font-bold text-[#059669] font-mono-num" id="suggestedSlotText">Đang tính toán...</span>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <button onclick="schedulePost(true, 'both'); closeManualPostModal();" class="neo-btn bg-[#FB923C] text-[#431407] hover:bg-orange-400 py-3 text-xs font-black uppercase shadow-[2.5px_2.5px_0px_#18181B]" title="Đăng ngay lên cả Fanpage và Facebook Cá Nhân">
-              🚀 ĐĂNG NGAY (FANPAGE + CÁ NHÂN)
+            <button onclick="schedulePost(true, 'both'); closeManualPostModal();" class="vg-btn vg-btn-primary py-2.5" title="Đăng ngay lên cả Fanpage và Facebook Cá Nhân">
+              Đăng ngay (Fanpage + Cá nhân)
             </button>
-            <button onclick="schedulePost(false, 'both'); closeManualPostModal();" class="neo-btn neo-btn-green py-3 text-xs font-black uppercase shadow-[2.5px_2.5px_0px_#18181B]" title="Xếp vào hàng đợi giờ vàng để đăng cả Fanpage lẫn Cá Nhân">
-              ⏳ LÊN LỊCH HÀNG ĐỢI (CẢ HAI)
+            <button onclick="schedulePost(false, 'both'); closeManualPostModal();" class="vg-btn vg-btn-success py-2.5" title="Xếp vào hàng đợi giờ vàng">
+              Lên lịch hàng đợi
             </button>
           </div>
         </div>
 
-        <!-- Hidden preview container to keep updateFacebookPreview safe -->
+        <!-- Hidden preview container kept for updateFacebookPreview compatibility -->
         <div class="hidden">
           <span id="previewPageName"></span>
           <div id="previewPostContent"></div>
@@ -855,188 +861,140 @@
     </div>
   </div>
 
-  <!-- Modal: Post Preview -->
-  <div id="postPreviewModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4" onclick="if(event.target === this) closePostPreviewModal()">
-    <div class="neo-card bg-white max-w-2xl w-full p-4 sm:p-6 space-y-3.5 max-h-[92vh] flex flex-col shadow-[6px_6px_0px_#18181B]">
-      <div class="flex justify-between items-center pb-3 border-b-2 border-[#18181B] gap-2">
-        <div class="flex items-center gap-2 min-w-0">
-          <span class="text-xl shrink-0">📄</span>
-          <h3 class="text-sm font-black text-[#18181B] uppercase truncate" id="previewModalTitle">Chi Tiết Bài Đăng Facebook</h3>
-        </div>
-        <button onclick="closePostPreviewModal()" class="neo-btn neo-btn-white px-2.5 py-1 text-xs font-bold shrink-0">✕ Đóng</button>
+  <!-- ==================== MODAL 2: XEM CHI TIẾT BÀI VIẾT ==================== -->
+  <div id="postPreviewModal" class="fixed inset-0 bg-[#0F172A]/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4" onclick="if(event.target === this) closePostPreviewModal()">
+    <div class="vg-modal max-w-2xl w-full p-5 sm:p-6 space-y-4 max-h-[92vh] flex flex-col">
+      <div class="flex justify-between items-center pb-3 border-b border-[#E2E8F0] gap-2">
+        <h3 class="text-base sm:text-lg font-bold text-[#0F172A] truncate" id="previewModalTitle">Chi tiết bài đăng Facebook</h3>
+        <button onclick="closePostPreviewModal()" class="vg-btn vg-btn-ghost w-9 h-9 p-0 shrink-0" aria-label="Đóng">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
       </div>
 
-      <!-- Meta Badges Bar -->
       <div id="previewModalMeta" class="flex flex-wrap items-center gap-2 text-xs"></div>
-
-      <!-- Media Thumbnails Preview -->
       <div id="previewModalMedia" class="hidden"></div>
 
-      <!-- Post Content Body -->
-      <div class="flex-1 overflow-y-auto pr-1">
-        <div class="text-[11px] font-bold text-neutral-500 uppercase tracking-wide mb-1">Nội dung bài viết:</div>
-        <pre id="previewModalContent" class="whitespace-pre-wrap font-sans text-xs sm:text-sm text-[#18181B] leading-relaxed bg-[#FAF8F5] p-3.5 sm:p-4 rounded-lg border-2 border-[#18181B] shadow-[2px_2px_0px_#18181B] select-text"></pre>
+      <div class="flex-1 overflow-y-auto pr-1 custom-scrollbar">
+        <div class="text-xs font-semibold text-[#475569] mb-1.5">Nội dung bài viết</div>
+        <pre id="previewModalContent" class="whitespace-pre-wrap font-sans text-sm text-[#0F172A] leading-relaxed bg-[#F8FAFC] p-4 rounded-lg border border-[#E2E8F0] select-text"></pre>
       </div>
 
-      <!-- Action Buttons Footer -->
-      <div class="pt-3 border-t-2 border-[#18181B] flex justify-between items-center gap-2 flex-wrap" id="previewModalActions">
-        <button onclick="copyPreviewModalContent()" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-bold shadow-[2px_2px_0px_#18181B]">
-          <span>📋 Sao chép nội dung</span>
-        </button>
-        <div class="flex items-center gap-2" id="previewModalExtraActions">
-          <button onclick="closePostPreviewModal()" class="neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold">
-            <span>Đóng lại</span>
-          </button>
+      <div class="pt-3 border-t border-[#E2E8F0] flex justify-between items-center gap-2 flex-wrap" id="previewModalActions">
+        <button onclick="copyPreviewModalContent()" class="vg-btn vg-btn-secondary vg-btn-sm">Sao chép nội dung</button>
+        <div class="flex items-center gap-2 flex-wrap" id="previewModalExtraActions">
+          <button onclick="closePostPreviewModal()" class="vg-btn vg-btn-secondary vg-btn-sm">Đóng lại</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Modal: Personal Profile Post Helper & Image Downloader -->
-  <div id="personalPostHelperModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-5" onclick="if(event.target === this) closePersonalPostHelperModal()">
-    <div class="neo-card bg-white max-w-xl w-full p-5 sm:p-6 space-y-4 max-h-[92vh] flex flex-col border-2 border-[#18181B] shadow-[6px_6px_0px_#18181B]">
-      <!-- Header -->
-      <div class="flex justify-between items-center pb-3 border-b-2 border-[#18181B] gap-2">
-        <div class="flex items-center gap-2">
-          <span class="text-2xl">👤</span>
-          <div>
-            <h3 class="text-sm sm:text-base font-black text-[#18181B] uppercase" id="personalHelperTitle">Hỗ Trợ Đăng Facebook Cá Nhân</h3>
-            <p class="text-[11px] text-neutral-600 font-medium">Hệ thống đã tự động sao chép chữ & chuẩn bị toàn bộ ảnh</p>
-          </div>
-        </div>
-        <button onclick="closePersonalPostHelperModal()" class="neo-btn neo-btn-white px-2.5 py-1 text-xs font-bold">✕ Đóng</button>
-      </div>
-
-      <!-- Status Badges -->
-      <div class="space-y-2">
-        <div class="p-2.5 bg-emerald-50 border-2 border-emerald-600 rounded-lg flex items-center gap-2 text-xs font-bold text-emerald-800">
-          <span>✅</span>
-          <span>1. Nội dung bài viết đã được sao chép vào bộ nhớ tạm (Bấm Ctrl+V để dán).</span>
-        </div>
-        <div class="p-2.5 bg-sky-50 border-2 border-sky-600 rounded-lg flex items-center justify-between gap-2 text-xs font-bold text-sky-800">
-          <div class="flex items-center gap-2">
-            <span>📥</span>
-            <span>2. Tự động tải bộ ảnh HD về máy (<span id="personalHelperMediaCount">0 ảnh</span>).</span>
-          </div>
-          <button onclick="triggerDownloadCurrentImages()" id="personalHelperDownloadBtn" class="neo-btn bg-white hover:bg-neutral-50 px-2 py-1 text-[11px] font-black border border-sky-700 shadow-[1px_1px_0px_#18181B]">
-            📥 Tải Lại Ảnh
-          </button>
-        </div>
-      </div>
-
-      <!-- Media Preview -->
-      <div class="space-y-1.5">
-        <div class="text-[11px] font-black uppercase text-neutral-600">Hình ảnh đính kèm của máy:</div>
-        <div id="personalHelperMedia" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin"></div>
-      </div>
-
-      <!-- Text Preview -->
-      <div class="flex-1 overflow-y-auto space-y-1.5 min-h-[90px] max-h-[170px]">
-        <div class="text-[11px] font-black uppercase text-neutral-600 flex justify-between items-center">
-          <span>Nội dung bài viết:</span>
-          <button onclick="copyCurrentPersonalText()" id="personalHelperCopyBtn" class="text-indigo-700 font-bold hover:underline text-[11px]">📋 Sao Chép Lại</button>
-        </div>
-        <pre id="personalHelperContent" class="whitespace-pre-wrap font-sans text-xs text-[#18181B] leading-relaxed bg-[#FAF8F5] p-3 rounded-lg border-2 border-[#18181B] select-text"></pre>
-      </div>
-
-      <!-- Action Footer -->
-      <div class="pt-3 border-t-2 border-[#18181B] flex flex-col sm:flex-row items-center justify-between gap-2.5">
-        <div class="text-[11px] text-neutral-500 font-medium">
-          💡 Sang tab Facebook: <strong>Ctrl+V</strong> và kéo ảnh vừa tải vào!
-        </div>
-        <div class="flex items-center gap-2 w-full sm:w-auto">
-          <button onclick="openFacebookFromHelper()" class="neo-btn bg-[#1877F2] text-white hover:bg-blue-600 flex-1 sm:flex-initial px-4 py-2 text-xs font-black shadow-[2px_2px_0px_#18181B]">
-            🚀 MỞ FACEBOOK ĐĂNG NGAY ➔
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal: PWA Install App Guide -->
-  <div id="pwaInstallModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
-    <div class="neo-card bg-white max-w-md w-full p-6 space-y-4 shadow-[6px_6px_0px_#18181B] relative">
-      <div class="flex justify-between items-center pb-3 border-b-2 border-[#18181B]">
-        <div class="flex items-center gap-2">
-          <span class="text-2xl">📱</span>
-          <h3 class="text-sm font-black text-[#18181B] uppercase">Cài Đặt App Về Màn Hình Chính</h3>
-        </div>
-        <button onclick="closePwaInstallModal()" class="neo-btn neo-btn-white px-2 py-1 text-xs font-bold">✕ Đóng</button>
-      </div>
-
-      <!-- App Icon & Description -->
-      <div class="flex items-center gap-3.5 p-3 bg-[#FAF5EE] border-2 border-[#18181B] rounded-lg">
-        <img src="/icons/icon.svg" class="w-14 h-14 rounded-xl border border-[#18181B] shadow-[2px_2px_0px_#18181B]" alt="VG App Icon" />
+  <!-- ==================== MODAL 3: HỖ TRỢ ĐĂNG FACEBOOK CÁ NHÂN ==================== -->
+  <div id="personalPostHelperModal" class="fixed inset-0 bg-[#0F172A]/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-5" onclick="if(event.target === this) closePersonalPostHelperModal()">
+    <div class="vg-modal max-w-xl w-full p-5 sm:p-6 space-y-4 max-h-[92vh] flex flex-col">
+      <div class="flex justify-between items-center pb-3 border-b border-[#E2E8F0] gap-2">
         <div>
-          <div class="text-sm font-black text-[#18181B]">Laptop Vương Gia</div>
-          <p class="text-xs text-neutral-600 mt-0.5 font-medium">Chạy độc lập toàn màn hình, mượt mà như app tải từ App Store / Google Play!</p>
+          <h3 class="text-base sm:text-lg font-bold text-[#0F172A]" id="personalHelperTitle">Hỗ trợ đăng Facebook Cá Nhân</h3>
+          <p class="text-xs text-[#475569] mt-0.5">Hệ thống đã sao chép chữ và chuẩn bị bộ ảnh HD cho bạn.</p>
         </div>
-      </div>
-
-      <!-- Direct Android/Chrome 1-Click Install Button (Shown if supported) -->
-      <div id="androidNativeInstallBox" class="hidden">
-        <button onclick="triggerPwaPrompt()" class="neo-btn bg-[#FDE047] hover:bg-yellow-300 w-full py-3 text-xs font-black uppercase shadow-[3px_3px_0px_#18181B]">
-          <span>⚡ BẤM ĐỂ CÀI ĐẶT NGAY TRONG 1 CHẠM ➔</span>
+        <button onclick="closePersonalPostHelperModal()" class="vg-btn vg-btn-ghost w-9 h-9 p-0 shrink-0" aria-label="Đóng">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
 
-      <!-- Tab Buttons for iOS & Android guides -->
-      <div class="space-y-3 text-xs">
-        <!-- iOS Guide -->
-        <div class="p-3.5 border-2 border-[#18181B] rounded-lg bg-[#F8FAFC] space-y-2">
-          <div class="font-black text-indigo-700 flex items-center gap-1.5 uppercase">
-            <span>🍏 Dành cho iPhone / iPad (Safari):</span>
-          </div>
-          <ol class="list-decimal list-inside space-y-1.5 text-neutral-700 font-medium">
-            <li>Mở trang web bằng trình duyệt <strong>Safari</strong>.</li>
-            <li>Bấm nút <strong>Chia sẻ</strong> (biểu tượng hình vuông có mũi tên chỉ lên <span class="border border-[#18181B] px-1 py-0.5 rounded font-mono text-[11px] bg-white">⎋ / ↑</span> ở thanh dưới Safari).</li>
-            <li>Cuộn xuống và chọn <strong>"Thêm vào MH chính" (Add to Home Screen)</strong>.</li>
-            <li>Bấm <strong>Thêm (Add)</strong> ở góc trên bên phải.</li>
-          </ol>
+      <div class="space-y-2 text-xs">
+        <div class="p-3 bg-[#ECFDF5] border border-[#A7F3D0] rounded-lg font-medium text-[#065F46]">
+          1. Nội dung bài viết đã được sao chép vào bộ nhớ tạm (bấm Ctrl+V để dán).
         </div>
-
-        <!-- Android Guide -->
-        <div class="p-3.5 border-2 border-[#18181B] rounded-lg bg-[#F0FDF4] space-y-2">
-          <div class="font-black text-emerald-800 flex items-center gap-1.5 uppercase">
-            <span>🤖 Dành cho Android (Chrome / Cốc Cốc):</span>
-          </div>
-          <ol class="list-decimal list-inside space-y-1.5 text-neutral-700 font-medium">
-            <li>Bấm vào biểu tượng <strong>Menu 3 chấm (⋮)</strong> ở góc trên bên phải trình duyệt.</li>
-            <li>Chọn <strong>"Cài đặt ứng dụng"</strong> hoặc <strong>"Thêm vào Màn hình chính"</strong>.</li>
-            <li>Xác nhận để biểu tượng app xuất hiện trên màn hình điện thoại!</li>
-          </ol>
+        <div class="p-3 bg-[#EFF6FF] border border-[#BFDBFE] rounded-lg flex items-center justify-between gap-2 font-medium text-[#1E40AF]">
+          <span>2. Bộ ảnh HD đính kèm (<span id="personalHelperMediaCount">0 ảnh</span>).</span>
+          <button onclick="triggerDownloadCurrentImages()" id="personalHelperDownloadBtn" class="vg-btn vg-btn-secondary vg-btn-sm">Tải lại ảnh</button>
         </div>
       </div>
 
-      <div class="pt-2 border-t-2 border-[#18181B] flex justify-end">
-        <button onclick="closePwaInstallModal()" class="neo-btn neo-btn-white px-4 py-2 text-xs font-bold">
-          <span>Đã hiểu, đóng lại</span>
-        </button>
+      <div class="space-y-1.5">
+        <div class="text-xs font-semibold text-[#475569]">Ảnh đính kèm</div>
+        <div id="personalHelperMedia" class="flex items-center gap-2 overflow-x-auto pb-1"></div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto space-y-1.5 min-h-[90px] max-h-[170px]">
+        <div class="text-xs font-semibold text-[#475569] flex justify-between items-center">
+          <span>Nội dung bài viết</span>
+          <button onclick="copyCurrentPersonalText()" id="personalHelperCopyBtn" class="text-[#2563EB] font-semibold hover:underline">Sao chép lại</button>
+        </div>
+        <pre id="personalHelperContent" class="whitespace-pre-wrap font-sans text-xs text-[#0F172A] leading-relaxed bg-[#F8FAFC] p-3 rounded-lg border border-[#E2E8F0] select-text"></pre>
+      </div>
+
+      <div class="pt-3 border-t border-[#E2E8F0] flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="text-xs text-[#475569]">Sang tab Facebook, bấm Ctrl+V và chọn ảnh vừa tải.</div>
+        <button onclick="openFacebookFromHelper()" class="vg-btn vg-btn-primary w-full sm:w-auto">Mở Facebook đăng ngay</button>
       </div>
     </div>
   </div>
 
-  <!-- ==================== DATA POST MODALS ==================== -->
-
-  <!-- Modal 1: Create / Edit Model Template -->
-  <div id="modelTemplateModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4" onclick="if(event.target === this) closeModelTemplateModal()">
-    <div class="neo-card bg-white max-w-3xl w-full p-5 sm:p-6 space-y-4 max-h-[92vh] flex flex-col shadow-[6px_6px_0px_#18181B] overflow-y-auto">
-      <div class="flex justify-between items-center pb-3 border-b-2 border-[#18181B]">
-        <div class="flex items-center gap-2">
-          <span class="text-2xl">💻</span>
-          <h3 class="text-sm sm:text-base font-black text-[#18181B] uppercase" id="modelTemplateModalTitle">Thêm Model Template Mới</h3>
-        </div>
-        <button onclick="closeModelTemplateModal()" class="neo-btn neo-btn-white px-2.5 py-1 text-xs font-bold">✕ Đóng</button>
+  <!-- ==================== MODAL 4: HƯỚNG DẪN CÀI PWA APP ==================== -->
+  <div id="pwaInstallModal" class="fixed inset-0 bg-[#0F172A]/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" onclick="if(event.target === this) closePwaInstallModal()">
+    <div class="vg-modal max-w-md w-full p-6 space-y-4">
+      <div class="flex justify-between items-center pb-3 border-b border-[#E2E8F0]">
+        <h3 class="text-base font-bold text-[#0F172A]">Cài đặt ứng dụng về điện thoại</h3>
+        <button onclick="closePwaInstallModal()" class="vg-btn vg-btn-ghost w-9 h-9 p-0" aria-label="Đóng">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
       </div>
 
-      <form id="modelTemplateForm" onsubmit="handleModelTemplateSubmit(event)" class="space-y-4 text-xs">
+      <div class="flex items-center gap-3.5 p-3.5 vg-panel-soft">
+        <img src="/icons/icon.svg" class="w-12 h-12 rounded-xl border border-[#E2E8F0]" alt="Biểu tượng ứng dụng" />
+        <div>
+          <div class="text-sm font-bold text-[#0F172A]">Laptop Vương Gia</div>
+          <p class="text-xs text-[#475569] mt-0.5">Mở toàn màn hình trực tiếp từ màn hình chính như app độc lập.</p>
+        </div>
+      </div>
+
+      <div id="androidNativeInstallBox" class="hidden">
+        <button onclick="triggerPwaPrompt()" class="vg-btn vg-btn-primary w-full">Cài đặt ngay trong 1 chạm</button>
+      </div>
+
+      <div class="space-y-3 text-xs leading-relaxed text-[#334155]">
+        <div class="p-3.5 border border-[#E2E8F0] rounded-lg bg-[#F8FAFC] space-y-1.5">
+          <div class="font-bold text-[#0F172A]">Trên iPhone / iPad (Safari)</div>
+          <ol class="list-decimal list-inside space-y-1">
+            <li>Mở đường dẫn bằng <strong>Safari</strong>.</li>
+            <li>Bấm nút <strong>Chia sẻ</strong> ở thanh dưới màn hình.</li>
+            <li>Chọn <strong>Thêm vào Màn hình chính</strong> rồi bấm <strong>Thêm</strong>.</li>
+          </ol>
+        </div>
+
+        <div class="p-3.5 border border-[#E2E8F0] rounded-lg bg-[#F8FAFC] space-y-1.5">
+          <div class="font-bold text-[#0F172A]">Trên Android (Chrome)</div>
+          <ol class="list-decimal list-inside space-y-1">
+            <li>Bấm nút <strong>Menu 3 chấm</strong> ở góc trên bên phải.</li>
+            <li>Chọn <strong>Cài đặt ứng dụng</strong> hoặc <strong>Thêm vào Màn hình chính</strong>.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="pt-2 border-t border-[#E2E8F0] flex justify-end">
+        <button onclick="closePwaInstallModal()" class="vg-btn vg-btn-secondary">Đóng lại</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 5: THÊM / SỬA MODEL TEMPLATE ==================== -->
+  <div id="modelTemplateModal" class="fixed inset-0 bg-[#0F172A]/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4" onclick="if(event.target === this) closeModelTemplateModal()">
+    <div class="vg-modal max-w-3xl w-full p-5 sm:p-6 space-y-4 max-h-[92vh] flex flex-col overflow-y-auto custom-scrollbar">
+      <div class="flex justify-between items-center pb-3 border-b border-[#E2E8F0]">
+        <h3 class="text-base sm:text-lg font-bold text-[#0F172A]" id="modelTemplateModalTitle">Thêm mẫu máy mới</h3>
+        <button onclick="closeModelTemplateModal()" class="vg-btn vg-btn-ghost w-9 h-9 p-0" aria-label="Đóng">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="modelTemplateForm" onsubmit="handleModelTemplateSubmit(event)" class="space-y-4 text-sm">
         <input type="hidden" id="templateFormId" value="" />
 
-        <!-- Row 1: Brand & Model Name -->
         <div class="grid grid-cols-1 sm:grid-cols-12 gap-3.5">
           <div class="sm:col-span-4">
-            <label class="font-bold text-[#18181B] block mb-1">Hãng sản xuất: <span class="text-red-500">*</span></label>
-            <select id="templateFormBrand" class="neo-input w-full px-3 py-2 font-bold" required>
+            <label for="templateFormBrand" class="block text-xs font-semibold text-[#0F172A] mb-1">Hãng sản xuất <span class="text-[#DC2626]">*</span></label>
+            <select id="templateFormBrand" class="vg-select font-semibold" required>
               <option value="Dell">Dell</option>
               <option value="HP">HP</option>
               <option value="ThinkPad">ThinkPad</option>
@@ -1050,196 +1008,166 @@
           </div>
 
           <div class="sm:col-span-8">
-            <label class="font-bold text-[#18181B] block mb-1">Tên Model Laptop: <span class="text-red-500">*</span> <span class="text-neutral-500 font-normal">(Tên máy vĩnh viễn, không dùng mã tạm thời #101)</span></label>
-            <input type="text" id="templateFormModelName" placeholder="Ví dụ: ThinkPad T480s, Dell Latitude 5350..." class="neo-input w-full px-3 py-2 text-sm font-bold" required />
+            <label for="templateFormModelName" class="block text-xs font-semibold text-[#0F172A] mb-1">Tên Model Laptop <span class="text-[#DC2626]">*</span></label>
+            <input type="text" id="templateFormModelName" placeholder="Ví dụ: ThinkPad T480s, Dell Latitude 5350..." class="vg-input font-semibold" required />
           </div>
         </div>
 
-        <!-- Row 2: Hardware Specs -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div>
-            <label class="font-bold text-[#18181B] block mb-1">Vi xử lý CPU: <span class="text-red-500">*</span></label>
-            <input type="text" id="templateFormCpu" placeholder="Ví dụ: Core i5-8350U" class="neo-input w-full px-2.5 py-2 font-mono" required />
+            <label for="templateFormCpu" class="block text-xs font-semibold text-[#0F172A] mb-1">CPU <span class="text-[#DC2626]">*</span></label>
+            <input type="text" id="templateFormCpu" placeholder="Core i5-8350U" class="vg-input font-mono-num text-xs" required />
           </div>
           <div>
-            <label class="font-bold text-[#18181B] block mb-1">RAM: <span class="text-red-500">*</span></label>
-            <input type="text" id="templateFormRam" placeholder="Ví dụ: 16GB DDR4" class="neo-input w-full px-2.5 py-2 font-mono" required />
+            <label for="templateFormRam" class="block text-xs font-semibold text-[#0F172A] mb-1">RAM <span class="text-[#DC2626]">*</span></label>
+            <input type="text" id="templateFormRam" placeholder="16GB DDR4" class="vg-input font-mono-num text-xs" required />
           </div>
           <div>
-            <label class="font-bold text-[#18181B] block mb-1">Ổ cứng SSD:</label>
-            <input type="text" id="templateFormSsd" placeholder="Ví dụ: 256GB NVMe" class="neo-input w-full px-2.5 py-2 font-mono" />
+            <label for="templateFormSsd" class="block text-xs font-semibold text-[#0F172A] mb-1">Ổ cứng SSD</label>
+            <input type="text" id="templateFormSsd" placeholder="256GB NVMe" class="vg-input font-mono-num text-xs" />
           </div>
           <div>
-            <label class="font-bold text-[#18181B] block mb-1">Màn hình:</label>
-            <input type="text" id="templateFormScreen" placeholder='Ví dụ: 14.0" FHD IPS' class="neo-input w-full px-2.5 py-2" />
+            <label for="templateFormScreen" class="block text-xs font-semibold text-[#0F172A] mb-1">Màn hình</label>
+            <input type="text" id="templateFormScreen" placeholder='14.0" FHD IPS' class="vg-input text-xs" />
           </div>
         </div>
 
-        <!-- Row 3: Pricing & Status -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <label class="font-bold text-[#18181B] block mb-1">Giá tối thiểu (VNĐ):</label>
-            <input type="number" id="templateFormPriceMin" placeholder="6500000" class="neo-input w-full px-2.5 py-2 font-mono" />
+            <label for="templateFormPriceMin" class="block text-xs font-semibold text-[#0F172A] mb-1">Giá tối thiểu (VNĐ)</label>
+            <input type="number" id="templateFormPriceMin" placeholder="6500000" class="vg-input font-mono-num" />
           </div>
           <div>
-            <label class="font-bold text-[#18181B] block mb-1">Giá tối đa (VNĐ):</label>
-            <input type="number" id="templateFormPriceMax" placeholder="7500000" class="neo-input w-full px-2.5 py-2 font-mono" />
+            <label for="templateFormPriceMax" class="block text-xs font-semibold text-[#0F172A] mb-1">Giá tối đa (VNĐ)</label>
+            <input type="number" id="templateFormPriceMax" placeholder="7500000" class="vg-input font-mono-num" />
           </div>
           <div>
-            <label class="font-bold text-[#18181B] block mb-1">Giá hiển thị / Niêm yết:</label>
-            <input type="text" id="templateFormPriceDisplay" placeholder="Ví dụ: 6.9 triệu" class="neo-input w-full px-2.5 py-2 font-bold text-emerald-800" />
+            <label for="templateFormPriceDisplay" class="block text-xs font-semibold text-[#0F172A] mb-1">Giá hiển thị</label>
+            <input type="text" id="templateFormPriceDisplay" placeholder="Ví dụ: 6.9 triệu" class="vg-input font-semibold text-[#065F46]" />
           </div>
         </div>
 
-        <div class="flex items-center gap-4 flex-wrap pt-1">
+        <div class="flex items-center justify-between gap-4 flex-wrap pt-1">
           <label class="flex items-center gap-2 cursor-pointer select-none">
-            <input type="checkbox" id="templateFormTouch" class="w-4 h-4 accent-[#18181B] rounded cursor-pointer" />
-            <span class="font-bold text-[#18181B]">Màn hình cảm ứng (Touchscreen)</span>
+            <input type="checkbox" id="templateFormTouch" class="w-4 h-4 accent-[#2563EB] rounded cursor-pointer" />
+            <span class="text-sm font-medium text-[#0F172A]">Màn hình cảm ứng (Touchscreen)</span>
           </label>
           <div class="flex items-center gap-2">
-            <span class="font-bold text-[#18181B]">Trạng thái:</span>
-            <select id="templateFormStatus" class="neo-input px-2.5 py-1 font-bold">
-              <option value="active">Đang tuần hoàn (Active)</option>
-              <option value="paused">Tạm dừng (Paused)</option>
+            <label for="templateFormStatus" class="text-sm font-semibold text-[#0F172A]">Trạng thái:</label>
+            <select id="templateFormStatus" class="vg-select w-auto">
+              <option value="active">Đang tuần hoàn</option>
+              <option value="paused">Tạm dừng</option>
             </select>
           </div>
         </div>
 
-        <!-- Base AI Prompt -->
         <div>
-          <label class="font-bold text-[#18181B] block mb-1">Phôi bài viết mẫu AI / Điểm nổi bật dòng máy:</label>
-          <textarea id="templateFormBasePrompt" rows="3" placeholder="Nhập điểm nổi bật làm phôi cho AI rewrite (ví dụ: Chuẩn quân đội Mỹ, gõ phím êm ái, pin kép dùng 4-5 tiếng, vỏ magie siêu nhẹ...)" class="neo-input w-full p-2.5 leading-relaxed"></textarea>
+          <label for="templateFormBasePrompt" class="block text-xs font-semibold text-[#0F172A] mb-1">Phôi bài viết mẫu / Điểm nổi bật dòng máy</label>
+          <textarea id="templateFormBasePrompt" rows="3" placeholder="Điểm nổi bật làm phôi cho AI viết bài..." class="vg-textarea"></textarea>
         </div>
 
-        <!-- HD Media URLs -->
         <div>
           <div class="flex justify-between items-center mb-1">
-            <label class="font-bold text-[#18181B]">Album ảnh HD (Supabase Storage / CDN URLs):</label>
-            <span class="text-neutral-500 font-medium">Mỗi link một dòng hoặc tải file bên dưới</span>
+            <label for="templateFormMediaUrls" class="text-xs font-semibold text-[#0F172A]">Album ảnh HD (mỗi link một dòng)</label>
           </div>
-          <textarea id="templateFormMediaUrls" rows="3" placeholder="https://egjxezhoohzgpbyukfwr.supabase.co/storage/v1/object/public/laptop-media/photo1.jpg" class="neo-input w-full p-2 font-mono text-[11px]"></textarea>
-          
-          <div class="mt-2 flex items-center gap-2 flex-wrap">
-            <label class="neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold cursor-pointer">
-              <span>📁 Tải thêm ảnh lên Cloud Supabase</span>
+          <textarea id="templateFormMediaUrls" rows="3" placeholder="https://..." class="vg-textarea font-mono-num text-xs"></textarea>
+          <div class="mt-2 flex items-center gap-2.5 flex-wrap">
+            <label class="vg-btn vg-btn-secondary vg-btn-sm cursor-pointer">
+              <span>Tải ảnh lên Supabase</span>
               <input type="file" id="templateFormUploadFile" multiple accept="image/*,video/*" class="hidden" onchange="handleTemplateFormFileUpload(event)" />
             </label>
-            <span id="templateFormUploadStatus" class="text-neutral-600 font-medium text-[11px]"></span>
+            <span id="templateFormUploadStatus" class="text-xs text-[#475569]"></span>
           </div>
           <div id="templateFormMediaPreview" class="flex gap-2 overflow-x-auto py-2"></div>
         </div>
 
-        <!-- Footer Buttons -->
-        <div class="pt-3 border-t-2 border-[#18181B] flex justify-between items-center gap-2">
-          <button type="button" onclick="closeModelTemplateModal()" class="neo-btn neo-btn-white px-4 py-2 font-bold">
-            ✕ Hủy bỏ
-          </button>
-          <button type="submit" id="templateFormSubmitBtn" class="neo-btn neo-btn-yellow px-5 py-2 font-black shadow-[3px_3px_0px_#18181B]">
-            💾 LƯU MODEL TEMPLATE ➔
-          </button>
+        <div class="pt-3 border-t border-[#E2E8F0] flex justify-end items-center gap-2.5">
+          <button type="button" onclick="closeModelTemplateModal()" class="vg-btn vg-btn-secondary">Hủy bỏ</button>
+          <button type="submit" id="templateFormSubmitBtn" class="vg-btn vg-btn-primary">Lưu mẫu máy</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Modal 2: Media Manager for Template (Supabase HD Storage) -->
-  <div id="mediaManagerModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4" onclick="if(event.target === this) closeMediaManagerModal()">
-    <div class="neo-card bg-white max-w-4xl w-full p-5 sm:p-6 space-y-4 max-h-[92vh] flex flex-col shadow-[6px_6px_0px_#18181B]">
-      <div class="flex justify-between items-center pb-3 border-b-2 border-[#18181B] gap-2">
-        <div class="flex items-center gap-2 min-w-0">
-          <span class="text-2xl shrink-0">🖼️</span>
-          <div>
-            <h3 class="text-sm sm:text-base font-black text-[#18181B] uppercase truncate" id="mediaManagerTitle">Kho Ảnh HD Model</h3>
-            <p class="text-xs text-neutral-600 font-mono" id="mediaManagerSubtitle">Storage Bucket: laptop-media (Supabase Cloud)</p>
-          </div>
+  <!-- ==================== MODAL 6: KHO ẢNH HD CỦA MẪU MÁY ==================== -->
+  <div id="mediaManagerModal" class="fixed inset-0 bg-[#0F172A]/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4" onclick="if(event.target === this) closeMediaManagerModal()">
+    <div class="vg-modal max-w-4xl w-full p-5 sm:p-6 space-y-4 max-h-[92vh] flex flex-col">
+      <div class="flex justify-between items-center pb-3 border-b border-[#E2E8F0] gap-2">
+        <div class="min-w-0">
+          <h3 class="text-base sm:text-lg font-bold text-[#0F172A] truncate" id="mediaManagerTitle">Kho ảnh HD</h3>
+          <p class="text-xs text-[#475569] font-mono-num" id="mediaManagerSubtitle">Storage Bucket: laptop-media</p>
         </div>
-        <button onclick="closeMediaManagerModal()" class="neo-btn neo-btn-white px-2.5 py-1 text-xs font-bold shrink-0">✕ Đóng</button>
+        <button onclick="closeMediaManagerModal()" class="vg-btn vg-btn-ghost w-9 h-9 p-0 shrink-0" aria-label="Đóng">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
       </div>
 
-      <!-- Add photo toolbar -->
-      <div class="p-3.5 bg-[#FAF5EE] border-2 border-[#18181B] rounded-xl flex flex-wrap items-center justify-between gap-3 shadow-[2px_2px_0px_#18181B]">
-        <div class="flex items-center gap-2 flex-1 min-w-[260px]">
-          <input type="text" id="mediaManagerAddUrlInput" placeholder="Dán link ảnh HD công khai (https://...)" class="neo-input flex-1 px-3 py-1.5 text-xs font-mono" />
-          <button type="button" onclick="addUrlToMediaManager()" class="neo-btn neo-btn-yellow px-3 py-1.5 text-xs font-black shadow-[2px_2px_0px_#18181B] shrink-0">
-            ➕ Thêm Link
-          </button>
+      <div class="vg-panel-soft p-3.5 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2 flex-1 min-w-[240px]">
+          <input type="text" id="mediaManagerAddUrlInput" placeholder="Dán link ảnh công khai (https://...)" class="vg-input font-mono-num text-xs" />
+          <button type="button" onclick="addUrlToMediaManager()" class="vg-btn vg-btn-secondary vg-btn-sm shrink-0">Thêm link</button>
         </div>
-        <div>
-          <label class="neo-btn neo-btn-green px-3.5 py-1.5 text-xs font-black shadow-[2px_2px_0px_#18181B] cursor-pointer inline-flex items-center gap-1.5">
-            <span>☁️ Tải ảnh lên Supabase</span>
-            <input type="file" id="mediaManagerFileInput" multiple accept="image/*,video/*" class="hidden" onchange="handleMediaManagerUpload(event)" />
-          </label>
-        </div>
+        <label class="vg-btn vg-btn-primary vg-btn-sm cursor-pointer">
+          <span>Tải ảnh từ máy</span>
+          <input type="file" id="mediaManagerFileInput" multiple accept="image/*,video/*" class="hidden" onchange="handleMediaManagerUpload(event)" />
+        </label>
       </div>
 
-      <div id="mediaManagerUploadStatus" class="hidden text-xs font-bold text-indigo-700 py-1"></div>
+      <div id="mediaManagerUploadStatus" class="hidden text-xs font-semibold text-[#1E40AF] py-1"></div>
 
-      <!-- Media Grid -->
-      <div class="flex-1 overflow-y-auto">
+      <div class="flex-1 overflow-y-auto custom-scrollbar">
         <div id="mediaManagerGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5 p-1">
           <!-- Populated by JS -->
         </div>
-        <div id="mediaManagerEmpty" class="hidden py-12 text-center text-neutral-500">
-          <div class="text-4xl">📷</div>
-          <div class="text-xs font-bold text-[#18181B] mt-2">Chưa có ảnh HD nào cho model này</div>
-          <p class="text-[11px] text-neutral-600 mt-0.5">Hãy tải ảnh chụp máy thật lên để tự động nạp khi tạo bài viết!</p>
+        <div id="mediaManagerEmpty" class="hidden py-12 text-center text-[#475569]">
+          <div class="text-sm font-bold text-[#0F172A]">Chưa có ảnh HD nào cho mẫu máy này</div>
+          <p class="text-xs mt-1">Tải ảnh thực tế lên để tự động nạp khi tạo bài viết.</p>
         </div>
       </div>
 
-      <!-- Action Footer -->
-      <div class="pt-3 border-t-2 border-[#18181B] flex justify-between items-center gap-2">
-        <span class="text-xs font-mono font-bold text-neutral-700" id="mediaManagerCounter">0 ảnh HD</span>
-        <button onclick="closeMediaManagerModal()" class="neo-btn neo-btn-white px-4 py-1.5 text-xs font-bold">
-          Xong &amp; Đóng lại
-        </button>
+      <div class="pt-3 border-t border-[#E2E8F0] flex justify-between items-center gap-2">
+        <span class="text-xs font-mono-num font-semibold text-[#475569]" id="mediaManagerCounter">0 ảnh HD</span>
+        <button onclick="closeMediaManagerModal()" class="vg-btn vg-btn-secondary">Xong</button>
       </div>
     </div>
   </div>
 
-  <!-- Modal 3: Circular Queue Management -->
-  <div id="circularQueueModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4" onclick="if(event.target === this) closeCircularQueueModal()">
-    <div class="neo-card bg-white max-w-3xl w-full p-5 sm:p-6 space-y-4 max-h-[92vh] flex flex-col shadow-[6px_6px_0px_#18181B]">
-      <div class="flex justify-between items-center pb-3 border-b-2 border-[#18181B] gap-2">
-        <div class="flex items-center gap-2">
-          <span class="text-2xl shrink-0">🔄</span>
-          <div>
-            <h3 class="text-sm sm:text-base font-black text-[#18181B] uppercase">Hàng Đợi Tuần Hoàn Bài Đăng Facebook</h3>
-            <p class="text-xs text-neutral-600">Đăng bài tự động xoay vòng với AI Rewrite khi kho Zalo chưa có máy mới</p>
-          </div>
+  <!-- ==================== MODAL 7: HÀNG ĐỢI TUẦN HOÀN ==================== -->
+  <div id="circularQueueModal" class="fixed inset-0 bg-[#0F172A]/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4" onclick="if(event.target === this) closeCircularQueueModal()">
+    <div class="vg-modal max-w-3xl w-full p-5 sm:p-6 space-y-4 max-h-[92vh] flex flex-col">
+      <div class="flex justify-between items-center pb-3 border-b border-[#E2E8F0] gap-2">
+        <div>
+          <h3 class="text-base sm:text-lg font-bold text-[#0F172A]">Hàng đợi tuần hoàn bài đăng</h3>
+          <p class="text-xs text-[#475569] mt-0.5">Tự động xoay vòng và AI viết lại nội dung khác nhau khi kho Zalo chưa có bài mới.</p>
         </div>
-        <button onclick="closeCircularQueueModal()" class="neo-btn neo-btn-white px-2.5 py-1 text-xs font-bold shrink-0">✕ Đóng</button>
-      </div>
-
-      <!-- Quick Action Banner -->
-      <div class="p-3.5 bg-[#FFFBEB] border-2 border-[#18181B] rounded-xl flex items-center justify-between gap-3 shadow-[2px_2px_0px_#18181B]">
-        <div class="text-xs text-neutral-700">
-          <span class="font-bold text-[#18181B]">💡 Cơ chế chống spam:</span> Mỗi lượt đăng đều qua AI Rewrite 4 phong cách luân phiên (Review chi tiết, Siêu sale chớp nhoáng, Tuyển chọn nguyên zin, Vô địch tầm giá) để Jaccard similarity &lt; 55%.
-        </div>
-        <button onclick="fetchCircularQueue()" class="neo-btn neo-btn-white px-3 py-1.5 text-xs font-bold shrink-0">
-          🔄 Cập nhật
+        <button onclick="closeCircularQueueModal()" class="vg-btn vg-btn-ghost w-9 h-9 p-0 shrink-0" aria-label="Đóng">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
 
-      <!-- Queue Items Container -->
-      <div class="flex-1 overflow-y-auto space-y-3 pr-1" id="circularQueueModalList">
+      <div class="vg-panel-soft p-3.5 flex items-center justify-between gap-3">
+        <div class="text-xs text-[#334155]">
+          <strong class="text-[#0F172A]">Chống trùng lặp:</strong> Mỗi lượt đăng tự động đổi văn phong AI luân phiên 4 góc tiếp cận khác nhau.
+        </div>
+        <button onclick="fetchCircularQueue()" class="vg-btn vg-btn-secondary vg-btn-sm shrink-0">Cập nhật</button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto space-y-2.5 pr-1 custom-scrollbar" id="circularQueueModalList">
         <!-- Populated by JS -->
       </div>
 
-      <div id="circularQueueModalEmpty" class="hidden py-12 text-center text-neutral-500">
-        <div class="text-4xl">⏰</div>
-        <div class="text-xs font-bold text-[#18181B] mt-2">Hàng đợi tuần hoàn hiện đang trống</div>
-        <p class="text-[11px] text-neutral-600 mt-0.5">Hãy bấm "🔄 Đưa vào hàng đợi tuần hoàn" tại thẻ model bất kỳ để lên lịch đăng bài.</p>
+      <div id="circularQueueModalEmpty" class="hidden py-12 text-center text-[#475569]">
+        <div class="text-sm font-bold text-[#0F172A]">Hàng đợi tuần hoàn đang trống</div>
+        <p class="text-xs mt-1">Bấm “Tuần hoàn” tại một mẫu máy trong Kho máy để đưa vào danh sách.</p>
       </div>
 
-      <div class="pt-3 border-t-2 border-[#18181B] flex justify-between items-center gap-2">
-        <span class="text-xs font-mono font-bold text-neutral-700" id="circularQueueCountText">0 bài trong hàng đợi</span>
-        <button onclick="closeCircularQueueModal()" class="neo-btn neo-btn-white px-4 py-1.5 text-xs font-bold">
-          Đóng lại
-        </button>
+      <div class="pt-3 border-t border-[#E2E8F0] flex justify-between items-center gap-2">
+        <span class="text-xs font-mono-num font-semibold text-[#475569]" id="circularQueueCountText">0 bài trong hàng đợi</span>
+        <button onclick="closeCircularQueueModal()" class="vg-btn vg-btn-secondary">Đóng lại</button>
       </div>
     </div>
   </div>
 
-  <script src="/js/app.js?v=20261125_v22_verified_group_queue" defer></script>
+  <script src="/js/app.js?v=20261125_v23_clean_daylight" defer></script>
 </body>
 </html>
