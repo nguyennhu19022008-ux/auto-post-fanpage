@@ -955,10 +955,11 @@
         const isSold = soldCodes.has(code);
         const firstLine = msg.fullText.split('\n').map(s => s.trim()).find(Boolean) || `Mã #${code}`;
 
-        let category = 'skipped'; // 'new_avail' | 'replenish' | 'sold_in_queue' | 'skipped'
+        let category = 'skipped'; // 'new_avail' | 'replenish' | 'sold_in_queue' | 'already_posted' | 'skipped'
         let badgeText = 'Đã có';
         let badgeClass = 'vg-badge-muted';
         let checked = false;
+        let canSelect = false;
 
         if (isSold) {
           if (existing && (existing.status === 'queued' || existing.status === 'pending_media' || existing.status === 'skipped_no_media')) {
@@ -966,10 +967,12 @@
             badgeText = 'Chốt · Đang trong hàng đợi';
             badgeClass = 'vg-badge-warn';
             checked = false;
+            canSelect = true;
           } else {
             category = 'skipped';
             badgeText = 'Đã bán (Chốt)';
             badgeClass = 'vg-badge-muted';
+            canSelect = false;
           }
         } else if (!existing) {
           if (images.length > 0) {
@@ -977,20 +980,24 @@
             badgeText = 'Mới · Còn hàng';
             badgeClass = 'vg-badge-new';
             checked = true;
+            canSelect = true;
           } else {
             category = 'skipped';
             badgeText = 'Mới · Thiếu ảnh';
             badgeClass = 'vg-badge-muted';
+            canSelect = false;
           }
         } else if (existing.mediaCount === 0 && images.length > 0) {
           category = 'replenish';
           badgeText = `Bù ảnh (${existing.status})`;
           badgeClass = 'vg-badge-replenish';
           checked = true;
+          canSelect = true;
         } else {
-          category = 'skipped';
-          badgeText = `Đã có (${existing.mediaCount} ảnh)`;
+          category = 'already_posted';
+          badgeText = `Đã có (${existing.mediaCount} ảnh) · Chọn để đăng lại`;
           badgeClass = 'vg-badge-muted';
+          canSelect = true;
         }
 
         parsed.push({
@@ -1005,13 +1012,15 @@
           badgeText,
           badgeClass,
           checked,
+          canSelect,
           execState: 'idle', // 'idle' | 'running' | 'done' | 'error'
           execNote: ''
         });
       }
 
       radarItems = parsed;
-      radarActiveTab = parsed.some(i => i.category !== 'skipped') ? 'actionable' : 'archived';
+      const isActionableCat = (c) => c === 'new_avail' || c === 'replenish' || c === 'sold_in_queue';
+      radarActiveTab = parsed.some(i => isActionableCat(i.category)) ? 'actionable' : 'archived';
       renderRadarDrawer();
       openRadarDrawer();
       showToast(`Radar đã lọc xong ${parsed.length} mã máy.`, 'success');
@@ -1028,10 +1037,11 @@
     const drawer = document.getElementById('vg-radar-drawer');
     if (!drawer) return;
 
-    const actionable = radarItems.filter(i => i.category !== 'skipped');
-    const archived = radarItems.filter(i => i.category === 'skipped');
+    const isActionableCat = (c) => c === 'new_avail' || c === 'replenish' || c === 'sold_in_queue';
+    const actionable = radarItems.filter(i => isActionableCat(i.category));
+    const archived = radarItems.filter(i => !isActionableCat(i.category));
     const list = radarActiveTab === 'actionable' ? actionable : archived;
-    const checkedCount = actionable.filter(i => i.checked && i.execState !== 'done').length;
+    const checkedCount = radarItems.filter(i => i.checked && i.canSelect && i.execState !== 'done').length;
 
     const sub = drawer.querySelector('#vg-radar-sub');
     if (sub) {
@@ -1061,7 +1071,7 @@
           const thumbHtml = item.images[0]
             ? `<img src="${item.images[0]}" class="vg-radar-item-thumb" alt="#${escapeRadarHtml(item.code)}" />`
             : `<div class="vg-radar-item-thumb" style="display:flex;align-items:center;justify-content:center;font-size:11px;color:#94A3B8;">0 ảnh</div>`;
-          const disabledAttr = (item.category === 'skipped' || isRadarExecuting || item.execState === 'done') ? 'disabled' : '';
+          const disabledAttr = (!item.canSelect || isRadarExecuting || item.execState === 'done') ? 'disabled' : '';
           const checkedAttr = item.checked ? 'checked' : '';
           const statusLine = item.execNote
             ? `<span style="font-weight:600;color:${item.execState === 'error' ? '#DC2626' : (item.execState === 'done' ? '#059669' : '#2563EB')};">${escapeRadarHtml(item.execNote)}</span>`
@@ -1110,7 +1120,7 @@
   }
 
   async function executeRadarConfirmedBatch() {
-    const queue = radarItems.filter(i => i.checked && i.category !== 'skipped' && i.execState !== 'done');
+    const queue = radarItems.filter(i => i.checked && i.canSelect && i.execState !== 'done');
     if (queue.length === 0 || isRadarExecuting) return;
 
     isRadarExecuting = true;
@@ -1146,7 +1156,7 @@
           item.execState = 'done';
           item.execNote = `Đã bù ${item.images.length} ảnh → queued`;
           okCount++;
-        } else if (item.category === 'new_avail') {
+        } else if (item.category === 'new_avail' || item.category === 'already_posted') {
           const firstBatch = item.images.slice(0, 3);
           const restBatch = item.images.slice(3);
           const pushRes = await sendSwMessage({
@@ -1266,9 +1276,14 @@
         renderRadarDrawer();
       });
       drawer.querySelector('#vg-radar-toggle-all').addEventListener('click', () => {
-        const actionable = radarItems.filter(i => i.category !== 'skipped' && i.execState !== 'done');
-        const allChecked = actionable.length > 0 && actionable.every(i => i.checked);
-        actionable.forEach(i => { i.checked = !allChecked; });
+        const isActionableCat = (c) => c === 'new_avail' || c === 'replenish' || c === 'sold_in_queue';
+        const visibleList = radarItems.filter(i =>
+          (radarActiveTab === 'actionable' ? isActionableCat(i.category) : !isActionableCat(i.category)) &&
+          i.canSelect &&
+          i.execState !== 'done'
+        );
+        const allChecked = visibleList.length > 0 && visibleList.every(i => i.checked);
+        visibleList.forEach(i => { i.checked = !allChecked; });
         renderRadarDrawer();
       });
       drawer.querySelector('#vg-radar-rescan-btn').addEventListener('click', () => runZaloSyncRadar('smart_auto'));
