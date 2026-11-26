@@ -691,17 +691,29 @@
   let isRadarScanning = false;
   let isRadarExecuting = false;
 
+  function isExtensionContextValid() {
+    try {
+      return typeof chrome !== 'undefined' && Boolean(chrome.runtime && chrome.runtime.id && chrome.runtime.sendMessage);
+    } catch (e) {
+      return false;
+    }
+  }
+
   function sendSwMessage(msg) {
     return new Promise((resolve) => {
-      if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.runtime.sendMessage) {
-        return resolve({ success: false, error: 'Extension context unavailable' });
+      if (!isExtensionContextValid()) {
+        return resolve({ success: false, contextInvalidated: true, error: 'Extension vừa được tải lại — hãy bấm F5 tải lại trang Zalo Web.' });
       }
-      chrome.runtime.sendMessage(msg, (res) => {
-        if (chrome.runtime.lastError) {
-          return resolve({ success: false, error: chrome.runtime.lastError.message });
-        }
-        resolve(res || { success: false, error: 'Empty response' });
-      });
+      try {
+        chrome.runtime.sendMessage(msg, (res) => {
+          if (chrome.runtime.lastError) {
+            return resolve({ success: false, error: chrome.runtime.lastError.message });
+          }
+          resolve(res || { success: false, error: 'Empty response' });
+        });
+      } catch (e) {
+        resolve({ success: false, contextInvalidated: true, error: 'Extension vừa được tải lại — hãy bấm F5 tải lại trang Zalo Web.' });
+      }
     });
   }
 
@@ -800,6 +812,10 @@
 
   async function runZaloSyncRadar(mode = 'smart_auto') {
     if (isRadarScanning || isRadarExecuting) return;
+    if (!isExtensionContextValid()) {
+      showToast('Extension vừa được cập nhật/tải lại — vui lòng bấm F5 tải lại trang Zalo Web 1 lần để kết nối!', 'error');
+      return;
+    }
     const scrollEl = findZaloScrollContainer();
     if (!scrollEl) {
       showToast('Hãy mở một cuộc trò chuyện nhóm Zalo có tin nhắn trước khi quét.', 'error');
@@ -818,6 +834,9 @@
     try {
       // 1. Lấy danh sách mã hiện có trên Web App (chỉ đọc nhẹ, chưa đụng AI)
       const appRes = await sendSwMessage({ action: 'fetchAppPostsSummary', serverUrl: defaultServerUrl });
+      if (!appRes.success) {
+        throw new Error(appRes.error || 'Không lấy được danh sách bài từ Web App (hãy F5 lại Zalo Web).');
+      }
       const appPosts = Array.isArray(appRes.posts) ? appRes.posts : [];
       const appByCode = new Map();
       for (const p of appPosts) {
