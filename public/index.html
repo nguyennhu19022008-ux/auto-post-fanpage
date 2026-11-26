@@ -1163,6 +1163,79 @@
     </div>
   </div>
 
-  <script src="/js/app.js?v=20261125_v23_clean_daylight" defer></script>
+  <!-- ==================== MODAL 8: POPUP QUẢN LÝ MEDIA BÀI ĐĂNG ==================== -->
+  <div id="postMediaModal" class="fixed inset-0 bg-[#0F172A]/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-3 sm:p-4" onclick="if(event.target === this) closePostMediaModal()">
+    <div class="vg-modal max-w-4xl w-full p-5 sm:p-6 space-y-4 max-h-[92vh] flex flex-col">
+      <div class="flex justify-between items-center pb-3 border-b border-[#E2E8F0] gap-2">
+        <div class="min-w-0">
+          <h3 class="text-base sm:text-lg font-bold text-[#0F172A] truncate" id="postMediaModalTitle">Media bài đăng</h3>
+          <p class="text-xs text-[#475569]" id="postMediaModalSubtitle">Xem ảnh lớn ngay tại chỗ, tải thêm hoặc dán Ctrl+V</p>
+        </div>
+        <button type="button" onclick="closePostMediaModal()" class="vg-btn vg-btn-ghost w-9 h-9 p-0 shrink-0" aria-label="Đóng">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div id="postMediaDropZone" class="border border-dashed border-[#CBD5E1] bg-[#F8FAFC] hover:border-[#2563EB] rounded-lg p-3.5 flex flex-wrap items-center justify-between gap-3 transition-colors">
+        <div class="flex items-center gap-2.5 text-xs text-[#475569]">
+          <svg class="w-5 h-5 text-[#2563EB] shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+          <span>Kéo thả ảnh/video vào đây, nhấn <strong class="text-[#0F172A]">Ctrl+V</strong> để dán ảnh từ clipboard, hoặc chọn từ máy.</span>
+        </div>
+        <label class="vg-btn vg-btn-primary vg-btn-sm cursor-pointer shrink-0">
+          <span>Chọn ảnh / video</span>
+          <input type="file" id="postMediaFileInput" multiple accept="image/*,video/*" class="hidden" onchange="handlePostMediaUpload(this.files); this.value='';" />
+        </label>
+      </div>
+
+      <div id="postMediaUploadStatus" class="hidden text-xs font-semibold text-[#1E40AF]"></div>
+
+      <div class="flex-1 overflow-y-auto custom-scrollbar">
+        <div id="postMediaGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5 p-1">
+          <!-- Populated by JS -->
+        </div>
+        <div id="postMediaEmpty" class="hidden py-12 text-center text-[#475569]">
+          <div class="text-sm font-bold text-[#0F172A]">Bài đăng này chưa có ảnh hoặc video</div>
+          <p class="text-xs mt-1">Chọn ảnh từ máy hoặc dán Ctrl+V để bổ sung ngay, bài sẽ tự sẵn sàng đăng.</p>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-[#E2E8F0] flex justify-between items-center gap-2">
+        <span class="text-xs font-mono-num font-semibold text-[#475569]" id="postMediaCounter">0 tệp media</span>
+        <button type="button" onclick="closePostMediaModal()" class="vg-btn vg-btn-secondary">Đóng lại</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 9: LIGHTBOX XEM ẢNH / VIDEO PHÓNG TO ==================== -->
+  <div id="mediaLightboxModal" class="fixed inset-0 bg-[#0F172A]/90 backdrop-blur-sm z-[80] hidden flex flex-col items-center justify-center p-3 sm:p-6" onclick="if(event.target === this) closeMediaLightbox()">
+    <div class="w-full max-w-5xl flex items-center justify-between text-white pb-3">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <span id="mediaLightboxCounter" class="text-xs font-mono-num font-semibold px-2.5 py-1 rounded bg-white/10 text-white">1 / 1</span>
+        <span id="mediaLightboxCaption" class="text-xs sm:text-sm text-slate-200 truncate"></span>
+      </div>
+      <div class="flex items-center gap-2">
+        <a id="mediaLightboxOriginalLink" href="#" target="_blank" class="text-xs font-semibold px-2.5 py-1.5 rounded bg-white/10 hover:bg-white/20 text-white transition-colors">Mở ảnh gốc</a>
+        <button type="button" onclick="closeMediaLightbox()" class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors" aria-label="Đóng xem ảnh">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="relative w-full max-w-5xl flex-1 min-h-0 flex items-center justify-center">
+      <button type="button" id="mediaLightboxPrevBtn" onclick="navigateMediaLightbox(-1)" class="absolute left-1 sm:left-3 z-10 w-10 h-10 rounded-full bg-[#0F172A]/75 hover:bg-[#0F172A] border border-white/20 text-white flex items-center justify-center transition-colors" aria-label="Ảnh trước">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+      </button>
+
+      <div id="mediaLightboxStage" class="w-full h-full flex items-center justify-center px-12 sm:px-16">
+        <!-- Populated by JS -->
+      </div>
+
+      <button type="button" id="mediaLightboxNextBtn" onclick="navigateMediaLightbox(1)" class="absolute right-1 sm:right-3 z-10 w-10 h-10 rounded-full bg-[#0F172A]/75 hover:bg-[#0F172A] border border-white/20 text-white flex items-center justify-center transition-colors" aria-label="Ảnh tiếp theo">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <script src="/js/app.js?v=20261126_v24_media_popup" defer></script>
 </body>
 </html>
