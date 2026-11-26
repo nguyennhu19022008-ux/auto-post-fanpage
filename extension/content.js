@@ -726,7 +726,7 @@
       const maxDim = 1280;
       let w = bmp.width;
       let h = bmp.height;
-      if (w < 220 || h < 220) {
+      if (w < 110 || h < 110) {
         bmp.close();
         return null;
       }
@@ -745,6 +745,36 @@
     } catch (e) {
       return null;
     }
+  }
+
+  function getRadarAlbumImages(container) {
+    if (!container) return [];
+    const out = [];
+    const seen = new Set();
+    container.querySelectorAll('img, img.zimg-el').forEach((img) => {
+      const classes = (img.className || '').toLowerCase();
+      const src = img.getAttribute('data-original') || img.getAttribute('data-src') || img.src || '';
+      if (!src || seen.has(src)) return;
+      if (!(src.startsWith('http') || src.startsWith('blob:'))) return;
+      const inAvatar = Boolean(
+        img.closest('.avatar, .avt-m, [class*="avatar"], [class*="avt"], .chat-item-avatar') ||
+        (img.closest('.rel') && img.closest('.rel').querySelector('.avt-m'))
+      );
+      if (inAvatar) return;
+      if (
+        src.includes('ava-talk') || src.includes('avatar') || src.includes('/w120/') ||
+        src.includes('/w160/') || src.includes('/w200/') || src.includes('emoji') ||
+        src.includes('static.zalo.me') || src.includes('iconlike') ||
+        classes.includes('avatar') || classes.includes('emoji') || classes.includes('icon') ||
+        classes.includes('default-react-icon') || classes.includes('react')
+      ) return;
+      const w = img.naturalWidth || img.width || 0;
+      const h = img.naturalHeight || img.height || 0;
+      if (w > 0 && h > 0 && (w < 90 || h < 90)) return;
+      seen.add(src);
+      out.push(src);
+    });
+    return out;
   }
 
   function extractCodeFromZaloText(text) {
@@ -808,9 +838,9 @@
           const quoteEl = el.querySelector('.quote-banner, [class*="quote"]');
           const isReply = Boolean(quoteEl) || /^(?:Thanh[\s\u00a0]+Vũ[\s\u00a0]+Store|[^\n]{2,30})\n(?:Mã|Ma)\s+/i.test(fullText);
 
-          const rawImgs = getPureMedia(el).filter(u => !/\.mp4(\?|$)/i.test(u));
+          const rawImgs = getRadarAlbumImages(el);
           const prev = collected.get(id);
-          if (prev && prev.dataUrls.length >= rawImgs.length && prev.fullText.length >= fullText.length) {
+          if (prev && prev.rawImgCount >= rawImgs.length && prev.dataUrls.length >= rawImgs.length && prev.fullText.length >= fullText.length) {
             continue;
           }
 
@@ -827,6 +857,7 @@
             ts,
             isReply,
             fullText,
+            rawImgCount: rawImgs.length,
             dataUrls
           });
         }
@@ -1071,6 +1102,7 @@
     const confirmBtn = drawer.querySelector('#vg-radar-confirm-btn');
     if (confirmBtn) {
       confirmBtn.disabled = isRadarExecuting || checkedCount === 0;
+      confirmBtn.classList.toggle('is-busy', isRadarExecuting);
       confirmBtn.textContent = isRadarExecuting
         ? 'Đang xử lý lên hàng đợi...'
         : `Xác nhận xử lý (${checkedCount} bài)`;
@@ -1170,10 +1202,12 @@
     const openBtn = document.getElementById('vg-radar-open-drawer');
     if (smartBtn) {
       smartBtn.disabled = isRadarScanning || isRadarExecuting;
+      smartBtn.classList.toggle('is-busy', isRadarScanning);
       smartBtn.textContent = isRadarScanning ? 'Đang quét...' : 'Quét kho mới';
     }
     if (viewBtn) {
       viewBtn.disabled = isRadarScanning || isRadarExecuting;
+      viewBtn.classList.toggle('is-busy', isRadarScanning);
     }
     if (openBtn) {
       openBtn.style.display = radarItems.length > 0 ? 'inline-flex' : 'none';

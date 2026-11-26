@@ -182,8 +182,12 @@
 }
 
 .vg-radar-btn:disabled {
-  opacity: 0.6;
-  cursor: wait;
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.vg-radar-btn.is-busy:disabled {
+  cursor: progress;
 }
 
 .vg-radar-btn-primary {
