@@ -959,8 +959,13 @@
         await clearEditorContents(editor);
       }
 
-      // Điền nội dung văn bản chuẩn Lexical (chỉ chèn 1 lần duy nhất, giữ nguyên xuống dòng & kèm link Fanpage)
+      // Điền nội dung văn bản chuẩn Lexical + kiểm tra xác nhận có chữ thật (chống đăng bài trống)
       const textToInsert = finalContent;
+      const expectedToken = textToInsert
+        .split('\n')
+        .map(s => s.trim())
+        .find(s => s.length >= 6) || textToInsert.trim().slice(0, 12);
+
       const placeCaretAtEnd = () => {
         try {
           const sel = window.getSelection();
@@ -974,11 +979,21 @@
         } catch (e) {}
       };
 
-      const hasInsertedText = () => (editor.innerText || '').trim().length > 0;
+      const hasInsertedText = () => {
+        const current = (editor.innerText || editor.textContent || '').trim();
+        if (!current) return false;
+        if (expectedToken && current.toLowerCase().includes(expectedToken.slice(0, 12).toLowerCase())) {
+          return true;
+        }
+        return current.length >= Math.min(20, textToInsert.trim().length);
+      };
 
-      // Ưu tiên 1: ClipboardEvent 'paste' (Lexical giữ nguyên 100% dấu xuống dòng \n và tự bật nút Đăng)
+      // Phương pháp 1: Click + Focus + ClipboardEvent 'paste'
       if (!hasInsertedText() && textToInsert) {
         try {
+          simulateRealisticClick(editor);
+          editor.focus();
+          await sleep(120);
           placeCaretAtEnd();
           const dt = new DataTransfer();
           dt.setData('text/plain', textToInsert);
@@ -988,21 +1003,49 @@
             clipboardData: dt
           });
           editor.dispatchEvent(pasteEvent);
-          await sleep(120);
+          await sleep(220);
         } catch (e) {
           console.warn('[VG FB Robot] ClipboardEvent paste fallback:', e);
         }
       }
 
-      // Ưu tiên 2 (Fallback duy nhất): Nếu editor vẫn trống thì mới dùng execCommand insertText
+      // Phương pháp 2: InputEvent beforeinput insertFromPaste (Lexical modern handler)
       if (!hasInsertedText() && textToInsert) {
         try {
+          editor.focus();
+          placeCaretAtEnd();
+          const dt = new DataTransfer();
+          dt.setData('text/plain', textToInsert);
+          editor.dispatchEvent(new InputEvent('beforeinput', {
+            bubbles: true,
+            cancelable: true,
+            inputType: 'insertFromPaste',
+            dataTransfer: dt
+          }));
+          await sleep(220);
+        } catch (e) {
+          console.warn('[VG FB Robot] beforeinput insertFromPaste fallback:', e);
+        }
+      }
+
+      // Phương pháp 3: execCommand insertText
+      if (!hasInsertedText() && textToInsert) {
+        try {
+          editor.focus();
           placeCaretAtEnd();
           document.execCommand('insertText', false, textToInsert);
-          await sleep(100);
+          await sleep(200);
         } catch (e) {
           console.warn('[VG FB Robot] execCommand insertText fallback:', e);
         }
+      }
+
+      // CHỐT CHẶN BẮT BUỘC: Tuyệt đối không đăng bài trống chữ
+      if (textToInsert && !hasInsertedText()) {
+        throw new VgRobotStatusError(
+          'failed_empty_caption',
+          'Không điền được nội dung bài viết vào khung soạn thảo Facebook — đã dừng để tránh đăng bài trống chữ.'
+        );
       }
 
       try {
@@ -1010,14 +1053,17 @@
           navigator.clipboard.writeText(textToInsert).catch(() => {});
         }
       } catch (e) {}
-      setStepStatus(2, 'success', 'Đã điền xong cấu hình máy!');
+      setStepStatus(2, 'success', 'Đã điền & xác minh xong nội dung bài!');
 
-      // BƯỚC 3: Đính kèm hình ảnh (đã được prefetch song song từ đầu)
+      // BƯỚC 3: Đính kèm toàn bộ hình ảnh (CHỈ tìm input[multiple] bên trong modal, cấm lấy input comment ngoài modal)
       setStepStatus(3, 'active', `Đang gắn ${mediaUrls.length} ảnh HD...`);
+      let attachedPhotoCount = 0;
       if (mediaUrls.length > 0) {
-        let fileInput = modal.querySelector('input[type="file"][accept*="image"]') || document.querySelector('input[type="file"][accept*="image"]');
+        let fileInput =
+          modal.querySelector('input[type="file"][multiple][accept*="image"]') ||
+          modal.querySelector('input[type="file"][accept*="image"]');
 
-        if (!fileInput) {
+        if (!fileInput || (mediaUrls.length > 1 && !fileInput.multiple)) {
           const photoBtn = Array.from(modal.querySelectorAll('div[role="button"], div[aria-label*="Ảnh/video"], div[aria-label*="Photo/video"], img[src*="photo"]')).find(b => {
             const label = (b.getAttribute('aria-label') || b.innerText || '').toLowerCase();
             return label.includes('ảnh') || label.includes('photo');
@@ -1025,7 +1071,9 @@
           if (photoBtn) {
             simulateRealisticClick(photoBtn);
           }
-          fileInput = await waitForElement('input[type="file"][accept*="image"]', modal, 4000) || document.querySelector('input[type="file"][accept*="image"]');
+          fileInput =
+            (await waitForElement('input[type="file"][multiple][accept*="image"]', modal, 3500)) ||
+            modal.querySelector('input[type="file"][accept*="image"]');
         }
 
         if (fileInput) {
@@ -1036,18 +1084,30 @@
             fileInput.files = dataTransfer.files;
             fileInput.dispatchEvent(new Event('change', { bubbles: true }));
             fileInput.dispatchEvent(new Event('input', { bubbles: true }));
-            setStepStatus(3, 'success', `Đã gắn siêu tốc ${fileObjects.length} ảnh HD!`);
+            attachedPhotoCount = fileObjects.length;
+            setStepStatus(3, 'success', `Đã gắn ${fileObjects.length} ảnh HD vào khung bài!`);
           } else {
             setStepStatus(3, 'success', 'Bỏ qua đính kèm ảnh (ảnh rỗng).');
           }
         } else {
-          setStepStatus(3, 'active', 'Không tìm thấy nút nạp ảnh, tiếp tục văn bản.');
+          setStepStatus(3, 'active', 'Không tìm thấy ô nạp ảnh trong hộp thoại, tiếp tục văn bản.');
         }
       } else {
         setStepStatus(3, 'success', 'Bài đăng không có ảnh.');
       }
 
-      await sleep(mediaUrls.length > 0 ? 850 : 250); // Chờ Facebook dựng preview & tiến trình upload ảnh
+      // Chờ Facebook dựng đủ preview & kích hoạt tiến trình upload cho toàn bộ ảnh trước khi kiểm tra nút Đăng
+      if (attachedPhotoCount > 1) {
+        const previewWaitStart = Date.now();
+        while (Date.now() - previewWaitStart < 3500) {
+          const modalImgs = modal.querySelectorAll('img[src^="blob:"], img[src*="scontent"]').length;
+          const hasBar = Boolean(modal.querySelector('div[role="progressbar"], [aria-valuemin]'));
+          if (modalImgs >= Math.min(attachedPhotoCount, 2) && !hasBar) break;
+          await sleep(250);
+        }
+      } else {
+        await sleep(attachedPhotoCount > 0 ? 900 : 250);
+      }
 
       // BƯỚC 4: Đếm ngược nhanh 1s và Tự động Bấm "ĐĂNG"
       setStepStatus(4, 'active', 'Chuẩn bị xuất bản...');

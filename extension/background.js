@@ -171,74 +171,26 @@ async function closeTabAndConfirm(tabId) {
 }
 
 async function openTabInWorkerWindow(targetUrl) {
-  const st = await storageGet('local', ['vg_worker_window_id']);
-  const existingWinId = st.vg_worker_window_id;
-
-  if (existingWinId) {
-    const winExists = await new Promise((resolve) => {
-      chrome.windows.get(existingWinId, (win) => {
-        if (chrome.runtime.lastError || !win) return resolve(false);
-        resolve(true);
-      });
+  // Mở trực tiếp tab mới trong cửa sổ Chrome hiện tại (có focus thật để Lexical Editor nhận text & ảnh ổn định 100%)
+  const tab = await new Promise((resolve) => {
+    chrome.tabs.create({ url: targetUrl, active: true }, (newTab) => {
+      if (chrome.runtime.lastError || !newTab) return resolve(null);
+      resolve(newTab);
     });
-
-    if (winExists) {
-      const tab = await new Promise((resolve) => {
-        chrome.tabs.create({ windowId: existingWinId, url: targetUrl, active: true }, (newTab) => {
-          if (chrome.runtime.lastError || !newTab) return resolve(null);
-          resolve(newTab);
-        });
-      });
-      if (tab && tab.id) {
-        await trackManagedTabId(tab.id);
-        return { tabId: tab.id, windowId: existingWinId };
-      }
-    }
-  }
-
-  // Tạo cửa sổ phụ phía sau màn hình làm việc chính (focused: false), dùng luôn tab đầu tiên win.tabs[0]
-  const createdWin = await new Promise((resolve) => {
-    chrome.windows.create(
-      {
-        url: targetUrl,
-        focused: false,
-        type: 'normal',
-        width: 1120,
-        height: 780
-      },
-      (win) => {
-        if (chrome.runtime.lastError || !win) return resolve(null);
-        resolve(win);
-      }
-    );
   });
 
-  if (createdWin && createdWin.id) {
-    await storageSet('local', { vg_worker_window_id: createdWin.id });
-    const firstTabId = createdWin.tabs && createdWin.tabs[0] ? createdWin.tabs[0].id : null;
-    if (firstTabId) await trackManagedTabId(firstTabId);
-    return { tabId: firstTabId, windowId: createdWin.id };
+  if (tab && tab.id) {
+    await trackManagedTabId(tab.id);
+    return { tabId: tab.id, windowId: tab.windowId || null };
   }
-
-  // Fallback cuối nếu không tạo được window
-  const fallbackTab = await new Promise((resolve) => {
-    chrome.tabs.create({ url: targetUrl, active: true }, (t) => resolve(t || null));
-  });
-  if (fallbackTab && fallbackTab.id) await trackManagedTabId(fallbackTab.id);
-  return { tabId: fallbackTab?.id || null, windowId: fallbackTab?.windowId || null };
+  return { tabId: null, windowId: null };
 }
 
 async function closeWorkerWindowIfIdle() {
-  const st = await storageGet('local', ['vg_worker_window_id', 'vg_group_share_queue', 'vg_active_group_job', 'vg_kept_failed_tab_ids']);
-  const queue = Array.isArray(st.vg_group_share_queue) ? st.vg_group_share_queue : [];
-  const keptFailed = Array.isArray(st.vg_kept_failed_tab_ids) ? st.vg_kept_failed_tab_ids : [];
-  // Không đóng cửa sổ phụ nếu còn tab lỗi đang giữ lại để người dùng kiểm tra
-  if (queue.length > 0 || st.vg_active_group_job || keptFailed.length > 0) return;
-
+  // Không còn tạo cửa sổ nền riêng; chỉ dọn khóa cũ nếu còn sót
+  const st = await storageGet('local', ['vg_worker_window_id']);
   if (st.vg_worker_window_id) {
-    const winId = st.vg_worker_window_id;
     await storageRemove('local', ['vg_worker_window_id']);
-    chrome.windows.remove(winId, () => { void chrome.runtime.lastError; });
   }
 }
 
