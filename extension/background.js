@@ -731,6 +731,89 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
+  if (request.action === 'fetchAppPostsSummary') {
+    const serverUrl = request.serverUrl || DEFAULT_BACKEND_URL;
+    fetch(`${serverUrl}/api/posts`)
+      .then(async (res) => {
+        const raw = await res.json().catch(() => []);
+        const list = Array.isArray(raw) ? raw : (raw.posts || []);
+        const summary = list.map((p) => ({
+          id: p.id,
+          machineCode: String(p.machineCode || '').toUpperCase().trim(),
+          machineName: p.machineName || '',
+          status: p.status || '',
+          mediaCount: Array.isArray(p.mediaFiles) ? p.mediaFiles.length : 0,
+          scheduledTime: p.scheduledTime || ''
+        }));
+        sendResponse({ success: res.ok, posts: summary });
+      })
+      .catch((err) => {
+        sendResponse({ success: false, error: err.message, posts: [] });
+      });
+    return true;
+  }
+
+  if (request.action === 'attachMediaToPost') {
+    (async () => {
+      try {
+        const serverUrl = request.serverUrl || DEFAULT_BACKEND_URL;
+        const postId = request.postId;
+        const code = request.code || 'LAPTOP';
+        const dataUrls = Array.isArray(request.dataUrls) ? request.dataUrls : [];
+        if (!postId || dataUrls.length === 0) {
+          return sendResponse({ success: false, error: 'Thiếu postId hoặc danh sách ảnh.' });
+        }
+
+        let lastPost = null;
+        for (let i = 0; i < dataUrls.length; i += 3) {
+          const chunk = dataUrls.slice(i, i + 3);
+          const fd = new FormData();
+          let added = 0;
+          for (let j = 0; j < chunk.length; j++) {
+            const src = chunk[j];
+            if (!src) continue;
+            try {
+              const r = await fetch(src);
+              const blob = await r.blob();
+              if (blob && blob.size > 1000) {
+                fd.append('files', blob, `zalo_${code}_${i + j + 1}.jpg`);
+                added++;
+              }
+            } catch (e) {}
+          }
+          if (added === 0) continue;
+          const upRes = await fetch(`${serverUrl}/api/posts/${encodeURIComponent(postId)}/attach-media`, {
+            method: 'POST',
+            body: fd
+          });
+          const upJson = await upRes.json().catch(() => ({}));
+          if (!upRes.ok || !upJson.success) {
+            return sendResponse({ success: false, error: upJson.error || `HTTP ${upRes.status}` });
+          }
+          lastPost = upJson.post;
+        }
+        sendResponse({ success: true, post: lastPost });
+      } catch (err) {
+        sendResponse({ success: false, error: err.message });
+      }
+    })();
+    return true;
+  }
+
+  if (request.action === 'deleteAppPost') {
+    const serverUrl = request.serverUrl || DEFAULT_BACKEND_URL;
+    const postId = request.postId;
+    fetch(`${serverUrl}/api/posts/${encodeURIComponent(postId)}`, { method: 'DELETE' })
+      .then(async (res) => {
+        const json = await res.json().catch(() => ({}));
+        sendResponse({ success: res.ok && json.success !== false, data: json });
+      })
+      .catch((err) => {
+        sendResponse({ success: false, error: err.message });
+      });
+    return true;
+  }
+
   if (request.action === 'triggerPersonalRobot') {
     dispatchToFacebookTab(request.payload || {}, sendResponse);
     return true;
