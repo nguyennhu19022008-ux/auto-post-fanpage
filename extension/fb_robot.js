@@ -397,12 +397,26 @@
   }
 
   /**
+   * Helper: Check if button is truly visible and enabled (including ancestor aria-disabled)
+   */
+  function isButtonEnabled(b) {
+    if (!b || !isVisible(b)) return false;
+    if (b.getAttribute('aria-disabled') === 'true' || b.hasAttribute('disabled') || b.classList.contains('disabled')) {
+      return false;
+    }
+    if (typeof b.closest === 'function' && b.closest('[aria-disabled="true"]')) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
    * Kiểm tra xem Group đã tham gia chưa, và chuyển sang tab "Thảo luận" nếu đang ở Group Mua bán
    */
   async function prepareGroupComposerEnvironment() {
-    // Đợi [role="main"] ổn định tối đa 3s nếu vừa mở trang
-    await waitForElement('[role="main"]', document, 3500);
-    await sleep(300);
+    // Đợi [role="main"] ổn định tối đa 10s (tab nền Chrome render SPA chậm hơn tab chính)
+    await waitForElement('[role="main"]', document, 10000);
+    await sleep(450);
 
     const existingTriggers = findFeedComposerTriggers();
     if (existingTriggers.length > 0) return;
@@ -441,11 +455,13 @@
   }
 
   /**
-   * Theo dõi tối đa 22s sau khi bấm "Đăng" để XÁC NHẬN THẬT bài đã được xuất bản hoặc tự retry nếu cú click đầu bị React nuốt
+   * Theo dõi sau khi bấm "Đăng" (tự gia hạn động khi Facebook vẫn đang hiển thị "Đang đăng..." / progressbar)
    */
   async function waitForPublishConfirmation(modal) {
     const startMs = Date.now();
-    const maxConfirmMs = 22000;
+    const maxConfirmMs = 25000;
+    let deadlineMs = startMs + maxConfirmMs;
+    const hardCapMs = startMs + 90000; // Giới hạn an toàn tối đa 90s nếu trình duyệt treo cứng
     let lastClickAttemptMs = startMs;
     let retrySubmitCount = 0;
 
@@ -480,7 +496,7 @@
       'đã gửi bài viết'
     ];
 
-    while (Date.now() - startMs < maxConfirmMs) {
+    while (Date.now() < deadlineMs) {
       if (isCancelled) {
         return { ok: false, status: 'cancelled', reason: 'Người dùng đã hủy giữa chừng.' };
       }
@@ -555,18 +571,17 @@
         };
       }
 
-      // E. Tự kiểm tra: Nếu không ở trạng thái "Đang đăng" / loading mà nút Đăng vẫn còn sáng sau 2.6s -> click lại tối đa 2 lần phòng trường hợp React vừa re-render làm trượt click đầu
+      // E. Gia hạn động khi Facebook vẫn đang gửi bài ("Đang đăng..." / progressbar) để không bao giờ cắt ngang oan
       const isSubmitting = Boolean(
         currentModal.querySelector('div[role="progressbar"], [aria-valuemin], .sp_progress, div[data-visualcompletion="loading-state"]')
       ) || modalText.includes('đang đăng') || modalText.includes('posting');
 
-      if (!isSubmitting && retrySubmitCount < 2 && (Date.now() - lastClickAttemptMs >= 2600)) {
+      if (isSubmitting) {
+        deadlineMs = Math.min(hardCapMs, Math.max(deadlineMs, Date.now() + 12000));
+      } else if (retrySubmitCount < 2 && (Date.now() - lastClickAttemptMs >= 2600)) {
         const freshPostBtn = modalButtons.find(b => {
           const label = (b.getAttribute('aria-label') || b.innerText || '').trim().toLowerCase();
-          return (label === 'đăng' || label === 'post') &&
-                 isVisible(b) &&
-                 b.getAttribute('aria-disabled') !== 'true' &&
-                 !b.classList.contains('disabled');
+          return (label === 'đăng' || label === 'post') && isButtonEnabled(b);
         });
         if (freshPostBtn) {
           retrySubmitCount += 1;
@@ -583,7 +598,7 @@
     return {
       ok: false,
       status: 'failed_modal_stuck',
-      reason: 'Đã bấm Đăng nhưng hộp thoại không tự đóng sau 22 giây (có thể Group yêu cầu chọn thêm danh mục hoặc mạng bị treo).'
+      reason: 'Đã bấm Đăng nhưng hộp thoại không tự đóng (có thể Group yêu cầu chọn thêm danh mục hoặc mạng Facebook phản hồi chậm).'
     };
   }
 
@@ -840,7 +855,7 @@
 
       let modal = findCreatePostModal();
       const openStartTime = Date.now();
-      const openTimeout = isGroupPost ? 9000 : 12000;
+      const openTimeout = isGroupPost ? 18000 : 14000;
 
       // Lắng nghe click thủ công từ người dùng để bắt ngay lập tức nếu người dùng bấm bằng tay
       const manualClickListener = () => {
@@ -1032,7 +1047,7 @@
         setStepStatus(3, 'success', 'Bài đăng không có ảnh.');
       }
 
-      await sleep(250); // Nhường 1 nhịp micro-render cho Facebook bắt đầu upload ảnh
+      await sleep(mediaUrls.length > 0 ? 850 : 250); // Chờ Facebook dựng preview & tiến trình upload ảnh
 
       // BƯỚC 4: Đếm ngược nhanh 1s và Tự động Bấm "ĐĂNG"
       setStepStatus(4, 'active', 'Chuẩn bị xuất bản...');
@@ -1052,31 +1067,49 @@
         setStepStatus(4, 'active', '⚡ Đang chờ ảnh tải xong & chuẩn bị bấm ĐĂNG...');
 
         let uploadWaitTime = 0;
-        const maxUploadWait = 30000;
+        const maxUploadWait = 60000;
+        let stillUploading = false;
         while (uploadWaitTime < maxUploadWait) {
           if (isCancelled) return;
-          const isUploading = modal.querySelector('div[role="progressbar"], [aria-valuemin], .sp_progress, div[data-visualcompletion="loading-state"]');
+          const isUploading = Boolean(modal.querySelector('div[role="progressbar"], [aria-valuemin], .sp_progress, div[data-visualcompletion="loading-state"]'));
+          stillUploading = isUploading;
           const readyBtn = Array.from(modal.querySelectorAll('div[role="button"]')).find(b => {
             const label = (b.getAttribute('aria-label') || b.innerText || '').trim().toLowerCase();
-            return (label === 'đăng' || label === 'post') &&
-                   b.getAttribute('aria-disabled') !== 'true' &&
-                   !b.classList.contains('disabled');
+            return (label === 'đăng' || label === 'post') && isButtonEnabled(b);
           });
 
           if (!isUploading && readyBtn) {
             break;
           }
-          await sleep(150);
-          uploadWaitTime += 150;
+          await sleep(200);
+          uploadWaitTime += 200;
+        }
+
+        if (stillUploading) {
+          const uploadTimeoutReason = 'Tải ảnh HD lên Facebook quá 60 giây vẫn chưa hoàn tất.';
+          setStepStatus(4, 'active', `⚠️ ${uploadTimeoutReason}`);
+          chrome.runtime.sendMessage({
+            action: isGroupPost ? 'groupShareCompleted' : 'personalPostCompleted',
+            postId,
+            machineCode,
+            content: finalContent,
+            mediaUrls,
+            groupUrl,
+            isGroupPost,
+            autoTriggered,
+            success: false,
+            status: 'failed_upload',
+            reason: uploadTimeoutReason,
+            error: uploadTimeoutReason
+          }, () => { void chrome.runtime.lastError; });
+          return;
         }
 
         setStepStatus(4, 'active', '⚡ Đang bấm nút ĐĂNG...');
 
         const postBtn = Array.from(modal.querySelectorAll('div[role="button"]')).find(b => {
           const label = (b.getAttribute('aria-label') || b.innerText || '').trim().toLowerCase();
-          return (label === 'đăng' || label === 'post') &&
-                 b.getAttribute('aria-disabled') !== 'true' &&
-                 !b.classList.contains('disabled');
+          return (label === 'đăng' || label === 'post') && isButtonEnabled(b);
         });
 
         if (postBtn) {
@@ -1244,10 +1277,32 @@
     }
   });
 
-  // Tự động kiểm tra Storage nếu tab vừa được mở mới (giảm delay từ 1200ms -> 250ms)
+  function matchesPayloadTargetUrl(payload) {
+    if (!payload) return false;
+    const curHref = (window.location.href || '').toLowerCase();
+    if (payload.isGroupPost && payload.groupUrl) {
+      const m = String(payload.groupUrl).match(/\/groups\/([^/?#]+)/i);
+      if (m && m[1]) {
+        return curHref.includes(`/groups/${m[1].toLowerCase()}`);
+      }
+      return curHref.includes('/groups/');
+    }
+    try {
+      const p = new URL(window.location.href).pathname.toLowerCase();
+      return p === '/' || p.startsWith('/profile') || p.startsWith('/me');
+    } catch (e) {
+      return true;
+    }
+  }
+
+  // Chỉ lấy & xóa vg_pending_personal_post khi URL tab hiện tại khớp đúng mục tiêu (tránh tab Facebook khác cướp lệnh)
   chrome.storage.local.get(['vg_pending_personal_post'], (res) => {
     if (res.vg_pending_personal_post) {
       const payload = res.vg_pending_personal_post;
+      if (!matchesPayloadTargetUrl(payload)) {
+        console.log('[VG FB Robot] Bỏ qua payload vì tab hiện tại không khớp URL mục tiêu:', window.location.href);
+        return;
+      }
       chrome.storage.local.remove(['vg_pending_personal_post'], () => {
         setTimeout(() => executePersonalPost(payload), 250);
       });
