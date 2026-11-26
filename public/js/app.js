@@ -1128,9 +1128,9 @@ function renderQueueList(posts) {
             <button onclick="viewQueuedPostContent('${post.id}')" class="vg-btn vg-btn-secondary vg-btn-sm" title="Xem chi tiết">
               Xem
             </button>
-            <a href="/quick-upload?id=${post.id}" target="_blank" class="${uploadBtnClass}" title="Nạp hoặc xem ảnh/video">
+            <button type="button" onclick="openPostMediaModal('${post.id}')" class="${uploadBtnClass}" title="Xem hoặc nạp ảnh/video ngay trong popup">
               ${mCount > 0 ? `Media (${mCount})` : 'Nạp ảnh'}
-            </a>
+            </button>
             <button onclick="publishPostNow('${post.id}', 'both')" class="vg-btn vg-btn-primary vg-btn-sm" title="Đăng ngay lên cả Fanpage và Cá Nhân">
               Đăng ngay
             </button>
@@ -1904,13 +1904,13 @@ function viewQueuedPostContent(postId) {
           ${mFiles.map((m, idx) => {
             const isVid = isVideoFile(m);
             return `
-              <div class="relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border border-[#E2E8F0] bg-[#0F172A] shrink-0">
+              <button type="button" onclick="openMediaLightboxByPost('${post.id}', ${idx})" class="relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border border-[#E2E8F0] bg-[#0F172A] shrink-0 cursor-pointer hover:ring-2 hover:ring-[#2563EB] transition" title="Phóng to ảnh/video #${idx + 1}">
                 ${isVid
                   ? `<video src="${m.url}" class="w-full h-full object-cover" muted preload="metadata"></video><span class="absolute inset-0 flex items-center justify-center bg-[#0F172A]/45 text-white text-[11px] font-semibold">VIDEO</span>`
-                  : `<a href="${m.url}" target="_blank" title="Mở ảnh gốc HD"><img src="${m.url}" class="w-full h-full object-cover"></a>`
+                  : `<img src="${m.url}" class="w-full h-full object-cover" alt="Ảnh ${idx + 1}">`
                 }
                 <span class="absolute top-1 right-1 bg-[#0F172A]/80 text-white text-[10px] px-1.5 rounded font-mono-num">#${idx + 1}</span>
-              </div>
+              </button>
             `;
           }).join('')}
         </div>
@@ -1920,7 +1920,7 @@ function viewQueuedPostContent(postId) {
       mediaContainer.innerHTML = `
         <div class="p-3 bg-[#FFFBEB] border border-[#FDE68A] rounded-lg text-xs text-[#92400E] flex items-center justify-between gap-2">
           <span>Chưa có ảnh/video đính kèm cho máy này.</span>
-          <a href="/quick-upload?id=${post.id}" target="_blank" class="vg-btn vg-btn-soft-primary vg-btn-sm shrink-0">Nạp ảnh ngay</a>
+          <button type="button" onclick="openPostMediaModal('${post.id}')" class="vg-btn vg-btn-soft-primary vg-btn-sm shrink-0">Nạp ảnh ngay</button>
         </div>
       `;
       mediaContainer.classList.remove('hidden');
@@ -1933,9 +1933,9 @@ function viewQueuedPostContent(postId) {
 
   if (extraActions) {
     extraActions.innerHTML = `
-      <a href="/quick-upload?id=${post.id}" target="_blank" class="vg-btn vg-btn-secondary vg-btn-sm">
+      <button type="button" onclick="openPostMediaModal('${post.id}')" class="vg-btn vg-btn-secondary vg-btn-sm">
         Media (${mFiles.length})
-      </a>
+      </button>
       ${post.status === 'queued' || post.status === 'pending_media' ? `
         <button onclick="publishPostNow('${post.id}', 'both'); closePostPreviewModal();" class="vg-btn vg-btn-primary vg-btn-sm" title="Đăng lên cả Fanpage và Facebook Cá Nhân">
           Đăng ngay (Fanpage + Cá nhân)
@@ -3504,5 +3504,289 @@ function removeGroupUrlFromApp(groupUrl) {
 function clearGroupLogsFromApp() {
   window.postMessage({ action: 'VG_CLEAR_GROUP_LOGS' }, '*');
 }
+
+// =========================================================================
+// POPUP QUẢN LÝ MEDIA BÀI ĐĂNG & LIGHTBOX XEM ẢNH PHÓNG TO (NO NEW TAB)
+// =========================================================================
+let activePostMediaId = null;
+let lightboxItems = [];
+let lightboxIndex = 0;
+
+function getPostMediaById(postId) {
+  return (allPosts || []).find(p => p && p.id === postId) || null;
+}
+
+async function openPostMediaModal(postId) {
+  const modal = document.getElementById('postMediaModal');
+  if (!modal) return;
+
+  activePostMediaId = postId;
+  let post = getPostMediaById(postId);
+
+  if (!post) {
+    try {
+      const res = await fetch(`/api/posts/${encodeURIComponent(postId)}`);
+      if (res.ok) post = await res.json();
+    } catch (e) {}
+  }
+
+  if (!post) {
+    showToast('Không tìm thấy dữ liệu bài đăng.', 'error');
+    return;
+  }
+
+  const titleEl = document.getElementById('postMediaModalTitle');
+  const subEl = document.getElementById('postMediaModalSubtitle');
+  if (titleEl) titleEl.innerText = `Media — Mã #${post.machineCode || 'N/A'}${post.machineName ? ` (${post.machineName})` : ''}`;
+  if (subEl) subEl.innerText = 'Bấm vào ảnh để phóng to ngay trong trang, kéo-thả hoặc nhấn Ctrl+V để thêm ảnh mới.';
+
+  renderPostMediaGrid(post);
+  modal.classList.remove('hidden');
+}
+
+function closePostMediaModal() {
+  const modal = document.getElementById('postMediaModal');
+  if (modal) modal.classList.add('hidden');
+  activePostMediaId = null;
+  const statusEl = document.getElementById('postMediaUploadStatus');
+  if (statusEl) {
+    statusEl.innerText = '';
+    statusEl.classList.add('hidden');
+  }
+}
+
+function renderPostMediaGrid(post) {
+  const grid = document.getElementById('postMediaGrid');
+  const empty = document.getElementById('postMediaEmpty');
+  const counter = document.getElementById('postMediaCounter');
+  if (!grid || !empty) return;
+
+  const files = Array.isArray(post.mediaFiles) ? post.mediaFiles : [];
+  if (counter) {
+    const vCount = files.filter(isVideoFile).length;
+    const pCount = files.length - vCount;
+    counter.innerText = vCount > 0 ? `${vCount} video · ${pCount} ảnh` : `${pCount} ảnh`;
+  }
+
+  if (files.length === 0) {
+    grid.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+
+  empty.classList.add('hidden');
+  grid.innerHTML = files.map((file, idx) => {
+    const url = typeof file === 'string' ? file : (file.url || file.path || '');
+    const isVid = isVideoFile(file);
+    const fname = (typeof file === 'object' && file.filename)
+      ? file.filename
+      : decodeURIComponent(String(url).split('?')[0].split('/').pop() || '');
+    const safePostId = escapeHtml(post.id);
+    const safeFname = escapeHtml(fname);
+
+    return `
+      <div class="group relative rounded-lg overflow-hidden border border-[#E2E8F0] bg-[#0F172A] aspect-square">
+        <button type="button" onclick="openMediaLightboxByPost('${safePostId}', ${idx})" class="w-full h-full block cursor-pointer focus:outline-none" title="Bấm để xem phóng to">
+          ${isVid
+            ? `<video src="${escapeHtml(url)}" class="w-full h-full object-cover" muted preload="metadata"></video><span class="absolute inset-0 flex items-center justify-center bg-[#0F172A]/45 text-white text-xs font-semibold">VIDEO</span>`
+            : `<img src="${escapeHtml(url)}" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105" alt="Ảnh ${idx + 1}" loading="lazy">`
+          }
+        </button>
+        <span class="absolute top-1.5 left-1.5 bg-[#0F172A]/80 text-white text-[11px] px-1.5 py-0.5 rounded font-mono-num pointer-events-none">#${idx + 1}</span>
+        <button type="button" onclick="event.stopPropagation(); deletePostMediaItem('${safePostId}', '${safeFname}')" class="absolute top-1.5 right-1.5 w-7 h-7 rounded-md bg-[#DC2626]/90 hover:bg-[#B91C1C] text-white flex items-center justify-center transition-colors shadow-sm" title="Xóa tệp media này" aria-label="Xóa tệp media">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+    `;
+  }).join('');
+}
+
+async function handlePostMediaUpload(fileList) {
+  if (!activePostMediaId || !fileList || fileList.length === 0) return;
+  const files = Array.from(fileList);
+  const statusEl = document.getElementById('postMediaUploadStatus');
+  if (statusEl) {
+    statusEl.innerText = `Đang tải lên ${files.length} tệp media...`;
+    statusEl.classList.remove('hidden');
+  }
+
+  let updatedPost = null;
+  try {
+    // Upload in batches of 3 files to stay safely under Vercel request limits
+    for (let i = 0; i < files.length; i += 3) {
+      const chunk = files.slice(i, i + 3);
+      const fd = new FormData();
+      chunk.forEach(f => fd.append('files', f, f.name || `upload_${Date.now()}.jpg`));
+      const res = await fetch(`/api/posts/${encodeURIComponent(activePostMediaId)}/attach-media`, {
+        method: 'POST',
+        body: fd
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || `HTTP ${res.status}`);
+      }
+      updatedPost = json.post;
+      if (statusEl) {
+        statusEl.innerText = `Đã nạp ${Math.min(i + chunk.length, files.length)}/${files.length} tệp...`;
+      }
+    }
+
+    if (updatedPost) {
+      syncUpdatedPostInMemory(updatedPost);
+      renderPostMediaGrid(updatedPost);
+      showToast(`Đã nạp thêm ${files.length} tệp media thành công!`, 'success');
+    }
+  } catch (err) {
+    showToast(`Lỗi tải ảnh lên: ${err.message}`, 'error');
+  } finally {
+    if (statusEl) {
+      statusEl.innerText = '';
+      statusEl.classList.add('hidden');
+    }
+  }
+}
+
+async function deletePostMediaItem(postId, filename) {
+  if (!postId || !filename) return;
+  if (!confirm('Xóa ảnh/video này khỏi bài đăng?')) return;
+
+  try {
+    const res = await fetch(`/api/posts/${encodeURIComponent(postId)}/media/${encodeURIComponent(filename)}`, {
+      method: 'DELETE'
+    });
+    const json = await res.json();
+    if (!res.ok || !json.success) {
+      throw new Error(json.error || `HTTP ${res.status}`);
+    }
+    if (json.post) {
+      syncUpdatedPostInMemory(json.post);
+      if (activePostMediaId === postId) {
+        renderPostMediaGrid(json.post);
+      }
+      showToast('Đã xóa tệp media khỏi bài đăng.', 'success');
+    }
+  } catch (err) {
+    showToast(`Không thể xóa ảnh: ${err.message}`, 'error');
+  }
+}
+
+function syncUpdatedPostInMemory(updatedPost) {
+  if (!updatedPost || !updatedPost.id) return;
+  if (Array.isArray(allPosts)) {
+    const idx = allPosts.findIndex(p => p && p.id === updatedPost.id);
+    if (idx !== -1) allPosts[idx] = updatedPost;
+  }
+  if (typeof renderQueueAndHistory === 'function') {
+    try { renderQueueAndHistory(); } catch (e) {}
+  } else if (typeof fetchPosts === 'function') {
+    try { fetchPosts(); } catch (e) {}
+  }
+  // If post detail preview modal is currently open for this same post, refresh it too
+  const previewModal = document.getElementById('postPreviewModal');
+  if (previewModal && !previewModal.classList.contains('hidden') && currentPreviewPostId === updatedPost.id) {
+    try { viewQueuedPostContent(updatedPost.id); } catch (e) {}
+  }
+}
+
+function openMediaLightboxByPost(postId, startIndex = 0) {
+  const post = getPostMediaById(postId);
+  if (!post || !Array.isArray(post.mediaFiles) || post.mediaFiles.length === 0) return;
+  const items = post.mediaFiles.map((m, idx) => ({
+    url: typeof m === 'string' ? m : (m.url || m.path || ''),
+    isVideo: isVideoFile(m),
+    caption: `Mã #${post.machineCode || 'N/A'} — Tệp #${idx + 1}`
+  })).filter(i => i.url);
+  openMediaLightbox(items, startIndex);
+}
+
+function openMediaLightbox(items, startIndex = 0) {
+  if (!Array.isArray(items) || items.length === 0) return;
+  lightboxItems = items;
+  lightboxIndex = Math.max(0, Math.min(startIndex, items.length - 1));
+  renderMediaLightbox();
+  const modal = document.getElementById('mediaLightboxModal');
+  if (modal) modal.classList.remove('hidden');
+}
+
+function renderMediaLightbox() {
+  const stage = document.getElementById('mediaLightboxStage');
+  const counter = document.getElementById('mediaLightboxCounter');
+  const caption = document.getElementById('mediaLightboxCaption');
+  const origLink = document.getElementById('mediaLightboxOriginalLink');
+  const prevBtn = document.getElementById('mediaLightboxPrevBtn');
+  const nextBtn = document.getElementById('mediaLightboxNextBtn');
+  if (!stage || lightboxItems.length === 0) return;
+
+  const item = lightboxItems[lightboxIndex];
+  if (counter) counter.innerText = `${lightboxIndex + 1} / ${lightboxItems.length}`;
+  if (caption) caption.innerText = item.caption || '';
+  if (origLink) origLink.href = item.url;
+
+  const hasMultiple = lightboxItems.length > 1;
+  if (prevBtn) prevBtn.classList.toggle('hidden', !hasMultiple);
+  if (nextBtn) nextBtn.classList.toggle('hidden', !hasMultiple);
+
+  if (item.isVideo) {
+    stage.innerHTML = `<video src="${escapeHtml(item.url)}" controls autoplay class="max-h-[82vh] max-w-full rounded-lg shadow-2xl bg-black"></video>`;
+  } else {
+    stage.innerHTML = `<img src="${escapeHtml(item.url)}" alt="${escapeHtml(item.caption || 'Xem ảnh')}" class="max-h-[82vh] max-w-full object-contain rounded-lg shadow-2xl select-none" />`;
+  }
+}
+
+function navigateMediaLightbox(delta) {
+  if (!lightboxItems.length) return;
+  lightboxIndex = (lightboxIndex + delta + lightboxItems.length) % lightboxItems.length;
+  renderMediaLightbox();
+}
+
+function closeMediaLightbox() {
+  const modal = document.getElementById('mediaLightboxModal');
+  const stage = document.getElementById('mediaLightboxStage');
+  if (modal) modal.classList.add('hidden');
+  if (stage) stage.innerHTML = '';
+}
+
+// Keyboard navigation for Lightbox & Post Media Modal + Drag/Drop & Ctrl+V Paste
+document.addEventListener('keydown', (e) => {
+  const lb = document.getElementById('mediaLightboxModal');
+  if (lb && !lb.classList.contains('hidden')) {
+    if (e.key === 'Escape') { closeMediaLightbox(); return; }
+    if (e.key === 'ArrowLeft') { navigateMediaLightbox(-1); return; }
+    if (e.key === 'ArrowRight') { navigateMediaLightbox(1); return; }
+  }
+  const pm = document.getElementById('postMediaModal');
+  if (pm && !pm.classList.contains('hidden') && e.key === 'Escape') {
+    closePostMediaModal();
+  }
+});
+
+document.addEventListener('paste', (e) => {
+  const pm = document.getElementById('postMediaModal');
+  if (!pm || pm.classList.contains('hidden') || !activePostMediaId) return;
+  const items = Array.from(e.clipboardData?.items || []);
+  const files = items.filter(it => it.kind === 'file').map(it => it.getAsFile()).filter(Boolean);
+  if (files.length > 0) {
+    e.preventDefault();
+    handlePostMediaUpload(files);
+  }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const dz = document.getElementById('postMediaDropZone');
+  if (!dz) return;
+  ['dragenter', 'dragover'].forEach(ev => dz.addEventListener(ev, (e) => {
+    e.preventDefault();
+    dz.classList.add('border-[#2563EB]', 'bg-[#EFF6FF]');
+  }));
+  ['dragleave', 'drop'].forEach(ev => dz.addEventListener(ev, (e) => {
+    e.preventDefault();
+    dz.classList.remove('border-[#2563EB]', 'bg-[#EFF6FF]');
+  }));
+  dz.addEventListener('drop', (e) => {
+    const files = e.dataTransfer?.files;
+    if (files && files.length > 0) handlePostMediaUpload(files);
+  });
+});
+
 
 

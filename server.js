@@ -494,7 +494,13 @@ app.delete('/api/posts/:id/media/:filename', async (req, res) => {
     if (!post) return res.status(404).json({ error: 'Không tìm thấy bài viết.' });
 
     if (post.mediaFiles) {
-      post.mediaFiles = post.mediaFiles.filter(m => m.filename !== req.params.filename);
+      const targetName = decodeURIComponent(req.params.filename || '');
+      post.mediaFiles = post.mediaFiles.filter(m => {
+        if (!m) return false;
+        const fname = m.filename || '';
+        const urlBase = m.url ? decodeURIComponent(String(m.url).split('?')[0].split('/').pop() || '') : '';
+        return fname !== targetName && urlBase !== targetName;
+      });
     }
     await savePosts(posts);
     await upsertPostToDb(post);
@@ -645,6 +651,7 @@ app.post('/api/extension/push-post', async (req, res) => {
           let buffer;
           let mime = 'image/jpeg';
           let ext = '.jpg';
+          let isVideo = false;
 
           // A. Handle Base64 Data URLs (from browser blobs)
           if (mUrl.startsWith('data:')) {
@@ -652,7 +659,7 @@ app.post('/api/extension/push-post', async (req, res) => {
             if (matches) {
               mime = matches[1];
               buffer = Buffer.from(matches[2], 'base64');
-              const isVideo = mime.startsWith('video/');
+              isVideo = mime.startsWith('video/');
               ext = isVideo ? '.mp4' : (mime.includes('png') ? '.png' : '.jpg');
             } else {
               continue;
@@ -669,7 +676,7 @@ app.post('/api/extension/push-post', async (req, res) => {
             });
             buffer = Buffer.from(mediaRes.data);
             const contentType = mediaRes.headers['content-type'] || '';
-            const isVideo = contentType.startsWith('video/') || /\.(mp4|mov|avi)$/i.test(mUrl);
+            isVideo = contentType.startsWith('video/') || /\.(mp4|mov|avi)$/i.test(mUrl);
             ext = isVideo ? '.mp4' : '.jpg';
             mime = isVideo ? 'video/mp4' : 'image/jpeg';
           } else {
